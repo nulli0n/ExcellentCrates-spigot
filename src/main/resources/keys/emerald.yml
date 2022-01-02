@@ -1,0 +1,11 @@
+Name: '&a&lEmerald Crate Key'
+Virtual: false
+Item:
+  Material: TRIPWIRE_HOOK
+  Amount: 1
+  Durability: 0
+  Name: '&a&lEmerald Crate Key'
+  Lore:
+  - '&7Use this key to open &a&lEmerald Crate'
+  Item_Flags: []
+  Unbreakable: false

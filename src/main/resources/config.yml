@@ -1,0 +1,27 @@
+Plugin:
+  Command_Aliases: 'excellentcrates,ecrates,crates,crate,case,cases'
+  Language: en
+  Prefix: 'ExcellentCrates'
+
+Database:
+  Type: SQLite
+  Auto_Save_Interval: 15
+  Instant_Save: false
+  MySQL:
+    Username: 'user123'
+    Password: 'pass123'
+    Host: 'localhost:3306'
+    Database: 'server'
+  Purge:
+    Enabled: false
+    For_Inactive_Days: 60
+
+Crate:
+  Click_Actions:
+    LEFT: CRATE_PREVIEW
+    RIGHT: CRATE_OPEN
+    SHIFT_LEFT: null
+    SHIFT_RIGHT: null
+  Block_Pushback:
+    Y: -0.4
+    Multiply: -1.25

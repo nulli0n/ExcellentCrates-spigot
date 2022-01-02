@@ -1,0 +1,147 @@
+Title: '&8&l「 &9Editor - Crate Reward Settings &8&l」'
+Size: 54
+
+Content:
+  back:
+    Display:
+      default:
+        Item:
+          Material: BARRIER
+          Name: '&c&lReturn'
+    Slots: 49
+    Type: RETURN
+
+Editor:
+  delete:
+    Display:
+      default:
+        Item:
+          Material: CAULDRON
+          Name: '&c&lDelete Reward'
+          Lore:
+            - '&7Reward will be deleted.'
+            - '&7'
+            - '&c&nHold Shift to confirm.'
+    Slots: 8
+    Type: CRATE_REWARD_DELETE
+
+  name:
+    Display:
+      default:
+        Item:
+          Material: NAME_TAG
+          Name: '&eDisplay Name'
+          Lore:
+            - '&bCurrent: &a%reward_name%'
+            - '&7'
+            - '&7This name will be used in messages.'
+            - '&7'
+            - '&6Left-Click: &eChange'
+            - '&6Right-Click: &eSync with item name'
+    Slots: 19
+    Type: CRATE_REWARD_CHANGE_NAME
+
+  preview:
+    Display:
+      default:
+        Item:
+          Material: ITEM_FRAME
+          Name: '&ePreview Item'
+          Lore:
+            - '&bCurrent: &a%reward_preview_name%'
+            - '&7'
+            - '&7This item will represent the reward'
+            - '&7in menus and holograms.'
+            - '&7'
+            - '&e&nUse item with preset name and lore.'
+            - '&7'
+            - '&6Drag and Drop: &eReplace'
+            - '&6Right-Click: &eGet Item'
+    Slots: 20
+    Type: CRATE_REWARD_CHANGE_PREVIEW
+
+  chance:
+    Display:
+      default:
+        Item:
+          Material: REDSTONE
+          Name: '&eWin Chance'
+          Lore:
+            - '&bCurrent: &a%reward_chance%%'
+            - '&7'
+            - '&7Sets the chance, that this'
+            - '&7reward will be selected.'
+            - '&7'
+            - '&6Left-Click: &eChange'
+    Slots: 21
+    Type: CRATE_REWARD_CHANGE_CHANCE
+
+  item:
+    Display:
+      default:
+        Item:
+          Material: EMERALD
+          Name: '&eReward Items'
+          Lore:
+            - '&7List of custom items, that'
+            - '&7will be given to a player on win.'
+            - '&7'
+            - '&e&nPut items and use ESC to save and return.'
+            - '&7'
+            - '&6Left-Click: &eNavigate'
+    Slots: 22
+    Type: CRATE_REWARD_CHANGE_ITEMS
+
+  commands:
+    Display:
+      default:
+        Item:
+          Material: COMMAND_BLOCK
+          Name: '&eReward Commands'
+          Lore:
+            - '&bThe following commands will be'
+            - '&bexecuted when player wins this reward:'
+            - '&a%reward_commands%'
+            - '&7'
+            - '&6Left-Click: &eAdd Command'
+            - '&6Right-Click: &eClear Commands'
+    Slots: 23
+    Type: CRATE_REWARD_CHANGE_COMMANDS
+
+  broadcast:
+    Display:
+      default:
+        Item:
+          Material: ENDER_EYE
+          Name: '&eBroadcast'
+          Lore:
+            - '&bEnabled: &a%reward_broadcast%'
+            - '&7'
+            - '&7Sets if there should be a broadcast'
+            - '&7message when player wins this reward.'
+            - '&7'
+            - '&6Left-Click: &eToggle'
+    Slots: 24
+    Type: CRATE_REWARD_CHANGE_BROADCAST
+
+  win_limits:
+    Display:
+      default:
+        Item:
+          Material: REPEATER
+          Name: '&eWin Limits'
+          Lore:
+            - '&bAmount: &a%reward_win_limit_amount%'
+            - '&bCooldown &a%reward_win_limit_cooldown%'
+            - '&7'
+            - '&7Sets how often and/or how many'
+            - '&7times player can win this reward.'
+            - '&7'
+            - '&eSet cooldown to &n-1&e for one-timed.'
+            - '&eSet cooldown to &n0&e to disabled.'
+            - '&eSet amount to &n-1&e for unlimit.'
+            - '&7'
+            - '&6Left-Click: &eChange Amount'
+            - '&6Right-Click: &eChange Cooldown'
+    Slots: 25
+    Type: CRATE_REWARD_CHANGE_WIN_LIMITS

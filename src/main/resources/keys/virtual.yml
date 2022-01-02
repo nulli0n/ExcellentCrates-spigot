@@ -1,0 +1,9 @@
+Name: §x§3§F§6§8§E§A§lVirtual Crate Key
+Virtual: true
+Item:
+  Material: TRIPWIRE_HOOK
+  Amount: 1
+  Durability: 0
+  Name: '&6Virtual Crate Key'
+  Item_Flags: []
+  Unbreakable: false

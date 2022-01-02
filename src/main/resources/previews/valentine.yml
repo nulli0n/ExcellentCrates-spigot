@@ -1,0 +1,85 @@
+Title: '           &nCrate Preview'
+Size: 54
+
+Reward:
+  Hide_Drained_Rewards: false
+  Name: '&e%reward_preview_name%'
+  Lore:
+    Default:
+    - '&7'
+    - '&e&lWin Chance: &6%reward_chance%%'
+    - '&e&lWin Amount Limit: &6%reward_win_limit_amount%'
+    - '&e&lWin Cooldown: &6%reward_win_limit_cooldown%'
+    - '&7'
+    - '%win_limit_amount%'
+    - '%win_limit_cooldown%'
+    - '%win_limit_drained%'
+    - '&7'
+    - '%reward_preview_lore%'
+    Win_Limit:
+      Amount:
+        - '&7You can win this reward &6%user_reward_win_limit_amount_left% more times &7(of total &f%reward_win_limit_amount%&7)'
+      Cooldown:
+        - '&7You can win this reward again in &6%user_reward_win_limit_expire_in%'
+      Drained:
+        - '&cYou already won this reward, you can not win more.'
+  Slots: 20,21,29,30,23,24,32,33
+
+Content:
+  pane_red:
+    Display:
+      default:
+        Item:
+          Material: RED_STAINED_GLASS_PANE
+    Slots: 11,12,14,15,22,19,28,25,34,38,39,40,41,42,48,49,50
+    Type: NONE
+
+  pane_pink:
+    Display:
+      default:
+        Item:
+          Material: PINK_STAINED_GLASS_PANE
+    Slots: 0,1,9,7,8,17,36,45,46,44,52,53
+    Type: NONE
+
+  pane_white:
+    Display:
+      default:
+        Item:
+          Material: WHITE_STAINED_GLASS_PANE
+    Slots: 3,4,5,13,31
+    Type: NONE
+
+  pane_cyan:
+    Display:
+      default:
+        Item:
+          Material: LIGHT_BLUE_STAINED_GLASS_PANE
+    Slots: 2,6,10,16,18,27,26,35,37,47,43,51
+    Type: NONE
+
+  page_next:
+    Display:
+      default:
+        Item:
+          Material: RED_DYE
+          Name: '&c&lNext Page'
+          Enchants:
+            unbreaking: 1
+          Item_Flags:
+          - '*'
+    Slots: 53
+    Type: PAGE_NEXT
+
+  page_prev:
+    Display:
+      default:
+        Item:
+          Material: RED_DYE
+          Name: '&c&lPrevious Page'
+          Enchants:
+            unbreaking: 1
+          Item_Flags:
+          - '*'
+    Slots: 45
+    Type: PAGE_PREVIOUS

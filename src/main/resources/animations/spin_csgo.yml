@@ -1,0 +1,36 @@
+Type: SPIN
+Menu:
+  Title: '&nOpening crate...'
+  Size: 27
+
+  Content:
+    panes:
+      Display:
+        default:
+          Item:
+            material: 'BLACK_STAINED_GLASS_PANE'
+            name: '&a'
+      Slots: '0,1,2,3,5,6,7,8,18,19,20,21,23,24,25,26'
+      Type: RAINBOW_SYNC
+
+    red_torch:
+      Display:
+        default:
+          Item:
+            material: 'REDSTONE_TORCH'
+            name: '&c&l» PRIZE «'
+      Slots: '4,22'
+      Type: NONE
+
+Settings:
+  Spinners:
+    spin-1:
+      Time:
+        Start_Delay_Ticks: 0
+        Spin_Task_Ticks: 2
+        Roll_Every_Ticks: 1
+        Duration_Second: 7
+        Finish_Random_Offset: 1.0
+      Roll_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+      Reward_Slots: '17,16,15,14,13,12,11,10,9'
+      Win_Slots: '13'

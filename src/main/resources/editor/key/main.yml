@@ -1,0 +1,63 @@
+Title: '&8&l「 &9Editor - Crate Key Settings &8&l」'
+Size: 36
+
+Content:
+  back:
+    Display:
+      default:
+        Item:
+          Material: BARRIER
+          Name: '&c&lReturn'
+    Slots: 31
+    Type: RETURN
+
+Editor:
+  key:
+    Display:
+      default:
+        Item:
+          Material: TRIPWIRE_HOOK
+          Name: '&eInventory Item'
+          Lore:
+            - '&bCurrent: &a%key_item_name%'
+            - '&7'
+            - '&7Represents a key as an inventory item'
+            - '&7that can be given to players.'
+            - '&7'
+            - '&e&nUse item with preset name and lore.'
+            - '&7'
+            - '&6Drag & Drop: &eReplace Item'
+            - '&6Right-Click: &eGet Item'
+    Slots: 13
+    Type: KEY_CHANGE_ITEM
+
+  name:
+    Display:
+      default:
+        Item:
+          Material: NAME_TAG
+          Name: '&eDisplay Name'
+          Lore:
+            - '&bCurrent: &a%key_name%'
+            - '&7'
+            - '&7This name is used in messages.'
+            - '&7'
+            - '&6Left-Click: &eChange'
+    Slots: 10
+    Type: KEY_CHANGE_NAME
+
+  virtual:
+    Display:
+      default:
+        Item:
+          Material: GRAY_DYE
+          Name: '&eVirtual Key'
+          Lore:
+            - '&bVirtual: &a%key_virtual%'
+            - '&7'
+            - '&7Virtual keys are stored in the database'
+            - '&7instead of being inventory items.'
+            - '&7'
+            - '&6Left-Click: &eToggle'
+    Slots: 16
+    Type: KEY_CHANGE_VIRTUAL

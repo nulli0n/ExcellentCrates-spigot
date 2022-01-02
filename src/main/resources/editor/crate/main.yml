@@ -1,0 +1,249 @@
+Title: '&8&l「 &9Editor - Crate Settings &8&l」'
+Size: 54
+
+Content:
+  back:
+    Display:
+      default:
+        Item:
+          Material: BARRIER
+          Name: '&c&lReturn'
+    Slots: 49
+    Type: RETURN
+
+Editor:
+  deletion:
+    Display:
+      default:
+        Item:
+          Material: CAULDRON
+          Name: '&c&lDelete Crate'
+          Lore:
+            - '&7Permanently delete this crate.'
+            - '&7'
+            - '&c&nHold Shift to confirm.'
+    Slots: 53
+    Type: CRATE_DELETE
+
+  permission:
+    Display:
+      default:
+        Item:
+          Material: REDSTONE
+          Name: '&ePermission Requirement'
+          Lore:
+            - '&bRequired: &a%crate_permission_required%'
+            - '&bPermission: &a%crate_permission%'
+            - '&7'
+            - '&7Sets if player must have permission'
+            - '&7to open this crate.'
+            - '&7'
+            - '&6Left-Click: &eToggle'
+    Slots: 0
+    Type: CRATE_CHANGE_PERMISSION
+
+  rewards:
+    Display:
+      default:
+        Item:
+          Material: EMERALD
+          Name: '&eReward Manager'
+          Lore:
+            - '&7Create and edit rewards here.'
+            - '&7'
+            - '&6Left-Click: &eNavigate'
+    Slots: 19
+    Type: CRATE_OPEN_REWARDS
+
+  block_effect:
+    Display:
+      default:
+        Item:
+          Material: BLAZE_POWDER
+          Name: '&eBlock Effect'
+          Lore:
+            - '&bModel: &a%crate_block_effect_model%'
+            - '&bParticle Name: &a%crate_block_effect_particle_name%'
+            - '&bParticle Data: &a%crate_block_effect_particle_data%'
+            - '&7'
+            - '&7Sets the particle effects that will'
+            - '&7be played around the crate block(s).'
+            - '&7'
+            - '&6Left-Click: &eToggle Model'
+            - '&6Shift-Left: &eChange Particle Name'
+            - '&6Shift-Right: &eChange Particle Data'
+    Slots: 28
+    Type: CRATE_CHANGE_BLOCK_EFFECT
+
+  npcs:
+    Display:
+      default:
+        Item:
+          Material: PLAYER_HEAD
+          Name: '&eAttached Citizens NPCs'
+          Lore:
+            - '&c&nYou must have Citizens plugin installed'
+            - '&7'
+            - '&7The following NPCs will'
+            - '&7preview and open crate on clicks:'
+            - '&aIDs: %crate_attached_citizens%'
+            - '&7'
+            - '&6Left-Click: &eAdd NPC'
+            - '&6Right-Click: &eClear List'
+    Slots: 8
+    Type: CRATE_CHANGE_CITIZENS
+
+  key:
+    Display:
+      default:
+        Item:
+          Material: TRIPWIRE_HOOK
+          Name: '&eKeys'
+          Lore:
+            - '&bThe following keys can be'
+            - '&bused to open this crate:'
+            - '&a%crate_key_ids%'
+            - '&7'
+            - '&7Sets the keys which can be used'
+            - '&7to open this crate.'
+            - '&7'
+            - '&6Left-Click: &eAdd Key'
+            - '&6Right-Click: &eDisable'
+    Slots: 15
+    Type: CRATE_CHANGE_KEYS
+
+  name:
+    Display:
+      default:
+        Item:
+          Material: NAME_TAG
+          Name: '&eDisplay Name'
+          Lore:
+            - '&bCurrent: &a%crate_name%'
+            - '&7'
+            - '&7Sets the crate name for chat messages.'
+            - '&7'
+            - '&6Left-Click: &eChange'
+    Slots: 4
+    Type: CRATE_CHANGE_NAME
+
+  guis:
+    Display:
+      default:
+        Item:
+          Material: PAINTING
+          Name: '&eAnimation and Preview Configs'
+          Lore:
+            - '&bAnimation: &a%crate_animation_config%'
+            - '&bPreview: &a%crate_preview_config%'
+            - '&7'
+            - '&7Sets the layout for crate'
+            - '&7preview and animation opening GUIs.'
+            - '&7'
+            - '&6Left-Click: &eChange Animation'
+            - '&6Right-Click: &eChange Preview'
+            - '&6Shift-Left: &eDisable Animation'
+            - '&6Shift-Right: &eDisable Preview'
+    Slots: 11
+    Type: CRATE_CHANGE_CONFIG
+
+  icon:
+    Display:
+      default:
+        Item:
+          Material: ENDER_CHEST
+          Name: '&eInventory Item'
+          Lore:
+            - '&bCurrent: &a%crate_item_name%'
+            - '&7'
+            - '&7A custom inventory item that'
+            - '&7can be used to open the crate.'
+            - '&7Also used to display crate in menus.'
+            - '&7'
+            - '&e&nUse item with predefined name and lore'
+            - '&7'
+            - '&6Drag & Drop: &eReplace'
+            - '&6Right-Click: &eGet crate item'
+    Slots: 13
+    Type: CRATE_CHANGE_ITEM
+
+  block-holo:
+    Display:
+      default:
+        Item:
+          Material: ARMOR_STAND
+          Name: '&eBlock Hologram'
+          Lore:
+            - '&c&nYou must have holograms plugin installed'
+            - '&7'
+            - '&bEnabled: &a%crate_block_hologram_enabled%'
+            - '&bY Offset: &a%crate_block_hologram_offset_y%'
+            - '&7'
+            - '&bThe following text will appear'
+            - '&babove the crate block via hologram:'
+            - '&a%crate_block_hologram_text%'
+            - '&7'
+            - '&6Left-Click: &eAdd Line'
+            - '&6Right-Click: &eClear List'
+            - '&6Shift-Left: &eToggle Hologram'
+            - '&6Shift-Right: &eChange Y Offset'
+    Slots: 25
+    Type: CRATE_CHANGE_BLOCK_HOLOGRAM
+
+  block-location:
+    Display:
+      default:
+        Item:
+          Material: CHEST
+          Name: '&eBlock Pushback & Locations'
+          Lore:
+            - '&bPushback: &a%crate_block_pushback_enabled%'
+            - '&7'
+            - '&bThis crate will be attached to'
+            - '&bthe blocks at following locations:'
+            - '&a%crate_block_locations%'
+            - '&7'
+            - '&6Left-Click: &eAdd Block'
+            - '&6Right-Click: &eClear Blocks'
+            - '&6Shift-Left: &eToggle Pushback'
+    Slots: 34
+    Type: CRATE_CHANGE_BLOCK_LOCATION
+
+  cooldown:
+    Display:
+      default:
+        Item:
+          Material: CLOCK
+          Name: '&eOpen Cooldown'
+          Lore:
+            - '&bCurrent: &a%crate_opening_cooldown%'
+            - '&7'
+            - '&7How long player will have to wait'
+            - '&7to open this crate again?'
+            - '&7'
+            - '&eUse &n-1&e for one-timed crate.'
+            - '&eUse &n0&e to disable cooldown.'
+            - '&7'
+            - '&6Left-Click: &eChange'
+            - '&6Right-Click: &eMake One-Timed'
+    Slots: 22
+    Type: CRATE_CHANGE_COOLDOWN
+
+  open_cost:
+    Display:
+      default:
+        Item:
+          Material: GOLD_NUGGET
+          Name: '&eOpen Cost'
+          Lore:
+            - '&bMoney: &a%crate_opening_cost_money%'
+            - '&bExp Levels: &a%crate_opening_cost_exp%'
+            - '&7'
+            - '&7Player will have to pay certain'
+            - '&7amount of money and/or exp levels'
+            - '&7to open this crate.'
+            - '&7'
+            - '&6Left-Click: &eChange Money'
+            - '&6Right-Click: &eChange Exp'
+    Slots: 31
+    Type: CRATE_CHANGE_OPEN_COST

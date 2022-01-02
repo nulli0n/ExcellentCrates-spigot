@@ -1,0 +1,158 @@
+main: su.nightexpress.excellentcrates.ExcellentCrates
+version: '${project.version}'
+name: ExcellentCrates
+author: NightExpress
+desciption: Fully customizable crates with rewards. Enjoy.
+depend: [NexEngine]
+softdepend: [Citizens, HolographicDisplays, DecentHolograms, Vault, PlaceholderAPI]
+api-version: 1.16
+load: POSTWORLD
+
+permissions:
+  excellentcrates.admin:
+    description: Access to all plugin functions.
+    default: op
+    children:
+      excellentcrates.command: true
+      excellentcrates.user: true
+      excellentcrates.bypass: true
+
+  excellentcrates.user:
+    description: Access to basic plugin functions.
+    default: true
+    children:
+      excellentcrates.command.keys: true
+      excellentcrates.command.menu: true
+      excellentcrates.command.preview: true
+
+# ------------------ Commands ------------------ #
+  excellentcrates.command:
+    description: Access to all plugin commands.
+    default: op
+    children:
+      excellentcrates.command.drop: true
+      excellentcrates.command.forceopen: true
+      excellentcrates.command.give: true
+      excellentcrates.command.givekey: true
+      excellentcrates.command.keys: true
+      excellentcrates.command.keys.others: true
+      excellentcrates.command.menu: true
+      excellentcrates.command.menu.others: true
+      excellentcrates.command.preview: true
+      excellentcrates.command.preview.others: true
+      excellentcrates.command.resetcooldown: true
+      excellentcrates.command.resetlimit: true
+      excellentcrates.command.takekey: true
+
+  excellentcrates.command.drop:
+    description: Access to '/crate drop' subcommand.
+    default: op
+
+  excellentcrates.command.forceopen:
+    description: Access to '/crate forceopen' subcommand.
+    default: op
+
+  excellentcrates.command.give:
+    description: Access to '/crate give' subcommand.
+    default: op
+
+  excellentcrates.command.givekey:
+    description: Access to '/crate givekey' subcommand.
+    default: op
+
+  excellentcrates.command.keys:
+    description: Access to '/crate keys' subcommand.
+    default: true
+
+  excellentcrates.command.keys.others:
+    description: Access to '/crate keys [player]' subcommand.
+    default: op
+
+  excellentcrates.command.menu:
+    description: Access to '/crate menu' subcommand.
+    default: true
+
+  excellentcrates.command.menu.others:
+    description: Access to '/crate menu [player]' subcommand.
+    default: op
+
+  excellentcrates.command.preview:
+    description: Access to '/crate preview' subcommand.
+    default: true
+
+  excellentcrates.command.preview.others:
+    description: Access to '/crate preview [player]' subcommand.
+    default: op
+
+  excellentcrates.command.resetcooldown:
+    description: Access to '/crate resetcooldown' subcommand.
+    default: op
+
+  excellentcrates.command.resetlimit:
+    description: Access to '/crate resetlimit' subcommand.
+    default: op
+
+  excellentcrates.command.takekey:
+    description: Access to '/crate takekey' subcommand.
+    default: op
+# ------------------ Commands End ------------------ #
+
+
+
+# ------------------ Bypass ------------------ #
+  excellentcrates.bypass:
+    description: Bypasses all the plugin restrictions.
+    default: op
+    children:
+      excellentcrates.bypass.crate: true
+      excellentcrates.bypass.reward: true
+
+
+  excellentcrates.bypass.crate:
+    description: Bypasses all crate restrictions.
+    default: op
+    children:
+      excellentcrates.bypass.crate.opencost: true
+      excellentcrates.bypass.crate.opencooldown: true
+
+  excellentcrates.bypass.crate.opencost:
+    description: Bypasses crate open cost.
+    default: op
+    children:
+      excellentcrates.bypass.crate.opencost.money: true
+      excellentcrates.bypass.crate.opencost.exp: true
+
+  excellentcrates.bypass.crate.opencost.money:
+    description: Bypasses crate money open cost.
+    default: op
+
+  excellentcrates.bypass.crate.opencost.exp:
+    description: Bypasses crate exp open cost.
+    default: op
+
+  excellentcrates.bypass.crate.opencooldown:
+    description: Bypasses crate open cooldown.
+    default: op
+
+
+  excellentcrates.bypass.reward:
+    description: Bypasses all crate reward restrictions.
+    default: op
+    children:
+      excellentcrates.bypass.reward.limit: true
+
+  excellentcrates.bypass.reward.limit:
+    description: Bypasses reward win limits.
+    default: op
+    children:
+      excellentcrates.bypass.reward.limit.amount: true
+      excellentcrates.bypass.reward.limit.cooldown: true
+
+  excellentcrates.bypass.reward.limit.amount:
+    description: Bypasses reward win limit amount.
+    default: op
+
+  excellentcrates.bypass.reward.limit.cooldown:
+    description: Bypasses reward win limit cooldown.
+    default: op
+# ------------------ Bypass End ------------------ #
