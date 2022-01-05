@@ -177,7 +177,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
             super.onClose(player, e);
 
-            this.stopRollTasks(player);
+            //this.stopRollTasks(player);
         }
 
         @Override
@@ -354,9 +354,9 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
                 }
             }
 
-            /*if (this.inventory.getViewers().isEmpty()) {
+            if (this.inventory.getViewers().isEmpty()) {
                 this.player.openInventory(this.inventory);
-            }*/
+            }
         }
 
         public void finish(boolean force) {
