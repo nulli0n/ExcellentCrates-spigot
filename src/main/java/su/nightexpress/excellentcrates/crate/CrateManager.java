@@ -30,6 +30,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,18 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 		this.crates = new HashMap<>();
 		this.plugin.getConfigManager().extract(Config.DIR_CRATES);
 		this.plugin.getConfigManager().extract(Config.DIR_PREVIEWS);
+
+		for (JYML cfgLegacy : JYML.loadAll(plugin.getDataFolder().getParentFile() + "/GoldenCrates/crates/", true)) {
+			File exist = new File(plugin.getDataFolder() + Config.DIR_CRATES + cfgLegacy.getFile().getName());
+			if (exist.exists()) {
+				plugin.error("Could not convert '" + cfgLegacy.getFile().getName() + "': Such crate already exist!");
+				continue;
+			}
+
+			Crate crateLegacy = Crate.fromLegacy(cfgLegacy);
+			crateLegacy.save();
+			plugin.info("Converted '" + cfgLegacy.getFile().getName() + "' Golden Crate crate!");
+		}
 
 		this.plugin.getServer().getScheduler().runTask(this.plugin, c -> {
 			for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_CRATES, true)) {

@@ -24,7 +24,17 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 	private ItemStack item;
 	
 	private KeyEditorKey editor;
-	
+
+	public static CrateKey fromLegacy(@NotNull JYML cfg) {
+		CrateKey key = new CrateKey(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
+
+		key.setName(cfg.getString("name", key.getId()));
+		key.setVirtual(cfg.getBoolean("virtual"));
+		key.setItem(cfg.getItem("item"));
+
+		return key;
+	}
+
 	public CrateKey(@NotNull ExcellentCrates plugin, @NotNull String id) {
 		super(plugin, plugin.getDataFolder() + Config.DIR_KEYS + id.toLowerCase() + ".yml");
 		

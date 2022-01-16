@@ -15,6 +15,7 @@ import su.nightexpress.excellentcrates.api.crate.ICrateKey;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -31,7 +32,19 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 	public void onLoad() {
 		this.keysMap = new HashMap<>();
 		this.plugin.getConfigManager().extract(Config.DIR_KEYS);
-		
+
+		for (JYML cfgLegacy : JYML.loadAll(plugin.getDataFolder().getParentFile() + "/GoldenCrates/keys/", true)) {
+			File exist = new File(plugin.getDataFolder() + Config.DIR_KEYS + cfgLegacy.getFile().getName());
+			if (exist.exists()) {
+				plugin.error("Could not convert '" + cfgLegacy.getFile().getName() + "': Such key already exist!");
+				continue;
+			}
+
+			CrateKey keyLegacy = CrateKey.fromLegacy(cfgLegacy);
+			keyLegacy.save();
+			plugin.info("Converted '" + cfgLegacy.getFile().getName() + "' Golden Crate key!");
+		}
+
 		for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_KEYS, true)) {
 			try {
 				ICrateKey crateKey = new CrateKey(plugin, cfg);

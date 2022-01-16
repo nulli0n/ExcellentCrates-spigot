@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate;
 
+import com.google.common.collect.Sets;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -54,7 +55,61 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 	
 	private CratePreview     preview;
 	private CrateEditorCrate editor;
-	
+
+	public static Crate fromLegacy(@NotNull JYML cfg) {
+		Crate crate = new Crate(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
+
+		crate.setName(cfg.getString("name", cfg.getFile().getName()));
+		crate.setAnimationConfig(cfg.getString("template", null));
+		crate.setPreviewConfig(cfg.getString("preview", Constants.DEFAULT));
+		crate.setPermissionRequired(cfg.getBoolean("permission-required"));
+		crate.setAttachedCitizens(cfg.getIntArray("attached-citizens"));
+
+		crate.setOpenCooldown(cfg.getInt("cooldown"));
+		crate.openCostType = new HashMap<>();
+		crate.setOpenCost(OpenCostType.MONEY, cfg.getDouble("open-cost.vault"));
+		crate.setOpenCost(OpenCostType.EXP, cfg.getDouble("open-cost.exp"));
+
+		crate.setKeyIds(Sets.newHashSet(cfg.getString("key.id", "")));
+		crate.setItem(cfg.getItem("item."));
+
+		crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("block.locations"))));
+		crate.setBlockPushbackEnabled(cfg.getBoolean("block.pushback.enabled"));
+		crate.setBlockHologramEnabled(cfg.getBoolean("block.hologram.enabled"));
+		crate.setBlockHologramOffsetY(1.5D);
+		crate.setBlockHologramText(cfg.getStringList("block.hologram.text"));
+
+		CrateEffectModel model = cfg.getEnum("block.effects.type", CrateEffectModel.class, CrateEffectModel.SIMPLE);
+		String particleName = cfg.getString("block.effects.particle", Particle.FLAME.name());
+		String particleData = "";
+		CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
+		crate.setBlockEffect(crateEffectSettings);
+
+		crate.rewardMap = new LinkedHashMap<>();
+		for (String rewId : cfg.getSection("rewards.list")) {
+			String path = "rewards.list." + rewId + ".";
+
+			String rewName = cfg.getString(path + "name", rewId);
+			double rewChance = cfg.getDouble(path + "chance");
+			boolean rBroadcast = false;
+			ItemStack rewPreview = cfg.getItem64(path + "preview");
+			if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
+
+			int winLimitAmount = -1;
+			long winLimitCooldown = 0L;
+
+			List<String> rewCmds = cfg.getStringList(path + "cmds");
+			List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItem64(path + "item")).toList());
+
+			ICrateReward reward = new CrateReward(crate, rewId, rewName, rewChance, rBroadcast,
+				winLimitAmount, winLimitCooldown,
+				rewPreview, rewItem, rewCmds);
+			crate.rewardMap.put(rewId, reward);
+		}
+
+		return crate;
+	}
+
 	public Crate(@NotNull ExcellentCrates plugin, @NotNull String id) {
 		super(plugin, plugin.getDataFolder() + Config.DIR_CRATES + id.toLowerCase() + ".yml");
 		
