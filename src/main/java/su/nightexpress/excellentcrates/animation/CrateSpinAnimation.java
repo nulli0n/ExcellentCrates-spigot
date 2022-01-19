@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.animation;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
 import su.nexmedia.engine.api.menu.AbstractMenu;
@@ -175,7 +177,10 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
 
         @Override
         public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
-            super.onClose(player, e);
+            Set<SpinTask> runnables = SPIN_TASKS.get(player);
+            if (runnables == null || runnables.stream().allMatch(BukkitRunnable::isCancelled)) {
+                super.onClose(player, e);
+            }
 
             //this.stopRollTasks(player);
         }
@@ -193,7 +198,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         private final double timeRollTicks;
         private final double timeEndTicks;
         private final double timeEndRndOffset;
-        private final String rollSound;
+        private final Sound  rollSound;
 
         private final int[] rewardSlots;
         private final int[] winSlots;
@@ -205,7 +210,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
             this.timeEndTicks = Math.ceil(20 * cfg.getDouble(path + "Time.Duration_Second"));
             this.timeEndRndOffset = cfg.getDouble(path + "Time.Finish_Random_Offset");
 
-            this.rollSound = cfg.getString(path + "Roll_Sound", "");
+            this.rollSound = cfg.getEnum(path + "Roll_Sound", Sound.class);
             this.rewardSlots = cfg.getIntArray(path + "Reward_Slots");
             this.winSlots = cfg.getIntArray(path + "Win_Slots");
         }
@@ -230,8 +235,8 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
             return timeEndRndOffset;
         }
 
-        @NotNull
-        public String getRollSound() {
+        @Nullable
+        public Sound getRollSound() {
             return this.rollSound;
         }
 
@@ -329,7 +334,9 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
             if (this.tickCounter % this.getSpinner().getRollEveryTicks() != 0) {
                 return;
             }
-            MessageUtil.sound(this.player, this.getSpinner().getRollSound());
+            if (this.getSpinner().getRollSound() != null) {
+                MessageUtil.sound(this.player, this.getSpinner().getRollSound());
+            }
 
             ICrateReward reward = this.crate.rollReward(this.player);
             if (reward == null) return;

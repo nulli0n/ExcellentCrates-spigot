@@ -27,6 +27,7 @@ import su.nightexpress.excellentcrates.crate.effect.CrateEffectSettings;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -434,7 +435,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 	
 	@Override
 	public void setKeyIds(@NotNull Set<String> keyIds) {
-		this.keyIds = new HashSet<>(keyIds.stream().map(String::toLowerCase).toList());
+		this.keyIds = new HashSet<>(keyIds.stream().filter(Predicate.not(String::isEmpty)).map(String::toLowerCase).toList());
 	}
 	
 	@Override
