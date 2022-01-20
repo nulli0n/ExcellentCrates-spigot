@@ -190,6 +190,10 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 	}
 	
 	public boolean openCrate(@NotNull Player player, @NotNull ICrate crate, boolean force, @Nullable ItemStack item, @Nullable Block block) {
+		if (plugin.getAnimationManager().getAnimations().stream().anyMatch(a -> a.isOpening(player))) {
+			return false;
+		}
+
 		if (!force && !crate.hasPermission(player)) {
 			plugin.lang().Error_Permission_Deny.send(player);
 			return false;

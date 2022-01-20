@@ -60,6 +60,11 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
     }
 
     @Override
+    public boolean isOpening(@NotNull Player player) {
+        return false;
+    }
+
+    @Override
     public void onSave() {
 
     }

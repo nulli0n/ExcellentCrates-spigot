@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
 import su.nexmedia.engine.api.menu.AbstractMenu;
+import su.nexmedia.engine.api.menu.IMenu;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.PDCUtil;
@@ -24,6 +25,7 @@ import su.nightexpress.excellentcrates.api.crate.ICrateAnimation;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> implements ICrateAnimation {
 
@@ -92,6 +94,12 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
     @Override
     public void open(@NotNull Player player, @NotNull ICrate crate) {
         this.getMenu().open(player, crate);
+    }
+
+    @Override
+    public boolean isOpening(@NotNull Player player) {
+        Set<SpinTask> runnables = SPIN_TASKS.get(player);
+        return runnables != null && !runnables.isEmpty() && runnables.stream().anyMatch(Predicate.not(BukkitRunnable::isCancelled));
     }
 
     @Override
@@ -177,8 +185,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
 
         @Override
         public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
-            Set<SpinTask> runnables = SPIN_TASKS.get(player);
-            if (runnables == null || runnables.stream().allMatch(BukkitRunnable::isCancelled)) {
+            if (!isOpening(player)) {
                 super.onClose(player, e);
             }
 
@@ -361,8 +368,14 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
                 }
             }
 
-            if (this.inventory.getViewers().isEmpty()) {
+            IMenu menuNew = IMenu.getMenu(this.player);
+            if (menuNew != null && menuNew.equals(menu)) {
                 this.player.openInventory(this.inventory);
+            }
+            else {
+                menu.getUserPageMap().remove(player);
+                menu.getUserItemsMap().remove(player);
+                menu.getViewers().remove(player);
             }
         }
 
