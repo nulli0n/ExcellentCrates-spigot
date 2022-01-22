@@ -9,9 +9,9 @@ Opening:
     EXP: 0.0
 Key:
   Ids:
-  - virtual
+    - virtual
 Block:
-  Locations: []
+  Locations: [ ]
   Pushback:
     Enabled: true
   Hologram:
@@ -19,8 +19,8 @@ Block:
     Offset:
       Y: 1.5
     Text:
-    - §bVIRTUAL CRATE
-    - §7Buy a key at §cwww.myserver.com§c
+      - §bVIRTUAL CRATE
+      - §7Buy a key at §cwww.myserver.com§c
   Effect:
     Model: HELIX
     Particle:
@@ -37,9 +37,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt64pb5btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt64pb5btpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400bmqqbeclhn4ob6egt64pb5btpn0obndpfmapr70400agrfeln78400
     egg_cat:
       Name: Cat Spawn Egg
       Chance: 25.0
@@ -48,9 +48,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt66obkbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt66obkbtpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400bmqqbeclhn4ob6egt66obkbtpn0obndpfmapr70400agrfeln78400
     egg_chicken:
       Name: Chicken Spawn Egg
       Chance: 25.0
@@ -59,9 +59,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 2g0004000j9cg01mrb9dpim6sj1cpq3kor8d5hmmpbebtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 2g0004000j9cg01mrb9dpim6sj1cpq3kor8d5hmmpbebtpn0obndpfmapr70400agrfeln78400
+        - 2g0004000j9cg01mrb9dpim6sj1cpq3kor8d5hmmpbebtpn0obndpfmapr70400agrfeln78400
     egg_cow:
       Name: Cow Spawn Egg
       Chance: 25.0
@@ -70,9 +70,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt66rrnbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt66rrnbtpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400bmqqbeclhn4ob6egt66rrnbtpn0obndpfmapr70400agrfeln78400
     egg_fox:
       Name: Fox Spawn Egg
       Chance: 25.0
@@ -81,9 +81,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt6crrobtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt6crrobtpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400bmqqbeclhn4ob6egt6crrobtpn0obndpfmapr70400agrfeln78400
     egg_horse:
       Name: Horse Spawn Egg
       Chance: 25.0
@@ -92,9 +92,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800pdlkmspb3e9gmct1qd1nn4sr5btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800pdlkmspb3e9gmct1qd1nn4sr5btpn0obndpfmapr70400agrfeln78400
+        - 1800020009km800pdlkmspb3e9gmct1qd1nn4sr5btpn0obndpfmapr70400agrfeln78400
     egg_mooshroom:
       Name: Mooshroom Spawn Egg
       Chance: 25.0
@@ -103,9 +103,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 5000080016ip003lmmirj5cdp62pjk79mmurrjd1p6urrdbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 5000080016ip003lmmirj5cdp62pjk79mmurrjd1p6urrdbtpn0obndpfmapr70400agrfeln78400
+        - 5000080016ip003lmmirj5cdp62pjk79mmurrjd1p6urrdbtpn0obndpfmapr70400agrfeln78400
     egg_ocelot:
       Name: Ocelot Spawn Egg
       Chance: 25.0
@@ -114,9 +114,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i006jdd5n6aoric5j78ejfcdimorrkbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i006jdd5n6aoric5j78ejfcdimorrkbtpn0obndpfmapr70400agrfeln78400
+        - a0000g002d5i006jdd5n6aoric5j78ejfcdimorrkbtpn0obndpfmapr70400agrfeln78400
     egg_panda:
       Name: Panda Spawn Egg
       Chance: 25.0
@@ -125,9 +125,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800pdlkmspb3e9gmct1qe1gmsp31btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800pdlkmspb3e9gmct1qe1gmsp31btpn0obndpfmapr70400agrfeln78400
+        - 1800020009km800pdlkmspb3e9gmct1qe1gmsp31btpn0obndpfmapr70400agrfeln78400
     egg_turtle:
       Name: Turtle Spawn Egg
       Chance: 25.0
@@ -136,9 +136,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i006jdd5n6aoric5j78ejkelp78r35btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i006jdd5n6aoric5j78ejkelp78r35btpn0obndpfmapr70400agrfeln78400
+        - a0000g002d5i006jdd5n6aoric5j78ejkelp78r35btpn0obndpfmapr70400agrfeln78400
     egg_wolf:
       Name: Wolf Spawn Egg
       Chance: 25.0
@@ -147,9 +147,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 5000080016ip0031mmirj5cdp62pjk79rmur36btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 5000080016ip0031mmirj5cdp62pjk79rmur36btpn0obndpfmapr70400agrfeln78400
+        - 5000080016ip0031mmirj5cdp62pjk79rmur36btpn0obndpfmapr70400agrfeln78400
     egg_villager:
       Name: Villager Spawn Egg
       Chance: 25.0
@@ -158,9 +158,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400e6qqbeclhn4ob6egt7cqbcdhgmepbibtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400e6qqbeclhn4ob6egt7cqbcdhgmepbibtpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400e6qqbeclhn4ob6egt7cqbcdhgmepbibtpn0obndpfmapr70400agrfeln78400
     egg_parrot:
       Name: Parrot Spawn Egg
       Chance: 25.0
@@ -169,9 +169,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i006jdd5n6aoric5j78ejgc5p74rrkbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i006jdd5n6aoric5j78ejgc5p74rrkbtpn0obndpfmapr70400agrfeln78400
+        - a0000g002d5i006jdd5n6aoric5j78ejgc5p74rrkbtpn0obndpfmapr70400agrfeln78400
     egg_squid:
       Name: Squid Spawn Egg
       Chance: 25.0
@@ -180,9 +180,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800pdlkmspb3e9gmct1qedonaqb4btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800pdlkmspb3e9gmct1qedonaqb4btpn0obndpfmapr70400agrfeln78400
+        - 1800020009km800pdlkmspb3e9gmct1qedonaqb4btpn0obndpfmapr70400agrfeln78400
     egg_rabbit:
       Name: Rabbit Spawn Egg
       Chance: 25.0
@@ -191,9 +191,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i006jdd5n6aoric5j78ejic5h64qbkbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i006jdd5n6aoric5j78ejic5h64qbkbtpn0obndpfmapr70400agrfeln78400
+        - a0000g002d5i006jdd5n6aoric5j78ejic5h64qbkbtpn0obndpfmapr70400agrfeln78400
     egg_pig:
       Name: Pig Spawn Egg
       Chance: 25.0
@@ -202,9 +202,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt70qb7btpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt70qb7btpn0obndpfmapr70400agrfeln78400
+        - k00010004qb400bmqqbeclhn4ob6egt70qb7btpn0obndpfmapr70400agrfeln78400
     egg_sheep:
       Name: Sheep Spawn Egg
       Chance: 25.0
@@ -213,14 +213,14 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800pdlkmspb3e9gmct1qedk6apbgbtpn0obndpfmapr70400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800pdlkmspb3e9gmct1qedk6apbgbtpn0obndpfmapr70400agrfeln78400
+        - 1800020009km800pdlkmspb3e9gmct1qedk6apbgbtpn0obndpfmapr70400agrfeln78400
 Item:
   Material: PLAYER_HEAD
   Amount: 1
   Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0ODZmMjg1OTE2OWM4YmZiNjZhNjg3YmNmNGM2OTkzNDE3ZjU4NGI1OGJiZmRiMzM2NDY0ZDUyMDcxY2NkNyJ9fX0=
   Durability: 0
   Name: '&x&3&F&6&8&E&A&lVirtual Crate'
-  Item_Flags: []
+  Item_Flags: [ ]
   Unbreakable: false

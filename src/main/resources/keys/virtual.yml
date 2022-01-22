@@ -5,5 +5,5 @@ Item:
   Amount: 1
   Durability: 0
   Name: '&6Virtual Crate Key'
-  Item_Flags: []
+  Item_Flags: [ ]
   Unbreakable: false

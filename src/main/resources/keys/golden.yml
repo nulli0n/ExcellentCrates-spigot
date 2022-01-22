@@ -6,6 +6,6 @@ Item:
   Durability: 0
   Name: '&e&lGolden Crate Key'
   Lore:
-  - '&7Use this key to open &e&lGolden Crate'
-  Item_Flags: []
+    - '&7Use this key to open &e&lGolden Crate'
+  Item_Flags: [ ]
   Unbreakable: false

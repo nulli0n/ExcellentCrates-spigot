@@ -5,7 +5,7 @@ import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 
 public class UserRewardWinLimit {
 
-    private int amount;
+    private int  amount;
     private long expireDate;
 
     public UserRewardWinLimit(int amount, long expireDate) {

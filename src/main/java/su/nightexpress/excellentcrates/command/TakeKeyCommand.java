@@ -18,7 +18,7 @@ import java.util.List;
 public class TakeKeyCommand extends AbstractCommand<ExcellentCrates> {
 
     public TakeKeyCommand(@NotNull ExcellentCrates plugin) {
-        super(plugin, new String[] {"takekey"}, Perms.COMMAND_TAKEKEY);
+        super(plugin, new String[]{"takekey"}, Perms.COMMAND_TAKEKEY);
     }
 
     @Override

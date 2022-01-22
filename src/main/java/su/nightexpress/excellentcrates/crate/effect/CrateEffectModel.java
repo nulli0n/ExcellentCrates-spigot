@@ -5,33 +5,33 @@ import su.nightexpress.excellentcrates.crate.effect.list.*;
 
 public enum CrateEffectModel {
 
-	HELIX, PULSAR, BEACON, TORNADO, VORTEX, SIMPLE, NONE;
+    HELIX, PULSAR, BEACON, TORNADO, VORTEX, SIMPLE, NONE;
 
     private AbstractCrateBlockEffect effect;
-    
+
     public static void start() {
-    	for (CrateEffectModel model : CrateEffectModel.values()) {
-    		if (model.effect != null && !model.effect.isCancelled()) continue;
-    		
-    		AbstractCrateBlockEffect effect = model.createEffect();
-    		if (effect == null) continue;
-    		
-    		effect.start();
-    	}
+        for (CrateEffectModel model : CrateEffectModel.values()) {
+            if (model.effect != null && !model.effect.isCancelled()) continue;
+
+            AbstractCrateBlockEffect effect = model.createEffect();
+            if (effect == null) continue;
+
+            effect.start();
+        }
     }
-    
+
     public static void shutdown() {
-    	for (CrateEffectModel model : CrateEffectModel.values()) {
-    		if (model.effect != null) {
-    			model.effect.cancel();
-    			model.effect = null;
-    		}
-    	}
+        for (CrateEffectModel model : CrateEffectModel.values()) {
+            if (model.effect != null) {
+                model.effect.cancel();
+                model.effect = null;
+            }
+        }
     }
-    
+
     @Nullable
-	private AbstractCrateBlockEffect createEffect() {
-    	if (this.effect != null) return this.effect;
+    private AbstractCrateBlockEffect createEffect() {
+        if (this.effect != null) return this.effect;
 
         return switch (this) {
             case PULSAR -> (this.effect = new CrateEffectPulsar());

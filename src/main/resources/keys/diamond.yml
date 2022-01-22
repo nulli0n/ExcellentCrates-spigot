@@ -6,6 +6,6 @@ Item:
   Durability: 0
   Name: '&b&lDiamond Crate Key'
   Lore:
-  - '&7Use this key to open &b&lDiamond Crate'
-  Item_Flags: []
+    - '&7Use this key to open &b&lDiamond Crate'
+  Item_Flags: [ ]
   Unbreakable: false

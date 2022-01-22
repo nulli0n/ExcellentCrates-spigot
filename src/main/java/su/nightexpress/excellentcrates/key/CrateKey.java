@@ -19,108 +19,108 @@ import java.util.function.UnaryOperator;
 
 public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements ICrateKey {
 
-	private String name;
-	private boolean isVirtual;
-	private ItemStack item;
-	
-	private KeyEditorKey editor;
+    private String    name;
+    private boolean   isVirtual;
+    private ItemStack item;
 
-	public static CrateKey fromLegacy(@NotNull JYML cfg) {
-		CrateKey key = new CrateKey(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
+    private KeyEditorKey editor;
 
-		key.setName(cfg.getString("name", key.getId()));
-		key.setVirtual(cfg.getBoolean("virtual"));
-		key.setItem(cfg.getItem("item"));
+    public CrateKey(@NotNull ExcellentCrates plugin, @NotNull String id) {
+        super(plugin, plugin.getDataFolder() + Config.DIR_KEYS + id.toLowerCase() + ".yml");
 
-		return key;
-	}
+        this.setName("&6" + StringUtil.capitalizeFully(this.getId()) + " Crate Key");
+        this.setVirtual(false);
 
-	public CrateKey(@NotNull ExcellentCrates plugin, @NotNull String id) {
-		super(plugin, plugin.getDataFolder() + Config.DIR_KEYS + id.toLowerCase() + ".yml");
-		
-		this.setName("&6" + StringUtil.capitalizeFully(this.getId()) + " Crate Key");
-		this.setVirtual(false);
-		
-		ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
-		ItemMeta meta = item.getItemMeta();
-		if (meta != null) {
-			meta.setDisplayName(this.getName());
-			item.setItemMeta(meta);
-		}
-		this.setItem(item);
-	}
-	
-	public CrateKey(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
-		super(plugin, cfg);
-		
-		this.setName(cfg.getString("Name", this.getId()));
-		this.setVirtual(cfg.getBoolean("Virtual"));
-		ItemStack item = cfg.getItemNew("Item", this.getId());
-		if (item.getType().isAir() && !this.isVirtual()) {
-			throw new IllegalStateException("Key item can not be AIR!");
-		}
-		this.setItem(item);
-	}
+        ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(this.getName());
+            item.setItemMeta(meta);
+        }
+        this.setItem(item);
+    }
 
-	@Override
-	@NotNull
-	public UnaryOperator<String> replacePlaceholders() {
-		return str -> str
-			.replace(PLACEHOLDER_ID, this.getId())
-			.replace(PLACEHOLDER_NAME, this.getName())
-			.replace(PLACEHOLDER_VIRTUAL, plugin().lang().getBoolean(this.isVirtual()))
-			.replace(PLACEHOLDER_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
-			;
-	}
+    public CrateKey(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
+        super(plugin, cfg);
 
-	@Override
-	public void onSave() {
-		cfg.set("Name", this.getName());
-		cfg.set("Virtual", this.isVirtual());
-		cfg.setItemNew("Item", this.getItem());
-	}
-	
-	@Override
-	public void clear() {
-		if (this.editor != null) {
-			this.editor.clear();
-			this.editor = null;
-		}
-	}
+        this.setName(cfg.getString("Name", this.getId()));
+        this.setVirtual(cfg.getBoolean("Virtual"));
+        ItemStack item = cfg.getItemNew("Item", this.getId());
+        if (item.getType().isAir() && !this.isVirtual()) {
+            throw new IllegalStateException("Key item can not be AIR!");
+        }
+        this.setItem(item);
+    }
 
-	@Override
-	@NotNull
-	public KeyEditorKey getEditor() {
-		if (this.editor == null) {
-			this.editor = new KeyEditorKey(plugin, this);
-		}
-		return this.editor;
-	}
+    public static CrateKey fromLegacy(@NotNull JYML cfg) {
+        CrateKey key = new CrateKey(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
 
-	@NotNull
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(@NotNull String name) {
-		this.name = StringUtil.color(name);
-	}
-	
-	public boolean isVirtual() {
-		return isVirtual;
-	}
-	
-	public void setVirtual(boolean isVirtual) {
-		this.isVirtual = isVirtual;
-	}
-	
-	@NotNull
-	public ItemStack getItem() {
-		return new ItemStack(item);
-	}
-	
-	public void setItem(@NotNull ItemStack item) {
-		this.item = new ItemStack(item);
-		PDCUtil.setData(this.item, Keys.CRATE_KEY_ID, this.getId());
-	}
+        key.setName(cfg.getString("name", key.getId()));
+        key.setVirtual(cfg.getBoolean("virtual"));
+        key.setItem(cfg.getItem("item"));
+
+        return key;
+    }
+
+    @Override
+    @NotNull
+    public UnaryOperator<String> replacePlaceholders() {
+        return str -> str
+            .replace(PLACEHOLDER_ID, this.getId())
+            .replace(PLACEHOLDER_NAME, this.getName())
+            .replace(PLACEHOLDER_VIRTUAL, plugin().lang().getBoolean(this.isVirtual()))
+            .replace(PLACEHOLDER_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
+            ;
+    }
+
+    @Override
+    public void onSave() {
+        cfg.set("Name", this.getName());
+        cfg.set("Virtual", this.isVirtual());
+        cfg.setItemNew("Item", this.getItem());
+    }
+
+    @Override
+    public void clear() {
+        if (this.editor != null) {
+            this.editor.clear();
+            this.editor = null;
+        }
+    }
+
+    @Override
+    @NotNull
+    public KeyEditorKey getEditor() {
+        if (this.editor == null) {
+            this.editor = new KeyEditorKey(plugin, this);
+        }
+        return this.editor;
+    }
+
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NotNull String name) {
+        this.name = StringUtil.color(name);
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean isVirtual) {
+        this.isVirtual = isVirtual;
+    }
+
+    @NotNull
+    public ItemStack getItem() {
+        return new ItemStack(item);
+    }
+
+    public void setItem(@NotNull ItemStack item) {
+        this.item = new ItemStack(item);
+        PDCUtil.setData(this.item, Keys.CRATE_KEY_ID, this.getId());
+    }
 }

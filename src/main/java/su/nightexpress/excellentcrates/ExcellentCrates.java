@@ -34,202 +34,202 @@ import java.sql.SQLException;
 
 public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserDataHolder<ExcellentCrates, CrateUser>, EditorHolder<ExcellentCrates, CrateEditorType> {
 
-	private static ExcellentCrates instance;
-	
-	private Config config;
-	private Lang lang;
-	
-	private CrateUserData dataHandler;
-	private UserManager userManager;
+    private static ExcellentCrates instance;
 
-	private CrateEditorHandler editorHandler;
-	private CrateEditorHub editorHub;
+    private Config config;
+    private Lang   lang;
 
-	private KeyManager       keyManager;
-	private AnimationManager animationManager;
+    private CrateUserData dataHandler;
+    private UserManager   userManager;
+
+    private CrateEditorHandler editorHandler;
+    private CrateEditorHub     editorHub;
+
+    private KeyManager       keyManager;
+    private AnimationManager animationManager;
     private CrateManager     crateManager;
     private MenuManager      menuManager;
 
     private HologramHandler hologramHandler;
 
+    public ExcellentCrates() {
+        instance = this;
+    }
+
     public static ExcellentCrates getInstance() {
-    	return instance;
+        return instance;
     }
-    
-	public ExcellentCrates() {
-	    instance = this;
-	}
-	
-	@Override
-	public void enable() {
-		this.animationManager = new AnimationManager(this);
-		this.animationManager.setup();
-		
-		this.keyManager = new KeyManager(this);
-		this.keyManager.setup();
-		
-	    this.crateManager = new CrateManager(this);
-	    this.crateManager.setup();
-	    
-	    this.menuManager = new MenuManager(this);
-	    this.menuManager.setup();
 
-	    this.editorHandler = new CrateEditorHandler(this);
-	    this.editorHandler.setup();
-	}
+    @Override
+    public boolean useNewConfigFields() {
+        return true;
+    }
 
-	@Override
-	public void disable() {
-    	if (this.editorHandler != null) {
-    		this.editorHandler.shutdown();
-    		this.editorHandler = null;
-		}
-    	if (this.editorHub != null) {
-    		this.editorHub.clear();
-    		this.editorHub = null;
-		}
-		if (this.animationManager != null) {
-			this.animationManager.shutdown();
-			this.animationManager = null;
-		}
-		if (this.keyManager != null) {
-			this.keyManager.shutdown();
-			this.keyManager = null;
-		}
-		if (this.crateManager != null) {
-			this.crateManager.shutdown();
-			this.crateManager = null;
-		}
-		if (this.menuManager != null) {
-			this.menuManager.shutdown();
-			this.menuManager = null;
-		}
-	}
+    @Override
+    public void enable() {
+        this.animationManager = new AnimationManager(this);
+        this.animationManager.setup();
 
-	@Override
-	public boolean useNewConfigFields() {
-		return true;
-	}
+        this.keyManager = new KeyManager(this);
+        this.keyManager.setup();
 
-	@Override
-	public void setConfig() {
-		this.config = new Config(this);
-		this.config.setup();
-		
-		this.lang = new Lang(this);
-		this.lang.setup();
-	}
+        this.crateManager = new CrateManager(this);
+        this.crateManager.setup();
 
-	@Override
-	public boolean setupDataHandlers() {
-		try {
-			this.dataHandler = CrateUserData.getInstance(this);
-			this.dataHandler.setup();
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-			return false;
-		}
-		
-		this.userManager = new UserManager(this);
-		this.userManager.setup();
-		
-		return true;
-	}
+        this.menuManager = new MenuManager(this);
+        this.menuManager.setup();
 
-	@Override
-	@NotNull
-	public Config cfg() {
-		return this.config;
-	}
-	
-	@Override
-	@NotNull
-	public Lang lang() {
-		return this.lang;
-	}
+        this.editorHandler = new CrateEditorHandler(this);
+        this.editorHandler.setup();
+    }
 
-	@Override
-	public void registerHooks() {
-    	if (Hooks.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
-			this.hologramHandler = this.registerHook(HookId.HOLOGRAPHIC_DISPLAYS, HologramHandlerHD.class);
-		}
-    	if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
-    		this.hologramHandler = this.registerHook(HookId.DECENT_HOLOGRAMS, HologramHandlerDecent.class);
-		}
-		if (Hooks.hasPlaceholderAPI()) {
-			this.registerHook(Hooks.PLACEHOLDER_API, PlaceholderHook.class);
-		}
-		CitizensHook citizensHook = this.getCitizens();
-		if (citizensHook != null) {
-			citizensHook.addListener(this, new CrateCitizensListener(this));
-		}
-	}
+    @Override
+    public void disable() {
+        if (this.editorHandler != null) {
+            this.editorHandler.shutdown();
+            this.editorHandler = null;
+        }
+        if (this.editorHub != null) {
+            this.editorHub.clear();
+            this.editorHub = null;
+        }
+        if (this.animationManager != null) {
+            this.animationManager.shutdown();
+            this.animationManager = null;
+        }
+        if (this.keyManager != null) {
+            this.keyManager.shutdown();
+            this.keyManager = null;
+        }
+        if (this.crateManager != null) {
+            this.crateManager.shutdown();
+            this.crateManager = null;
+        }
+        if (this.menuManager != null) {
+            this.menuManager.shutdown();
+            this.menuManager = null;
+        }
+    }
 
-	@Override
-	public void registerCommands(@NotNull GeneralCommand<ExcellentCrates> mainCommand) {
-		mainCommand.addChildren(new DropCommand(this));
-		mainCommand.addChildren(new ForceOpenCommand(this));
-		mainCommand.addChildren(new GiveCommand(this));
-		mainCommand.addChildren(new GivekeyCommand(this));
-		mainCommand.addChildren(new KeysCommand(this));
-		mainCommand.addChildren(new MenuCommand(this));
-		mainCommand.addChildren(new PreviewCommand(this));
-		mainCommand.addChildren(new ResetCooldownCommand(this));
-		mainCommand.addChildren(new ResetLimitCommand(this));
-		mainCommand.addChildren(new TakeKeyCommand(this));
-	}
+    @Override
+    public void setConfig() {
+        this.config = new Config(this);
+        this.config.setup();
 
-	@Override
-	@NotNull
-	public CrateUserData getData() {
-		return this.dataHandler;
-	}
+        this.lang = new Lang(this);
+        this.lang.setup();
+    }
 
-	@NotNull
-	@Override
-	public UserManager getUserManager() {
-		return userManager;
-	}
+    @Override
+    public void registerHooks() {
+        if (Hooks.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
+            this.hologramHandler = this.registerHook(HookId.HOLOGRAPHIC_DISPLAYS, HologramHandlerHD.class);
+        }
+        if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
+            this.hologramHandler = this.registerHook(HookId.DECENT_HOLOGRAMS, HologramHandlerDecent.class);
+        }
+        if (Hooks.hasPlaceholderAPI()) {
+            this.registerHook(Hooks.PLACEHOLDER_API, PlaceholderHook.class);
+        }
+        CitizensHook citizensHook = this.getCitizens();
+        if (citizensHook != null) {
+            citizensHook.addListener(this, new CrateCitizensListener(this));
+        }
+    }
 
-	@NotNull
-	public AnimationManager getAnimationManager() {
-		return animationManager;
-	}
+    @Override
+    public void registerCommands(@NotNull GeneralCommand<ExcellentCrates> mainCommand) {
+        mainCommand.addChildren(new DropCommand(this));
+        mainCommand.addChildren(new ForceOpenCommand(this));
+        mainCommand.addChildren(new GiveCommand(this));
+        mainCommand.addChildren(new GivekeyCommand(this));
+        mainCommand.addChildren(new KeysCommand(this));
+        mainCommand.addChildren(new MenuCommand(this));
+        mainCommand.addChildren(new PreviewCommand(this));
+        mainCommand.addChildren(new ResetCooldownCommand(this));
+        mainCommand.addChildren(new ResetLimitCommand(this));
+        mainCommand.addChildren(new TakeKeyCommand(this));
+    }
 
-	@NotNull
-	public KeyManager getKeyManager() {
-		return keyManager;
-	}
-	
-	@NotNull
+    @Override
+    @NotNull
+    public Config cfg() {
+        return this.config;
+    }
+
+    @Override
+    @NotNull
+    public Lang lang() {
+        return this.lang;
+    }
+
+    @Override
+    public boolean setupDataHandlers() {
+        try {
+            this.dataHandler = CrateUserData.getInstance(this);
+            this.dataHandler.setup();
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        this.userManager = new UserManager(this);
+        this.userManager.setup();
+
+        return true;
+    }
+
+    @Override
+    @NotNull
+    public CrateUserData getData() {
+        return this.dataHandler;
+    }
+
+    @NotNull
+    @Override
+    public UserManager getUserManager() {
+        return userManager;
+    }
+
+    @NotNull
+    public AnimationManager getAnimationManager() {
+        return animationManager;
+    }
+
+    @NotNull
+    public KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    @NotNull
     public CrateManager getCrateManager() {
-    	return this.crateManager;
+        return this.crateManager;
     }
-	
-	@NotNull
-	public MenuManager getMenuManager() {
-		return menuManager;
-	}
 
-	@Nullable
-	public HologramHandler getHologramHandler() {
-		return hologramHandler;
-	}
+    @NotNull
+    public MenuManager getMenuManager() {
+        return menuManager;
+    }
 
-	@Override
-	@NotNull
-	public CrateEditorHub getEditor() {
-    	if (this.editorHub == null) {
-			JYML cfg = JYML.loadOrExtract(this, "/editor/main.yml");
-    		this.editorHub = new CrateEditorHub(this, cfg);
-		}
-		return this.editorHub;
-	}
+    @Nullable
+    public HologramHandler getHologramHandler() {
+        return hologramHandler;
+    }
 
-	@Override
-	@NotNull
-	public AbstractEditorHandler<ExcellentCrates, CrateEditorType> getEditorHandlerNew() {
-		return this.editorHandler;
-	}
+    @Override
+    @NotNull
+    public CrateEditorHub getEditor() {
+        if (this.editorHub == null) {
+            JYML cfg = JYML.loadOrExtract(this, "/editor/main.yml");
+            this.editorHub = new CrateEditorHub(this, cfg);
+        }
+        return this.editorHub;
+    }
+
+    @Override
+    @NotNull
+    public AbstractEditorHandler<ExcellentCrates, CrateEditorType> getEditorHandlerNew() {
+        return this.editorHandler;
+    }
 }

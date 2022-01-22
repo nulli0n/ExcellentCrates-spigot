@@ -11,41 +11,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Config extends ConfigTemplate {
-	
-	public static final String DIR_CRATES     = 	"/crates/";
-	public static final String DIR_PREVIEWS   = 	"/previews/";
-	public static final String DIR_KEYS       = 		"/keys/";
-	public static final String DIR_MENUS      = 		"/menu/";
-	public static final String DIR_ANIMATIONS = 	"/animations/";
 
-	private static Map<ClickType, CrateClickAction> CRATE_CLICK_ACTIONS;
+    public static final String DIR_CRATES     = "/crates/";
+    public static final String DIR_PREVIEWS   = "/previews/";
+    public static final String DIR_KEYS       = "/keys/";
+    public static final String DIR_MENUS      = "/menu/";
+    public static final String DIR_ANIMATIONS = "/animations/";
 
-	public static double CRATE_PUSHBACK_Y;
-	public static double CRATE_PUSHBACK_MULTIPLY;
+    public static double CRATE_PUSHBACK_Y;
+    public static double CRATE_PUSHBACK_MULTIPLY;
+    private static Map<ClickType, CrateClickAction> CRATE_CLICK_ACTIONS;
 
-	public Config(@NotNull ExcellentCrates plugin) {
-		super(plugin);
-	}
+    public Config(@NotNull ExcellentCrates plugin) {
+        super(plugin);
+    }
 
-	@Override
-	public void load() {
+    @Nullable
+    public static CrateClickAction getCrateClickAction(@NotNull ClickType clickType) {
+        return CRATE_CLICK_ACTIONS.get(clickType);
+    }
 
-		String path = "Crate.Click_Actions.";
-		CRATE_CLICK_ACTIONS = new HashMap<>();
-		for (ClickType clickType : ClickType.values()) {
-			CrateClickAction clickAction = cfg.getEnum(path + clickType.name(), CrateClickAction.class);
-			if (clickAction == null) continue;
+    @Override
+    public void load() {
 
-			CRATE_CLICK_ACTIONS.put(clickType, clickAction);
-		}
+        String path = "Crate.Click_Actions.";
+        CRATE_CLICK_ACTIONS = new HashMap<>();
+        for (ClickType clickType : ClickType.values()) {
+            CrateClickAction clickAction = cfg.getEnum(path + clickType.name(), CrateClickAction.class);
+            if (clickAction == null) continue;
 
-		path = "Crate.Block_Pushback.";
-		CRATE_PUSHBACK_Y = cfg.getDouble(path + "Y", -0.4D);
-		CRATE_PUSHBACK_MULTIPLY = cfg.getDouble(path + "Multiply", -1.25D);
-	}
+            CRATE_CLICK_ACTIONS.put(clickType, clickAction);
+        }
 
-	@Nullable
-	public static CrateClickAction getCrateClickAction(@NotNull ClickType clickType) {
-		return CRATE_CLICK_ACTIONS.get(clickType);
-	}
+        path = "Crate.Block_Pushback.";
+        CRATE_PUSHBACK_Y = cfg.getDouble(path + "Y", -0.4D);
+        CRATE_PUSHBACK_MULTIPLY = cfg.getDouble(path + "Multiply", -1.25D);
+    }
 }

@@ -10,9 +10,9 @@ Opening:
     EXP: 0.0
 Key:
   Ids:
-  - emerald
+    - emerald
 Block:
-  Locations: []
+  Locations: [ ]
   Pushback:
     Enabled: true
   Hologram:
@@ -20,9 +20,9 @@ Block:
     Offset:
       Y: 1.5
     Text:
-    - §a§lEmerald Crate
-    - §fLeft Click §7to preview
-    - §fRight Click §7to open
+      - §a§lEmerald Crate
+      - §fLeft Click §7to preview
+      - §fRight Click §7to open
   Effect:
     Model: HELIX
     Particle:
@@ -39,8 +39,8 @@ Rewards:
         Cooldown: 0
       Preview: 5000080016ip0025mmirj5cdp62pjk79imqpbic5m682g00dq62poa003m8qbje1m62u880024sobdck09eup2cls78sj148t5mup2c9nmop1279j62r3jckm24qbkc5m6iop279j62r3jckm24tbechin4r39dpim88hqcpgmosr55gh76t3id5lmat38e9nnapr848t6cobcediio8jfc9j7asr3c5q6ap1279j62r3jckm24orfdhnn48hq49jn4pb5doh2o8jkcls788hq4bh9f1h04gp2sd9g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
       Commands:
-      - '[CONSOLE] eco give %player% 2500'
-      Items: &id001 []
+        - '[CONSOLE] eco give %player% 2500'
+      Items: &id001 [ ]
     money5000:
       Name: §a◆ $5.000 ◆
       Chance: 3.0
@@ -50,7 +50,7 @@ Rewards:
         Cooldown: 0
       Preview: 5000080016ip0025mmirj5cdp62pjk79imqpbic5m682g00dq62poa003m8qbje1m62u880024sobdck09eup2cls78sj148t5mup2c9nmop1279j62r3jckm24qbkc5m6iop279j62r3jckm24tbechin4r39dpim88hqcpgmosr55gh76t3id5lmat38e9nnapr848t6cobcediio8jfc9j7asr3c5q6ap1279j62r3jckm24orfdhnn48hq49jn4pb5doh2o8jkcls788hq4bh9f1h04gqisc1g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
       Commands:
-      - '[CONSOLE] eco give %player% 5000'
+        - '[CONSOLE] eco give %player% 5000'
       Items: *id001
     money10000:
       Name: §a◆ $10.000 ◆
@@ -61,7 +61,7 @@ Rewards:
         Cooldown: 0
       Preview: 1800020009km800hdlkmspb3e9gmct1qclmmasj1dhi0k003ehgme2g00ti6isrgdhgni2000h762rb502c7m8j5f1q74o9279dnm8j2dtm688hqcpgmosr55gh6it31dhkm68hqcpgmosr55gh7arj4clp6oqbecli24ej6c5m76p9c49pn8sj9ddin8q3idtqmeq1279j62r3jckm24rr2cpqn6or1ehim88hqcpgmosr55gh66rrcdtp24eh2ctp6apbe48m24t35f1q24eh2saboc81464o2sc1g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
       Commands:
-      - '[CONSOLE] eco give %player% 10000'
+        - '[CONSOLE] eco give %player% 10000'
       Items: *id001
     exp10:
       Name: §e◆ 10 Exp Levels ◆
@@ -72,7 +72,7 @@ Rewards:
         Cooldown: 0
       Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog32c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
       Commands:
-      - '[CONSOLE] exp give %player% 10l'
+        - '[CONSOLE] exp give %player% 10l'
       Items: *id001
     exp20:
       Name: §e◆ 20 Exp Levels ◆
@@ -83,7 +83,7 @@ Rewards:
         Cooldown: 0
       Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog34c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
       Commands:
-      - '[CONSOLE] exp give %player% 20l'
+        - '[CONSOLE] exp give %player% 20l'
       Items: *id001
     exp30:
       Name: §e◆ 30 Exp Levels ◆
@@ -94,7 +94,7 @@ Rewards:
         Cooldown: 0
       Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog36c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
       Commands:
-      - '[CONSOLE] exp give %player% 30l'
+        - '[CONSOLE] exp give %player% 30l'
       Items: *id001
     iron_block:
       Name: §fx5 Iron Block
@@ -104,9 +104,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
+        - 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
     diamond_block:
       Name: §bx5 Diamond Block
       Chance: 11.0
@@ -115,9 +115,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
+        - k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
     emerald_block:
       Name: §ax5 Emerald Block
       Chance: 10.0
@@ -126,9 +126,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
+        - k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
     golden_apple:
       Name: §ex32 Golden Apple
       Chance: 14.0
@@ -137,9 +137,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
-      Commands: []
+      Commands: [ ]
       Items:
-      - 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
+        - 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
     slime:
       Name: §ax32 Slime Ball
       Chance: 17.0
@@ -148,9 +148,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
+        - 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
     trident:
       Name: §3Trident
       Chance: 15.0
@@ -159,9 +159,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
-      Commands: []
+      Commands: [ ]
       Items:
-      - 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+        - 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
     elytra:
       Name: §dElytra
       Chance: 9.0
@@ -170,9 +170,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+        - a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
     netherite_ingot:
       Name: §8x5 Netherite Ingot
       Chance: 16.0
@@ -181,9 +181,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
+        - 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
     ender_pearl:
       Name: §bx16 Ender Pearl
       Chance: 20.0
@@ -192,9 +192,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
-      Commands: []
+      Commands: [ ]
       Items:
-      - a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
+        - a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
     sugar:
       Name: §fx32 Sugar
       Chance: 25.0
@@ -203,9 +203,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
-      Commands: []
+      Commands: [ ]
       Items:
-      - 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
+        - 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
     shulker_shell:
       Name: §dx8 Shulker Shell
       Chance: 13.0
@@ -214,9 +214,9 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: k00010004qb400bmqqbeclhn4ob6egt76q3ldhlmasivedk6ar3c0400agrfeln78200
-      Commands: []
+      Commands: [ ]
       Items:
-      - k00010004qb400bmqqbeclhn4ob6egt76q3ldhlmasivedk6ar3c0400agrfeln78200
+        - k00010004qb400bmqqbeclhn4ob6egt76q3ldhlmasivedk6ar3c0400agrfeln78200
     test:
       Name: §aTest Reward
       Chance: 25.0
@@ -225,7 +225,7 @@ Rewards:
         Amount: -1
         Cooldown: 0
       Preview: 2g0004000j9cg012rb9dpim6sj1cpq3kpbdclp62r340400agrfeln78080
-      Commands: []
+      Commands: [ ]
       Items: *id001
 Item:
   Material: PLAYER_HEAD
@@ -234,7 +234,7 @@ Item:
   Durability: 0
   Name: '&a&lEmerald Crate &7(Right-Click)'
   Lore:
-  - '&fLeft Click &7to preview'
-  - '&fRight Click &7to open'
+    - '&fLeft Click &7to preview'
+    - '&fRight Click &7to open'
   Item_Flags: *id001
   Unbreakable: false

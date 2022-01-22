@@ -15,70 +15,73 @@ import java.util.function.Function;
 
 public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, CrateUser> {
 
-	private static CrateUserData instance;
-	
-	private final Function<ResultSet, CrateUser> FUNC_USER;
+    private static final String COL_KEYS              = "keys";
+    private static final String COL_KEYS_ONHOLD       = "keysOnHold";
+    private static final String COL_CRATE_COOLDOWNS   = "crateCooldowns";
+    private static final String COL_REWARD_WIN_LIMITS = "rewardWinLimits";
 
-	private static final String COL_KEYS = "keys";
-	private static final String COL_KEYS_ONHOLD = "keysOnHold";
-	private static final String COL_CRATE_COOLDOWNS = "crateCooldowns";
-	private static final String COL_REWARD_WIN_LIMITS = "rewardWinLimits";
+    private static CrateUserData instance;
+    private final Function<ResultSet, CrateUser> FUNC_USER;
 
-	protected CrateUserData(@NotNull ExcellentCrates plugin) throws SQLException {
-		super(plugin);
-		
-		this.FUNC_USER = (rs) -> {
-			try {
-				UUID uuid = UUID.fromString(rs.getString(COL_USER_UUID));
-				String name = rs.getString(COL_USER_NAME);
-				long lastOnline = rs.getLong(COL_USER_LAST_ONLINE);
-				
-				Map<String, Integer> keys = this.gson.fromJson(rs.getString(COL_KEYS), new TypeToken<Map<String, Integer>>(){}.getType());
-				Map<String, Integer> keysOnHold = this.gson.fromJson(rs.getString(COL_KEYS_ONHOLD), new TypeToken<Map<String, Integer>>(){}.getType());
-				Map<String, Long> openCooldowns = gson.fromJson(rs.getString(COL_CRATE_COOLDOWNS), new TypeToken<Map<String, Long>>(){}.getType());
-				Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits = this.gson.fromJson(rs.getString(COL_REWARD_WIN_LIMITS), new TypeToken<Map<String, Map<String, UserRewardWinLimit>>>(){}.getType());
+    protected CrateUserData(@NotNull ExcellentCrates plugin) throws SQLException {
+        super(plugin);
 
-				return new CrateUser(plugin, uuid, name, lastOnline, keys, keysOnHold, openCooldowns, rewardWinLimits);
-			}
-			catch (SQLException e) {
-				return null;
-			}
-		};
-	}
+        this.FUNC_USER = (rs) -> {
+            try {
+                UUID uuid = UUID.fromString(rs.getString(COL_USER_UUID));
+                String name = rs.getString(COL_USER_NAME);
+                long lastOnline = rs.getLong(COL_USER_LAST_ONLINE);
 
-	@NotNull
-	public static CrateUserData getInstance(@NotNull ExcellentCrates plugin) throws SQLException {
-		if (instance == null) {
-			instance = new CrateUserData(plugin);
-		}
-		return instance;
-	}
+                Map<String, Integer> keys = this.gson.fromJson(rs.getString(COL_KEYS), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Integer> keysOnHold = this.gson.fromJson(rs.getString(COL_KEYS_ONHOLD), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Long> openCooldowns = gson.fromJson(rs.getString(COL_CRATE_COOLDOWNS), new TypeToken<Map<String, Long>>() {
+                }.getType());
+                Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits = this.gson.fromJson(rs.getString(COL_REWARD_WIN_LIMITS), new TypeToken<Map<String, Map<String, UserRewardWinLimit>>>() {
+                }.getType());
 
-	@Override
-	@NotNull
-	protected LinkedHashMap<String, String> getColumnsToCreate() {
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();
-		map.put(COL_KEYS, DataTypes.STRING.build(this.dataType));
-		map.put(COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType));
-		map.put(COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.dataType));
-		map.put(COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.dataType));
-		return map;
-	}
+                return new CrateUser(plugin, uuid, name, lastOnline, keys, keysOnHold, openCooldowns, rewardWinLimits);
+            }
+            catch (SQLException e) {
+                return null;
+            }
+        };
+    }
 
-	@Override
-	@NotNull
-	protected LinkedHashMap<String, String> getColumnsToSave(@NotNull CrateUser user) {
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();
-		map.put(COL_KEYS, this.gson.toJson(user.getKeysMap()));
-		map.put(COL_KEYS_ONHOLD, this.gson.toJson(user.getKeysOnHold()));
-		map.put(COL_CRATE_COOLDOWNS, this.gson.toJson(user.getCrateCooldowns()));
-		map.put(COL_REWARD_WIN_LIMITS, this.gson.toJson(user.getRewardWinLimits()));
-		return map;
-	}
+    @NotNull
+    public static CrateUserData getInstance(@NotNull ExcellentCrates plugin) throws SQLException {
+        if (instance == null) {
+            instance = new CrateUserData(plugin);
+        }
+        return instance;
+    }
 
-	@Override
-	@NotNull
-	protected Function<ResultSet, CrateUser> getFunctionToUser() {
-		return this.FUNC_USER;
-	}
+    @Override
+    @NotNull
+    protected LinkedHashMap<String, String> getColumnsToCreate() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put(COL_KEYS, DataTypes.STRING.build(this.dataType));
+        map.put(COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType));
+        map.put(COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.dataType));
+        map.put(COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.dataType));
+        return map;
+    }
+
+    @Override
+    @NotNull
+    protected LinkedHashMap<String, String> getColumnsToSave(@NotNull CrateUser user) {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put(COL_KEYS, this.gson.toJson(user.getKeysMap()));
+        map.put(COL_KEYS_ONHOLD, this.gson.toJson(user.getKeysOnHold()));
+        map.put(COL_CRATE_COOLDOWNS, this.gson.toJson(user.getCrateCooldowns()));
+        map.put(COL_REWARD_WIN_LIMITS, this.gson.toJson(user.getRewardWinLimits()));
+        return map;
+    }
+
+    @Override
+    @NotNull
+    protected Function<ResultSet, CrateUser> getFunctionToUser() {
+        return this.FUNC_USER;
+    }
 }

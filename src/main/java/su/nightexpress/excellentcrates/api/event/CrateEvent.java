@@ -8,33 +8,33 @@ import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 public abstract class CrateEvent extends Event {
 
-	private static final HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-	private final ICrate crate;
-	private final Player player;
-	
-	public CrateEvent(@NotNull ICrate crate, @NotNull Player player) {
-		this.crate = crate;
-		this.player = player;
-	}
+    private final ICrate crate;
+    private final Player player;
 
-	public static HandlerList getHandlerList() {
-		return handlerList;
-	}
+    public CrateEvent(@NotNull ICrate crate, @NotNull Player player) {
+        this.crate = crate;
+        this.player = player;
+    }
 
-	@NotNull
-	@Override
-	public HandlerList getHandlers() {
-		return handlerList;
-	}
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
 
-	@NotNull
-	public ICrate getCrate() {
-		return this.crate;
-	}
-	
-	@NotNull
-	public Player getPlayer() {
-		return this.player;
-	}
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return handlerList;
+    }
+
+    @NotNull
+    public ICrate getCrate() {
+        return this.crate;
+    }
+
+    @NotNull
+    public Player getPlayer() {
+        return this.player;
+    }
 }

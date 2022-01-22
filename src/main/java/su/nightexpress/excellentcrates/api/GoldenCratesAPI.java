@@ -13,30 +13,30 @@ import su.nightexpress.excellentcrates.menu.MenuManager;
 @Deprecated
 public class GoldenCratesAPI {
 
-	private static ExcellentCrates plugin = ExcellentCrates.getInstance();
-	
-	@Nullable
-	public static CrateUser getUserData(@NotNull Player player) {
-		return plugin.getUserManager().getOrLoadUser(player);
-	}
-	
-	@NotNull
-	public static UserManager getUserManager() {
-		return plugin.getUserManager();
-	}
-	
-	@NotNull
-	public static CrateManager getCrateManager() {
-		return plugin.getCrateManager();
-	}
-	
-	@NotNull
-	public static KeyManager getKeyManager() {
-		return plugin.getKeyManager();
-	}
-	
-	@NotNull
-	public static MenuManager getMenuManager() {
-		return plugin.getMenuManager();
-	}
+    private static ExcellentCrates plugin = ExcellentCrates.getInstance();
+
+    @Nullable
+    public static CrateUser getUserData(@NotNull Player player) {
+        return plugin.getUserManager().getOrLoadUser(player);
+    }
+
+    @NotNull
+    public static UserManager getUserManager() {
+        return plugin.getUserManager();
+    }
+
+    @NotNull
+    public static CrateManager getCrateManager() {
+        return plugin.getCrateManager();
+    }
+
+    @NotNull
+    public static KeyManager getKeyManager() {
+        return plugin.getKeyManager();
+    }
+
+    @NotNull
+    public static MenuManager getMenuManager() {
+        return plugin.getMenuManager();
+    }
 }

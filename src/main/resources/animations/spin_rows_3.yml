@@ -3,7 +3,7 @@ Type: SPIN
 Menu:
   Title: '&nOpening crate...'
   Size: 45
-  
+
   Content:
     black_panes:
       Display:
@@ -12,7 +12,7 @@ Menu:
             Material: 'BLACK_STAINED_GLASS_PANE'
             Name: '&7'
       Slots: '0,1,2,3,4,5,6,7,8,9,10,12,14,16,17,27,28,30,32,34,35,36,37,38,39,40,41,42,43,44'
-    
+
     torch:
       Display:
         default:
@@ -20,7 +20,7 @@ Menu:
             Material: 'REDSTONE_TORCH'
             Name: '&c&l&nPrize Line'
       Slots: '18,26'
-    
+
     green_panes1:
       Display:
         default:
@@ -29,7 +29,7 @@ Menu:
             Name: '&aYour Prize »'
       Slots: '19'
       Type: RAINBOW_SYNC
-    
+
     green_panes2:
       Display:
         default:
@@ -38,7 +38,7 @@ Menu:
             Name: '&a« Your Prize »'
       Slots: '21,23'
       Type: RAINBOW_SYNC
-    
+
     green_panes3:
       Display:
         default:

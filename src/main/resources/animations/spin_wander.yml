@@ -3,7 +3,7 @@ Type: SPIN
 Menu:
   Title: '&nOpening crate...'
   Size: 54
-  
+
   Content:
     panes:
       Display:

@@ -6,16 +6,16 @@ Reward:
   Name: '&e%reward_preview_name%'
   Lore:
     Default:
-    - '&7'
-    - '&e&lWin Chance: &6%reward_chance%%'
-    - '&e&lWin Amount Limit: &6%reward_win_limit_amount%'
-    - '&e&lWin Cooldown: &6%reward_win_limit_cooldown%'
-    - '&7'
-    - '%win_limit_amount%'
-    - '%win_limit_cooldown%'
-    - '%win_limit_drained%'
-    - '&7'
-    - '%reward_preview_lore%'
+      - '&7'
+      - '&e&lWin Chance: &6%reward_chance%%'
+      - '&e&lWin Amount Limit: &6%reward_win_limit_amount%'
+      - '&e&lWin Cooldown: &6%reward_win_limit_cooldown%'
+      - '&7'
+      - '%win_limit_amount%'
+      - '%win_limit_cooldown%'
+      - '%win_limit_drained%'
+      - '&7'
+      - '%reward_preview_lore%'
     Win_Limit:
       Amount:
         - '&7You can win this reward &6%user_reward_win_limit_amount_left% more times &7(of total &f%reward_win_limit_amount%&7)'
@@ -67,7 +67,7 @@ Content:
           Enchants:
             unbreaking: 1
           Item_Flags:
-          - '*'
+            - '*'
     Slots: 53
     Type: PAGE_NEXT
 
@@ -80,6 +80,6 @@ Content:
           Enchants:
             unbreaking: 1
           Item_Flags:
-          - '*'
+            - '*'
     Slots: 45
     Type: PAGE_PREVIOUS

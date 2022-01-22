@@ -8,11 +8,11 @@ import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
 public class CrateEffectVortex extends AbstractCrateBlockEffect {
 
-    private int strands = 2;
-    private int particles = 170;
-    private float radius = 1.5F;
-    private float curve = 2.0F;
-    private double rotation = 0.7853981633974483D;
+    private int    strands   = 2;
+    private int    particles = 170;
+    private float  radius    = 1.5F;
+    private float  curve     = 2.0F;
+    private double rotation  = 0.7853981633974483D;
 
     public CrateEffectVortex() {
         super(CrateEffectModel.VORTEX, 1L, 170);

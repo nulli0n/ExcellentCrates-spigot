@@ -24,123 +24,122 @@ import java.util.List;
 
 public class CrateEditorRewards extends AbstractMenuAuto<ExcellentCrates, ICrateReward> {
 
-	private final ICrate crate;
+    private static int[]        objectSlots;
+    private static String       objectName;
+    private static List<String> objectLore;
+    private final ICrate crate;
 
-	private static int[]        objectSlots;
-	private static String       objectName;
-	private static List<String> objectLore;
-	
-	public CrateEditorRewards(@NotNull ExcellentCrates plugin, @NotNull ICrate crate) {
-		super(plugin, CrateEditorHandler.CRATE_REWARD_LIST, "");
-		this.crate = crate;
+    public CrateEditorRewards(@NotNull ExcellentCrates plugin, @NotNull ICrate crate) {
+        super(plugin, CrateEditorHandler.CRATE_REWARD_LIST, "");
+        this.crate = crate;
 
-		objectSlots = cfg.getIntArray("Object.Slots");
-		objectName = StringUtil.color(cfg.getString("Object.Name", ICrateReward.PLACEHOLDER_NAME));
-		objectLore = StringUtil.color(cfg.getStringList("Object.Lore"));
-		
-		IMenuClick click = (p, type, e) -> {
-			if (type instanceof MenuItemType type2) {
-				if (type2 == MenuItemType.RETURN) {
-					crate.getEditor().open(p, 1);
-				}
-				else this.onItemClickDefault(p, type2);
-			}
-			else if (type instanceof CrateEditorType type2) {
-				if (type2 == CrateEditorType.CRATE_REWARD_CREATE) {
-					plugin.getEditorHandlerNew().startEdit(p, crate, type2);
-					EditorUtils.tipCustom(p, plugin.lang().Editor_Reward_Enter_Id.getMsg());
-					p.closeInventory();
-				}
-			}
-		};
-			
-		for (String sId : cfg.getSection("Content")) {
-			IMenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
-			
-			if (menuItem.getType() != null) {
-				menuItem.setClick(click);
-			}
-			this.addItem(menuItem);
-		}
-		
-		for (String sId : cfg.getSection("Editor")) {
-			IMenuItem menuItem = cfg.getMenuItem("Editor." + sId, CrateEditorType.class);
-			
-			if (menuItem.getType() != null) {
-				menuItem.setClick(click);
-			}
-			this.addItem(menuItem);
-		}
-	}
+        objectSlots = cfg.getIntArray("Object.Slots");
+        objectName = StringUtil.color(cfg.getString("Object.Name", ICrateReward.PLACEHOLDER_NAME));
+        objectLore = StringUtil.color(cfg.getStringList("Object.Lore"));
 
-	@Override
-	@NotNull
-	protected List<ICrateReward> getObjects(@NotNull Player player) {
-		return new ArrayList<>(this.crate.getRewards());
-	}
+        IMenuClick click = (p, type, e) -> {
+            if (type instanceof MenuItemType type2) {
+                if (type2 == MenuItemType.RETURN) {
+                    crate.getEditor().open(p, 1);
+                }
+                else this.onItemClickDefault(p, type2);
+            }
+            else if (type instanceof CrateEditorType type2) {
+                if (type2 == CrateEditorType.CRATE_REWARD_CREATE) {
+                    plugin.getEditorHandlerNew().startEdit(p, crate, type2);
+                    EditorUtils.tipCustom(p, plugin.lang().Editor_Reward_Enter_Id.getMsg());
+                    p.closeInventory();
+                }
+            }
+        };
 
-	@Override
-	public int[] getObjectSlots() {
-		return objectSlots;
-	}
+        for (String sId : cfg.getSection("Content")) {
+            IMenuItem menuItem = cfg.getMenuItem("Content." + sId, MenuItemType.class);
 
-	@Override
-	@NotNull
-	protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICrateReward reward) {
-		ItemStack item = new ItemStack(reward.getPreview());
-		ItemMeta meta = item.getItemMeta();
-		if (meta == null) return item;
+            if (menuItem.getType() != null) {
+                menuItem.setClick(click);
+            }
+            this.addItem(menuItem);
+        }
 
-		meta.setDisplayName(objectName);
-		meta.setLore(objectLore);
-		meta.addItemFlags(ItemFlag.values());
-		item.setItemMeta(meta);
+        for (String sId : cfg.getSection("Editor")) {
+            IMenuItem menuItem = cfg.getMenuItem("Editor." + sId, CrateEditorType.class);
 
-		ItemUtil.replace(item, reward.replacePlaceholders());
-		return item;
-	}
+            if (menuItem.getType() != null) {
+                menuItem.setClick(click);
+            }
+            this.addItem(menuItem);
+        }
+    }
 
-	@Override
-	@NotNull
-	protected IMenuClick getObjectClick(@NotNull Player player, @NotNull ICrateReward reward) {
-		return (player1, type, e) -> {
-			if (e.isShiftClick()) {
-				// Reward position move.
-				List<ICrateReward> all = new ArrayList<>(this.crate.getRewards());
-				int index = all.indexOf(reward);
-				int allSize = all.size();
+    @Override
+    public int[] getObjectSlots() {
+        return objectSlots;
+    }
 
-				if (e.isLeftClick()) {
-					if (index + 1 >= allSize) return;
+    @Override
+    @NotNull
+    protected List<ICrateReward> getObjects(@NotNull Player player) {
+        return new ArrayList<>(this.crate.getRewards());
+    }
 
-					all.remove(index);
-					all.add(index + 1, reward);
-				}
-				else if (e.isRightClick()) {
-					if (index == 0) return;
+    @Override
+    @NotNull
+    protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICrateReward reward) {
+        ItemStack item = new ItemStack(reward.getPreview());
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return item;
 
-					all.remove(index);
-					all.add(index - 1, reward);
-				}
-				this.crate.setRewards(all);
-				this.crate.save();
-				this.open(player1, this.getPage(player1));
-				return;
-			}
+        meta.setDisplayName(objectName);
+        meta.setLore(objectLore);
+        meta.addItemFlags(ItemFlag.values());
+        item.setItemMeta(meta);
 
-			if (e.isLeftClick()) {
-				reward.getEditor().open(player1, 1);
-			}
-		};
-	}
+        ItemUtil.replace(item, reward.replacePlaceholders());
+        return item;
+    }
 
-	@Override
-	public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+    @Override
+    @NotNull
+    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull ICrateReward reward) {
+        return (player1, type, e) -> {
+            if (e.isShiftClick()) {
+                // Reward position move.
+                List<ICrateReward> all = new ArrayList<>(this.crate.getRewards());
+                int index = all.indexOf(reward);
+                int allSize = all.size();
 
-	}
+                if (e.isLeftClick()) {
+                    if (index + 1 >= allSize) return;
 
-	@Override
-	public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-		return true;
-	}
+                    all.remove(index);
+                    all.add(index + 1, reward);
+                }
+                else if (e.isRightClick()) {
+                    if (index == 0) return;
+
+                    all.remove(index);
+                    all.add(index - 1, reward);
+                }
+                this.crate.setRewards(all);
+                this.crate.save();
+                this.open(player1, this.getPage(player1));
+                return;
+            }
+
+            if (e.isLeftClick()) {
+                reward.getEditor().open(player1, 1);
+            }
+        };
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+        return true;
+    }
+
+    @Override
+    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+
+    }
 }

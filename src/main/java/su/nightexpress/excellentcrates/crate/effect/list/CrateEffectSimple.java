@@ -14,6 +14,6 @@ public class CrateEffectSimple extends AbstractCrateBlockEffect {
 
     @Override
     public void doStep(@NotNull Location loc, @NotNull String particleName, @NotNull String particleData, int step) {
-        EffectUtil.playEffect(loc.clone().add(0,0.5D,0), particleName, particleData, 0.3f, 0.3f, 0.3f, 0.1f, 30);
+        EffectUtil.playEffect(loc.clone().add(0, 0.5D, 0), particleName, particleData, 0.3f, 0.3f, 0.3f, 0.1f, 30);
     }
 }

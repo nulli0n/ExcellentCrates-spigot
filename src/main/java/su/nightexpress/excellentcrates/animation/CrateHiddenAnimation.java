@@ -30,9 +30,9 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
     private final int[]     lockedSlots;
 
     private final boolean openAnimationEnabled;
+    private final Sound   openSound;
     private       int     openAnimationInterval;
-    private       int   openAnimationDuration;
-    private final Sound openSound;
+    private       int     openAnimationDuration;
 
     public CrateHiddenAnimation(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
@@ -81,7 +81,7 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
         private static final Map<Player, Set<BukkitRunnable>> TASKS = new HashMap<>();
 
         private final Map<Player, Set<Integer>> openedSlots;
-        private final Map<Player, ICrate>        crateMap;
+        private final Map<Player, ICrate>       crateMap;
 
         public Menu(@NotNull String path) {
             super(CrateHiddenAnimation.this.plugin, CrateHiddenAnimation.this.cfg, path);
@@ -121,6 +121,25 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
             this.openedSlots.clear();
             this.crateMap.clear();
             super.clear();
+        }
+
+        @Nullable
+        private ICrateReward rollReward(@NotNull Player player, @NotNull ICrate crate, @NotNull Inventory inventory, int slot) {
+            ICrateReward reward = crate.rollReward(player);
+            if (reward == null) return null;
+
+            inventory.setItem(slot, reward.getPreview());
+
+            if (openSound != null) {
+                MessageUtil.sound(player, openSound);
+            }
+
+            return reward;
+        }
+
+        @Override
+        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+            return true;
         }
 
         @Override
@@ -182,20 +201,6 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
             }
         }
 
-        @Nullable
-        private ICrateReward rollReward(@NotNull Player player, @NotNull ICrate crate, @NotNull Inventory inventory, int slot) {
-            ICrateReward reward = crate.rollReward(player);
-            if (reward == null) return null;
-
-            inventory.setItem(slot, reward.getPreview());
-
-            if (openSound != null) {
-                MessageUtil.sound(player, openSound);
-            }
-
-            return reward;
-        }
-
         @Override
         public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
 
@@ -219,11 +224,6 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
 
             this.openedSlots.remove(player);
             this.crateMap.remove(player);
-        }
-
-        @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-            return true;
         }
     }
 }

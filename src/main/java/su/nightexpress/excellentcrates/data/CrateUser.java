@@ -17,169 +17,169 @@ import java.util.function.UnaryOperator;
 
 public class CrateUser extends AbstractUser<ExcellentCrates> {
 
-	private final Map<String, Integer>                         keys;
-	private final Map<String, Integer>                         keysOnHold;
-	private final Map<String, Long>                            openCooldowns;
-	private final Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits;
+    public static final String PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
+    public static final String PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
 
-	public static final String PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
-	public static final String PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN = "%user_reward_win_limit_expire_in%";
+    private final Map<String, Integer>                         keys;
+    private final Map<String, Integer>                         keysOnHold;
+    private final Map<String, Long>                            openCooldowns;
+    private final Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits;
 
-	public CrateUser(@NotNull ExcellentCrates plugin, @NotNull Player player) {
-		this(plugin, player.getUniqueId(), player.getName(), System.currentTimeMillis(), 
-			new HashMap<>(),
-			new HashMap<>(),
-			new HashMap<>(),
-			new HashMap<>()
-		);
-	}
-	
-	public CrateUser(
-			@NotNull ExcellentCrates plugin,
-			@NotNull UUID uuid,
-			@NotNull String name,
-			long lastOnline,
+    public CrateUser(@NotNull ExcellentCrates plugin, @NotNull Player player) {
+        this(plugin, player.getUniqueId(), player.getName(), System.currentTimeMillis(),
+            new HashMap<>(),
+            new HashMap<>(),
+            new HashMap<>(),
+            new HashMap<>()
+        );
+    }
 
-			@NotNull Map<String, Integer> keys,
-			@NotNull Map<String, Integer> keysOnHold,
-			@NotNull Map<String, Long> openCooldowns,
-			@NotNull Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits
-			) {
-		super(plugin, uuid, name, lastOnline);
-		this.keys = keys;
-		this.keysOnHold = keysOnHold;
-		this.openCooldowns = openCooldowns;
-		this.rewardWinLimits = rewardWinLimits;
-	}
+    public CrateUser(
+        @NotNull ExcellentCrates plugin,
+        @NotNull UUID uuid,
+        @NotNull String name,
+        long lastOnline,
 
-	@NotNull
-	public UnaryOperator<String> replacePlaceholers(@NotNull ICrateReward reward) {
-		UserRewardWinLimit rewardLimit = this.getRewardWinLimit(reward);
+        @NotNull Map<String, Integer> keys,
+        @NotNull Map<String, Integer> keysOnHold,
+        @NotNull Map<String, Long> openCooldowns,
+        @NotNull Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits
+    ) {
+        super(plugin, uuid, name, lastOnline);
+        this.keys = keys;
+        this.keysOnHold = keysOnHold;
+        this.openCooldowns = openCooldowns;
+        this.rewardWinLimits = rewardWinLimits;
+    }
 
-		int amountLeft = rewardLimit == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardLimit.getAmount();
-		long expireIn = rewardLimit == null ? 0L : rewardLimit.getExpireDate();
+    @NotNull
+    public UnaryOperator<String> replacePlaceholers(@NotNull ICrateReward reward) {
+        UserRewardWinLimit rewardLimit = this.getRewardWinLimit(reward);
 
-		return str -> str
-			.replace(PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
-			.replace(PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
-			;
-	}
-	
-	@NotNull
-	public Map<String, Long> getCrateCooldowns() {
-		return this.openCooldowns;
-	}
-	
-	public void setCrateCooldown(@NotNull ICrate crate, long endDate) {
-		this.setCrateCooldown(crate.getId(), endDate);
-	}
+        int amountLeft = rewardLimit == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardLimit.getAmount();
+        long expireIn = rewardLimit == null ? 0L : rewardLimit.getExpireDate();
 
-	public void setCrateCooldown(@NotNull String id, long endDate) {
-		this.getCrateCooldowns().put(id.toLowerCase(), endDate);
+        return str -> str
+            .replace(PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
+            .replace(PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
+            ;
+    }
 
-		if (plugin.cfg().dataSaveInstant) {
-			plugin.getUserManager().save(this, true);
-		}
-	}
-	
-	public boolean isCrateOnCooldown(@NotNull ICrate crate) {
-		return this.getCrateCooldown(crate.getId()) != 0;
-	}
+    @NotNull
+    public Map<String, Long> getCrateCooldowns() {
+        return this.openCooldowns;
+    }
 
-	public boolean isCrateOnCooldown(@NotNull String id) {
-		return this.getCrateCooldown(id) != 0;
-	}
-	
-	public long getCrateCooldown(@NotNull ICrate crate) {
-		return this.getCrateCooldown(crate.getId());
-	}
+    public void setCrateCooldown(@NotNull ICrate crate, long endDate) {
+        this.setCrateCooldown(crate.getId(), endDate);
+    }
 
-	public long getCrateCooldown(@NotNull String id) {
-		this.getCrateCooldowns().values().removeIf(endDate -> endDate >= 0 && endDate < System.currentTimeMillis());
-		return this.getCrateCooldowns().getOrDefault(id.toLowerCase(), 0L);
-	}
-	
-	@NotNull
-	public Map<String, Integer> getKeysMap() {
-		return this.keys;
-	}
+    public void setCrateCooldown(@NotNull String id, long endDate) {
+        this.getCrateCooldowns().put(id.toLowerCase(), endDate);
 
-	@NotNull
-	public Map<String, Integer> getKeysOnHold() {
-		return this.keysOnHold;
-	}
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
+    }
 
-	public void addKeys(@NotNull String id, int amount) {
-		this.getKeysMap().put(id.toLowerCase(), Math.max(0, this.getKeys(id) + amount));
+    public boolean isCrateOnCooldown(@NotNull ICrate crate) {
+        return this.getCrateCooldown(crate.getId()) != 0;
+    }
 
-		if (plugin.cfg().dataSaveInstant) {
-			plugin.getUserManager().save(this, true);
-		}
-	}
-	
-	public void takeKeys(@NotNull String id, int amount) {
-		this.addKeys(id, -amount);
-	}
-	
-	public int getKeys(@NotNull String id) {
-		return this.getKeysMap().getOrDefault(id.toLowerCase(), 0);
-	}
+    public boolean isCrateOnCooldown(@NotNull String id) {
+        return this.getCrateCooldown(id) != 0;
+    }
 
-	public void addKeysOnHold(@NotNull String id, int amount) {
-		this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
+    public long getCrateCooldown(@NotNull ICrate crate) {
+        return this.getCrateCooldown(crate.getId());
+    }
 
-		if (plugin.cfg().dataSaveInstant) {
-			plugin.getUserManager().save(this, true);
-		}
-	}
+    public long getCrateCooldown(@NotNull String id) {
+        this.getCrateCooldowns().values().removeIf(endDate -> endDate >= 0 && endDate < System.currentTimeMillis());
+        return this.getCrateCooldowns().getOrDefault(id.toLowerCase(), 0L);
+    }
 
-	public int getKeysOnHold(@NotNull String id) {
-		return this.getKeysOnHold().getOrDefault(id.toLowerCase(), 0);
-	}
+    @NotNull
+    public Map<String, Integer> getKeysMap() {
+        return this.keys;
+    }
 
-	public void cleanKeysOnHold() {
-		this.getKeysOnHold().clear();
+    @NotNull
+    public Map<String, Integer> getKeysOnHold() {
+        return this.keysOnHold;
+    }
 
-		if (plugin.cfg().dataSaveInstant) {
-			plugin.getUserManager().save(this, true);
-		}
-	}
+    public void addKeys(@NotNull String id, int amount) {
+        this.getKeysMap().put(id.toLowerCase(), Math.max(0, this.getKeys(id) + amount));
 
-	@NotNull
-	public Map<String, Map<String, UserRewardWinLimit>> getRewardWinLimits() {
-		return rewardWinLimits;
-	}
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
+    }
 
-	@Nullable
-	public UserRewardWinLimit getRewardWinLimit(@NotNull ICrateReward reward) {
-		return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
-	}
+    public void takeKeys(@NotNull String id, int amount) {
+        this.addKeys(id, -amount);
+    }
 
-	@Nullable
-	public UserRewardWinLimit getRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
-		return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
-			.get(rewardId.toLowerCase());
-	}
+    public int getKeys(@NotNull String id) {
+        return this.getKeysMap().getOrDefault(id.toLowerCase(), 0);
+    }
 
-	public void setRewardWinLimit(@NotNull ICrateReward reward, @NotNull UserRewardWinLimit rewardLimit) {
-		this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
-	}
+    public void addKeysOnHold(@NotNull String id, int amount) {
+        this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
 
-	public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardWinLimit rewardLimit) {
-		this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
-			.put(rewardId.toLowerCase(), rewardLimit);
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
+    }
 
-		if (plugin.cfg().dataSaveInstant) {
-			plugin.getUserManager().save(this, true);
-		}
-	}
+    public int getKeysOnHold(@NotNull String id) {
+        return this.getKeysOnHold().getOrDefault(id.toLowerCase(), 0);
+    }
 
-	public void removeRewardWinLimit(@NotNull String crateId) {
-		this.getRewardWinLimits().remove(crateId.toLowerCase());
-	}
+    public void cleanKeysOnHold() {
+        this.getKeysOnHold().clear();
 
-	public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
-		this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
-			.remove(rewardId.toLowerCase());
-	}
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
+    }
+
+    @NotNull
+    public Map<String, Map<String, UserRewardWinLimit>> getRewardWinLimits() {
+        return rewardWinLimits;
+    }
+
+    @Nullable
+    public UserRewardWinLimit getRewardWinLimit(@NotNull ICrateReward reward) {
+        return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
+    }
+
+    @Nullable
+    public UserRewardWinLimit getRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
+        return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
+            .get(rewardId.toLowerCase());
+    }
+
+    public void setRewardWinLimit(@NotNull ICrateReward reward, @NotNull UserRewardWinLimit rewardLimit) {
+        this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
+    }
+
+    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardWinLimit rewardLimit) {
+        this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
+            .put(rewardId.toLowerCase(), rewardLimit);
+
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
+    }
+
+    public void removeRewardWinLimit(@NotNull String crateId) {
+        this.getRewardWinLimits().remove(crateId.toLowerCase());
+    }
+
+    public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
+        this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
+            .remove(rewardId.toLowerCase());
+    }
 }

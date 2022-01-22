@@ -29,12 +29,8 @@ import java.util.function.Predicate;
 
 public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> implements ICrateAnimation {
 
-    private Menu         menu;
-    private Set<Spinner>        spinners;
-    private final NamespacedKey keyRewardId;
-
     private static final Map<Player, Set<SpinTask>> SPIN_TASKS    = new WeakHashMap<>();
-    private static final Set<Material> COLORED_PANES = new HashSet<>();
+    private static final Set<Material>              COLORED_PANES = new HashSet<>();
 
     static {
         COLORED_PANES.add(Material.BLACK_STAINED_GLASS_PANE);
@@ -54,6 +50,10 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         COLORED_PANES.add(Material.LIGHT_BLUE_STAINED_GLASS_PANE);
         COLORED_PANES.add(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
     }
+
+    private final NamespacedKey keyRewardId;
+    private       Menu          menu;
+    private       Set<Spinner>  spinners;
 
     public CrateSpinAnimation(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
@@ -174,6 +174,11 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         }
 
         @Override
+        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+            return true;
+        }
+
+        @Override
         public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
             this.update(inventory);
         }
@@ -190,11 +195,6 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
             }
 
             //this.stopRollTasks(player);
-        }
-
-        @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-            return true;
         }
     }
 
@@ -269,9 +269,8 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         private final ICrate    crate;
         private final Inventory inventory;
         private final Spinner   spinner;
-
-        private       int    tickCounter;
         private final double tickMaximum;
+        private       int    tickCounter;
 
         public SpinTask(
             @NotNull Spinner spinner,
@@ -362,7 +361,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
                         this.inventory.setItem(slot, preview);
                     }
                     else {
-                        int slot2 = this.getSpinner().getRewardSlots()[index-1];
+                        int slot2 = this.getSpinner().getRewardSlots()[index - 1];
                         this.inventory.setItem(slot, this.inventory.getItem(slot2));
                     }
                 }

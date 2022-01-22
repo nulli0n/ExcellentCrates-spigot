@@ -1,7 +1,7 @@
 Title: '&8&l「 &9Excellent Crates - Editor &8&l」'
 Size: 27
 
-Content: {}
+Content: { }
 
 Editor:
   rewards:
@@ -11,7 +11,7 @@ Editor:
           material: CHEST
           name: '&6&lCrate Manager'
           lore:
-          - '&eCreate and edit crates here!'
+            - '&eCreate and edit crates here!'
     Slots: 11
     Type: EDITOR_CRATES
 
@@ -22,6 +22,6 @@ Editor:
           material: TRIPWIRE_HOOK
           name: '&6&lKey Manager'
           lore:
-          - '&eCreate and edit keys here!'
+            - '&eCreate and edit keys here!'
     Slots: 15
     Type: EDITOR_KEYS

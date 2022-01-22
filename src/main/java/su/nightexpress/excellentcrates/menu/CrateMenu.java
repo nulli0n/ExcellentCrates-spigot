@@ -19,128 +19,128 @@ import su.nightexpress.excellentcrates.config.Config;
 import java.util.function.UnaryOperator;
 
 public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements ICrateMenu {
-	
-	private Menu menu;
-	
-	public CrateMenu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
-		super(plugin, cfg);
-	}
 
-	@Override
-	@NotNull
-	public UnaryOperator<String> replacePlaceholders() {
-		return str -> str
-			.replace(PLACEHOLDER_ID, this.getId())
-			;
-	}
+    private Menu menu;
 
-	@Override
-	public void onSave() {
+    public CrateMenu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
+        super(plugin, cfg);
+    }
 
-	}
+    @Override
+    @NotNull
+    public UnaryOperator<String> replacePlaceholders() {
+        return str -> str
+            .replace(PLACEHOLDER_ID, this.getId())
+            ;
+    }
 
-	@Override
-	public void clear() {
-		if (this.menu != null) {
-			this.menu.clear();
-			this.menu = null;
-		}
-	}
+    @Override
+    public void onSave() {
 
-	@Override
-	@NotNull
-	public IMenu getMenu() {
-		return this.menu;
-	}
+    }
 
-	@Override
-	public void open(@NotNull Player player) {
-		if (this.menu == null) {
-			this.menu = new Menu(this.plugin(), this.getConfig(), "");
-		}
-		this.menu.open(player, 1);
-	}
+    @Override
+    public void clear() {
+        if (this.menu != null) {
+            this.menu.clear();
+            this.menu = null;
+        }
+    }
 
-	class Menu extends AbstractMenu<ExcellentCrates> {
+    @Override
+    @NotNull
+    public IMenu getMenu() {
+        return this.menu;
+    }
 
-		Menu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg, @NotNull String path) {
-			super(plugin, cfg, path);
-			
-			IMenuClick click = (p, type, e) -> {
-				if (!(type instanceof MenuItemType type2)) return;
+    @Override
+    public void open(@NotNull Player player) {
+        if (this.menu == null) {
+            this.menu = new Menu(this.plugin(), this.getConfig(), "");
+        }
+        this.menu.open(player, 1);
+    }
 
-				if (type2 == MenuItemType.CLOSE) {
-					p.closeInventory();
-				}
-			};
-			
-			for (String id : cfg.getSection("Content")) {
-				IMenuItem guimenuItemtem = cfg.getMenuItem("Content." + id, MenuItemType.class);
-				
-				if (guimenuItemtem.getType() != null) {
-					guimenuItemtem.setClick(click);
-				}
-				this.addItem(guimenuItemtem);
-			}
-			
-			IMenuClick clickCrate = (player, type, e) -> {
-				int slot = e.getRawSlot();
-				
-				IMenuItem menuItem = this.getItem(player, slot);
-				if (menuItem == null) return;
-				
-				String crateId = menuItem.getId();
-				ICrate crate = plugin.getCrateManager().getCrateById(crateId);
-				if (crate == null) return;
+    class Menu extends AbstractMenu<ExcellentCrates> {
 
-				ClickType clickType = ClickType.from(e);
-				CrateClickAction clickAction = Config.getCrateClickAction(clickType);
-				if (clickAction == null) return;
+        Menu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg, @NotNull String path) {
+            super(plugin, cfg, path);
 
-				player.closeInventory();
-				plugin.getCrateManager().interactCrate(player, crate, clickAction, null, null);
-			};
-			
-			for (String id : cfg.getSection("Crates")) {
-				ICrate crate = plugin.getCrateManager().getCrateById(id);
-				if (crate == null) {
-					plugin.error("Invalid crate '" + id + "' in '" + CrateMenu.this.getId() + "' menu!");
-					continue;
-				}
+            IMenuClick click = (p, type, e) -> {
+                if (!(type instanceof MenuItemType type2)) return;
 
-				IMenuItem menuItem = cfg.getMenuItem("Crates." + id);
-				menuItem.setClick(clickCrate);
-				this.addItem(menuItem);
-			}
-		}
+                if (type2 == MenuItemType.CLOSE) {
+                    p.closeInventory();
+                }
+            };
 
-		@Override
-		public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
+            for (String id : cfg.getSection("Content")) {
+                IMenuItem guimenuItemtem = cfg.getMenuItem("Content." + id, MenuItemType.class);
 
-		}
+                if (guimenuItemtem.getType() != null) {
+                    guimenuItemtem.setClick(click);
+                }
+                this.addItem(guimenuItemtem);
+            }
 
-		@Override
-		public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+            IMenuClick clickCrate = (player, type, e) -> {
+                int slot = e.getRawSlot();
 
-		}
+                IMenuItem menuItem = this.getItem(player, slot);
+                if (menuItem == null) return;
 
-		@Override
-		public void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
-			super.onItemPrepare(player, menuItem, item);
+                String crateId = menuItem.getId();
+                ICrate crate = plugin.getCrateManager().getCrateById(crateId);
+                if (crate == null) return;
 
-			ItemMeta meta = item.getItemMeta();
-			if (meta == null) return;
+                ClickType clickType = ClickType.from(e);
+                CrateClickAction clickAction = Config.getCrateClickAction(clickType);
+                if (clickAction == null) return;
 
-			ICrate crate = plugin.getCrateManager().getCrateById(menuItem.getId());
-			if (crate == null) return;
+                player.closeInventory();
+                plugin.getCrateManager().interactCrate(player, crate, clickAction, null, null);
+            };
 
-			ItemUtil.replace(item, crate.replacePlaceholders());
-			ItemUtil.replace(item, str -> str.replace("%user_keys%", String.valueOf(plugin.getKeyManager().getKeysAmount(player, crate))));
-		}
+            for (String id : cfg.getSection("Crates")) {
+                ICrate crate = plugin.getCrateManager().getCrateById(id);
+                if (crate == null) {
+                    plugin.error("Invalid crate '" + id + "' in '" + CrateMenu.this.getId() + "' menu!");
+                    continue;
+                }
 
-		@Override
-		public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-			return true;
-		}
-	}
+                IMenuItem menuItem = cfg.getMenuItem("Crates." + id);
+                menuItem.setClick(clickCrate);
+                this.addItem(menuItem);
+            }
+        }
+
+        @Override
+        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+            return true;
+        }
+
+        @Override
+        public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
+
+        }
+
+        @Override
+        public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+
+        }
+
+        @Override
+        public void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
+            super.onItemPrepare(player, menuItem, item);
+
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null) return;
+
+            ICrate crate = plugin.getCrateManager().getCrateById(menuItem.getId());
+            if (crate == null) return;
+
+            ItemUtil.replace(item, crate.replacePlaceholders());
+            ItemUtil.replace(item, str -> str.replace("%user_keys%", String.valueOf(plugin.getKeyManager().getKeysAmount(player, crate))));
+        }
+    }
 }

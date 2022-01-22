@@ -7,19 +7,19 @@ import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 public class CrateOpenEvent extends CrateEvent implements Cancellable {
 
-	private boolean isCancelled;
-	
-	public CrateOpenEvent(@NotNull ICrate crate, @NotNull Player player) {
-		super(crate, player);
-	}
+    private boolean isCancelled;
 
-	@Override
-	public boolean isCancelled() {
-		return this.isCancelled;
-	}
+    public CrateOpenEvent(@NotNull ICrate crate, @NotNull Player player) {
+        super(crate, player);
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.isCancelled = cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return this.isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.isCancelled = cancelled;
+    }
 }
