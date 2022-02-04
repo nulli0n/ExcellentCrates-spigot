@@ -518,6 +518,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 
     @Override
     public void createPreview() {
+        if (this.getPreviewConfig() == null) {
+            return;
+        }
         this.preview = new CratePreview(this, JYML.loadOrExtract(plugin(), Config.DIR_PREVIEWS + this.getPreviewConfig() + ".yml"));
     }
 

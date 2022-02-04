@@ -58,8 +58,19 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
     }
 
     @Override
+    protected void onTableCreate() {
+        super.onTableCreate();
+        this.addColumn(this.tableUsers, COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType), "{}");
+        this.addColumn(this.tableUsers, COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.dataType), "{}");
+        this.addColumn(this.tableUsers, COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.dataType), "{}");
+    }
+
+    @Override
     @NotNull
     protected LinkedHashMap<String, String> getColumnsToCreate() {
+        this.renameTable("goldencrates_users", this.tableUsers);
+        this.renameColumn(this.tableUsers, "cd", COL_CRATE_COOLDOWNS);
+
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put(COL_KEYS, DataTypes.STRING.build(this.dataType));
         map.put(COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType));
