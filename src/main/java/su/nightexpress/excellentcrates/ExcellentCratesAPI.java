@@ -1,42 +1,39 @@
-package su.nightexpress.excellentcrates.api;
+package su.nightexpress.excellentcrates;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.UserManager;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.excellentcrates.menu.MenuManager;
 
-@Deprecated
-public class GoldenCratesAPI {
+public class ExcellentCratesAPI {
 
-    private static ExcellentCrates plugin = ExcellentCrates.getInstance();
+    public static final ExcellentCrates PLUGIN = ExcellentCrates.getPlugin(ExcellentCrates.class);
 
-    @Nullable
+    @NotNull
     public static CrateUser getUserData(@NotNull Player player) {
-        return plugin.getUserManager().getOrLoadUser(player);
+        return PLUGIN.getUserManager().getOrLoadUser(player);
     }
 
     @NotNull
     public static UserManager getUserManager() {
-        return plugin.getUserManager();
+        return PLUGIN.getUserManager();
     }
 
     @NotNull
     public static CrateManager getCrateManager() {
-        return plugin.getCrateManager();
+        return PLUGIN.getCrateManager();
     }
 
     @NotNull
     public static KeyManager getKeyManager() {
-        return plugin.getKeyManager();
+        return PLUGIN.getKeyManager();
     }
 
     @NotNull
     public static MenuManager getMenuManager() {
-        return plugin.getMenuManager();
+        return PLUGIN.getMenuManager();
     }
 }

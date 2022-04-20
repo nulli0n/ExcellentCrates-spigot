@@ -8,8 +8,6 @@ import su.nexmedia.engine.api.menu.IMenu;
 
 public interface ICrateMenu extends ICleanable, IPlaceholder {
 
-    String PLACEHOLDER_ID = "%menu_id%";
-
     @NotNull String getId();
 
     @NotNull IMenu getMenu();

@@ -7,6 +7,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
@@ -69,8 +70,8 @@ public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
         user.setCrateCooldown(crate, 0L);
         plugin.lang().Command_ResetCooldown_Done
             .replace("%player%", user.getName())
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-            .replace(ICrate.PLACEHOLDER_ID, crate.getId())
+            .replace(Placeholders.CRATE_NAME, crate.getName())
+            .replace(Placeholders.CRATE_ID, crate.getId())
             .send(sender);
     }
 }

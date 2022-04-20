@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -174,7 +175,7 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         }
 
         @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+        public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
             return true;
         }
 

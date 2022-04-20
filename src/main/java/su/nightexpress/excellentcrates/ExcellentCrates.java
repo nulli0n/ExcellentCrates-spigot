@@ -34,8 +34,6 @@ import java.sql.SQLException;
 
 public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserDataHolder<ExcellentCrates, CrateUser>, EditorHolder<ExcellentCrates, CrateEditorType> {
 
-    private static ExcellentCrates instance;
-
     private Config config;
     private Lang   lang;
 
@@ -51,19 +49,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     private MenuManager      menuManager;
 
     private HologramHandler hologramHandler;
-
-    public ExcellentCrates() {
-        instance = this;
-    }
-
-    public static ExcellentCrates getInstance() {
-        return instance;
-    }
-
-    @Override
-    public boolean useNewConfigFields() {
-        return true;
-    }
 
     @Override
     public void enable() {
@@ -125,14 +110,14 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         if (Hooks.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
             this.hologramHandler = this.registerHook(HookId.HOLOGRAPHIC_DISPLAYS, HologramHandlerHD.class);
         }
-        if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
+        else if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
             this.hologramHandler = this.registerHook(HookId.DECENT_HOLOGRAMS, HologramHandlerDecent.class);
         }
+
         if (Hooks.hasPlaceholderAPI()) {
             this.registerHook(Hooks.PLACEHOLDER_API, PlaceholderHook.class);
         }
-        CitizensHook citizensHook = this.getCitizens();
-        if (citizensHook != null) {
+        if (Hooks.hasCitizens()) {
             CitizensHook.addListener(this, new CrateCitizensListener(this));
         }
     }
@@ -142,13 +127,11 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         mainCommand.addChildren(new DropCommand(this));
         mainCommand.addChildren(new ForceOpenCommand(this));
         mainCommand.addChildren(new GiveCommand(this));
-        mainCommand.addChildren(new GivekeyCommand(this));
-        mainCommand.addChildren(new KeysCommand(this));
+        mainCommand.addChildren(new KeyCommand(this));
         mainCommand.addChildren(new MenuCommand(this));
         mainCommand.addChildren(new PreviewCommand(this));
         mainCommand.addChildren(new ResetCooldownCommand(this));
         mainCommand.addChildren(new ResetLimitCommand(this));
-        mainCommand.addChildren(new TakeKeyCommand(this));
     }
 
     @Override

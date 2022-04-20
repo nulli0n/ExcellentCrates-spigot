@@ -11,16 +11,6 @@ import java.util.List;
 
 public interface ICrateReward extends IEditable, ICleanable, IPlaceholder {
 
-    String PLACEHOLDER_ID                 = "%reward_id%";
-    String PLACEHOLDER_NAME               = "%reward_name%";
-    String PLACEHOLDER_CHANCE             = "%reward_chance%";
-    String PLACEHOLDER_BROADCAST          = "%reward_broadcast%";
-    String PLACEHOLDER_PREVIEW_NAME       = "%reward_preview_name%";
-    String PLACEHOLDER_PREVIEW_LORE       = "%reward_preview_lore%";
-    String PLACEHOLDER_COMMANDS           = "%reward_commands%";
-    String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%reward_win_limit_amount%";
-    String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%reward_win_limit_cooldown%";
-
     @NotNull String getId();
 
     @NotNull ICrate getCrate();

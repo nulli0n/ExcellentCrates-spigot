@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.data.AbstractUser;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 
@@ -16,9 +17,6 @@ import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 public class CrateUser extends AbstractUser<ExcellentCrates> {
-
-    public static final String PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
-    public static final String PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
 
     private final Map<String, Integer>                         keys;
     private final Map<String, Integer>                         keysOnHold;
@@ -60,8 +58,8 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         long expireIn = rewardLimit == null ? 0L : rewardLimit.getExpireDate();
 
         return str -> str
-            .replace(PLACEHOLDER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
-            .replace(PLACEHOLDER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
+            .replace(Placeholders.USER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
+            .replace(Placeholders.USER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
             ;
     }
 
@@ -110,15 +108,19 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     public void addKeys(@NotNull String id, int amount) {
-        this.getKeysMap().put(id.toLowerCase(), Math.max(0, this.getKeys(id) + amount));
-
-        if (plugin.cfg().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.setKeys(id, this.getKeys(id) + amount);
     }
 
     public void takeKeys(@NotNull String id, int amount) {
         this.addKeys(id, -amount);
+    }
+
+    public void setKeys(@NotNull String id, int amount) {
+        this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
+
+        if (plugin.cfg().dataSaveInstant) {
+            plugin.getUserManager().save(this, true);
+        }
     }
 
     public int getKeys(@NotNull String id) {

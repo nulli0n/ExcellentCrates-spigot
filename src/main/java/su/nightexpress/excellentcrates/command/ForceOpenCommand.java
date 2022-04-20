@@ -7,6 +7,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 import java.util.List;
@@ -71,13 +72,13 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
         }
 
         plugin.lang().Command_ForceOpen_Notify
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName()).send(player);
+            .replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
 
         if (!sender.equals(player)) {
             plugin.lang().Command_ForceOpen_Done
                 .replace("%player%", player.getName())
-                .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-                .replace(ICrate.PLACEHOLDER_ID, crate.getId())
+                .replace(Placeholders.CRATE_NAME, crate.getName())
+                .replace(Placeholders.CRATE_ID, crate.getId())
                 .send(sender);
         }
 

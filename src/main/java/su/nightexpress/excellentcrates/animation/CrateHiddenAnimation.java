@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.animation;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +39,7 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
         super(plugin, cfg);
 
         this.rewardAmount = cfg.getInt("Settings.Reward.Amount", 1);
-        this.lockedItem = cfg.getItemNew("Settings.Locked.Item");
+        this.lockedItem = cfg.getItem("Settings.Locked.Item");
         this.lockedSlots = cfg.getIntArray("Settings.Locked.Slots");
         this.openSound = cfg.getEnum("Settings.Open.Sound", Sound.class);
         if (this.openAnimationEnabled = cfg.getBoolean("Settings.Open.Animation.Enabled")) {
@@ -138,7 +139,7 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
         }
 
         @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+        public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
             return true;
         }
 

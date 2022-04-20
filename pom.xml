@@ -6,7 +6,7 @@
 
     <groupId>su.nightexpress.excellentcrates</groupId>
     <artifactId>ExcellentCrates</artifactId>
-    <version>4.0.3.6</version>
+    <version>4.0.4</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>

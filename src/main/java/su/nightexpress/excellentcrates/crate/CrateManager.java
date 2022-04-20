@@ -18,6 +18,7 @@ import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
@@ -204,7 +205,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             long expireDate = user.getCrateCooldown(crate);
             (expireDate < 0 ? plugin.lang().Crate_Open_Error_Cooldown_OneTimed : plugin.lang().Crate_Open_Error_Cooldown_Temporary)
                 .replace("%time%", TimeUtil.formatTimeLeft(expireDate))
-                .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
+                .replace(Placeholders.CRATE_NAME, crate.getName())
                 .send(player);
             return false;
         }
@@ -247,7 +248,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         if (!force && player.getInventory().firstEmpty() == -1) {
-            plugin.lang().Crate_Open_Error_InventorySpace.replace(ICrate.PLACEHOLDER_NAME, crate.getName()).send(player);
+            plugin.lang().Crate_Open_Error_InventorySpace.replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
             return false;
         }
 

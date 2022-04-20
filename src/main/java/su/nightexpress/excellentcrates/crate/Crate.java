@@ -13,9 +13,7 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Keys;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.*;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
@@ -106,9 +104,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         }
 
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
-        this.setItem(cfg.getItemNew("Item.", this.getId()));
+        this.setItem(cfg.getItem("Item.", this.getId()));
 
-        this.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("Block.Locations"))));
+        this.setBlockLocations(new HashSet<>(LocationUtil.deserialize((Collection<String>)cfg.getStringList("Block.Locations"))));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
         this.setBlockHologramEnabled(cfg.getBoolean("Block.Hologram.Enabled"));
         this.setBlockHologramOffsetY(cfg.getDouble("Block.Hologram.Offset.Y", 1.5D));
@@ -127,14 +125,14 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             String rewName = cfg.getString(path + "Name", rewId);
             double rewChance = cfg.getDouble(path + "Chance");
             boolean rBroadcast = cfg.getBoolean(path + "Broadcast");
-            ItemStack rewPreview = cfg.getItem64(path + "Preview");
+            ItemStack rewPreview = cfg.getItemEncoded(path + "Preview");
             if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
 
             int winLimitAmount = cfg.getInt(path + "Win_Limits.Amount", -1);
             long winLimitCooldown = cfg.getLong(path + "Win_Limits.Cooldown", 0L);
 
             List<String> rewCmds = cfg.getStringList(path + "Commands");
-            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemList64(path + "Items")).toList());
+            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemsEncoded(path + "Items")).toList());
 
             ICrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rBroadcast,
                 winLimitAmount, winLimitCooldown,
@@ -146,7 +144,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     }
 
     public static Crate fromLegacy(@NotNull JYML cfg) {
-        Crate crate = new Crate(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
+        Crate crate = new Crate(ExcellentCratesAPI.PLUGIN, cfg.getFile().getName().replace(".yml", ""));
 
         crate.setName(cfg.getString("name", cfg.getFile().getName()));
         crate.setAnimationConfig(cfg.getString("template", null));
@@ -162,7 +160,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         crate.setKeyIds(Sets.newHashSet(cfg.getString("key.id", "")));
         crate.setItem(cfg.getItem("item."));
 
-        crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("block.locations"))));
+        crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize((Collection<String>)cfg.getStringList("block.locations"))));
         crate.setBlockPushbackEnabled(cfg.getBoolean("block.pushback.enabled"));
         crate.setBlockHologramEnabled(cfg.getBoolean("block.hologram.enabled"));
         crate.setBlockHologramOffsetY(1.5D);
@@ -181,14 +179,14 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             String rewName = cfg.getString(path + "name", rewId);
             double rewChance = cfg.getDouble(path + "chance");
             boolean rBroadcast = false;
-            ItemStack rewPreview = cfg.getItem64(path + "preview");
+            ItemStack rewPreview = cfg.getItemEncoded(path + "preview");
             if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
 
             int winLimitAmount = -1;
             long winLimitCooldown = 0L;
 
             List<String> rewCmds = cfg.getStringList(path + "cmds");
-            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItem64(path + "item")).toList());
+            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemEncoded(path + "item")).toList());
 
             ICrateReward reward = new CrateReward(crate, rewId, rewName, rewChance, rBroadcast,
                 winLimitAmount, winLimitCooldown,
@@ -213,9 +211,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         }
 
         cfg.set("Key.Ids", this.getKeyIds());
-        cfg.setItemNew("Item", this.getItem());
+        cfg.setItem("Item", this.getItem());
 
-        cfg.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
+        cfg.set("Block.Locations", LocationUtil.serialize((Collection<Location>) new ArrayList<>(this.getBlockLocations())));
         cfg.set("Block.Pushback.Enabled", this.isBlockPushbackEnabled());
         cfg.set("Block.Hologram.Enabled", this.isBlockHologramEnabled());
         cfg.set("Block.Hologram.Offset.Y", this.getBlockHologramOffsetY());
@@ -235,9 +233,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             cfg.set(path + "Broadcast", reward.isBroadcast());
             cfg.set(path + "Win_Limits.Amount", reward.getWinLimitAmount());
             cfg.set(path + "Win_Limits.Cooldown", reward.getWinLimitCooldown());
-            cfg.setItem64(path + "Preview", reward.getPreview());
+            cfg.setItemEncoded(path + "Preview", reward.getPreview());
             cfg.set(path + "Commands", reward.getCommands());
-            cfg.setItemList64(path + "Items", reward.getItems());
+            cfg.setItemsEncoded(path + "Items", reward.getItems());
         }
 
         this.createPreview();
@@ -248,34 +246,61 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
-            .replace(PLACEHOLDER_ID, this.getId())
-            .replace(PLACEHOLDER_NAME, this.getName())
-            .replace(PLACEHOLDER_ANIMATION_CONFIG, String.valueOf(this.getAnimationConfig()))
-            .replace(PLACEHOLDER_PREVIEW_CONFIG, String.valueOf(this.getPreviewConfig()))
-            .replace(PLACEHOLDER_PERMISSION, Perms.CRATE + this.getId())
-            .replace(PLACEHOLDER_PERMISSION_REQUIRED, plugin().lang().getBoolean(this.isPermissionRequired()))
-            .replace(PLACEHOLDER_ATTACHED_CITIZENS, Arrays.toString(this.getAttachedCitizens()))
-            .replace(PLACEHOLDER_OPENING_COOLDOWN, TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
-            .replace(PLACEHOLDER_OPENING_COST_EXP, NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
-            .replace(PLACEHOLDER_OPENING_COST_MONEY, NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
-            .replace(PLACEHOLDER_KEY_IDS, String.join(DELIMITER_DEFAULT, this.getKeyIds()))
-            .replace(PLACEHOLDER_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
-            .replace(PLACEHOLDER_ITEM_LORE, String.join("\n", ItemUtil.getLore(this.getItem())))
-            .replace(PLACEHOLDER_BLOCK_PUSHBACK_ENABLED, plugin().lang().getBoolean(this.isBlockPushbackEnabled()))
-            .replace(PLACEHOLDER_BLOCK_HOLOGRAM_ENABLED, plugin().lang().getBoolean(this.isBlockHologramEnabled()))
-            .replace(PLACEHOLDER_BLOCK_HOLOGRAM_OFFSET_Y, NumberUtil.format(this.getBlockHologramOffsetY()))
-            .replace(PLACEHOLDER_BLOCK_HOLOGRAM_TEXT, String.join("\n", this.getBlockHologramText()))
-            .replace(PLACEHOLDER_BLOCK_LOCATIONS, String.join(DELIMITER_DEFAULT, this.getBlockLocations().stream().map(location -> {
+            .replace(Placeholders.CRATE_ID, this.getId())
+            .replace(Placeholders.CRATE_NAME, this.getName())
+            .replace(Placeholders.CRATE_ANIMATION_CONFIG, String.valueOf(this.getAnimationConfig()))
+            .replace(Placeholders.CRATE_PREVIEW_CONFIG, String.valueOf(this.getPreviewConfig()))
+            .replace(Placeholders.CRATE_PERMISSION, Perms.CRATE + this.getId())
+            .replace(Placeholders.CRATE_PERMISSION_REQUIRED, plugin().lang().getBoolean(this.isPermissionRequired()))
+            .replace(Placeholders.CRATE_ATTACHED_CITIZENS, Arrays.toString(this.getAttachedCitizens()))
+            .replace(Placeholders.CRATE_OPENING_COOLDOWN, TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
+            .replace(Placeholders.CRATE_OPENING_COST_EXP, NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
+            .replace(Placeholders.CRATE_OPENING_COST_MONEY, NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
+            .replace(Placeholders.CRATE_KEY_IDS, String.join(DELIMITER_DEFAULT, this.getKeyIds()))
+            .replace(Placeholders.CRATE_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
+            .replace(Placeholders.CRATE_ITEM_LORE, String.join("\n", ItemUtil.getLore(this.getItem())))
+            .replace(Placeholders.CRATE_BLOCK_PUSHBACK_ENABLED, plugin().lang().getBoolean(this.isBlockPushbackEnabled()))
+            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED, plugin().lang().getBoolean(this.isBlockHologramEnabled()))
+            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_OFFSET_Y, NumberUtil.format(this.getBlockHologramOffsetY()))
+            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_TEXT, String.join("\n", this.getBlockHologramText()))
+            .replace(Placeholders.CRATE_BLOCK_LOCATIONS, String.join(DELIMITER_DEFAULT, this.getBlockLocations().stream().map(location -> {
                 String x = NumberUtil.format(location.getX());
                 String y = NumberUtil.format(location.getY());
                 String z = NumberUtil.format(location.getZ());
                 String world = location.getWorld() == null ? "null" : location.getWorld().getName();
                 return x + ", " + y + ", " + z + " in " + world;
             }).toList()))
-            .replace(PLACEHOLDER_BLOCK_EFFECT_MODEL, this.getBlockEffect().getModel().name())
-            .replace(PLACEHOLDER_BLOCK_EFFECT_PARTICLE_NAME, this.getBlockEffect().getParticleName())
-            .replace(PLACEHOLDER_BLOCK_EFFECT_PARTICLE_DATA, this.getBlockEffect().getParticleData())
+            .replace(Placeholders.CRATE_BLOCK_EFFECT_MODEL, this.getBlockEffect().getModel().name())
+            .replace(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_NAME, this.getBlockEffect().getParticleName())
+            .replace(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_DATA, this.getBlockEffect().getParticleData())
             ;
+    }
+
+    @Override
+    public void clear() {
+        this.removeHologram();
+        if (this.editor != null) {
+            this.editor.clear();
+            this.editor = null;
+        }
+        if (this.preview != null) {
+            this.preview.clear();
+            this.preview = null;
+        }
+        if (this.rewardMap != null) {
+            this.rewardMap.values().forEach(ICrateReward::clear);
+            this.rewardMap.clear();
+            this.rewardMap = null;
+        }
+    }
+
+    @Override
+    @NotNull
+    public CrateEditorCrate getEditor() {
+        if (this.editor == null) {
+            this.editor = new CrateEditorCrate(this.plugin, this);
+        }
+        return this.editor;
     }
 
     @Override
@@ -528,32 +553,5 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     public void openPreview(@NotNull Player player) {
         if (this.getPreview() == null) return;
         this.getPreview().open(player, 1);
-    }
-
-    @Override
-    public void clear() {
-        this.removeHologram();
-        if (this.editor != null) {
-            this.editor.clear();
-            this.editor = null;
-        }
-        if (this.preview != null) {
-            this.preview.clear();
-            this.preview = null;
-        }
-        if (this.rewardMap != null) {
-            this.rewardMap.values().forEach(ICrateReward::clear);
-            this.rewardMap.clear();
-            this.rewardMap = null;
-        }
-    }
-
-    @Override
-    @NotNull
-    public CrateEditorCrate getEditor() {
-        if (this.editor == null) {
-            this.editor = new CrateEditorCrate(this.plugin, this);
-        }
-        return this.editor;
     }
 }

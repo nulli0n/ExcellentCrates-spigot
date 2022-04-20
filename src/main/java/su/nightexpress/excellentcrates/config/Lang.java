@@ -8,6 +8,10 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 
 public class Lang extends CoreLang {
 
+    public Lang(@NotNull ExcellentCrates plugin) {
+        super(plugin);
+    }
+
     public LangMessage Command_Drop_Usage = new LangMessage(this, "<crateId> <world> <x> <y> <z>");
     public LangMessage Command_Drop_Desc  = new LangMessage(this, "Drop crate at specified location in the world.");
     public LangMessage Command_Drop_Done  = new LangMessage(this, "Dropped &6%crate_name%&7 at &6%x%&7, &6%y%&7, &6%z%&7 in &6%world%&7.");
@@ -22,26 +26,33 @@ public class Lang extends CoreLang {
     public LangMessage Command_Give_Done   = new LangMessage(this, "Given &6x%amount% &7of &6%crate_name% &7crate(s) to &6%player%&7.");
     public LangMessage Command_Give_Notify = new LangMessage(this, "You recieved &6x%amount% &7of &6%crate_name%&7!");
 
-    public LangMessage Command_GiveKey_Usage  = new LangMessage(this, "<player | *> <keyId> [amount]");
-    public LangMessage Command_GiveKey_Desc   = new LangMessage(this, "Give crate key(s) to a player.");
-    public LangMessage Command_GiveKey_Done   = new LangMessage(this, "Given &6x%amount% &7of &6%key_name% &7key(s) to &6%player%&7.");
-    public LangMessage Command_GiveKey_Notify = new LangMessage(this, "You recieved &6x%amount% &7of &6%key_name%&7!");
+    public LangMessage Command_Key_Desc         = new LangMessage(this, "Manage or view player's crate keys.");
+    public LangMessage Command_Key_Error_Player = new LangMessage(this, "&cCould not proccess operation for offline/invalid player &e%player%&c!");
 
-    public LangMessage Command_TakeKey_Usage  = new LangMessage(this, "<player | *> <keyId> [amount]");
-    public LangMessage Command_TakeKey_Desc   = new LangMessage(this, "Take crate key(s) from a player.");
-    public LangMessage Command_TakeKey_Done   = new LangMessage(this, "Taken &6x%amount% &6%key_name% &7key(s) from &6%player%");
-    public LangMessage Command_TakeKey_Notify = new LangMessage(this, "You lost &6x%amount% &6%key_name%&7!");
-    public LangMessage Command_TakeKey_Error  = new LangMessage(this, "&cCould not take keys: &ePlayer does noet exist or do not have such amount of keys.");
+    public LangMessage Command_Key_Give_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
+    public LangMessage Command_Key_Give_Desc  = new LangMessage(this, "Give crate key(s) to a player.");
+    public LangMessage Command_Key_Give_Done   = new LangMessage(this, "Given &ax%amount% &7of &a%key_name% &7key(s) to &a%player%&7.");
+    public LangMessage Command_Key_Give_Notify = new LangMessage(this, "You recieved &ax%amount% &7of &a%key_name%&7!");
 
-    public LangMessage Command_CheckKey_Desc               = new LangMessage(this, "Show amount of your or other player keys.");
-    public LangMessage Command_CheckKey_Usage              = new LangMessage(this, "[player]");
-    public LangMessage Command_CheckKey_Format_List        = new LangMessage(this, """
+    public LangMessage Command_Key_Take_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
+    public LangMessage Command_Key_Take_Desc  = new LangMessage(this, "Take crate key(s) from a player.");
+    public LangMessage Command_Key_Take_Done   = new LangMessage(this, "Taken &cx%amount% &c%key_name% &7key(s) from &c%player%");
+    public LangMessage Command_Key_Take_Notify = new LangMessage(this, "You lost &cx%amount% &c%key_name%&7!");
+    //public LangMessage Command_Key_Take_Error  = new LangMessage(this, "&cCould not take keys: &ePlayer does noet exist or do not have such amount of keys.");
+
+    public LangMessage Command_Key_Set_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
+    public LangMessage Command_Key_Set_Desc  = new LangMessage(this, "Set crate key(s) amount for a player.");
+    public LangMessage Command_Key_Set_Done   = new LangMessage(this, "Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player%&7.");
+    public LangMessage Command_Key_Set_Notify = new LangMessage(this, "Your &e%key_name%&7 amount has been changed to &ex%amount%&7!");
+
+    public LangMessage Command_Key_Show_Desc        = new LangMessage(this, "Show amount of your or other player keys.");
+    public LangMessage Command_Key_Show_Usage       = new LangMessage(this, "[player]");
+    public LangMessage Command_Key_Show_Format_List = new LangMessage(this, """
         {message: ~prefix: false;}
-        &8&m              &8&l[ &e%player% &7Crate Keys &8&l]&8&m              &8
+        &6&m              &6&l[ &a%player% &e&lCrate Keys &6&l]&6&m              &6
         &7
         &6▸ &e%key_name%: &6%amount%
         """);
-    public LangMessage Command_CheckKey_Format_OfflineItem = new LangMessage(this, "&c<Player Offline>");
 
     public LangMessage Command_Preview_Desc        = new LangMessage(this, "Open crate preview.");
     public LangMessage Command_Preview_Usage       = new LangMessage(this, "<crateId> [player]");
@@ -100,10 +111,4 @@ public class Lang extends CoreLang {
     public LangMessage Editor_Reward_Error_Create_Exist      = new LangMessage(this, "&cReward with such id is already exists!");
 
     public LangMessage Editor_Key_Error_Create_Exist = new LangMessage(this, "Key with such id is already exists!");
-
-    public LangMessage Other_All_Online = new LangMessage(this, "All online players");
-
-    public Lang(@NotNull ExcellentCrates plugin) {
-        super(plugin);
-    }
 }

@@ -176,13 +176,49 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
         user.cleanKeysOnHold();
     }
 
+    public boolean setKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
+        CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
+        if (user == null) return false;
+
+        Player player = user.getPlayer();
+        if (player != null) {
+            this.setKey(player, key, amount);
+            return true;
+        }
+
+        if (key.isVirtual()) {
+            user.setKeys(key.getId(), amount);
+            return true;
+        }
+        return false;
+    }
+
+    public void setKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
+        if (key.isVirtual()) {
+            CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+            user.setKeys(key.getId(), amount);
+        }
+        else {
+            ItemStack keyItem = key.getItem();
+            int has = PlayerUtil.countItem(player, keyItem);
+            if (has > amount) {
+                PlayerUtil.takeItem(player, keyItem, has - amount);
+            }
+            else if (has < amount) {
+                PlayerUtil.addItem(player, keyItem, amount - has);
+            }
+        }
+        //return true;
+    }
+
     public boolean giveKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
         CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
         if (user == null) return false;
 
         Player player = user.getPlayer();
         if (player != null) {
-            return this.giveKey(player, key, amount);
+            this.giveKey(player, key, amount);
+            return true;
         }
 
         if (key.isVirtual()) {
@@ -194,7 +230,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
         return true;
     }
 
-    public boolean giveKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
+    public void giveKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getOrLoadUser(player);
             user.addKeys(key.getId(), amount);
@@ -204,7 +240,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
             keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
             PlayerUtil.addItem(player, keyItem);
         }
-        return true;
+        //return true;
     }
 
     public boolean takeKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
@@ -213,19 +249,21 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
         Player player = user.getPlayer();
         if (player != null) {
-            return this.takeKey(player, key, amount);
+            this.takeKey(player, key, amount);
+            return true;
         }
 
         if (key.isVirtual()) {
             user.takeKeys(key.getId(), amount);
+            return true;
         }
-        return true;
+        return false;
     }
 
-    public boolean takeKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
+    public void takeKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getOrLoadUser(player);
-            if (user.getKeys(key.getId()) < amount) return false;
+            //if (user.getKeys(key.getId()) < amount) return false;
             user.takeKeys(key.getId(), amount);
         }
         else {
@@ -233,9 +271,8 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
                 ICrateKey itemKey = this.getKeyByItem(itemHas);
                 return itemKey != null && itemKey.getId().equalsIgnoreCase(key.getId());
             };
-            if (PlayerUtil.countItem(player, predicate) < amount) return false;
-            PlayerUtil.takeItem(player, predicate, amount);
+            PlayerUtil.takeItem(player, predicate, Math.min(PlayerUtil.countItem(player, predicate), amount));
         }
-        return true;
+        //return true;
     }
 }

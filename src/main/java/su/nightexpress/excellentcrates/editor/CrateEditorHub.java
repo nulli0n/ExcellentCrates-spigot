@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.editor;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
@@ -73,11 +74,6 @@ public class CrateEditorHub extends AbstractMenu<ExcellentCrates> {
     }
 
     @Override
-    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-        return true;
-    }
-
-    @Override
     public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
 
     }
@@ -85,5 +81,10 @@ public class CrateEditorHub extends AbstractMenu<ExcellentCrates> {
     @Override
     public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
 
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+        return true;
     }
 }

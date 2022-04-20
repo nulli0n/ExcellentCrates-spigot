@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.crate.editor.CrateEditorReward;
@@ -98,15 +99,15 @@ public class CrateReward implements ICrateReward {
         String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().lang().Other_OneTimed.getLocalized()) : plugin().lang().Other_No.getLocalized();
 
         return str -> str
-            .replace(PLACEHOLDER_ID, this.getId())
-            .replace(PLACEHOLDER_NAME, this.getName())
-            .replace(PLACEHOLDER_CHANCE, NumberUtil.format(this.getChance()))
-            .replace(PLACEHOLDER_BROADCAST, plugin().lang().getBoolean(this.isBroadcast()))
-            .replace(PLACEHOLDER_PREVIEW_NAME, ItemUtil.getItemName(preview))
-            .replace(PLACEHOLDER_PREVIEW_LORE, String.join("\n", lore == null ? new ArrayList<>() : lore))
-            .replace(PLACEHOLDER_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
-            .replace(PLACEHOLDER_WIN_LIMIT_AMOUNT, winAmount)
-            .replace(PLACEHOLDER_WIN_LIMIT_COOLDOWN, winCooldown)
+            .replace(Placeholders.REWARD_ID, this.getId())
+            .replace(Placeholders.REWARD_NAME, this.getName())
+            .replace(Placeholders.REWARD_CHANCE, NumberUtil.format(this.getChance()))
+            .replace(Placeholders.REWARD_BROADCAST, plugin().lang().getBoolean(this.isBroadcast()))
+            .replace(Placeholders.REWARD_PREVIEW_NAME, ItemUtil.getItemName(preview))
+            .replace(Placeholders.REWARD_PREVIEW_LORE, String.join("\n", lore == null ? new ArrayList<>() : lore))
+            .replace(Placeholders.REWARD_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
+            .replace(Placeholders.REWARD_WIN_LIMIT_AMOUNT, winAmount)
+            .replace(Placeholders.REWARD_WIN_LIMIT_COOLDOWN, winCooldown)
             ;
     }
 
@@ -242,15 +243,15 @@ public class CrateReward implements ICrateReward {
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
 
         this.plugin().lang().Crate_Open_Reward_Info
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-            .replace(PLACEHOLDER_NAME, this.getName())
+            .replace(Placeholders.CRATE_NAME, crate.getName())
+            .replace(Placeholders.REWARD_NAME, this.getName())
             .send(player);
 
         if (this.isBroadcast()) {
             this.plugin().lang().Crate_Open_Reward_Broadcast
                 .replace("%player%", player.getName())
-                .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-                .replace(PLACEHOLDER_NAME, this.getName())
+                .replace(Placeholders.CRATE_NAME, crate.getName())
+                .replace(Placeholders.REWARD_NAME, this.getName())
                 .broadcast();
         }
 

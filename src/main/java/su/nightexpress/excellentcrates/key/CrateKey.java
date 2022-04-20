@@ -10,7 +10,9 @@ import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrateKey;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.key.editor.KeyEditorKey;
@@ -45,7 +47,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 
         this.setName(cfg.getString("Name", this.getId()));
         this.setVirtual(cfg.getBoolean("Virtual"));
-        ItemStack item = cfg.getItemNew("Item", this.getId());
+        ItemStack item = cfg.getItem("Item", this.getId());
         if (item.getType().isAir() && !this.isVirtual()) {
             throw new IllegalStateException("Key item can not be AIR!");
         }
@@ -53,7 +55,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
     }
 
     public static CrateKey fromLegacy(@NotNull JYML cfg) {
-        CrateKey key = new CrateKey(ExcellentCrates.getInstance(), cfg.getFile().getName().replace(".yml", ""));
+        CrateKey key = new CrateKey(ExcellentCratesAPI.PLUGIN, cfg.getFile().getName().replace(".yml", ""));
 
         key.setName(cfg.getString("name", key.getId()));
         key.setVirtual(cfg.getBoolean("virtual"));
@@ -66,10 +68,10 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
-            .replace(PLACEHOLDER_ID, this.getId())
-            .replace(PLACEHOLDER_NAME, this.getName())
-            .replace(PLACEHOLDER_VIRTUAL, plugin().lang().getBoolean(this.isVirtual()))
-            .replace(PLACEHOLDER_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
+            .replace(Placeholders.KEY_ID, this.getId())
+            .replace(Placeholders.KEY_NAME, this.getName())
+            .replace(Placeholders.KEY_VIRTUAL, plugin().lang().getBoolean(this.isVirtual()))
+            .replace(Placeholders.KEY_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
             ;
     }
 
@@ -77,7 +79,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
     public void onSave() {
         cfg.set("Name", this.getName());
         cfg.set("Virtual", this.isVirtual());
-        cfg.setItemNew("Item", this.getItem());
+        cfg.setItem("Item", this.getItem());
     }
 
     @Override

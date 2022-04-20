@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.crate.editor;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -137,11 +138,6 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
     }
 
     @Override
-    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-        return slotType != SlotType.PLAYER && slotType != SlotType.EMPTY_PLAYER;
-    }
-
-    @Override
     public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
 
     }
@@ -163,6 +159,11 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
         ItemUtil.replace(item, this.reward.replacePlaceholders());
     }
 
+    @Override
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+        return slotType != SlotType.PLAYER && slotType != SlotType.EMPTY_PLAYER;
+    }
+
     static class ContentEditor extends AbstractMenu<ExcellentCrates> {
 
         private final ICrateReward reward;
@@ -178,7 +179,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
         }
 
         @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+        public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
             return false;
         }
 

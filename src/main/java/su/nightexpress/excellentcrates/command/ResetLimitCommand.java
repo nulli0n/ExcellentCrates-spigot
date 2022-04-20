@@ -8,6 +8,7 @@ import su.nexmedia.engine.api.config.LangMessage;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
@@ -82,12 +83,12 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
         }
         else {
             user.removeRewardWinLimit(crate.getId(), reward.getId());
-            message = plugin.lang().Command_ResetLimit_Done_Reward.replace(ICrateReward.PLACEHOLDER_NAME, reward.getName());
+            message = plugin.lang().Command_ResetLimit_Done_Reward.replace(Placeholders.REWARD_NAME, reward.getName());
         }
 
         message
             .replace("%player%", user.getName())
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
+            .replace(Placeholders.CRATE_NAME, crate.getName())
             .send(sender);
     }
 }

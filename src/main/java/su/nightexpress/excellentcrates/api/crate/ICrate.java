@@ -21,35 +21,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public interface ICrate extends ConfigHolder, ICleanable, IEditable, IPlaceholder {
-
-    String PLACEHOLDER_ID                         = "%crate_id%";
-    String PLACEHOLDER_NAME                       = "%crate_name%";
-    String PLACEHOLDER_ANIMATION_CONFIG           = "%crate_animation_config%";
-    String PLACEHOLDER_PREVIEW_CONFIG             = "%crate_preview_config%";
-    String PLACEHOLDER_PERMISSION                 = "%crate_permission%";
-    String PLACEHOLDER_PERMISSION_REQUIRED        = "%crate_permission_required%";
-    String PLACEHOLDER_ATTACHED_CITIZENS          = "%crate_attached_citizens%";
-    String PLACEHOLDER_OPENING_COOLDOWN           = "%crate_opening_cooldown%";
-    String PLACEHOLDER_OPENING_COST_MONEY         = "%crate_opening_cost_money%";
-    String PLACEHOLDER_OPENING_COST_EXP           = "%crate_opening_cost_exp%";
-    String PLACEHOLDER_KEY_IDS                    = "%crate_key_ids%";
-    String PLACEHOLDER_ITEM_NAME                  = "%crate_item_name%";
-    String PLACEHOLDER_ITEM_LORE                  = "%crate_item_lore%";
-    String PLACEHOLDER_BLOCK_PUSHBACK_ENABLED     = "%crate_block_pushback_enabled%";
-    String PLACEHOLDER_BLOCK_HOLOGRAM_ENABLED     = "%crate_block_hologram_enabled%";
-    String PLACEHOLDER_BLOCK_HOLOGRAM_OFFSET_Y    = "%crate_block_hologram_offset_y%";
-    String PLACEHOLDER_BLOCK_HOLOGRAM_TEXT        = "%crate_block_hologram_text%";
-    String PLACEHOLDER_BLOCK_LOCATIONS            = "%crate_block_locations%";
-    String PLACEHOLDER_BLOCK_EFFECT_MODEL         = "%crate_block_effect_model%";
-    String PLACEHOLDER_BLOCK_EFFECT_PARTICLE_NAME = "%crate_block_effect_particle_name%";
-    String PLACEHOLDER_BLOCK_EFFECT_PARTICLE_DATA = "%crate_block_effect_particle_data%";
-
-    @Override
-    @NotNull UnaryOperator<String> replacePlaceholders();
 
     @NotNull ExcellentCrates plugin();
 

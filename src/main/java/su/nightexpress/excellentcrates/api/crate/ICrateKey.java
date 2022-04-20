@@ -9,11 +9,6 @@ import su.nexmedia.engine.api.manager.IPlaceholder;
 
 public interface ICrateKey extends ConfigHolder, IEditable, ICleanable, IPlaceholder {
 
-    String PLACEHOLDER_ID        = "%key_id%";
-    String PLACEHOLDER_NAME      = "%key_name%";
-    String PLACEHOLDER_VIRTUAL   = "%key_virtual%";
-    String PLACEHOLDER_ITEM_NAME = "%key_item_name%";
-
     @NotNull String getId();
 
     @NotNull String getName();

@@ -12,6 +12,7 @@ import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.replace(ICrate.PLACEHOLDER_ID, args[1]).send(sender);
+            plugin.lang().Crate_Error_Invalid.replace(Placeholders.CRATE_ID, args[1]).send(sender);
             return;
         }
 
@@ -88,8 +89,8 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
         if (!plugin.getCrateManager().spawnCrate(crate, location)) return;
 
         plugin.lang().Command_Drop_Done
-            .replace(ICrate.PLACEHOLDER_ID, crate.getId())
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
+            .replace(Placeholders.CRATE_ID, crate.getId())
+            .replace(Placeholders.CRATE_NAME, crate.getName())
             .replace("%x%", NumberUtil.format(x))
             .replace("%y%", NumberUtil.format(y))
             .replace("%z%", NumberUtil.format(z))

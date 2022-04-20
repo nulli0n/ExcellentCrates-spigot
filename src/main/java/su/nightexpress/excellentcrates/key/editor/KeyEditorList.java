@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.key.editor;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +15,7 @@ import su.nexmedia.engine.utils.EditorUtils;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrateKey;
 import su.nightexpress.excellentcrates.editor.CrateEditorHandler;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
@@ -31,7 +33,7 @@ public class KeyEditorList extends AbstractMenuAuto<ExcellentCrates, ICrateKey> 
     public KeyEditorList(@NotNull ExcellentCrates plugin) {
         super(plugin, CrateEditorHandler.KEY_LIST, "");
 
-        this.objectName = StringUtil.color(cfg.getString("Object.Name", ICrateKey.PLACEHOLDER_ID));
+        this.objectName = StringUtil.color(cfg.getString("Object.Name", Placeholders.KEY_ID));
         this.objectLore = StringUtil.color(cfg.getStringList("Object.Lore"));
         this.objectSlots = cfg.getIntArray("Object.Slots");
 
@@ -113,12 +115,12 @@ public class KeyEditorList extends AbstractMenuAuto<ExcellentCrates, ICrateKey> 
     }
 
     @Override
-    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-        return true;
+    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+
     }
 
     @Override
-    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
-
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+        return true;
     }
 }

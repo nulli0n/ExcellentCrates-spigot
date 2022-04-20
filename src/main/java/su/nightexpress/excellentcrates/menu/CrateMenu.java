@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.menu;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,6 +12,7 @@ import su.nexmedia.engine.api.menu.*;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateMenu;
@@ -30,7 +32,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
         return str -> str
-            .replace(PLACEHOLDER_ID, this.getId())
+            .replace(Placeholders.MENU_ID, this.getId())
             ;
     }
 
@@ -75,12 +77,12 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
             };
 
             for (String id : cfg.getSection("Content")) {
-                IMenuItem guimenuItemtem = cfg.getMenuItem("Content." + id, MenuItemType.class);
+                IMenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
 
-                if (guimenuItemtem.getType() != null) {
-                    guimenuItemtem.setClick(click);
+                if (menuItem.getType() != null) {
+                    menuItem.setClick(click);
                 }
-                this.addItem(guimenuItemtem);
+                this.addItem(menuItem);
             }
 
             IMenuClick clickCrate = (player, type, e) -> {
@@ -115,11 +117,6 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
         }
 
         @Override
-        public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-            return true;
-        }
-
-        @Override
         public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
 
         }
@@ -141,6 +138,11 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
 
             ItemUtil.replace(item, crate.replacePlaceholders());
             ItemUtil.replace(item, str -> str.replace("%user_keys%", String.valueOf(plugin.getKeyManager().getKeysAmount(player, crate))));
+        }
+
+        @Override
+        public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+            return true;
         }
     }
 }

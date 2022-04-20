@@ -13,6 +13,7 @@ import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
@@ -43,7 +44,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
 
         this.hideDrainedRewards = cfg.getBoolean("Reward.Hide_Drained_Rewards");
         this.rewardSlots = cfg.getIntArray("Reward.Slots");
-        this.rewardName = StringUtil.color(cfg.getString("Reward.Name", ICrateReward.PLACEHOLDER_PREVIEW_NAME));
+        this.rewardName = StringUtil.color(cfg.getString("Reward.Name", Placeholders.REWARD_PREVIEW_NAME));
         this.rewardLore = StringUtil.color(cfg.getStringList("Reward.Lore.Default"));
         this.rewardLoreLimitAmount = StringUtil.color(cfg.getStringList("Reward.Lore.Win_Limit.Amount"));
         this.rewardLoreLimitCoolown = StringUtil.color(cfg.getStringList("Reward.Lore.Win_Limit.Cooldown"));

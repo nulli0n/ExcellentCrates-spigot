@@ -7,6 +7,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 import java.util.List;
@@ -79,8 +80,8 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
         if (!sender.equals(player)) {
             plugin.lang().Command_Preview_Done_Others
                 .replace("%player%", player.getName())
-                .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-                .replace(ICrate.PLACEHOLDER_ID, crate.getId())
+                .replace(Placeholders.CRATE_NAME, crate.getName())
+                .replace(Placeholders.CRATE_ID, crate.getId())
                 .send(sender);
         }
     }

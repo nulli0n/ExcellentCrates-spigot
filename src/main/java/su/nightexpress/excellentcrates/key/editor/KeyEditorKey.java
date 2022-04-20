@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.key.editor;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -79,11 +80,6 @@ public class KeyEditorKey extends AbstractMenu<ExcellentCrates> {
     }
 
     @Override
-    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
-        return slotType != SlotType.EMPTY_PLAYER && slotType != SlotType.PLAYER;
-    }
-
-    @Override
     public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
 
     }
@@ -102,5 +98,10 @@ public class KeyEditorKey extends AbstractMenu<ExcellentCrates> {
         }
 
         ItemUtil.replace(item, this.crateKey.replacePlaceholders());
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+        return slotType != SlotType.EMPTY_PLAYER && slotType != SlotType.PLAYER;
     }
 }

@@ -9,6 +9,7 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 
 import java.util.ArrayList;
@@ -76,7 +77,6 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
                 plugin.getCrateManager().giveCrate(player, crate, amount);
             }
-            pName = plugin.lang().Other_All_Online.getLocalized();
         }
         else {
             Player player = plugin.getServer().getPlayer(pName);
@@ -87,15 +87,15 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
             plugin.getCrateManager().giveCrate(player, crate, amount);
             plugin.lang().Command_Give_Notify
                 .replace("%amount%", amount)
-                .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
+                .replace(Placeholders.CRATE_NAME, crate.getName())
                 .send(player);
         }
 
         plugin.lang().Command_Give_Done
             .replace("%player%", pName)
             .replace("%amount%", amount)
-            .replace(ICrate.PLACEHOLDER_NAME, crate.getName())
-            .replace(ICrate.PLACEHOLDER_ID, crate.getId())
+            .replace(Placeholders.CRATE_NAME, crate.getName())
+            .replace(Placeholders.CRATE_ID, crate.getId())
             .send(sender);
     }
 }

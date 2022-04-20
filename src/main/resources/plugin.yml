@@ -21,7 +21,8 @@ permissions:
     description: Access to basic plugin functions.
     default: true
     children:
-      excellentcrates.command.keys: true
+      excellentcrates.command.key: true
+      excellentcrates.command.key.show: true
       excellentcrates.command.menu: true
       excellentcrates.command.preview: true
 
@@ -33,16 +34,18 @@ permissions:
       excellentcrates.command.drop: true
       excellentcrates.command.forceopen: true
       excellentcrates.command.give: true
-      excellentcrates.command.givekey: true
-      excellentcrates.command.keys: true
-      excellentcrates.command.keys.others: true
+      excellentcrates.command.key: true
+      excellentcrates.command.key.give: true
+      excellentcrates.command.key.take: true
+      excellentcrates.command.key.set: true
+      excellentcrates.command.key.show: true
+      excellentcrates.command.key.show.others: true
       excellentcrates.command.menu: true
       excellentcrates.command.menu.others: true
       excellentcrates.command.preview: true
       excellentcrates.command.preview.others: true
       excellentcrates.command.resetcooldown: true
       excellentcrates.command.resetlimit: true
-      excellentcrates.command.takekey: true
 
   excellentcrates.command.drop:
     description: Access to '/crate drop' subcommand.
@@ -56,16 +59,28 @@ permissions:
     description: Access to '/crate give' subcommand.
     default: op
 
-  excellentcrates.command.givekey:
-    description: Access to '/crate givekey' subcommand.
+  excellentcrates.command.key:
+    description: Access to '/crate key' subcommand.
     default: op
 
-  excellentcrates.command.keys:
-    description: Access to '/crate keys' subcommand.
+  excellentcrates.command.key.give:
+    description: Access to '/crate key give' subcommand.
+    default: op
+
+  excellentcrates.command.key.take:
+    description: Access to '/crate key take' subcommand.
+    default: op
+
+  excellentcrates.command.key.set:
+    description: Access to '/crate key set' subcommand.
+    default: op
+
+  excellentcrates.command.key.show:
+    description: Access to '/crate key show' subcommand.
     default: true
 
-  excellentcrates.command.keys.others:
-    description: Access to '/crate keys [player]' subcommand.
+  excellentcrates.command.key.show.others:
+    description: Access to '/crate key show [player]' subcommand.
     default: op
 
   excellentcrates.command.menu:
@@ -90,10 +105,6 @@ permissions:
 
   excellentcrates.command.resetlimit:
     description: Access to '/crate resetlimit' subcommand.
-    default: op
-
-  excellentcrates.command.takekey:
-    description: Access to '/crate takekey' subcommand.
     default: op
   # ------------------ Commands End ------------------ #
 
