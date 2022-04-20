@@ -29,7 +29,7 @@ public class EditorHandlerCrate extends CrateEditorInputHandler<ICrate> {
             case CRATE_REWARD_CREATE -> {
                 String id = EditorUtils.fineId(msg);
                 if (crate.getReward(id) != null) {
-                    EditorUtils.errorCustom(player, plugin.lang().Editor_Reward_Error_Create_Exist.getMsg());
+                    EditorUtils.errorCustom(player, plugin.lang().Editor_Reward_Error_Create_Exist.getLocalized());
                     return false;
                 }
                 ICrateReward reward = new CrateReward(crate, id);

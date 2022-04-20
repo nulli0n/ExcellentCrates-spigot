@@ -20,13 +20,13 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Preview_Usage.getMsg();
+        return plugin.lang().Command_Preview_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Preview_Desc.getMsg();
+        return plugin.lang().Command_Preview_Desc.getLocalized();
     }
 
     @Override

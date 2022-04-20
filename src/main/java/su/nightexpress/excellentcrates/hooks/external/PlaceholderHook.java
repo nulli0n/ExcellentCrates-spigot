@@ -77,7 +77,7 @@ public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
                     CrateUser user = plugin.getUserManager().getOrLoadUser(player);
 
                     long left = user.getCrateCooldown(crate);
-                    if (left == 0) return plugin.lang().Crate_Placeholder_Cooldown_Blank.getMsg();
+                    if (left == 0) return plugin.lang().Crate_Placeholder_Cooldown_Blank.getLocalized();
                     return TimeUtil.formatTimeLeft(left);
                 }
             }

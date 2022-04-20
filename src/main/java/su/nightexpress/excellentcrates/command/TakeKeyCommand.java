@@ -24,13 +24,13 @@ public class TakeKeyCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_TakeKey_Usage.getMsg();
+        return plugin.lang().Command_TakeKey_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_TakeKey_Desc.getMsg();
+        return plugin.lang().Command_TakeKey_Desc.getLocalized();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TakeKeyCommand extends AbstractCommand<ExcellentCrates> {
                     .replace(ICrateKey.PLACEHOLDER_NAME, crateKey.getName())
                     .send(player);
             }
-            pName = plugin.lang().Other_All_Online.getMsg();
+            pName = plugin.lang().Other_All_Online.getLocalized();
         }
         else {
             if (!plugin.getKeyManager().takeKey(pName, crateKey, amount)) {

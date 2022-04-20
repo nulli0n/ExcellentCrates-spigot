@@ -23,13 +23,13 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_ResetLimit_Usage.getMsg();
+        return plugin.lang().Command_ResetLimit_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_ResetLimit_Desc.getMsg();
+        return plugin.lang().Command_ResetLimit_Desc.getLocalized();
     }
 
     @Override

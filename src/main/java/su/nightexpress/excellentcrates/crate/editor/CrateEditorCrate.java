@@ -58,7 +58,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                             }
                             else if (e.isRightClick()) {
                                 plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_BLOCK_HOLOGRAM_OFFSET_Y);
-                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockHologramOffset.getMsg());
+                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockHologramOffset.getLocalized());
                                 player.closeInventory();
                                 return;
                             }
@@ -66,7 +66,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                         else {
                             if (e.isLeftClick()) {
                                 plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_BLOCK_HOLOGRAM_TEXT);
-                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockHologramText.getMsg());
+                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockHologramText.getLocalized());
                                 player.closeInventory();
                                 return;
                             }
@@ -96,7 +96,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                         else {
                             if (e.isLeftClick()) {
                                 plugin.getEditorHandlerNew().startEdit(player, crate, type2);
-                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockLocation.getMsg());
+                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_BlockLocation.getLocalized());
                                 player.closeInventory();
                                 return;
                             }
@@ -115,11 +115,11 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                         else {
                             if (e.isRightClick()) {
                                 plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_BLOCK_EFFECT_PARTICLE_DATA);
-                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Particle_Data.getMsg());
+                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Particle_Data.getLocalized());
                             }
                             else if (e.isLeftClick()) {
                                 plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_BLOCK_EFFECT_PARTICLE_NAME);
-                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Particle_Name.getMsg());
+                                EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Particle_Name.getLocalized());
 
                                 List<String> items = Arrays.stream(Particle.values()).map(Particle::name).toList();
                                 EditorUtils.sendClickableTips(player, items);
@@ -134,14 +134,14 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                             break;
                         }
                         plugin.getEditorHandlerNew().startEdit(player, crate, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Cooldown.getMsg());
+                        EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Cooldown.getLocalized());
                         player.closeInventory();
                         return;
                     }
                     case CRATE_CHANGE_KEYS -> {
                         if (e.isLeftClick()) {
                             plugin.getEditorHandlerNew().startEdit(player, crate, type2);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_KeyId.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_KeyId.getLocalized());
                             EditorUtils.sendClickableTips(player, plugin.getKeyManager().getKeyIds());
                             player.closeInventory();
                             return;
@@ -153,7 +153,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                     }
                     case CRATE_CHANGE_NAME -> {
                         plugin.getEditorHandlerNew().startEdit(player, crate, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_DisplayName.getMsg());
+                        EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_DisplayName.getLocalized());
                         player.closeInventory();
                         return;
                     }
@@ -162,7 +162,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
 
                         if (e.isLeftClick()) {
                             plugin.getEditorHandlerNew().startEdit(player, crate, type2);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Citizens.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Citizens.getLocalized());
                             player.closeInventory();
                             return;
                         }
@@ -177,7 +177,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                                 break;
                             }
                             plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_CONFIG_TEMPLATE);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_AnimationConfig.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_AnimationConfig.getLocalized());
                             EditorUtils.sendClickableTips(player, plugin.getAnimationManager().getAnimationIds());
                         }
                         else if (e.isRightClick()) {
@@ -189,7 +189,7 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                                 .stream().map(f -> f.getName().replace(".yml", "")).toList();
 
                             plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_CONFIG_PREVIEW);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_PreviewConfig.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_PreviewConfig.getLocalized());
                             EditorUtils.sendClickableTips(player, previews);
                         }
                         player.closeInventory();
@@ -198,11 +198,11 @@ public class CrateEditorCrate extends AbstractMenu<ExcellentCrates> {
                     case CRATE_CHANGE_OPEN_COST -> {
                         if (e.isLeftClick()) {
                             plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_OPEN_COST_MONEY);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_OpenCost_Money.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_OpenCost_Money.getLocalized());
                         }
                         else if (e.isRightClick()) {
                             plugin.getEditorHandlerNew().startEdit(player, crate, CrateEditorType.CRATE_CHANGE_OPEN_COST_EXP);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_OpenCost_Exp.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_OpenCost_Exp.getLocalized());
                         }
                         player.closeInventory();
                         return;

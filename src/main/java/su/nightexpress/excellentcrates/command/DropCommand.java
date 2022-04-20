@@ -26,13 +26,13 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Drop_Usage.getMsg();
+        return plugin.lang().Command_Drop_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Drop_Desc.getMsg();
+        return plugin.lang().Command_Drop_Desc.getLocalized();
     }
 
     @Override

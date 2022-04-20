@@ -24,13 +24,13 @@ public class GivekeyCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_GiveKey_Usage.getMsg();
+        return plugin.lang().Command_GiveKey_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_GiveKey_Desc.getMsg();
+        return plugin.lang().Command_GiveKey_Desc.getLocalized();
     }
 
     @Override
@@ -80,12 +80,20 @@ public class GivekeyCommand extends AbstractCommand<ExcellentCrates> {
                     .replace(ICrateKey.PLACEHOLDER_NAME, crateKey.getName())
                     .send(player);
             }
-            pName = plugin.lang().Other_All_Online.getMsg();
+            pName = plugin.lang().Other_All_Online.getLocalized();
         }
         else {
             if (!plugin.getKeyManager().giveKey(pName, crateKey, amount)) {
                 this.errorPlayer(sender);
                 return;
+            }
+
+            Player target = plugin.getServer().getPlayer(pName);
+            if (target != null) {
+                plugin.lang().Command_GiveKey_Notify
+                    .replace("%amount%", amount)
+                    .replace(ICrateKey.PLACEHOLDER_NAME, crateKey.getName())
+                    .send(target);
             }
         }
 

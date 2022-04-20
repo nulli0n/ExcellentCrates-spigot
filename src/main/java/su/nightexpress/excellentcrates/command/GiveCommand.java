@@ -24,13 +24,13 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Give_Usage.getMsg();
+        return plugin.lang().Command_Give_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Give_Desc.getMsg();
+        return plugin.lang().Command_Give_Desc.getLocalized();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
                 plugin.getCrateManager().giveCrate(player, crate, amount);
             }
-            pName = plugin.lang().Other_All_Online.getMsg();
+            pName = plugin.lang().Other_All_Online.getLocalized();
         }
         else {
             Player player = plugin.getServer().getPlayer(pName);

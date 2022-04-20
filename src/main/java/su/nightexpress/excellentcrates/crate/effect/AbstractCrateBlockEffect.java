@@ -39,7 +39,7 @@ public abstract class AbstractCrateBlockEffect extends BukkitRunnable implements
         PLUGIN.getCrateManager().getCrates().stream().filter(crate -> crate.getBlockEffect().getModel() == this.model).forEach(crate -> {
             CrateEffectSettings effect = crate.getBlockEffect();
             new HashSet<>(crate.getBlockLocations()).forEach(loc -> {
-                this.doStep(LocationUtil.getCenter(loc, false), effect.getParticleName(), effect.getParticleData(), this.step);
+                this.doStep(LocationUtil.getCenter(loc.clone(), false), effect.getParticleName(), effect.getParticleData(), this.step);
             });
         });
 

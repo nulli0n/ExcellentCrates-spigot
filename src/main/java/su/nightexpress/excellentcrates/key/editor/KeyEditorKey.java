@@ -46,7 +46,7 @@ public class KeyEditorKey extends AbstractMenu<ExcellentCrates> {
                     case KEY_CHANGE_VIRTUAL -> crateKey.setVirtual(!crateKey.isVirtual());
                     case KEY_CHANGE_NAME -> {
                         plugin.getEditorHandlerNew().startEdit(player, crateKey, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_DisplayName.getMsg());
+                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_DisplayName.getLocalized());
                         player.closeInventory();
                         return;
                     }

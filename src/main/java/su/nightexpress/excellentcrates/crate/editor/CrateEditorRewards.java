@@ -47,7 +47,7 @@ public class CrateEditorRewards extends AbstractMenuAuto<ExcellentCrates, ICrate
             else if (type instanceof CrateEditorType type2) {
                 if (type2 == CrateEditorType.CRATE_REWARD_CREATE) {
                     plugin.getEditorHandlerNew().startEdit(p, crate, type2);
-                    EditorUtils.tipCustom(p, plugin.lang().Editor_Reward_Enter_Id.getMsg());
+                    EditorUtils.tipCustom(p, plugin.lang().Editor_Reward_Enter_Id.getLocalized());
                     p.closeInventory();
                 }
             }

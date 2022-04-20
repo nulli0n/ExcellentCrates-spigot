@@ -23,13 +23,13 @@ public class KeysCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_CheckKey_Usage.getMsg();
+        return plugin.lang().Command_CheckKey_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_CheckKey_Desc.getMsg();
+        return plugin.lang().Command_CheckKey_Desc.getLocalized();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class KeysCommand extends AbstractCommand<ExcellentCrates> {
                     keys.forEach((key, amount) -> {
                         sender.sendMessage(line
                             .replace(ICrateKey.PLACEHOLDER_NAME, key.getName())
-                            .replace("%amount%", amount == -2 ? plugin.lang().Command_CheckKey_Format_OfflineItem.getMsg() : String.valueOf(amount))
+                            .replace("%amount%", amount == -2 ? plugin.lang().Command_CheckKey_Format_OfflineItem.getLocalized() : String.valueOf(amount))
                         );
                     });
                     return;

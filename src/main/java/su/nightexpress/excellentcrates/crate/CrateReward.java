@@ -94,8 +94,8 @@ public class CrateReward implements ICrateReward {
         ItemMeta meta = preview.getItemMeta();
         List<String> lore = meta != null ? meta.getLore() : null;
 
-        String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().lang().Other_Unlimited.getMsg();
-        String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().lang().Other_OneTimed.getMsg()) : plugin().lang().Other_No.getMsg();
+        String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().lang().Other_Unlimited.getLocalized();
+        String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().lang().Other_OneTimed.getLocalized()) : plugin().lang().Other_No.getLocalized();
 
         return str -> str
             .replace(PLACEHOLDER_ID, this.getId())

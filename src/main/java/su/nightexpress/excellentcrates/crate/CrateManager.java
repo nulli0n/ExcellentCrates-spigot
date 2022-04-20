@@ -226,9 +226,8 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             openCostExp = 0D;
         }
 
-        VaultHook vaultHook = plugin.getVault();
-        if (openCostMoney > 0 && vaultHook != null) {
-            double balance = vaultHook.getBalance(player);
+        if (openCostMoney > 0 && VaultHook.hasEconomy()) {
+            double balance = VaultHook.getBalance(player);
             if (balance < openCostMoney) {
                 plugin.lang().Crate_Open_Error_Cost_Money.send(player);
                 return false;
@@ -257,7 +256,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         if (preOpenEvent.isCancelled()) return false;
 
         // Take costs
-        if (openCostMoney > 0 && vaultHook != null) vaultHook.take(player, openCostMoney);
+        if (openCostMoney > 0 && VaultHook.hasEconomy()) VaultHook.takeMoney(player, openCostMoney);
         if (openCostExp > 0) player.setLevel(player.getLevel() - (int) openCostExp);
 
         String animationConfig = crate.getAnimationConfig();

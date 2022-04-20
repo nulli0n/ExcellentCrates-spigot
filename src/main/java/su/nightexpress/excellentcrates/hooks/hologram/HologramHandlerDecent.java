@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.hook.AbstractHook;
+import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
@@ -69,7 +70,7 @@ public class HologramHandlerDecent extends AbstractHook<ExcellentCrates> impleme
         this.removeReward(player);
 
         ICrate crate = reward.getCrate();
-        Hologram hologram = DHAPI.createHologram(crate.getId() + "_" + reward.getId(), location);
+        Hologram hologram = DHAPI.createHologram(crate.getId() + "_" + reward.getId() + Rnd.get(100), location);
         DHAPI.addHologramLine(hologram, reward.getName());
         DHAPI.addHologramLine(hologram, "#ICON: " + reward.getPreview().getType().name());
         hologram.hideAll();

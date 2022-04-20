@@ -20,13 +20,13 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Menu_Usage.getMsg();
+        return plugin.lang().Command_Menu_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Menu_Desc.getMsg();
+        return plugin.lang().Command_Menu_Desc.getLocalized();
     }
 
     @Override

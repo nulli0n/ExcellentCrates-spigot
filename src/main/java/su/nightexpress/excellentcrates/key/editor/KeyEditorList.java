@@ -45,7 +45,7 @@ public class KeyEditorList extends AbstractMenuAuto<ExcellentCrates, ICrateKey> 
             else if (type instanceof CrateEditorType type2) {
                 if (type2 == CrateEditorType.KEY_CREATE) {
                     plugin.getEditorHandlerNew().startEdit(p, plugin.getKeyManager(), type2);
-                    EditorUtils.tipCustom(p, plugin.lang().Editor_Crate_Enter_Id.getMsg());
+                    EditorUtils.tipCustom(p, plugin.lang().Editor_Crate_Enter_Id.getLocalized());
                     p.closeInventory();
                 }
             }

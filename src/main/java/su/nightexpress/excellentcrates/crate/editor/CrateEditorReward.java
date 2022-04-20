@@ -60,7 +60,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
                             break;
                         }
                         plugin.getEditorHandlerNew().startEdit(player, reward, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_DisplayName.getMsg());
+                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_DisplayName.getLocalized());
                         player.closeInventory();
                         return;
                     }
@@ -82,7 +82,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
                     }
                     case CRATE_REWARD_CHANGE_CHANCE -> {
                         plugin.getEditorHandlerNew().startEdit(player, reward, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_Chance.getMsg());
+                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_Chance.getLocalized());
                         player.closeInventory();
                         return;
                     }
@@ -92,7 +92,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
                         }
                         else {
                             plugin.getEditorHandlerNew().startEdit(player, reward, type2);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_Command.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_Command.getLocalized());
                             EditorUtils.sendCommandTips(player);
                             player.closeInventory();
                             return;
@@ -101,11 +101,11 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
                     case CRATE_REWARD_CHANGE_WIN_LIMITS -> {
                         if (e.isLeftClick()) {
                             plugin.getEditorHandlerNew().startEdit(player, reward, CrateEditorType.CRATE_REWARD_CHANGE_WIN_LIMITS_AMOUNT);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_WinLimit_Amount.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_WinLimit_Amount.getLocalized());
                         }
                         else {
                             plugin.getEditorHandlerNew().startEdit(player, reward, CrateEditorType.CRATE_REWARD_CHANGE_WIN_LIMITS_COOLDOWN);
-                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_WinLimit_Cooldown.getMsg());
+                            EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_WinLimit_Cooldown.getLocalized());
                         }
                         player.closeInventory();
                         return;
@@ -184,7 +184,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
 
         @Override
         public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
-            inventory.setContents(this.reward.getItems().toArray(new ItemStack[0]));
+            inventory.setContents(this.reward.getItems().stream().map(ItemStack::new).toList().toArray(new ItemStack[0]));
         }
 
         @Override
@@ -201,7 +201,7 @@ public class CrateEditorReward extends AbstractMenu<ExcellentCrates> {
                 ItemStack item = inventory.getItem(slot);
                 if (item == null) continue;
 
-                items[slot] = item;
+                items[slot] = new ItemStack(item);
             }
 
             this.reward.setItems(Arrays.asList(items));

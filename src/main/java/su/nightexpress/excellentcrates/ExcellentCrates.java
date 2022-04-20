@@ -133,7 +133,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         }
         CitizensHook citizensHook = this.getCitizens();
         if (citizensHook != null) {
-            citizensHook.addListener(this, new CrateCitizensListener(this));
+            CitizensHook.addListener(this, new CrateCitizensListener(this));
         }
     }
 

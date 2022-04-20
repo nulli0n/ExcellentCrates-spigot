@@ -70,7 +70,7 @@ public class CrateEditorHandler extends AbstractEditorHandler<ExcellentCrates, C
     protected boolean onType(@NotNull Player player, @NotNull Object object, @NotNull CrateEditorType type, @NotNull String input) {
         if (type == CrateEditorType.CRATE_CREATE) {
             if (!plugin.getCrateManager().create(EditorUtils.fineId(input))) {
-                EditorUtils.errorCustom(player, plugin.lang().Editor_Crate_Error_Create_Exists.getMsg());
+                EditorUtils.errorCustom(player, plugin.lang().Editor_Crate_Error_Create_Exists.getLocalized());
                 return false;
             }
             //this.plugin.getEditor().getCratesEditor().open(player, 1);
@@ -78,7 +78,7 @@ public class CrateEditorHandler extends AbstractEditorHandler<ExcellentCrates, C
         }
         if (type == CrateEditorType.KEY_CREATE) {
             if (!plugin.getKeyManager().create(EditorUtils.fineId(input))) {
-                EditorUtils.errorCustom(player, plugin.lang().Editor_Key_Error_Create_Exist.getMsg());
+                EditorUtils.errorCustom(player, plugin.lang().Editor_Key_Error_Create_Exist.getLocalized());
                 return false;
             }
             //this.plugin.getEditor().getKeysEditor().open(player, 1);

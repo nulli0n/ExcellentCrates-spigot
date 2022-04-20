@@ -20,13 +20,13 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_ForceOpen_Usage.getMsg();
+        return plugin.lang().Command_ForceOpen_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_ForceOpen_Desc.getMsg();
+        return plugin.lang().Command_ForceOpen_Desc.getLocalized();
     }
 
     @Override

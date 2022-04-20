@@ -21,13 +21,13 @@ public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_ResetCooldown_Usage.getMsg();
+        return plugin.lang().Command_ResetCooldown_Usage.getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_ResetCooldown_Desc.getMsg();
+        return plugin.lang().Command_ResetCooldown_Desc.getLocalized();
     }
 
     @Override
