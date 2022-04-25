@@ -6,7 +6,7 @@ import su.nexmedia.engine.utils.LocationUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.crate.effect.ICrateBlockEffect;
 
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public abstract class AbstractCrateBlockEffect extends BukkitRunnable implements ICrateBlockEffect {
 
@@ -38,7 +38,7 @@ public abstract class AbstractCrateBlockEffect extends BukkitRunnable implements
 
         PLUGIN.getCrateManager().getCrates().stream().filter(crate -> crate.getBlockEffect().getModel() == this.model).forEach(crate -> {
             CrateEffectSettings effect = crate.getBlockEffect();
-            new HashSet<>(crate.getBlockLocations()).forEach(loc -> {
+            crate.getBlockLocations().stream().collect(Collectors.toUnmodifiableSet()).forEach(loc -> {
                 this.doStep(LocationUtil.getCenter(loc.clone(), false), effect.getParticleName(), effect.getParticleData(), this.step);
             });
         });

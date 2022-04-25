@@ -271,7 +271,10 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
                 ICrateKey itemKey = this.getKeyByItem(itemHas);
                 return itemKey != null && itemKey.getId().equalsIgnoreCase(key.getId());
             };
-            PlayerUtil.takeItem(player, predicate, Math.min(PlayerUtil.countItem(player, predicate), amount));
+            int has = PlayerUtil.countItem(player, predicate);
+            if (has < amount) amount = has;
+
+            PlayerUtil.takeItem(player, predicate, amount);
         }
         //return true;
     }
