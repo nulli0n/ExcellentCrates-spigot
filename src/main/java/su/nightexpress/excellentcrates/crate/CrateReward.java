@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -239,7 +240,16 @@ public class CrateReward implements ICrateReward {
 
     @Override
     public void give(@NotNull Player player) {
-        this.getItems().forEach(item -> PlayerUtil.addItem(player, item));
+        this.getItems().forEach(item -> {
+            ItemMeta meta = item.getItemMeta();
+            if(meta != null) {
+                if (meta.hasLore())
+                    meta.setLore(meta.getLore().stream().map((s -> PlaceholderAPI.setPlaceholders(player, s))).toList());
+                if (meta.hasDisplayName())
+                    meta.setDisplayName(PlaceholderAPI.setPlaceholders(player, meta.getDisplayName()));
+            }
+            PlayerUtil.addItem(player, item);
+        });
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
 
         this.plugin().lang().Crate_Open_Reward_Info
