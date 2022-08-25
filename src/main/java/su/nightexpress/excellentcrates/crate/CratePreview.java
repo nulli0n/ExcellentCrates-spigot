@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.crate;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -87,7 +88,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        CrateUser crateUser = plugin.getUserManager().getOrLoadUser(player);
+        CrateUser crateUser = plugin.getUserManager().getUserData(player);
         UserRewardWinLimit rewardLimit = crateUser.getRewardWinLimit(reward);
 
         List<String> lore = new ArrayList<>(this.rewardLore);
@@ -120,7 +121,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
     }
 
     @Override
-    public boolean cancelClick(@NotNull SlotType slotType, int slot) {
+    public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return true;
     }
 

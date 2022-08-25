@@ -8,13 +8,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.data.event.EngineUserLoadEvent;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.data.CrateUser;
 
 public class KeyListener extends AbstractListener<ExcellentCrates> {
 
@@ -26,12 +25,8 @@ public class KeyListener extends AbstractListener<ExcellentCrates> {
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onUserLoad(EngineUserLoadEvent<ExcellentCrates, CrateUser> e) {
-        if (!(e.getPlugin() instanceof ExcellentCrates)) return;
-
-        Player player = e.getUser().getPlayer();
-        if (player == null) return;
-
+    public void onUserLoad(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
         this.keyManager.giveKeysOnHold(player);
     }
 

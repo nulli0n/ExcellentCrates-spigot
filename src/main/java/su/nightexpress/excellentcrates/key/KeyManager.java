@@ -148,7 +148,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
     public int getKeysAmount(@NotNull Player player, @NotNull ICrateKey crateKey) {
         if (crateKey.isVirtual()) {
-            CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin.getUserManager().getUserData(player);
             return user.getKeys(crateKey.getId());
         }
         return PlayerUtil.countItem(player, itemHas -> {
@@ -166,7 +166,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     }
 
     public void giveKeysOnHold(@NotNull Player player) {
-        CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+        CrateUser user = plugin.getUserManager().getUserData(player);
         user.getKeysOnHold().forEach((keyId, amount) -> {
             ICrateKey crateKey = this.getKeyById(keyId);
             if (crateKey == null) return;
@@ -177,7 +177,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     }
 
     public boolean setKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
-        CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
+        CrateUser user = plugin.getUserManager().getUserData(pName);
         if (user == null) return false;
 
         Player player = user.getPlayer();
@@ -195,7 +195,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
     public void setKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
         if (key.isVirtual()) {
-            CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin.getUserManager().getUserData(player);
             user.setKeys(key.getId(), amount);
         }
         else {
@@ -212,7 +212,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     }
 
     public boolean giveKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
-        CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
+        CrateUser user = plugin.getUserManager().getUserData(pName);
         if (user == null) return false;
 
         Player player = user.getPlayer();
@@ -232,7 +232,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
     public void giveKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
         if (key.isVirtual()) {
-            CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin.getUserManager().getUserData(player);
             user.addKeys(key.getId(), amount);
         }
         else {
@@ -244,7 +244,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     }
 
     public boolean takeKey(@NotNull String pName, @NotNull ICrateKey key, int amount) {
-        CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
+        CrateUser user = plugin.getUserManager().getUserData(pName);
         if (user == null) return false;
 
         Player player = user.getPlayer();
@@ -262,7 +262,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
     public void takeKey(@NotNull Player player, @NotNull ICrateKey key, int amount) {
         if (key.isVirtual()) {
-            CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin.getUserManager().getUserData(player);
             //if (user.getKeys(key.getId()) < amount) return false;
             user.takeKeys(key.getId(), amount);
         }

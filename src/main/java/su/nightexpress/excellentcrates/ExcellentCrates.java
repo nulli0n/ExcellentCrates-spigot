@@ -6,7 +6,6 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
-import su.nexmedia.engine.api.editor.AbstractEditorHandler;
 import su.nexmedia.engine.api.editor.EditorHolder;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
@@ -34,14 +33,11 @@ import java.sql.SQLException;
 
 public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserDataHolder<ExcellentCrates, CrateUser>, EditorHolder<ExcellentCrates, CrateEditorType> {
 
-    private Config config;
-    private Lang   lang;
-
     private CrateUserData dataHandler;
     private UserManager   userManager;
 
-    private CrateEditorHandler editorHandler;
     private CrateEditorHub     editorHub;
+    private CrateEditorHandler editorHandler;
 
     private KeyManager       keyManager;
     private AnimationManager animationManager;
@@ -49,6 +45,12 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     private MenuManager      menuManager;
 
     private HologramHandler hologramHandler;
+
+    @Override
+    @NotNull
+    protected ExcellentCrates getSelf() {
+        return this;
+    }
 
     @Override
     public void enable() {
@@ -70,13 +72,13 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public void disable() {
-        if (this.editorHandler != null) {
-            this.editorHandler.shutdown();
-            this.editorHandler = null;
-        }
         if (this.editorHub != null) {
             this.editorHub.clear();
             this.editorHub = null;
+        }
+        if (this.editorHandler != null) {
+            this.editorHandler.shutdown();
+            this.editorHandler = null;
         }
         if (this.animationManager != null) {
             this.animationManager.shutdown();
@@ -97,12 +99,13 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     }
 
     @Override
-    public void setConfig() {
-        this.config = new Config(this);
-        this.config.setup();
+    public void loadConfig() {
+        Config.load(this);
+    }
 
-        this.lang = new Lang(this);
-        this.lang.setup();
+    @Override
+    public void loadLang() {
+        this.getLangManager().loadMissing(Lang.class);
     }
 
     @Override
@@ -132,18 +135,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         mainCommand.addChildren(new PreviewCommand(this));
         mainCommand.addChildren(new ResetCooldownCommand(this));
         mainCommand.addChildren(new ResetLimitCommand(this));
-    }
-
-    @Override
-    @NotNull
-    public Config cfg() {
-        return this.config;
-    }
-
-    @Override
-    @NotNull
-    public Lang lang() {
-        return this.lang;
     }
 
     @Override
@@ -210,9 +201,8 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         return this.editorHub;
     }
 
-    @Override
     @NotNull
-    public AbstractEditorHandler<ExcellentCrates, CrateEditorType> getEditorHandlerNew() {
-        return this.editorHandler;
+    public CrateEditorHandler getEditorHandler() {
+        return editorHandler;
     }
 }

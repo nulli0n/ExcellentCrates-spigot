@@ -4,13 +4,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.api.config.LangMessage;
+import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 import java.util.List;
@@ -24,13 +25,13 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_ResetLimit_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_RESET_LIMIT_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_ResetLimit_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_RESET_LIMIT_DESC).getLocalized();
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        CrateUser user = plugin.getUserManager().getOrLoadUser(args[1], false);
+        CrateUser user = plugin.getUserManager().getUserData(args[1]);
         if (user == null) {
             this.errorPlayer(sender);
             return;
@@ -71,7 +72,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(args[2]);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.send(sender);
+            plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
@@ -79,11 +80,11 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
         LangMessage message;
         if (reward == null) {
             user.removeRewardWinLimit(crate.getId());
-            message = plugin.lang().Command_ResetLimit_Done_Crate;
+            message = plugin.getMessage(Lang.COMMAND_RESET_LIMIT_DONE_CRATE);
         }
         else {
             user.removeRewardWinLimit(crate.getId(), reward.getId());
-            message = plugin.lang().Command_ResetLimit_Done_Reward.replace(Placeholders.REWARD_NAME, reward.getName());
+            message = plugin.getMessage(Lang.COMMAND_RESET_LIMIT_DONE_REWARD).replace(Placeholders.REWARD_NAME, reward.getName());
         }
 
         message

@@ -14,7 +14,7 @@ public class ExcellentCratesAPI {
 
     @NotNull
     public static CrateUser getUserData(@NotNull Player player) {
-        return PLUGIN.getUserManager().getOrLoadUser(player);
+        return PLUGIN.getUserManager().getUserData(player);
     }
 
     @NotNull

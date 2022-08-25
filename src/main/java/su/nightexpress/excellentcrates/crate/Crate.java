@@ -11,9 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
+import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.*;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
@@ -60,7 +62,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 
         this.setName("&b" + StringUtil.capitalizeFully(this.getId() + " Crate"));
         this.setAnimationConfig(null); // None
-        this.setPreviewConfig(Constants.DEFAULT);
+        this.setPreviewConfig(Placeholders.DEFAULT);
         this.setPermissionRequired(false);
         this.setAttachedCitizens(new int[]{});
 
@@ -106,7 +108,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
         this.setItem(cfg.getItem("Item.", this.getId()));
 
-        this.setBlockLocations(new HashSet<>(LocationUtil.deserialize((Collection<String>)cfg.getStringList("Block.Locations"))));
+        this.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("Block.Locations"))));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
         this.setBlockHologramEnabled(cfg.getBoolean("Block.Hologram.Enabled"));
         this.setBlockHologramOffsetY(cfg.getDouble("Block.Hologram.Offset.Y", 1.5D));
@@ -148,7 +150,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 
         crate.setName(cfg.getString("name", cfg.getFile().getName()));
         crate.setAnimationConfig(cfg.getString("template", null));
-        crate.setPreviewConfig(cfg.getString("preview", Constants.DEFAULT));
+        crate.setPreviewConfig(cfg.getString("preview", Placeholders.DEFAULT));
         crate.setPermissionRequired(cfg.getBoolean("permission-required"));
         crate.setAttachedCitizens(cfg.getIntArray("attached-citizens"));
 
@@ -160,7 +162,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         crate.setKeyIds(Sets.newHashSet(cfg.getString("key.id", "")));
         crate.setItem(cfg.getItem("item."));
 
-        crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize((Collection<String>)cfg.getStringList("block.locations"))));
+        crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("block.locations"))));
         crate.setBlockPushbackEnabled(cfg.getBoolean("block.pushback.enabled"));
         crate.setBlockHologramEnabled(cfg.getBoolean("block.hologram.enabled"));
         crate.setBlockHologramOffsetY(1.5D);
@@ -213,7 +215,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         cfg.set("Key.Ids", this.getKeyIds());
         cfg.setItem("Item", this.getItem());
 
-        cfg.set("Block.Locations", LocationUtil.serialize((Collection<Location>) new ArrayList<>(this.getBlockLocations())));
+        cfg.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
         cfg.set("Block.Pushback.Enabled", this.isBlockPushbackEnabled());
         cfg.set("Block.Hologram.Enabled", this.isBlockHologramEnabled());
         cfg.set("Block.Hologram.Offset.Y", this.getBlockHologramOffsetY());
@@ -251,7 +253,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             .replace(Placeholders.CRATE_ANIMATION_CONFIG, String.valueOf(this.getAnimationConfig()))
             .replace(Placeholders.CRATE_PREVIEW_CONFIG, String.valueOf(this.getPreviewConfig()))
             .replace(Placeholders.CRATE_PERMISSION, Perms.CRATE + this.getId())
-            .replace(Placeholders.CRATE_PERMISSION_REQUIRED, plugin().lang().getBoolean(this.isPermissionRequired()))
+            .replace(Placeholders.CRATE_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
             .replace(Placeholders.CRATE_ATTACHED_CITIZENS, Arrays.toString(this.getAttachedCitizens()))
             .replace(Placeholders.CRATE_OPENING_COOLDOWN, TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
             .replace(Placeholders.CRATE_OPENING_COST_EXP, NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
@@ -259,8 +261,8 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             .replace(Placeholders.CRATE_KEY_IDS, String.join(DELIMITER_DEFAULT, this.getKeyIds()))
             .replace(Placeholders.CRATE_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
             .replace(Placeholders.CRATE_ITEM_LORE, String.join("\n", ItemUtil.getLore(this.getItem())))
-            .replace(Placeholders.CRATE_BLOCK_PUSHBACK_ENABLED, plugin().lang().getBoolean(this.isBlockPushbackEnabled()))
-            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED, plugin().lang().getBoolean(this.isBlockHologramEnabled()))
+            .replace(Placeholders.CRATE_BLOCK_PUSHBACK_ENABLED, LangManager.getBoolean(this.isBlockPushbackEnabled()))
+            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED, LangManager.getBoolean(this.isBlockHologramEnabled()))
             .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_OFFSET_Y, NumberUtil.format(this.getBlockHologramOffsetY()))
             .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_TEXT, String.join("\n", this.getBlockHologramText()))
             .replace(Placeholders.CRATE_BLOCK_LOCATIONS, String.join(DELIMITER_DEFAULT, this.getBlockLocations().stream().map(location -> {

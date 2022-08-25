@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.ConfigTemplate;
+import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
@@ -10,7 +10,7 @@ import su.nightexpress.excellentcrates.api.CrateClickAction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Config extends ConfigTemplate {
+public class Config {
 
     public static final String DIR_CRATES     = "/crates/";
     public static final String DIR_PREVIEWS   = "/previews/";
@@ -22,17 +22,13 @@ public class Config extends ConfigTemplate {
     public static double CRATE_PUSHBACK_MULTIPLY;
     private static Map<ClickType, CrateClickAction> CRATE_CLICK_ACTIONS;
 
-    public Config(@NotNull ExcellentCrates plugin) {
-        super(plugin);
-    }
-
     @Nullable
     public static CrateClickAction getCrateClickAction(@NotNull ClickType clickType) {
         return CRATE_CLICK_ACTIONS.get(clickType);
     }
 
-    @Override
-    public void load() {
+    public static void load(@NotNull ExcellentCrates plugin) {
+        JYML cfg = plugin.getConfig();
 
         String path = "Crate.Click_Actions.";
         CRATE_CLICK_ACTIONS = new HashMap<>();

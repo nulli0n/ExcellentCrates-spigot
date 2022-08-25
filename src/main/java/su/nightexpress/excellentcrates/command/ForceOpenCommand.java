@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_ForceOpen_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_FORCE_OPEN_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_ForceOpen_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_FORCE_OPEN_DESC).getLocalized();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.send(sender);
+            plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
@@ -71,11 +72,11 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        plugin.lang().Command_ForceOpen_Notify
+        plugin.getMessage(Lang.COMMAND_FORCE_OPEN_NOTIFY)
             .replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
 
         if (!sender.equals(player)) {
-            plugin.lang().Command_ForceOpen_Done
+            plugin.getMessage(Lang.COMMAND_FORCE_OPEN_DONE)
                 .replace("%player%", player.getName())
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .replace(Placeholders.CRATE_ID, crate.getId())

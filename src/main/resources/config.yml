@@ -1,7 +1,8 @@
 Plugin:
   Command_Aliases: 'excellentcrates,ecrates,crates,crate,case,cases'
   Language: en
-  Prefix: 'ExcellentCrates'
+  Name: 'ExcellentCrates'
+  Prefix: '&e%plugin_name% &8» &7'
 
 Database:
   Type: SQLite

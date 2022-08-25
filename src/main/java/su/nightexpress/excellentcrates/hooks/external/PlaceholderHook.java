@@ -8,6 +8,7 @@ import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
@@ -74,10 +75,10 @@ public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
                 String id = tmp.replace("cooldown_", "");
                 ICrate crate = plugin.getCrateManager().getCrateById(id);
                 if (crate != null) {
-                    CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+                    CrateUser user = plugin.getUserManager().getUserData(player);
 
                     long left = user.getCrateCooldown(crate);
-                    if (left == 0) return plugin.lang().Crate_Placeholder_Cooldown_Blank.getLocalized();
+                    if (left == 0) return plugin.getMessage(Lang.CRATE_PLACEHOLDER_COOLDOWN_BLANK).getLocalized();
                     return TimeUtil.formatTimeLeft(left);
                 }
             }

@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrateMenu;
+import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Menu_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_MENU_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Menu_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_MENU_DESC).getLocalized();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrateMenu menu = plugin.getMenuManager().getMenuById(args[1]);
         if (menu == null) {
-            plugin.lang().Menu_Invalid.send(sender);
+            plugin.getMessage(Lang.MENU_INVALID).send(sender);
             return;
         }
 
@@ -78,7 +79,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
         menu.open(player);
 
         if (!sender.equals(player)) {
-            plugin.lang().Command_Menu_Done_Others
+            plugin.getMessage(Lang.COMMAND_MENU_DONE_OTHERS)
                 .replace("%player%", player.getName())
                 .replace(Placeholders.MENU_ID, menu.getId())
                 .send(sender);

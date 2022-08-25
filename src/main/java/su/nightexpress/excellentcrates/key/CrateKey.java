@@ -6,6 +6,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
+import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -70,7 +71,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
         return str -> str
             .replace(Placeholders.KEY_ID, this.getId())
             .replace(Placeholders.KEY_NAME, this.getName())
-            .replace(Placeholders.KEY_VIRTUAL, plugin().lang().getBoolean(this.isVirtual()))
+            .replace(Placeholders.KEY_VIRTUAL, LangManager.getBoolean(this.isVirtual()))
             .replace(Placeholders.KEY_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
             ;
     }

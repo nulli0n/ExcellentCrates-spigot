@@ -5,12 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.api.crate.ICrateReward;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.editor.CrateEditorReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.UserRewardWinLimit;
@@ -95,14 +97,14 @@ public class CrateReward implements ICrateReward {
         ItemMeta meta = preview.getItemMeta();
         List<String> lore = meta != null ? meta.getLore() : null;
 
-        String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().lang().Other_Unlimited.getLocalized();
-        String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().lang().Other_OneTimed.getLocalized()) : plugin().lang().Other_No.getLocalized();
+        String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().getMessage(Lang.OTHER_INFINITY).getLocalized();
+        String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().getMessage(Lang.OTHER_ONE_TIMED).getLocalized()) : plugin().getMessage(Lang.OTHER_NO).getLocalized();
 
         return str -> str
             .replace(Placeholders.REWARD_ID, this.getId())
             .replace(Placeholders.REWARD_NAME, this.getName())
             .replace(Placeholders.REWARD_CHANCE, NumberUtil.format(this.getChance()))
-            .replace(Placeholders.REWARD_BROADCAST, plugin().lang().getBoolean(this.isBroadcast()))
+            .replace(Placeholders.REWARD_BROADCAST, LangManager.getBoolean(this.isBroadcast()))
             .replace(Placeholders.REWARD_PREVIEW_NAME, ItemUtil.getItemName(preview))
             .replace(Placeholders.REWARD_PREVIEW_LORE, String.join("\n", lore == null ? new ArrayList<>() : lore))
             .replace(Placeholders.REWARD_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
@@ -194,7 +196,7 @@ public class CrateReward implements ICrateReward {
     @Override
     public boolean canWin(@NotNull Player player) {
         if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
-            CrateUser user = plugin().getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin().getUserManager().getUserData(player);
             UserRewardWinLimit winLimit = user.getRewardWinLimit(this);
             if (winLimit == null) return true;
             if (!winLimit.isExpired() || winLimit.isDrained(this)) return false;
@@ -242,13 +244,13 @@ public class CrateReward implements ICrateReward {
         this.getItems().forEach(item -> PlayerUtil.addItem(player, item));
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
 
-        this.plugin().lang().Crate_Open_Reward_Info
+        this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_INFO)
             .replace(Placeholders.CRATE_NAME, crate.getName())
             .replace(Placeholders.REWARD_NAME, this.getName())
             .send(player);
 
         if (this.isBroadcast()) {
-            this.plugin().lang().Crate_Open_Reward_Broadcast
+            this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_BROADCAST)
                 .replace("%player%", player.getName())
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .replace(Placeholders.REWARD_NAME, this.getName())
@@ -256,7 +258,7 @@ public class CrateReward implements ICrateReward {
         }
 
         if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
-            CrateUser user = plugin().getUserManager().getOrLoadUser(player);
+            CrateUser user = plugin().getUserManager().getUserData(player);
             UserRewardWinLimit winLimit = user.getRewardWinLimit(this);
             if (winLimit == null) winLimit = new UserRewardWinLimit(0, 0);
 
