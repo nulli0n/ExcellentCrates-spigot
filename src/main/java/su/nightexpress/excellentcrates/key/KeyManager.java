@@ -112,6 +112,9 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     @Nullable
     public ICrateKey getKeyByItem(@NotNull ItemStack item) {
         String id = PDCUtil.getStringData(item, Keys.CRATE_KEY_ID);
+        if (id == null) {
+            id = PDCUtil.getStringData(item, Keys.OLD_CRATES_KEY_ID);
+        }
         return id == null ? null : this.getKeyById(id);
     }
 
