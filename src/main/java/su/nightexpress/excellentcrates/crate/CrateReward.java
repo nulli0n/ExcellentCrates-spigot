@@ -243,9 +243,7 @@ public class CrateReward implements ICrateReward {
     @Override
     public void give(@NotNull Player player) {
         this.getItems().forEach(item -> {
-            if(Hooks.hasPlaceholderAPI()) {
-                ItemUtil.applyPlaceholderAPI(player, item);
-            }
+            ItemUtil.applyPlaceholderAPI(player, item);
             PlayerUtil.addItem(player, item);
         });
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
