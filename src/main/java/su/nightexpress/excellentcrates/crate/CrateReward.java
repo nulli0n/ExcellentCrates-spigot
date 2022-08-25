@@ -2,10 +2,12 @@ package su.nightexpress.excellentcrates.crate;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
@@ -241,12 +243,8 @@ public class CrateReward implements ICrateReward {
     @Override
     public void give(@NotNull Player player) {
         this.getItems().forEach(item -> {
-            ItemMeta meta = item.getItemMeta();
-            if(meta != null) {
-                if (meta.hasLore())
-                    meta.setLore(meta.getLore().stream().map((s -> PlaceholderAPI.setPlaceholders(player, s))).toList());
-                if (meta.hasDisplayName())
-                    meta.setDisplayName(PlaceholderAPI.setPlaceholders(player, meta.getDisplayName()));
+            if(Hooks.hasPlaceholderAPI()) {
+                ItemUtil.applyPlaceholderAPI(player, item);
             }
             PlayerUtil.addItem(player, item);
         });
