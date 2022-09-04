@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.data;
 
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.data.AbstractUser;
@@ -23,8 +22,8 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     private final Map<String, Long>                            openCooldowns;
     private final Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits;
 
-    public CrateUser(@NotNull ExcellentCrates plugin, @NotNull Player player) {
-        this(plugin, player.getUniqueId(), player.getName(), System.currentTimeMillis(),
+    public CrateUser(@NotNull ExcellentCrates plugin, @NotNull UUID uuid, @NotNull String name) {
+        this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
             new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
@@ -36,6 +35,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         @NotNull ExcellentCrates plugin,
         @NotNull UUID uuid,
         @NotNull String name,
+        long dateCreated,
         long lastOnline,
 
         @NotNull Map<String, Integer> keys,
@@ -43,7 +43,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         @NotNull Map<String, Long> openCooldowns,
         @NotNull Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits
     ) {
-        super(plugin, uuid, name, lastOnline);
+        super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
         this.keysOnHold = keysOnHold;
         this.openCooldowns = openCooldowns;
@@ -75,7 +75,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void setCrateCooldown(@NotNull String id, long endDate) {
         this.getCrateCooldowns().put(id.toLowerCase(), endDate);
 
-        if (plugin.cfg().dataSaveInstant) {
+        if (plugin.getConfigManager().dataSaveInstant) {
             plugin.getUserManager().save(this, true);
         }
     }
@@ -118,7 +118,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void setKeys(@NotNull String id, int amount) {
         this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
 
-        if (plugin.cfg().dataSaveInstant) {
+        if (plugin.getConfigManager().dataSaveInstant) {
             plugin.getUserManager().save(this, true);
         }
     }
@@ -130,7 +130,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void addKeysOnHold(@NotNull String id, int amount) {
         this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
 
-        if (plugin.cfg().dataSaveInstant) {
+        if (plugin.getConfigManager().dataSaveInstant) {
             plugin.getUserManager().save(this, true);
         }
     }
@@ -142,7 +142,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void cleanKeysOnHold() {
         this.getKeysOnHold().clear();
 
-        if (plugin.cfg().dataSaveInstant) {
+        if (plugin.getConfigManager().dataSaveInstant) {
             plugin.getUserManager().save(this, true);
         }
     }
@@ -171,7 +171,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
 
-        if (plugin.cfg().dataSaveInstant) {
+        if (plugin.getConfigManager().dataSaveInstant) {
             plugin.getUserManager().save(this, true);
         }
     }

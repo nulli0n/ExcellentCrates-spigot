@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Preview_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_PREVIEW_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Preview_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_PREVIEW_DESC).getLocalized();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.send(sender);
+            plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
@@ -78,7 +79,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
         crate.openPreview(player);
 
         if (!sender.equals(player)) {
-            plugin.lang().Command_Preview_Done_Others
+            plugin.getMessage(Lang.COMMAND_PREVIEW_DONE_OTHERS)
                 .replace("%player%", player.getName())
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .replace(Placeholders.CRATE_ID, crate.getId())

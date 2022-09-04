@@ -7,16 +7,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
 import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.utils.EditorUtils;
+import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.editor.CrateEditorHandler;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 
@@ -38,6 +41,16 @@ public class CrateEditorList extends AbstractMenuAuto<ExcellentCrates, ICrate> {
         this.objectName = StringUtil.color(cfg.getString("Object.Name", Placeholders.CRATE_ID));
         this.objectLore = StringUtil.color(cfg.getStringList("Object.Lore"));
 
+        EditorInput<CrateManager, CrateEditorType> input = (player, crateManager, type, e) -> {
+            if (type == CrateEditorType.CRATE_CREATE) {
+                if (!plugin.getCrateManager().create(EditorManager.fineId(e.getMessage()))) {
+                    EditorManager.error(player, plugin.getMessage(Lang.EDITOR_CRATE_ERROR_CREATE_EXISTS).getLocalized());
+                    return false;
+                }
+            }
+            return true;
+        };
+
         IMenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
@@ -47,8 +60,8 @@ public class CrateEditorList extends AbstractMenuAuto<ExcellentCrates, ICrate> {
             }
             else if (type instanceof CrateEditorType type2) {
                 if (type2 == CrateEditorType.CRATE_CREATE) {
-                    plugin.getEditorHandlerNew().startEdit(player, plugin.getCrateManager(), type2);
-                    EditorUtils.tipCustom(player, plugin.lang().Editor_Crate_Enter_Id.getLocalized());
+                    EditorManager.startEdit(player, plugin.getCrateManager(), type2, input);
+                    EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_CRATE_ENTER_ID).getLocalized());
                     player.closeInventory();
                 }
             }

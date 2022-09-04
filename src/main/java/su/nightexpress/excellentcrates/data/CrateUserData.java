@@ -30,6 +30,7 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
             try {
                 UUID uuid = UUID.fromString(rs.getString(COL_USER_UUID));
                 String name = rs.getString(COL_USER_NAME);
+                long dateCreated = rs.getLong(COL_USER_DATE_CREATED);
                 long lastOnline = rs.getLong(COL_USER_LAST_ONLINE);
 
                 Map<String, Integer> keys = this.gson.fromJson(rs.getString(COL_KEYS), new TypeToken<Map<String, Integer>>() {
@@ -41,7 +42,7 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
                 Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits = this.gson.fromJson(rs.getString(COL_REWARD_WIN_LIMITS), new TypeToken<Map<String, Map<String, UserRewardWinLimit>>>() {
                 }.getType());
 
-                return new CrateUser(plugin, uuid, name, lastOnline, keys, keysOnHold, openCooldowns, rewardWinLimits);
+                return new CrateUser(plugin, uuid, name, dateCreated, lastOnline, keys, keysOnHold, openCooldowns, rewardWinLimits);
             }
             catch (SQLException e) {
                 return null;

@@ -8,20 +8,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.editor.AbstractEditorHandler;
-import su.nexmedia.engine.utils.EditorUtils;
+import su.nexmedia.engine.api.editor.EditorObject;
+import su.nexmedia.engine.api.manager.AbstractManager;
+import su.nexmedia.engine.api.manager.IListener;
+import su.nexmedia.engine.editor.EditorManager;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateKey;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
-import su.nightexpress.excellentcrates.crate.editor.handler.EditorHandlerCrate;
-import su.nightexpress.excellentcrates.crate.editor.handler.EditorHandlerReward;
-import su.nightexpress.excellentcrates.key.editor.handler.EditorHandlerKey;
 
 import java.io.File;
-import java.util.Map;
 
-public class CrateEditorHandler extends AbstractEditorHandler<ExcellentCrates, CrateEditorType> {
+public class CrateEditorHandler extends AbstractManager<ExcellentCrates> implements IListener {
 
     public static JYML CRATE_LIST;
     public static JYML CRATE_MAIN;
@@ -37,7 +33,6 @@ public class CrateEditorHandler extends AbstractEditorHandler<ExcellentCrates, C
 
     @Override
     protected void onLoad() {
-        super.onLoad();
         this.plugin.getConfigManager().extract("editor");
 
         if (CRATE_LIST == null || !CRATE_LIST.reload()) {
@@ -61,52 +56,39 @@ public class CrateEditorHandler extends AbstractEditorHandler<ExcellentCrates, C
             KEY_MAIN = new JYML(new File(plugin.getDataFolder() + "/editor/key/main.yml"));
         }
 
-        this.addInputHandler(ICrate.class, new EditorHandlerCrate(this.plugin()));
-        this.addInputHandler(ICrateReward.class, new EditorHandlerReward(this.plugin()));
-        this.addInputHandler(ICrateKey.class, new EditorHandlerKey(this.plugin()));
+        this.registerListeners();
     }
 
     @Override
-    protected boolean onType(@NotNull Player player, @NotNull Object object, @NotNull CrateEditorType type, @NotNull String input) {
-        if (type == CrateEditorType.CRATE_CREATE) {
-            if (!plugin.getCrateManager().create(EditorUtils.fineId(input))) {
-                EditorUtils.errorCustom(player, plugin.lang().Editor_Crate_Error_Create_Exists.getLocalized());
-                return false;
-            }
-            //this.plugin.getEditor().getCratesEditor().open(player, 1);
-            return true;
-        }
-        if (type == CrateEditorType.KEY_CREATE) {
-            if (!plugin.getKeyManager().create(EditorUtils.fineId(input))) {
-                EditorUtils.errorCustom(player, plugin.lang().Editor_Key_Error_Create_Exist.getLocalized());
-                return false;
-            }
-            //this.plugin.getEditor().getKeysEditor().open(player, 1);
-            return true;
-        }
+    protected void onShutdown() {
+        this.unregisterListeners();
+    }
 
-        return super.onType(player, object, type, input);
+    @Override
+    public void registerListeners() {
+        this.plugin.getPluginManager().registerEvents(this, this.plugin);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onCrateBlockClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        Map.Entry<CrateEditorType, Object> editor = this.getEditor(player);
+
+        EditorObject<?, ?> editor = EditorManager.getEditorInput(player);
         if (editor == null) return;
 
         Block block = e.getClickedBlock();
         if (block == null) return;
 
-        if (editor.getKey() == CrateEditorType.CRATE_CHANGE_BLOCK_LOCATION) {
+        if (editor.getType() == CrateEditorType.CRATE_CHANGE_BLOCK_LOCATION) {
             if (plugin.getCrateManager().getCrateByBlock(block) != null) return;
 
-            ICrate crate = (ICrate) editor.getValue();
+            ICrate crate = (ICrate) editor.getObject();
             crate.getBlockLocations().add(block.getLocation());
             e.setUseInteractedBlock(Result.DENY);
             e.setUseItemInHand(Result.DENY);
 
             crate.save();
-            this.endEdit(player);
+            EditorManager.endEdit(player);
             //crate.getEditor().open(player, 1);
         }
     }

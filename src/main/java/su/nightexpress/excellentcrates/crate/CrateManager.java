@@ -28,6 +28,7 @@ import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.api.event.CrateOpenEvent;
 import su.nightexpress.excellentcrates.api.hook.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
@@ -196,14 +197,14 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         if (!force && !crate.hasPermission(player)) {
-            plugin.lang().Error_Permission_Deny.send(player);
+            plugin.getMessage(Lang.ERROR_PERMISSION_DENY).send(player);
             return false;
         }
 
-        CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+        CrateUser user = plugin.getUserManager().getUserData(player);
         if (!force && user.isCrateOnCooldown(crate)) {
             long expireDate = user.getCrateCooldown(crate);
-            (expireDate < 0 ? plugin.lang().Crate_Open_Error_Cooldown_OneTimed : plugin.lang().Crate_Open_Error_Cooldown_Temporary)
+            (expireDate < 0 ? plugin.getMessage(Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED) : plugin.getMessage(Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY))
                 .replace("%time%", TimeUtil.formatTimeLeft(expireDate))
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .send(player);
@@ -213,7 +214,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         ICrateKey crateKey = this.plugin.getKeyManager().getKeys(player, crate).stream().findFirst().orElse(null);
         if (!force) {
             if (!crate.getKeyIds().isEmpty() && crateKey == null) {
-                plugin.lang().Crate_Open_Error_NoKey.send(player);
+                plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_KEY).send(player);
                 return false;
             }
         }
@@ -230,25 +231,25 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         if (openCostMoney > 0 && VaultHook.hasEconomy()) {
             double balance = VaultHook.getBalance(player);
             if (balance < openCostMoney) {
-                plugin.lang().Crate_Open_Error_Cost_Money.send(player);
+                plugin.getMessage(Lang.CRATE_OPEN_ERROR_COST_MONEY).send(player);
                 return false;
             }
         }
         if (openCostExp > 0) {
             double balance = player.getLevel();
             if (balance < openCostExp) {
-                plugin.lang().Crate_Open_Error_Cost_Exp.send(player);
+                plugin.getMessage(Lang.CRATE_OPEN_ERROR_COST_EXP).send(player);
                 return false;
             }
         }
 
         if (crate.getRewards(player).isEmpty()) {
-            plugin.lang().Crate_Open_Error_NoRewards.send(player);
+            plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_REWARDS).send(player);
             return false;
         }
 
         if (!force && player.getInventory().firstEmpty() == -1) {
-            plugin.lang().Crate_Open_Error_InventorySpace.replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
+            plugin.getMessage(Lang.CRATE_OPEN_ERROR_INVENTORY_SPACE).replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
             return false;
         }
 
@@ -302,7 +303,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         long cooldown = crate.getOpenCooldown();
         long endDate = cooldown < 0 ? -1 : System.currentTimeMillis() + cooldown * 1000L;
 
-        CrateUser user = plugin.getUserManager().getOrLoadUser(player);
+        CrateUser user = plugin.getUserManager().getUserData(player);
         user.setCrateCooldown(crate, endDate);
     }
 }

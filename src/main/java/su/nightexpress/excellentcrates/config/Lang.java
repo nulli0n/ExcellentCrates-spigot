@@ -1,114 +1,108 @@
 package su.nightexpress.excellentcrates.config;
 
-import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.LangMessage;
-import su.nexmedia.engine.core.config.CoreLang;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nexmedia.engine.api.lang.LangKey;
+import su.nexmedia.engine.lang.EngineLang;
 
 
-public class Lang extends CoreLang {
+public class Lang extends EngineLang {
 
-    public Lang(@NotNull ExcellentCrates plugin) {
-        super(plugin);
-    }
+    public static final LangKey COMMAND_DROP_USAGE = new LangKey("Command.Drop.Usage", "<crateId> <world> <x> <y> <z>");
+    public static final LangKey COMMAND_DROP_DESC = new LangKey("Command.Drop.Desc", "Drop crate at specified location in the world.");
+    public static final LangKey COMMAND_DROP_DONE = new LangKey("Command.Drop.Done", "Dropped &6%crate_name%&7 at &6%x%&7, &6%y%&7, &6%z%&7 in &6%world%&7.");
 
-    public LangMessage Command_Drop_Usage = new LangMessage(this, "<crateId> <world> <x> <y> <z>");
-    public LangMessage Command_Drop_Desc  = new LangMessage(this, "Drop crate at specified location in the world.");
-    public LangMessage Command_Drop_Done  = new LangMessage(this, "Dropped &6%crate_name%&7 at &6%x%&7, &6%y%&7, &6%z%&7 in &6%world%&7.");
+    public static final LangKey COMMAND_FORCE_OPEN_DESC  = new LangKey("Command.ForceOpen.Desc", "Force open a crate for a player.");
+    public static final LangKey COMMAND_FORCE_OPEN_USAGE = new LangKey("Command.ForceOpen.Usage", "<crateId> [player]");
+    public static final LangKey COMMAND_FORCE_OPEN_DONE   = new LangKey("Command.ForceOpen.Done", "Force opened &6%crate_name%&7 for &6%player%&7.");
+    public static final LangKey COMMAND_FORCE_OPEN_NOTIFY = new LangKey("Command.ForceOpen.Notify", "You have been forced to open &6%crate_name%&7.");
 
-    public LangMessage Command_ForceOpen_Desc   = new LangMessage(this, "Force open a crate for a player.");
-    public LangMessage Command_ForceOpen_Usage  = new LangMessage(this, "<crateId> [player]");
-    public LangMessage Command_ForceOpen_Done   = new LangMessage(this, "Force opened &6%crate_name%&7 for &6%player%&7.");
-    public LangMessage Command_ForceOpen_Notify = new LangMessage(this, "You have been forced to open &6%crate_name%&7.");
+    public static final LangKey COMMAND_GIVE_USAGE = new LangKey("Command.Give.Usage", "<player | *> <crateId> [amount]");
+    public static final LangKey COMMAND_GIVE_DESC   = new LangKey("Command.Give.Desc", "Gives crate(s) to a player.");
+    public static final LangKey COMMAND_GIVE_DONE   = new LangKey("Command.Give.Done", "Given &6x%amount% &7of &6%crate_name% &7crate(s) to &6%player%&7.");
+    public static final LangKey COMMAND_GIVE_NOTIFY = new LangKey("Command.Give.Notify", "You recieved &6x%amount% &7of &6%crate_name%&7!");
 
-    public LangMessage Command_Give_Usage  = new LangMessage(this, "<player | *> <crateId> [amount]");
-    public LangMessage Command_Give_Desc   = new LangMessage(this, "Gives crate(s) to a player.");
-    public LangMessage Command_Give_Done   = new LangMessage(this, "Given &6x%amount% &7of &6%crate_name% &7crate(s) to &6%player%&7.");
-    public LangMessage Command_Give_Notify = new LangMessage(this, "You recieved &6x%amount% &7of &6%crate_name%&7!");
+    public static final LangKey COMMAND_KEY_DESC         = new LangKey("Command.Key.Desc", "Manage or view player's crate keys.");
+    public static final LangKey COMMAND_KEY_ERROR_PLAYER = new LangKey("Command.Key.Error.Player", "&cCould not proccess operation for offline/invalid player &e%player%&c!");
 
-    public LangMessage Command_Key_Desc         = new LangMessage(this, "Manage or view player's crate keys.");
-    public LangMessage Command_Key_Error_Player = new LangMessage(this, "&cCould not proccess operation for offline/invalid player &e%player%&c!");
+    public static final LangKey COMMAND_KEY_GIVE_USAGE = new LangKey("Command.Key.Give.Usage", "<player | *> <keyId> <amount>");
+    public static final LangKey COMMAND_KEY_GIVE_DESC   = new LangKey("Command.Key.Give.Desc", "Give crate key(s) to a player.");
+    public static final LangKey COMMAND_KEY_GIVE_DONE   = new LangKey("Command.Key.Give.Done", "Given &ax%amount% &7of &a%key_name% &7key(s) to &a%player%&7.");
+    public static final LangKey COMMAND_KEY_GIVE_NOTIFY = new LangKey("Command.Key.Give.Notify", "You recieved &ax%amount% &7of &a%key_name%&7!");
 
-    public LangMessage Command_Key_Give_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
-    public LangMessage Command_Key_Give_Desc  = new LangMessage(this, "Give crate key(s) to a player.");
-    public LangMessage Command_Key_Give_Done   = new LangMessage(this, "Given &ax%amount% &7of &a%key_name% &7key(s) to &a%player%&7.");
-    public LangMessage Command_Key_Give_Notify = new LangMessage(this, "You recieved &ax%amount% &7of &a%key_name%&7!");
+    public static final LangKey COMMAND_KEY_TAKE_USAGE = new LangKey("Command.Key.Take.Usage", "<player | *> <keyId> <amount>");
+    public static final LangKey COMMAND_KEY_TAKE_DESC   = new LangKey("Command.Key.Take.Desc", "Take crate key(s) from a player.");
+    public static final LangKey COMMAND_KEY_TAKE_DONE   = new LangKey("Command.Key.Take.Done", "Taken &cx%amount% &c%key_name% &7key(s) from &c%player%");
+    public static final LangKey COMMAND_KEY_TAKE_NOTIFY = new LangKey("Command.Key.Take.Notify", "You lost &cx%amount% &c%key_name%&7!");
+    //public static final LangKey Command_Key_Take_Error  = new LangKey(this, "&cCould not take keys: &ePlayer does noet exist or do not have such amount of keys.");
 
-    public LangMessage Command_Key_Take_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
-    public LangMessage Command_Key_Take_Desc  = new LangMessage(this, "Take crate key(s) from a player.");
-    public LangMessage Command_Key_Take_Done   = new LangMessage(this, "Taken &cx%amount% &c%key_name% &7key(s) from &c%player%");
-    public LangMessage Command_Key_Take_Notify = new LangMessage(this, "You lost &cx%amount% &c%key_name%&7!");
-    //public LangMessage Command_Key_Take_Error  = new LangMessage(this, "&cCould not take keys: &ePlayer does noet exist or do not have such amount of keys.");
+    public static final LangKey COMMAND_KEY_SET_USAGE = new LangKey("Command.Key.Set.Usage", "<player | *> <keyId> <amount>");
+    public static final LangKey COMMAND_KEY_SET_DESC   = new LangKey("Command.Key.Set.Desc", "Set crate key(s) amount for a player.");
+    public static final LangKey COMMAND_KEY_SET_DONE   = new LangKey("Command.Key.Set.Done", "Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player%&7.");
+    public static final LangKey COMMAND_KEY_SET_NOTIFY = new LangKey("Command.Key.Set.Notify", "Your &e%key_name%&7 amount has been changed to &ex%amount%&7!");
 
-    public LangMessage Command_Key_Set_Usage = new LangMessage(this, "<player | *> <keyId> <amount>");
-    public LangMessage Command_Key_Set_Desc  = new LangMessage(this, "Set crate key(s) amount for a player.");
-    public LangMessage Command_Key_Set_Done   = new LangMessage(this, "Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player%&7.");
-    public LangMessage Command_Key_Set_Notify = new LangMessage(this, "Your &e%key_name%&7 amount has been changed to &ex%amount%&7!");
-
-    public LangMessage Command_Key_Show_Desc        = new LangMessage(this, "Show amount of your or other player keys.");
-    public LangMessage Command_Key_Show_Usage       = new LangMessage(this, "[player]");
-    public LangMessage Command_Key_Show_Format_List = new LangMessage(this, """
+    public static final LangKey COMMAND_KEY_SHOW_DESC        = new LangKey("Command.Key.Show.Desc", "Show amount of your or other player keys.");
+    public static final LangKey COMMAND_KEY_SHOW_USAGE       = new LangKey("Command.Key.Show.Usage", "[player]");
+    public static final LangKey COMMAND_KEY_SHOW_FORMAT_LIST = new LangKey("Command.Key.Show.Format.List", """
         {message: ~prefix: false;}
         &6&m              &6&l[ &a%player% &e&lCrate Keys &6&l]&6&m              &6
         &7
         &6▸ &e%key_name%: &6%amount%
         """);
 
-    public LangMessage Command_Preview_Desc        = new LangMessage(this, "Open crate preview.");
-    public LangMessage Command_Preview_Usage       = new LangMessage(this, "<crateId> [player]");
-    public LangMessage Command_Preview_Done_Others = new LangMessage(this, "Opened &6%crate_name%&7 preview for &6%player%&7.");
+    public static final LangKey COMMAND_PREVIEW_DESC        = new LangKey("Command.Preview.Desc", "Open crate preview.");
+    public static final LangKey COMMAND_PREVIEW_USAGE       = new LangKey("Command.Preview.Usage", "<crateId> [player]");
+    public static final LangKey COMMAND_PREVIEW_DONE_OTHERS = new LangKey("Command.Preview.Done.Others", "Opened &6%crate_name%&7 preview for &6%player%&7.");
 
-    public LangMessage Command_ResetLimit_Desc        = new LangMessage(this, "Reset reward win limit for specified crate and reward.");
-    public LangMessage Command_ResetLimit_Usage       = new LangMessage(this, "<player> <crateId> [rewardId]");
-    public LangMessage Command_ResetLimit_Done_Crate  = new LangMessage(this, "Reset &6%player% &7win limit for all rewards of &6%crate_name%&7.");
-    public LangMessage Command_ResetLimit_Done_Reward = new LangMessage(this, "Reset &6%player% &7win limit for &6%reward_name% &7reward of &6%crate_name%&7.");
+    public static final LangKey COMMAND_RESET_LIMIT_DESC      = new LangKey("Command.ResetLimit.Desc", "Reset reward win limit for specified crate and reward.");
+    public static final LangKey COMMAND_RESET_LIMIT_USAGE      = new LangKey("Command.ResetLimit.Usage", "<player> <crateId> [rewardId]");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_CRATE  = new LangKey("Command.ResetLimit.Done.Crate", "Reset &6%player% &7win limit for all rewards of &6%crate_name%&7.");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_REWARD = new LangKey("Command.ResetLimit.Done.Reward", "Reset &6%player% &7win limit for &6%reward_name% &7reward of &6%crate_name%&7.");
 
-    public LangMessage Command_ResetCooldown_Desc  = new LangMessage(this, "Reset player cooldown for specified crate.");
-    public LangMessage Command_ResetCooldown_Usage = new LangMessage(this, "<player> <crateId>");
-    public LangMessage Command_ResetCooldown_Done  = new LangMessage(this, "Reset &6%player% &7cooldown for &6%crate_name%&7.");
+    public static final LangKey COMMAND_RESET_COOLDOWN_DESC  = new LangKey("Command.ResetCooldown.Desc", "Reset player cooldown for specified crate.");
+    public static final LangKey COMMAND_RESET_COOLDOWN_USAGE = new LangKey("Command.ResetCooldown.Usage", "<player> <crateId>");
+    public static final LangKey COMMAND_RESET_COOLDOWN_DONE  = new LangKey("Command.ResetCooldown.Done", "Reset &6%player% &7cooldown for &6%crate_name%&7.");
 
-    public LangMessage Command_Menu_Usage       = new LangMessage(this, "[menuId]");
-    public LangMessage Command_Menu_Desc        = new LangMessage(this, "Open crate menu.");
-    public LangMessage Command_Menu_Done_Others = new LangMessage(this, "Opened &6%menu_id%&7 crate menu for &6%player%&7.");
+    public static final LangKey COMMAND_MENU_USAGE       = new LangKey("Command.Menu.Usage", "[menuId]");
+    public static final LangKey COMMAND_MENU_DESC        = new LangKey("Command.Menu.Desc", "Open crate menu.");
+    public static final LangKey COMMAND_MENU_DONE_OTHERS = new LangKey("Command.Menu.Done.Others", "Opened &6%menu_id%&7 crate menu for &6%player%&7.");
 
-    public LangMessage Crate_Error_Invalid                 = new LangMessage(this, "&cInvalid crate!");
-    public LangMessage Crate_Open_Error_InventorySpace     = new LangMessage(this, "&cPlease clean up your inventory to open the crate!");
-    public LangMessage Crate_Open_Error_Cooldown_Temporary = new LangMessage(this, "&cYou have to wait &6%time% &7before you can open &6%crate_name%&7 again!");
-    public LangMessage Crate_Open_Error_Cooldown_OneTimed  = new LangMessage(this, "&cYou already have opened this crate, you can not open it more!");
-    public LangMessage Crate_Open_Error_NoKey              = new LangMessage(this, "&cYou don't have a key for this crate!");
-    public LangMessage Crate_Open_Error_NoRewards          = new LangMessage(this, "&cThis crate does not contains any rewards for you!");
-    public LangMessage Crate_Open_Error_Cost_Money         = new LangMessage(this, "&cYou don't have enough money to open this crate!");
-    public LangMessage Crate_Open_Error_Cost_Exp           = new LangMessage(this, "&cYou don't have enough exp levels to open this crate!");
-    public LangMessage Crate_Open_Reward_Info              = new LangMessage(this, "You got the &6%reward_name% &7reward from the &6%crate_name%&7!");
-    public LangMessage Crate_Open_Reward_Broadcast         = new LangMessage(this, "&7Player &a%player% &7just got the &6%reward_name% &7reward from the &6%crate_name%&7!");
-    public LangMessage Crate_Key_Error_Invalid             = new LangMessage(this, "&cInvalid key!");
-    public LangMessage Crate_Placeholder_Cooldown_Blank = new LangMessage(this, "Ready to open!");
+    public static final LangKey CRATE_ERROR_INVALID                 = new LangKey("Crate.Error.Invalid", "&cInvalid crate!");
+    public static final LangKey CRATE_OPEN_ERROR_INVENTORY_SPACE    = new LangKey("Crate.Open.Error.InventorySpace", "&cPlease clean up your inventory to open the crate!");
+    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = new LangKey("Crate.Open.Error.Cooldown.Temporary", "&cYou have to wait &6%time% &7before you can open &6%crate_name%&7 again!");
+    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED = new LangKey("Crate.Open.Error.Cooldown.OneTimed", "&cYou already have opened this crate, you can not open it more!");
+    public static final LangKey CRATE_OPEN_ERROR_NO_KEY     = new LangKey("Crate.Open.Error.NoKey", "&cYou don't have a key for this crate!");
+    public static final LangKey CRATE_OPEN_ERROR_NO_REWARDS = new LangKey("Crate.Open.Error.NoRewards", "&cThis crate does not contains any rewards for you!");
+    public static final LangKey CRATE_OPEN_ERROR_COST_MONEY = new LangKey("Crate.Open.Error.Cost.Money", "&cYou don't have enough money to open this crate!");
+    public static final LangKey CRATE_OPEN_ERROR_COST_EXP   = new LangKey("Crate.Open.Error.Cost.Exp", "&cYou don't have enough exp levels to open this crate!");
+    public static final LangKey CRATE_OPEN_REWARD_INFO      = new LangKey("Crate.Open.Reward.Info", "You got the &6%reward_name% &7reward from the &6%crate_name%&7!");
+    public static final LangKey CRATE_OPEN_REWARD_BROADCAST      = new LangKey("Crate.Open.Reward.Broadcast", "&7Player &a%player% &7just got the &6%reward_name% &7reward from the &6%crate_name%&7!");
+    public static final LangKey CRATE_KEY_ERROR_INVALID          = new LangKey("Crate.Key.Error.Invalid", "&cInvalid key!");
+    public static final LangKey CRATE_PLACEHOLDER_COOLDOWN_BLANK = new LangKey("Crate.Placeholder.Cooldown.Blank", "Ready to open!");
 
-    public LangMessage Menu_Invalid = new LangMessage(this, "&cMenu does not exist!");
+    public static final LangKey MENU_INVALID = new LangKey("Menu.Invalid", "&cMenu does not exist!");
 
-    public LangMessage Editor_Crate_Enter_Id                  = new LangMessage(this, "&7Enter &aunique &7crate &aidentifier&7...");
-    public LangMessage Editor_Crate_Enter_DisplayName         = new LangMessage(this, "&7Enter crate &adisplay name&7...");
-    public LangMessage Editor_Crate_Enter_Particle_Name       = new LangMessage(this, "&7Enter &aparticle &7name...");
-    public LangMessage Editor_Crate_Enter_Particle_Data       = new LangMessage(this, "&7Enter &aparticle &7data...");
-    public LangMessage Editor_Crate_Enter_KeyId               = new LangMessage(this, "&7Enter &akey &7identifier...");
-    public LangMessage Editor_Crate_Enter_BlockLocation       = new LangMessage(this, "&7Click a &ablock &7to assign crate...");
-    public LangMessage Editor_Crate_Enter_BlockHologramText   = new LangMessage(this, "&7Enter &atext &7line...");
-    public LangMessage Editor_Crate_Enter_BlockHologramOffset = new LangMessage(this, "&7Enter &aoffset &7value...");
-    public LangMessage Editor_Crate_Enter_Cooldown            = new LangMessage(this, "&7Enter &acooldown &7in seconds...");
-    public LangMessage Editor_Crate_Enter_Citizens            = new LangMessage(this, "&7Enter &aCitizens NPC &7ID...");
-    public LangMessage Editor_Crate_Enter_AnimationConfig     = new LangMessage(this, "&7Enter &aanimation config &7name...");
-    public LangMessage Editor_Crate_Enter_PreviewConfig       = new LangMessage(this, "&7Enter &apreview config &7name...");
-    public LangMessage Editor_Crate_Enter_OpenCost_Money      = new LangMessage(this, "&7Enter &amoney &7cost...");
-    public LangMessage Editor_Crate_Enter_OpenCost_Exp        = new LangMessage(this, "&7Enter &aexp levels &7cost...");
-    public LangMessage Editor_Crate_Error_Create_Exists       = new LangMessage(this, "&cCrate with such id is already exists!");
+    public static final LangKey EDITOR_CRATE_ENTER_ID            = new LangKey("Editor.Crate.Enter.Id", "&7Enter &aunique &7crate &aidentifier&7...");
+    public static final LangKey EDITOR_CRATE_ENTER_DISPLAY_NAME  = new LangKey("Editor.Crate.Enter.DisplayName", "&7Enter crate &adisplay name&7...");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME = new LangKey("Editor.Crate.Enter.Particle.Name", "&7Enter &aparticle &7name...");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_DATA = new LangKey("Editor.Crate.Enter.Particle.Data", "&7Enter &aparticle &7data...");
+    public static final LangKey EDITOR_CRATE_ENTER_KEY_ID            = new LangKey("Editor.Crate.Enter.KeyId", "&7Enter &akey &7identifier...");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_LOCATION      = new LangKey("Editor.Crate.Enter.Block.Location", "&7Click a &ablock &7to assign crate...");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT   = new LangKey("Editor.Crate.Enter.Block.Hologram.Text", "&7Enter &atext &7line...");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET = new LangKey("Editor.Crate.Enter.Block.Hologram.Offset", "&7Enter &aoffset &7value...");
+    public static final LangKey EDITOR_CRATE_ENTER_COOLDOWN        = new LangKey("Editor.Crate.Enter.Cooldown", "&7Enter &acooldown &7in seconds...");
+    public static final LangKey EDITOR_CRATE_ENTER_CITIZENS         = new LangKey("Editor.Crate.Enter.Citizens", "&7Enter &aCitizens NPC &7ID...");
+    public static final LangKey EDITOR_CRATE_ENTER_ANIMATION_CONFIG = new LangKey("Editor.Crate.Enter.AnimationConfig", "&7Enter &aanimation config &7name...");
+    public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG  = new LangKey("Editor.Crate.Enter.PreviewConfig", "&7Enter &apreview config &7name...");
+    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_MONEY = new LangKey("Editor.Crate.Enter.OpenCost.Money", "&7Enter &amoney &7cost...");
+    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP = new LangKey("Editor.Crate.Enter.OpenCost.Exp", "&7Enter &aexp levels &7cost...");
+    public static final LangKey EDITOR_CRATE_ERROR_CREATE_EXISTS = new LangKey("Editor.Crate.Error.Create.Exists", "&cCrate with such id is already exists!");
 
-    public LangMessage Editor_Reward_Enter_Id                = new LangMessage(this, "&7Enter &aunique &7reward &aidentifier&7...");
-    public LangMessage Editor_Reward_Enter_DisplayName       = new LangMessage(this, "&7Enter reward &adisplay name&7...");
-    public LangMessage Editor_Reward_Enter_Chance            = new LangMessage(this, "&7Enter win &achance&7...");
-    public LangMessage Editor_Reward_Enter_Command           = new LangMessage(this, "&7Enter a &acommand&7...");
-    public LangMessage Editor_Reward_Enter_WinLimit_Amount   = new LangMessage(this, "&7Enter win limit &aamount&7...");
-    public LangMessage Editor_Reward_Enter_WinLimit_Cooldown = new LangMessage(this, "&7Enter win limit &acooldown&7...");
-    public LangMessage Editor_Reward_Error_Create_Exist      = new LangMessage(this, "&cReward with such id is already exists!");
+    public static final LangKey EDITOR_REWARD_ENTER_ID           = new LangKey("Editor.Reward.Enter.Id", "&7Enter &aunique &7reward &aidentifier&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME = new LangKey("Editor.Reward.Enter.DisplayName", "&7Enter reward &adisplay name&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_CHANCE          = new LangKey("Editor.Reward.Enter.Chance", "&7Enter win &achance&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_COMMAND           = new LangKey("Editor.Reward.Enter.Command", "&7Enter a &acommand&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = new LangKey("Editor.Reward.Enter.WinLimit.Amount", "&7Enter win limit &aamount&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN = new LangKey("Editor.Reward.Enter.WinLimit.Cooldown", "&7Enter win limit &acooldown&7...");
+    public static final LangKey EDITOR_REWARD_ERROR_CREATE_EXIST       = new LangKey("Editor.Reward.Error.Create.Exist", "&cReward with such id is already exists!");
 
-    public LangMessage Editor_Key_Error_Create_Exist = new LangMessage(this, "Key with such id is already exists!");
+    public static final LangKey EDITOR_KEY_ERROR_CREATE_EXIST = new LangKey("Editor.Key.Error.Create.Exist", "Key with such id is already exists!");
 }

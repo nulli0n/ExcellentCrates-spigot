@@ -6,9 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.GeneralCommand;
-import su.nexmedia.engine.api.config.LangMessage;
+import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.command.list.HelpSubCommand;
-import su.nexmedia.engine.utils.Constants;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -16,6 +15,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrateKey;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 import java.util.*;
@@ -40,7 +40,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Key_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_KEY_DESC).getLocalized();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
             if (arg == 2) {
                 List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
-                list.add(0, Constants.MASK_ANY);
+                list.add(0, Placeholders.MASK_ANY);
                 return list;
             }
             if (arg == 3) {
@@ -103,7 +103,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
 
             ICrateKey crateKey = plugin.getKeyManager().getKeyById(args[3]);
             if (crateKey == null) {
-                plugin.lang().Crate_Key_Error_Invalid.send(sender);
+                plugin.getMessage(Lang.CRATE_KEY_ERROR_INVALID).send(sender);
                 return;
             }
 
@@ -115,7 +115,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
 
             String pName = args[2];
             Set<String> playerNames = new HashSet<>();
-            if (pName.equalsIgnoreCase(Constants.MASK_ANY)) {
+            if (pName.equalsIgnoreCase(Placeholders.MASK_ANY)) {
                 playerNames.addAll(PlayerUtil.getPlayerNames());
             }
             else playerNames.add(pName);
@@ -127,7 +127,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                     case TAKE -> plugin.getKeyManager().takeKey(name, crateKey, amount);
                 };
                 if (!isDone) {
-                    this.plugin.lang().Command_Key_Error_Player.replace("%player%", name).send(sender);
+                    this.plugin.getMessage(Lang.COMMAND_KEY_ERROR_PLAYER).replace("%player%", name).send(sender);
                     //this.getMessageError().send(sender);
                     return;
                 }
@@ -164,25 +164,25 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @Override
         @NotNull
         public LangMessage getMessageDone() {
-            return plugin.lang().Command_Key_Give_Done;
+            return plugin.getMessage(Lang.COMMAND_KEY_GIVE_DONE);
         }
 
         @Override
         @NotNull
         public LangMessage getMessageNotify() {
-            return plugin.lang().Command_Key_Give_Notify;
+            return plugin.getMessage(Lang.COMMAND_KEY_GIVE_NOTIFY);
         }
 
         @Override
         @NotNull
         public String getUsage() {
-            return plugin.lang().Command_Key_Give_Usage.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_GIVE_USAGE).getLocalized();
         }
 
         @Override
         @NotNull
         public String getDescription() {
-            return plugin.lang().Command_Key_Give_Desc.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_GIVE_DESC).getLocalized();
         }
     }
 
@@ -201,25 +201,25 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @Override
         @NotNull
         public LangMessage getMessageDone() {
-            return plugin.lang().Command_Key_Take_Done;
+            return plugin.getMessage(Lang.COMMAND_KEY_TAKE_DONE);
         }
 
         @Override
         @NotNull
         public LangMessage getMessageNotify() {
-            return plugin.lang().Command_Key_Take_Notify;
+            return plugin.getMessage(Lang.COMMAND_KEY_TAKE_NOTIFY);
         }
 
         @Override
         @NotNull
         public String getUsage() {
-            return plugin.lang().Command_Key_Take_Usage.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_TAKE_USAGE).getLocalized();
         }
 
         @Override
         @NotNull
         public String getDescription() {
-            return plugin.lang().Command_Key_Take_Desc.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_TAKE_DESC).getLocalized();
         }
     }
 
@@ -238,25 +238,25 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @Override
         @NotNull
         public LangMessage getMessageDone() {
-            return plugin.lang().Command_Key_Set_Done;
+            return plugin.getMessage(Lang.COMMAND_KEY_SET_DONE);
         }
 
         @Override
         @NotNull
         public LangMessage getMessageNotify() {
-            return plugin.lang().Command_Key_Set_Notify;
+            return plugin.getMessage(Lang.COMMAND_KEY_SET_NOTIFY);
         }
 
         @Override
         @NotNull
         public String getUsage() {
-            return plugin.lang().Command_Key_Set_Usage.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_SET_USAGE).getLocalized();
         }
 
         @Override
         @NotNull
         public String getDescription() {
-            return plugin.lang().Command_Key_Set_Desc.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_SET_DESC).getLocalized();
         }
     }
 
@@ -269,13 +269,13 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @Override
         @NotNull
         public String getUsage() {
-            return plugin.lang().Command_Key_Show_Usage.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_SHOW_USAGE).getLocalized();
         }
 
         @Override
         @NotNull
         public String getDescription() {
-            return plugin.lang().Command_Key_Show_Desc.getLocalized();
+            return plugin.getMessage(Lang.COMMAND_KEY_SHOW_DESC).getLocalized();
         }
 
         @Override
@@ -300,7 +300,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
             }
 
             String pName = args.length >= 3 ? args[2] : sender.getName();
-            CrateUser user = plugin.getUserManager().getOrLoadUser(pName, false);
+            CrateUser user = plugin.getUserManager().getUserData(pName);
             if (user == null) {
                 this.errorPlayer(sender);
                 return;
@@ -319,7 +319,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                 keys.put(key, has);
             }
 
-            plugin.lang().Command_Key_Show_Format_List.replace("%player%", user.getName()).asList().forEach(line -> {
+            plugin.getMessage(Lang.COMMAND_KEY_SHOW_FORMAT_LIST).replace("%player%", user.getName()).asList().forEach(line -> {
                 if (line.contains(Placeholders.KEY_NAME)) {
                     keys.forEach((key, amount) -> {
                         MessageUtil.sendWithJSON(sender, line

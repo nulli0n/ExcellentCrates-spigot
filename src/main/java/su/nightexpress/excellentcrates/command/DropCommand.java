@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.core.config.CoreConfig;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.utils.LocationUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -14,6 +14,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +28,13 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Drop_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_DROP_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Drop_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_DROP_DESC).getLocalized();
     }
 
     @Override
@@ -71,13 +72,13 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.replace(Placeholders.CRATE_ID, args[1]).send(sender);
+            plugin.getMessage(Lang.CRATE_ERROR_INVALID).replace(Placeholders.CRATE_ID, args[1]).send(sender);
             return;
         }
 
         World world = plugin.getServer().getWorld(args[2]);
         if (world == null) {
-            plugin.lang().Error_World_Invalid.replace("%world%", args[2]).send(sender);
+            plugin.getMessage(Lang.ERROR_WORLD_INVALID).replace("%world%", args[2]).send(sender);
             return;
         }
 
@@ -88,13 +89,13 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
         if (!plugin.getCrateManager().spawnCrate(crate, location)) return;
 
-        plugin.lang().Command_Drop_Done
+        plugin.getMessage(Lang.COMMAND_DROP_DONE)
             .replace(Placeholders.CRATE_ID, crate.getId())
             .replace(Placeholders.CRATE_NAME, crate.getName())
             .replace("%x%", NumberUtil.format(x))
             .replace("%y%", NumberUtil.format(y))
             .replace("%z%", NumberUtil.format(z))
-            .replace("%world%", CoreConfig.getWorldName(world.getName()))
+            .replace("%world%", EngineConfig.getWorldName(world.getName()))
             .send(sender);
     }
 }

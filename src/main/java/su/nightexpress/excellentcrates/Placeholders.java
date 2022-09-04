@@ -1,6 +1,6 @@
 package su.nightexpress.excellentcrates;
 
-public class Placeholders {
+public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
 
     public static final String CRATE_ID                         = "%crate_id%";
     public static final String CRATE_NAME                       = "%crate_name%";

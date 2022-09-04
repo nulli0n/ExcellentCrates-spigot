@@ -5,15 +5,17 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.menu.AbstractMenu;
 import su.nexmedia.engine.api.menu.IMenuClick;
 import su.nexmedia.engine.api.menu.IMenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.utils.EditorUtils;
+import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.crate.ICrateKey;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.editor.CrateEditorHandler;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 
@@ -24,6 +26,14 @@ public class KeyEditorKey extends AbstractMenu<ExcellentCrates> {
     public KeyEditorKey(@NotNull ExcellentCrates plugin, @NotNull ICrateKey crateKey) {
         super(plugin, CrateEditorHandler.KEY_MAIN, "");
         this.crateKey = crateKey;
+
+        EditorInput<ICrateKey, CrateEditorType> input = (player, key, type, e) -> {
+            if (type == CrateEditorType.KEY_CHANGE_NAME) {
+                key.setName(e.getMessage());
+            }
+            key.save();
+            return true;
+        };
 
         IMenuClick clickHandler = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
@@ -46,8 +56,8 @@ public class KeyEditorKey extends AbstractMenu<ExcellentCrates> {
                     }
                     case KEY_CHANGE_VIRTUAL -> crateKey.setVirtual(!crateKey.isVirtual());
                     case KEY_CHANGE_NAME -> {
-                        plugin.getEditorHandlerNew().startEdit(player, crateKey, type2);
-                        EditorUtils.tipCustom(player, plugin.lang().Editor_Reward_Enter_DisplayName.getLocalized());
+                        EditorManager.startEdit(player, crateKey, type2, input);
+                        EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_REWARD_ENTER_DISPLAY_NAME).getLocalized());
                         player.closeInventory();
                         return;
                     }

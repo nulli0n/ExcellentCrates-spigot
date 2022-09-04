@@ -4,13 +4,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.utils.Constants;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,13 +25,13 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     @Override
     @NotNull
     public String getUsage() {
-        return plugin.lang().Command_Give_Usage.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_GIVE_USAGE).getLocalized();
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Command_Give_Desc.getLocalized();
+        return plugin.getMessage(Lang.COMMAND_GIVE_DESC).getLocalized();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 1) {
             List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
-            list.add(0, Constants.MASK_ANY);
+            list.add(0, Placeholders.MASK_ANY);
             return list;
         }
         if (arg == 2) {
@@ -69,11 +69,11 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
 
         ICrate crate = plugin.getCrateManager().getCrateById(crateId);
         if (crate == null) {
-            plugin.lang().Crate_Error_Invalid.send(sender);
+            plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
-        if (pName.equalsIgnoreCase(Constants.MASK_ANY)) {
+        if (pName.equalsIgnoreCase(Placeholders.MASK_ANY)) {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
                 plugin.getCrateManager().giveCrate(player, crate, amount);
             }
@@ -85,13 +85,13 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
                 return;
             }
             plugin.getCrateManager().giveCrate(player, crate, amount);
-            plugin.lang().Command_Give_Notify
+            plugin.getMessage(Lang.COMMAND_GIVE_NOTIFY)
                 .replace("%amount%", amount)
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .send(player);
         }
 
-        plugin.lang().Command_Give_Done
+        plugin.getMessage(Lang.COMMAND_GIVE_DONE)
             .replace("%player%", pName)
             .replace("%amount%", amount)
             .replace(Placeholders.CRATE_NAME, crate.getName())

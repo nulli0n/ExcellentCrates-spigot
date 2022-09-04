@@ -5,7 +5,7 @@ author: NightExpress
 desciption: Fully customizable crates with rewards. Enjoy.
 depend: [ NexEngine ]
 softdepend: [ Citizens, HolographicDisplays, DecentHolograms, Vault, PlaceholderAPI ]
-api-version: 1.16
+api-version: 1.17
 load: POSTWORLD
 
 permissions:
