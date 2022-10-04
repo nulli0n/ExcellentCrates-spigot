@@ -8,6 +8,8 @@ public class Perms {
     //public static final String USER  = PREFIX + "user";
     public static final String CRATE = PREFIX + "crate.";
 
+    public static final String COMMAND_RELOAD          = PREFIX + "command.reload";
+    public static final String COMMAND_EDITOR          = PREFIX + "command.editor";
     public static final String COMMAND_DROP            = PREFIX + "command.drop";
     public static final String COMMAND_FORCEOPEN       = PREFIX + "command.forceopen";
     public static final String COMMAND_GIVE            = PREFIX + "command.give";

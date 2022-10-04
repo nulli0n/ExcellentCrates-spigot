@@ -17,9 +17,4 @@ public class UserManager extends AbstractUserManager<ExcellentCrates, CrateUser>
     protected CrateUser createData(@NotNull UUID uuid, @NotNull String name) {
         return new CrateUser(plugin, uuid, name);
     }
-
-    @Override
-    protected void onSynchronize() {
-        // TODO
-    }
 }

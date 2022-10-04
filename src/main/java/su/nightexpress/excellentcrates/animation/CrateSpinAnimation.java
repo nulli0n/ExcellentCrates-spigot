@@ -7,6 +7,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -336,6 +337,10 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
         }
 
         private void spinReward() {
+            // Ужасный костыль от какого-то бага
+            // похер, все равно потом анимации переделаем
+            if (this.inventory.getType() == InventoryType.CRAFTING) return;
+
             menu.update(this.inventory);
 
             if (this.tickCounter % this.getSpinner().getRollEveryTicks() != 0) {

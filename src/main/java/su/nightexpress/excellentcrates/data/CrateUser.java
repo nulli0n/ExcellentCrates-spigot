@@ -74,10 +74,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void setCrateCooldown(@NotNull String id, long endDate) {
         this.getCrateCooldowns().put(id.toLowerCase(), endDate);
-
-        if (plugin.getConfigManager().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.plugin.runTask(c -> this.saveData(this.plugin), true);
     }
 
     public boolean isCrateOnCooldown(@NotNull ICrate crate) {
@@ -117,10 +114,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void setKeys(@NotNull String id, int amount) {
         this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
-
-        if (plugin.getConfigManager().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.plugin.runTask(c -> this.saveData(this.plugin), true);
     }
 
     public int getKeys(@NotNull String id) {
@@ -129,10 +123,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void addKeysOnHold(@NotNull String id, int amount) {
         this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
-
-        if (plugin.getConfigManager().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.plugin.runTask(c -> this.saveData(this.plugin), true);
     }
 
     public int getKeysOnHold(@NotNull String id) {
@@ -141,10 +132,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void cleanKeysOnHold() {
         this.getKeysOnHold().clear();
-
-        if (plugin.getConfigManager().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.plugin.runTask(c -> this.saveData(this.plugin), true);
     }
 
     @NotNull
@@ -170,10 +158,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardWinLimit rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
-
-        if (plugin.getConfigManager().dataSaveInstant) {
-            plugin.getUserManager().save(this, true);
-        }
+        this.plugin.runTask(c -> this.saveData(this.plugin), true);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId) {

@@ -5,17 +5,20 @@ Plugin:
   Prefix: '&e%plugin_name% &8» &7'
 
 Database:
-  Type: SQLite
-  Auto_Save_Interval: 15
-  Instant_Save: false
+  Auto_Save_Interval: 20
+  Sync_Interval: -1
+  Type: SQLITE
+  Table_Prefix: 'excellentcrates'
   MySQL:
-    Username: 'user123'
-    Password: 'pass123'
-    Host: 'localhost:3306'
-    Database: 'server'
+    Username: root
+    Password: root
+    Host: localhost
+    Database: minecraft
+  SQLite:
+    FileName: data.db
   Purge:
     Enabled: false
-    For_Inactive_Days: 60
+    For_Period: 60
 
 Crate:
   Click_Actions:

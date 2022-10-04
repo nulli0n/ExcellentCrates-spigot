@@ -7,6 +7,8 @@ import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.editor.EditorHolder;
+import su.nexmedia.engine.command.list.EditorSubCommand;
+import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nightexpress.excellentcrates.animation.AnimationManager;
@@ -135,6 +137,13 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         mainCommand.addChildren(new PreviewCommand(this));
         mainCommand.addChildren(new ResetCooldownCommand(this));
         mainCommand.addChildren(new ResetLimitCommand(this));
+        mainCommand.addChildren(new ReloadSubCommand<>(this, Perms.COMMAND_RELOAD));
+        mainCommand.addChildren(new EditorSubCommand<>(this, this, Perms.COMMAND_EDITOR));
+    }
+
+    @Override
+    public void registerPermissions() {
+        // TODO
     }
 
     @Override

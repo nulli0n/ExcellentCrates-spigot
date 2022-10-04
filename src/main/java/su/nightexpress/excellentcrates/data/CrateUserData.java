@@ -23,8 +23,8 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
     private static CrateUserData instance;
     private final Function<ResultSet, CrateUser> FUNC_USER;
 
-    protected CrateUserData(@NotNull ExcellentCrates plugin) throws SQLException {
-        super(plugin);
+    protected CrateUserData(@NotNull ExcellentCrates plugin) {
+        super(plugin, plugin);
 
         this.FUNC_USER = (rs) -> {
             try {
@@ -59,11 +59,22 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
     }
 
     @Override
+    protected void onShutdown() {
+        super.onShutdown();
+        instance = null;
+    }
+
+    @Override
+    public void onSynchronize() {
+        // TODO Load user data and put it to the current one to synchronize keys, cooldowns and rewards.
+    }
+
+    @Override
     protected void onTableCreate() {
         super.onTableCreate();
-        this.addColumn(this.tableUsers, COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType), "{}");
-        this.addColumn(this.tableUsers, COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.dataType), "{}");
-        this.addColumn(this.tableUsers, COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.dataType), "{}");
+        this.addColumn(this.tableUsers, COL_KEYS_ONHOLD, DataTypes.STRING.build(this.getDataType()), "{}");
+        this.addColumn(this.tableUsers, COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.getDataType()), "{}");
+        this.addColumn(this.tableUsers, COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.getDataType()), "{}");
     }
 
     @Override
@@ -72,10 +83,10 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
         //this.renameTable("goldencrates_users", this.tableUsers);
 
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put(COL_KEYS, DataTypes.STRING.build(this.dataType));
-        map.put(COL_KEYS_ONHOLD, DataTypes.STRING.build(this.dataType));
-        map.put(COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.dataType));
-        map.put(COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.dataType));
+        map.put(COL_KEYS, DataTypes.STRING.build(this.getDataType()));
+        map.put(COL_KEYS_ONHOLD, DataTypes.STRING.build(this.getDataType()));
+        map.put(COL_CRATE_COOLDOWNS, DataTypes.STRING.build(this.getDataType()));
+        map.put(COL_REWARD_WIN_LIMITS, DataTypes.STRING.build(this.getDataType()));
         return map;
     }
 
