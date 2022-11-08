@@ -30,6 +30,8 @@ Block:
       Name: FLAME
       Data: ''
 Rewards:
+  Min: 1
+  Max: 1
   List:
     iron_helmet:
       Name: Iron Helmet

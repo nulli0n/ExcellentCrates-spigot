@@ -12,6 +12,8 @@ public interface ICrateAnimation extends ConfigHolder, ICleanable {
 
     @NotNull IMenu getMenu();
 
+    @NotNull int getRewardAmount();
+
     void open(@NotNull Player player, @NotNull ICrate crate);
 
     boolean isOpening(@NotNull Player player);

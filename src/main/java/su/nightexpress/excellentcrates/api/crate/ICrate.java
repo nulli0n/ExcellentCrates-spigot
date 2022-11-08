@@ -33,6 +33,16 @@ public interface ICrate extends ConfigHolder, ICleanable, IEditable, IPlaceholde
 
     void setName(@NotNull String name);
 
+    @NotNull
+    int getMaxRewards();
+
+    void setMaxRewards(@NotNull int max);
+
+    @NotNull
+    int getMinRewards();
+
+    void setMinRewards(@NotNull int min);
+
     @Nullable String getAnimationConfig();
 
     void setAnimationConfig(@Nullable String animationConfig);
@@ -147,6 +157,8 @@ public interface ICrate extends ConfigHolder, ICleanable, IEditable, IPlaceholde
     }
 
     @NotNull ICrateReward rollReward();
+
+    @NotNull int rollRewardsAmount();
 
     @Nullable ICrateReward rollReward(@NotNull Player player);
 

@@ -28,6 +28,8 @@ Block:
       Data: ''
 Animation_Config: click_chests
 Rewards:
+  Min: 1
+  Max: 1
   List:
     egg_bee:
       Name: Bee Spawn Egg

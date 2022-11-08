@@ -51,6 +51,8 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     private double              blockHologramOffsetY;
     private List<String>        blockHologramText;
     private CrateEffectSettings blockEffect;
+    private int rewardMinAmount;
+    private int rewardMaxAmount;
 
     private LinkedHashMap<String, ICrateReward> rewardMap;
 
@@ -87,6 +89,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         this.setBlockHologramText(Arrays.asList("&c&l" + this.getName().toUpperCase(), "&7Buy a key at &cwww.myserver.com"));
         this.setBlockEffect(new CrateEffectSettings(CrateEffectModel.HELIX, Particle.FLAME.name(), ""));
 
+        this.setMinRewards(1);
+        this.setMaxRewards(1);
+
         this.setRewardsMap(new LinkedHashMap<>());
     }
 
@@ -119,6 +124,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         String particleData = cfg.getString("Block.Effect.Particle.Data", "");
         CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
         this.setBlockEffect(crateEffectSettings);
+
+        this.setMinRewards(cfg.getInt("Rewards.Min", 1));
+        this.setMaxRewards(cfg.getInt("Rewards.Max", 1));
 
         this.rewardMap = new LinkedHashMap<>();
         for (String rewId : cfg.getSection("Rewards.List")) {
@@ -174,6 +182,9 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
         crate.setBlockEffect(crateEffectSettings);
 
+        crate.setMinRewards(cfg.getInt("rewards.min", 1));
+        crate.setMaxRewards(cfg.getInt("rewards.max", 1));
+
         crate.rewardMap = new LinkedHashMap<>();
         for (String rewId : cfg.getSection("rewards.list")) {
             String path = "rewards.list." + rewId + ".";
@@ -224,6 +235,8 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         cfg.set("Block.Effect.Particle.Name", this.getBlockEffect().getParticleName());
         cfg.set("Block.Effect.Particle.Data", this.getBlockEffect().getParticleData());
 
+        cfg.set("Rewards.Min", this.getMinRewards());
+        cfg.set("Rewards.Max", this.getMaxRewards());
         cfg.set("Rewards.List", null);
 
         for (Entry<String, ICrateReward> e : this.getRewardsMap().entrySet()) {
@@ -492,6 +505,34 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     public void setBlockEffect(@NotNull CrateEffectSettings blockEffect) {
         this.blockEffect = blockEffect;
     }
+
+    @Override
+    public int getMinRewards() {
+        /* 392 */     return this.rewardMinAmount;
+        /*     */   }
+
+    @Override
+    public void setMinRewards(int min) {
+         this.rewardMinAmount = Math.max(1, min);
+        }
+
+    @Override
+    public int getMaxRewards() {
+        return this.rewardMaxAmount;
+        }
+
+    @Override
+    public void setMaxRewards(int max) {
+        this.rewardMaxAmount = Math.max(1, max);
+        }
+
+    @Override
+    public int rollRewardsAmount() {
+        if (getMinRewards() > getMaxRewards()) {
+            return getMinRewards();
+            }
+        return Rnd.get(getMinRewards(), getMaxRewards());
+        }
 
     @Override
     @NotNull

@@ -56,6 +56,12 @@ public class CrateHiddenAnimation extends AbstractLoadableItem<ExcellentCrates> 
         return this.menu;
     }
 
+    @Override
+    @NotNull
+    public int getRewardAmount() {
+        return this.rewardAmount;
+    }
+
     public void open(@NotNull Player player, @NotNull ICrate crate) {
         this.getMenu().open(player, crate);
     }

@@ -1,9 +1,11 @@
 package su.nightexpress.excellentcrates.crate;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lidded;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -200,6 +202,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             plugin.getMessage(Lang.ERROR_PERMISSION_DENY).send(player);
             return false;
         }
+        int rewAmount = crate.rollRewardsAmount();
 
         CrateUser user = plugin.getUserManager().getUserData(player);
         if (!force && user.isCrateOnCooldown(crate)) {
@@ -248,10 +251,23 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             return false;
         }
 
-        if (!force && player.getInventory().firstEmpty() == -1) {
+        /*if (!force && player.getInventory().firstEmpty() == -1) {
             plugin.getMessage(Lang.CRATE_OPEN_ERROR_INVENTORY_SPACE).replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
             return false;
-        }
+        }*/
+
+        String animationConfig = crate.getAnimationConfig();
+        ICrateAnimation animation = animationConfig == null ? null : this.plugin.getAnimationManager().getAnimationById(animationConfig);
+
+        int emptySlots = 0;
+        int maxSlots = (animation != null) ? animation.getRewardAmount() : crate.getMaxRewards();
+        for (ItemStack item2 : player.getInventory().getStorageContents()) {
+            if (item2 == null || item2.getType() == Material.AIR || item2.getType().isAir()) emptySlots++;
+            }
+        if (!force && emptySlots < maxSlots) {
+            plugin.getMessage(Lang.CRATE_OPEN_ERROR_INVENTORY_SPACE_ALT).replace(Placeholders.CRATE_REWARDS, Integer.valueOf(maxSlots)).send(player);
+            return false;
+            }
 
         CrateOpenEvent preOpenEvent = new CrateOpenEvent(crate, player);
         plugin.getPluginManager().callEvent(preOpenEvent);
@@ -261,27 +277,25 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         if (openCostMoney > 0 && VaultHook.hasEconomy()) VaultHook.takeMoney(player, openCostMoney);
         if (openCostExp > 0) player.setLevel(player.getLevel() - (int) openCostExp);
 
-        String animationConfig = crate.getAnimationConfig();
-        ICrateAnimation animation = animationConfig == null ? null : this.plugin.getAnimationManager().getAnimationById(animationConfig);
         if (animation != null) {
             animation.open(player, crate);
         }
         else {
-            ICrateReward reward = crate.rollReward(player);
-            if (reward != null) {
-                reward.give(player);
-
-                if (block != null) {
-                    if (block.getState() instanceof Lidded lidded) {
-                        lidded.open();
-                        plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);
-                    }
-                    HologramHandler hologramHandler = plugin.getHologramHandler();
-                    if (hologramHandler != null) {
-                        Location location = LocationUtil.getCenter(block.getLocation().add(0, 2, 0), false);
-                        hologramHandler.createReward(player, reward, location);
-                        plugin.getServer().getScheduler().runTaskLater(plugin, c -> hologramHandler.removeReward(player), 60L);
-                    }
+            ICrateReward lastReward = null;
+            for (int rewCount = 0; rewCount < rewAmount; rewCount++) {
+                lastReward = crate.rollReward(player);
+                if (lastReward != null) lastReward.give(player);
+            }
+            if (lastReward != null && block != null) {
+                if (block.getState() instanceof Lidded lidded) {
+                    lidded.open();
+                    plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);
+                }
+                HologramHandler hologramHandler = plugin.getHologramHandler();
+                if (hologramHandler != null) {
+                    Location location = LocationUtil.getCenter(block.getLocation().add(0, 2, 0), false);
+                    hologramHandler.createReward(player, lastReward, location);
+                    plugin.getServer().getScheduler().runTaskLater(plugin, c -> hologramHandler.removeReward(player), 60L);
                 }
             }
         }

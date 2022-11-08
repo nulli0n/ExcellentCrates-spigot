@@ -29,6 +29,8 @@ Block:
       Name: VILLAGER_HAPPY
       Data: ''
 Rewards:
+  Min: 1
+  Max: 1
   List:
     money2500:
       Name: §a◆ $2.500 ◆

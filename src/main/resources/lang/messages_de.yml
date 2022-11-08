@@ -67,6 +67,7 @@ Crate:
   Open:
     Error:
       InventorySpace: '&cBitte leere dein Inventar um eine Kiste zu öffnen!'
+      InventorySpace_Alt: '&cBitte leere dein Inventar um eine Kiste zu öffnen! %slots%'
       Cooldown:
         Temporary: '&cDu musst &6%time% &7bevor du eine weitere Kiste von: &6%crate_name% &7wieder öffnen kannst'
         OneTimed: '&cDu hast die Kiste bereits geöffnet, du kannst sie nicht erneut öffnen!'

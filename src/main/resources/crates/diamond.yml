@@ -28,6 +28,8 @@ Block:
       Name: redstone
       Data: 85,205,226
 Rewards:
+  Min: 1
+  Max: 1
   List:
     rank_coal:
       Name: §e◆ Coal Rank ◆

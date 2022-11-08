@@ -24,6 +24,8 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String CRATE_BLOCK_EFFECT_PARTICLE_NAME = "%crate_block_effect_particle_name%";
     public static final String CRATE_BLOCK_EFFECT_PARTICLE_DATA = "%crate_block_effect_particle_data%";
 
+    public static final String CRATE_REWARDS = "%crate_rewards%";
+
     public static final String KEY_ID        = "%key_id%";
     public static final String KEY_NAME      = "%key_name%";
     public static final String KEY_VIRTUAL   = "%key_virtual%";

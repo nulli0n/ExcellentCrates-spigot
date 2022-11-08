@@ -67,6 +67,7 @@ public class Lang extends EngineLang {
 
     public static final LangKey CRATE_ERROR_INVALID                 = new LangKey("Crate.Error.Invalid", "&cInvalid crate!");
     public static final LangKey CRATE_OPEN_ERROR_INVENTORY_SPACE    = new LangKey("Crate.Open.Error.InventorySpace", "&cPlease clean up your inventory to open the crate!");
+    public static final LangKey CRATE_OPEN_ERROR_INVENTORY_SPACE_ALT    = new LangKey("Crate.Open.Error.InventorySpace_Alt", "&cPlease clean up your inventory for &eat least %crate_rewards%&c slots!");
     public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = new LangKey("Crate.Open.Error.Cooldown.Temporary", "&cYou have to wait &6%time% &7before you can open &6%crate_name%&7 again!");
     public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED = new LangKey("Crate.Open.Error.Cooldown.OneTimed", "&cYou already have opened this crate, you can not open it more!");
     public static final LangKey CRATE_OPEN_ERROR_NO_KEY     = new LangKey("Crate.Open.Error.NoKey", "&cYou don't have a key for this crate!");

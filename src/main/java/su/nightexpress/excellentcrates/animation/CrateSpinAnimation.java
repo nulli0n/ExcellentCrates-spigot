@@ -94,6 +94,12 @@ public class CrateSpinAnimation extends AbstractLoadableItem<ExcellentCrates> im
     }
 
     @Override
+    @NotNull
+    public int getRewardAmount() {
+        return this.spinners.size();
+    }
+
+    @Override
     public void open(@NotNull Player player, @NotNull ICrate crate) {
         this.getMenu().open(player, crate);
     }

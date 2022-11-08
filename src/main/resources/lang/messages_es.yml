@@ -60,6 +60,7 @@ Crate:
   Open:
     Error:
       InventorySpace: '&c¡Por favor, limpia tu inventario para abrir el crate!'
+      InventorySpace: '&c¡Por favor, limpia tu inventario para abrir el crate! %slots%'
       Cooldown:
         Temporary: '&c¡Tienes que esperar &6%time% &7antes de poder abrir &6%crate_name%&7 denuevo!'
         OneTimed: '&c¡Ya has abierto este crate, no puedes abrirlo más!'
