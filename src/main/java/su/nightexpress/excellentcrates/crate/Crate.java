@@ -106,7 +106,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         }
 
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
-        this.setItem(cfg.getItem("Item.", this.getId()));
+        this.setItem(cfg.getItem("Item."));
 
         this.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("Block.Locations"))));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));

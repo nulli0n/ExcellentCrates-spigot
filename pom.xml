@@ -42,6 +42,10 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>nex-engin</id>
+            <url>file:///${project.basedir}/libraries</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -73,6 +77,8 @@
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngine</artifactId>
             <version>2.2.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libraries/NexEngine.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>

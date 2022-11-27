@@ -48,7 +48,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 
         this.setName(cfg.getString("Name", this.getId()));
         this.setVirtual(cfg.getBoolean("Virtual"));
-        ItemStack item = cfg.getItem("Item", this.getId());
+        ItemStack item = cfg.getItem("Item");
         if (item.getType().isAir() && !this.isVirtual()) {
             throw new IllegalStateException("Key item can not be AIR!");
         }
