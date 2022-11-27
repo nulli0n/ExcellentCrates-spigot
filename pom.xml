@@ -77,8 +77,6 @@
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngine</artifactId>
             <version>2.2.6</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libraries/NexEngine.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
