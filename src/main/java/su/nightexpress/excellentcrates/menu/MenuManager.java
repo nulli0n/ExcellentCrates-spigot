@@ -5,14 +5,13 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.crate.ICrateMenu;
 import su.nightexpress.excellentcrates.config.Config;
 
 import java.util.*;
 
 public class MenuManager extends AbstractManager<ExcellentCrates> {
 
-    private Map<String, ICrateMenu> menuMap;
+    private Map<String, CrateMenu> menuMap;
 
     public MenuManager(@NotNull ExcellentCrates plugin) {
         super(plugin);
@@ -25,7 +24,7 @@ public class MenuManager extends AbstractManager<ExcellentCrates> {
 
         for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_MENUS, true)) {
             try {
-                ICrateMenu menu = new CrateMenu(plugin, cfg);
+                CrateMenu menu = new CrateMenu(plugin, cfg);
                 this.getMenuMap().put(menu.getId(), menu);
             }
             catch (Exception ex) {
@@ -40,23 +39,23 @@ public class MenuManager extends AbstractManager<ExcellentCrates> {
     @Override
     public void onShutdown() {
         if (this.menuMap != null) {
-            this.menuMap.values().forEach(ICrateMenu::clear);
+            this.menuMap.values().forEach(CrateMenu::clear);
             this.menuMap.clear();
         }
     }
 
     @NotNull
-    public Map<String, ICrateMenu> getMenuMap() {
+    public Map<String, CrateMenu> getMenuMap() {
         return menuMap;
     }
 
     @Nullable
-    public ICrateMenu getMenuById(@NotNull String id) {
+    public CrateMenu getMenuById(@NotNull String id) {
         return this.getMenuMap().get(id.toLowerCase());
     }
 
     @NotNull
-    public Collection<ICrateMenu> getMenus() {
+    public Collection<CrateMenu> getMenus() {
         return this.getMenuMap().values();
     }
 

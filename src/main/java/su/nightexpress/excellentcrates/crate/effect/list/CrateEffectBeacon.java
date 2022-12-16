@@ -4,10 +4,10 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.EffectUtil;
 import su.nexmedia.engine.utils.LocationUtil;
-import su.nightexpress.excellentcrates.crate.effect.AbstractCrateBlockEffect;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
-public class CrateEffectBeacon extends AbstractCrateBlockEffect {
+public class CrateEffectBeacon extends CrateEffectTask {
 
     public CrateEffectBeacon() {
         super(CrateEffectModel.BEACON, 3L, 40);

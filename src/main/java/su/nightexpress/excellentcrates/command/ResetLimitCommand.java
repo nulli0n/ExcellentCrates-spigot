@@ -9,9 +9,9 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.CrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 import java.util.List;
@@ -49,9 +49,9 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
             return plugin.getCrateManager().getCrateIds(false);
         }
         if (arg == 3) {
-            ICrate crate = plugin.getCrateManager().getCrateById(args[2]);
+            Crate crate = plugin.getCrateManager().getCrateById(args[2]);
             if (crate != null) {
-                return crate.getRewards().stream().map(ICrateReward::getId).toList();
+                return crate.getRewards().stream().map(CrateReward::getId).toList();
             }
         }
         return super.getTab(player, arg, args);
@@ -70,13 +70,13 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        ICrate crate = plugin.getCrateManager().getCrateById(args[2]);
+        Crate crate = plugin.getCrateManager().getCrateById(args[2]);
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
-        ICrateReward reward = args.length >= 4 ? crate.getReward(args[3]) : null;
+        CrateReward reward = args.length >= 4 ? crate.getReward(args[3]) : null;
         LangMessage message;
         if (reward == null) {
             user.removeRewardWinLimit(crate.getId());
@@ -88,7 +88,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
         }
 
         message
-            .replace("%player%", user.getName())
+            .replace(Placeholders.Player.NAME, user.getName())
             .replace(Placeholders.CRATE_NAME, crate.getName())
             .send(sender);
     }

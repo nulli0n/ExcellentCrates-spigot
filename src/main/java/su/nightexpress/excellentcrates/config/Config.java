@@ -15,8 +15,8 @@ public class Config {
     public static final String DIR_CRATES     = "/crates/";
     public static final String DIR_PREVIEWS   = "/previews/";
     public static final String DIR_KEYS       = "/keys/";
-    public static final String DIR_MENUS      = "/menu/";
-    public static final String DIR_ANIMATIONS = "/animations/";
+    public static final String DIR_MENUS    = "/menu/";
+    public static final String DIR_OPENINGS = "/openings/";
 
     public static double CRATE_PUSHBACK_Y;
     public static double CRATE_PUSHBACK_MULTIPLY;

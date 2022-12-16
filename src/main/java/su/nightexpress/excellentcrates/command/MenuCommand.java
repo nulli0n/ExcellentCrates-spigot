@@ -8,8 +8,8 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrateMenu;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.menu.CrateMenu;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        ICrateMenu menu = plugin.getMenuManager().getMenuById(args[1]);
+        CrateMenu menu = plugin.getMenuManager().getMenuById(args[1]);
         if (menu == null) {
             plugin.getMessage(Lang.MENU_INVALID).send(sender);
             return;
@@ -80,7 +80,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
 
         if (!sender.equals(player)) {
             plugin.getMessage(Lang.COMMAND_MENU_DONE_OTHERS)
-                .replace("%player%", player.getName())
+                .replace(Placeholders.Player.replacer(player))
                 .replace(Placeholders.MENU_ID, menu.getId())
                 .send(sender);
         }

@@ -6,14 +6,18 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+
+import java.util.stream.Stream;
 
 public class KeyListener extends AbstractListener<ExcellentCrates> {
 
@@ -63,6 +67,14 @@ public class KeyListener extends AbstractListener<ExcellentCrates> {
 
         if ((first != null && this.keyManager.isKey(first)) || (second != null && this.keyManager.isKey(second))) {
             e.setResult(null);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onKeyCraftShop(CraftItemEvent e) {
+        CraftingInventory inventory = e.getInventory();
+        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.keyManager.isKey(item))) {
+            e.setCancelled(true);
         }
     }
 }

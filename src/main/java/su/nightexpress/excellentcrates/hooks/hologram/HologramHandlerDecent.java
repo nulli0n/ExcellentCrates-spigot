@@ -5,29 +5,27 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
-import su.nightexpress.excellentcrates.api.hook.HologramHandler;
+import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
+import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.CrateReward;
 
 import java.util.*;
 
-public class HologramHandlerDecent extends AbstractHook<ExcellentCrates> implements HologramHandler {
+public class HologramHandlerDecent implements HologramHandler {
 
     private Map<String, Set<Hologram>> holoCrates;
     private Map<Player, Hologram>      holoRewards;
 
-    public HologramHandlerDecent(@NotNull ExcellentCrates plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
+    public HologramHandlerDecent(@NotNull ExcellentCrates plugin) {
+        this.holoCrates = new HashMap<>();
+        this.holoRewards = new WeakHashMap<>();
     }
 
     @Override
-    public boolean setup() {
-        this.holoCrates = new HashMap<>();
-        this.holoRewards = new WeakHashMap<>();
-        return true;
+    public void setup() {
+
     }
 
     @Override
@@ -45,7 +43,7 @@ public class HologramHandlerDecent extends AbstractHook<ExcellentCrates> impleme
     }
 
     @Override
-    public void create(@NotNull ICrate crate) {
+    public void create(@NotNull Crate crate) {
         String id = "crate_" + crate.getId();
 
         crate.getBlockLocations().forEach(loc -> {
@@ -58,7 +56,7 @@ public class HologramHandlerDecent extends AbstractHook<ExcellentCrates> impleme
     }
 
     @Override
-    public void remove(@NotNull ICrate crate) {
+    public void remove(@NotNull Crate crate) {
         Set<Hologram> set = this.holoCrates.remove(crate.getId());
         if (set == null) return;
 
@@ -66,10 +64,10 @@ public class HologramHandlerDecent extends AbstractHook<ExcellentCrates> impleme
     }
 
     @Override
-    public void createReward(@NotNull Player player, @NotNull ICrateReward reward, @NotNull Location location) {
+    public void createReward(@NotNull Player player, @NotNull CrateReward reward, @NotNull Location location) {
         this.removeReward(player);
 
-        ICrate crate = reward.getCrate();
+        Crate crate = reward.getCrate();
         Hologram hologram = DHAPI.createHologram(crate.getId() + "_" + reward.getId() + Rnd.get(100), location);
         DHAPI.addHologramLine(hologram, reward.getName());
         DHAPI.addHologramLine(hologram, "#ICON: " + reward.getPreview().getType().name());

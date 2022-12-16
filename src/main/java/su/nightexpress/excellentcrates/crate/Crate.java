@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.crate;
 
-import com.google.common.collect.Sets;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,37 +9,39 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.AbstractLoadableItem;
+import su.nexmedia.engine.api.manager.*;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
-import su.nightexpress.excellentcrates.*;
+import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.OpenCostType;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
-import su.nightexpress.excellentcrates.api.hook.HologramHandler;
+import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.editor.CrateEditorCrate;
+import su.nightexpress.excellentcrates.crate.editor.EditorCrateMain;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectSettings;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICrate {
+public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICleanable, IEditable, IPlaceholder {
 
-    private String  name;
-    private String  animationConfig;
-    private String  previewConfig;
+    private String name;
+    private String openingConfig;
+    private String previewConfig;
     private boolean isPermissionRequired;
     private int[]   attachedCitizens;
 
-    private int                       openCooldown;
-    private Map<OpenCostType, Double> openCostType;
+    private       int                       openCooldown;
+    private final Map<OpenCostType, Double> openCostType;
 
     private Set<String> keyIds;
     private ItemStack   item;
@@ -52,26 +53,17 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
     private List<String>        blockHologramText;
     private CrateEffectSettings blockEffect;
 
-    private LinkedHashMap<String, ICrateReward> rewardMap;
+    private LinkedHashMap<String, CrateReward> rewardMap;
 
-    private CratePreview     preview;
-    private CrateEditorCrate editor;
+    private CratePreview    preview;
+    private EditorCrateMain editor;
 
     public Crate(@NotNull ExcellentCrates plugin, @NotNull String id) {
-        super(plugin, plugin.getDataFolder() + Config.DIR_CRATES + id.toLowerCase() + ".yml");
+        this(plugin, new JYML(plugin.getDataFolder() + Config.DIR_CRATES, id.toLowerCase() + ".yml"));
 
         this.setName("&b" + StringUtil.capitalizeFully(this.getId() + " Crate"));
-        this.setAnimationConfig(null); // None
+        this.setOpeningConfig(null);
         this.setPreviewConfig(Placeholders.DEFAULT);
-        this.setPermissionRequired(false);
-        this.setAttachedCitizens(new int[]{});
-
-        this.setOpenCooldown(0);
-        this.openCostType = new HashMap<>();
-        this.setOpenCost(OpenCostType.MONEY, 0);
-        this.setOpenCost(OpenCostType.EXP, 0);
-
-        this.setKeyIds(new HashSet<>());
 
         ItemStack item = new ItemStack(Material.ENDER_CHEST);
         ItemMeta meta = item.getItemMeta();
@@ -80,33 +72,37 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         }
         this.setItem(item);
 
-        this.setBlockLocations(new HashSet<>());
         this.setBlockPushbackEnabled(true);
         this.setBlockHologramEnabled(false);
         this.setBlockHologramOffsetY(1.5D);
         this.setBlockHologramText(Arrays.asList("&c&l" + this.getName().toUpperCase(), "&7Buy a key at &cwww.myserver.com"));
         this.setBlockEffect(new CrateEffectSettings(CrateEffectModel.HELIX, Particle.FLAME.name(), ""));
-
-        this.setRewardsMap(new LinkedHashMap<>());
     }
 
     public Crate(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
+        this.setAttachedCitizens(new int[0]);
+        this.setKeyIds(new HashSet<>());
+        this.openCostType = new HashMap<>();
+        this.setRewardsMap(new LinkedHashMap<>());
+        this.setBlockLocations(new HashSet<>());
+    }
 
+    @Override
+    public boolean load() {
         this.setName(cfg.getString("Name", this.getId()));
-        this.setAnimationConfig(cfg.getString("Animation_Config"));
+        this.setOpeningConfig(cfg.getString("Animation_Config"));
         this.setPreviewConfig(cfg.getString("Preview_Config"));
         this.setPermissionRequired(cfg.getBoolean("Permission_Required"));
         this.setAttachedCitizens(cfg.getIntArray("Attached_Citizens"));
 
         this.setOpenCooldown(cfg.getInt("Opening.Cooldown"));
-        this.openCostType = new HashMap<>();
         for (OpenCostType openCostType : OpenCostType.values()) {
             this.setOpenCost(openCostType, cfg.getDouble("Opening.Cost." + openCostType.name()));
         }
 
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
-        this.setItem(cfg.getItem("Item.", this.getId()));
+        this.setItem(cfg.getItem("Item"));
 
         this.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("Block.Locations"))));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
@@ -120,7 +116,6 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
         this.setBlockEffect(crateEffectSettings);
 
-        this.rewardMap = new LinkedHashMap<>();
         for (String rewId : cfg.getSection("Rewards.List")) {
             String path = "Rewards.List." + rewId + ".";
 
@@ -136,73 +131,21 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             List<String> rewCmds = cfg.getStringList(path + "Commands");
             List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemsEncoded(path + "Items")).toList());
 
-            ICrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rBroadcast,
+            CrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rBroadcast,
                 winLimitAmount, winLimitCooldown,
                 rewPreview, rewItem, rewCmds);
             this.rewardMap.put(rewId, reward);
         }
 
         this.updateHologram();
-    }
-
-    public static Crate fromLegacy(@NotNull JYML cfg) {
-        Crate crate = new Crate(ExcellentCratesAPI.PLUGIN, cfg.getFile().getName().replace(".yml", ""));
-
-        crate.setName(cfg.getString("name", cfg.getFile().getName()));
-        crate.setAnimationConfig(cfg.getString("template", null));
-        crate.setPreviewConfig(cfg.getString("preview", Placeholders.DEFAULT));
-        crate.setPermissionRequired(cfg.getBoolean("permission-required"));
-        crate.setAttachedCitizens(cfg.getIntArray("attached-citizens"));
-
-        crate.setOpenCooldown(cfg.getInt("cooldown"));
-        crate.openCostType = new HashMap<>();
-        crate.setOpenCost(OpenCostType.MONEY, cfg.getDouble("open-cost.vault"));
-        crate.setOpenCost(OpenCostType.EXP, cfg.getDouble("open-cost.exp"));
-
-        crate.setKeyIds(Sets.newHashSet(cfg.getString("key.id", "")));
-        crate.setItem(cfg.getItem("item."));
-
-        crate.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("block.locations"))));
-        crate.setBlockPushbackEnabled(cfg.getBoolean("block.pushback.enabled"));
-        crate.setBlockHologramEnabled(cfg.getBoolean("block.hologram.enabled"));
-        crate.setBlockHologramOffsetY(1.5D);
-        crate.setBlockHologramText(cfg.getStringList("block.hologram.text"));
-
-        CrateEffectModel model = cfg.getEnum("block.effects.type", CrateEffectModel.class, CrateEffectModel.SIMPLE);
-        String particleName = cfg.getString("block.effects.particle", Particle.FLAME.name());
-        String particleData = "";
-        CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
-        crate.setBlockEffect(crateEffectSettings);
-
-        crate.rewardMap = new LinkedHashMap<>();
-        for (String rewId : cfg.getSection("rewards.list")) {
-            String path = "rewards.list." + rewId + ".";
-
-            String rewName = cfg.getString(path + "name", rewId);
-            double rewChance = cfg.getDouble(path + "chance");
-            boolean rBroadcast = false;
-            ItemStack rewPreview = cfg.getItemEncoded(path + "preview");
-            if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
-
-            int winLimitAmount = -1;
-            long winLimitCooldown = 0L;
-
-            List<String> rewCmds = cfg.getStringList(path + "cmds");
-            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemEncoded(path + "item")).toList());
-
-            ICrateReward reward = new CrateReward(crate, rewId, rewName, rewChance, rBroadcast,
-                winLimitAmount, winLimitCooldown,
-                rewPreview, rewItem, rewCmds);
-            crate.rewardMap.put(rewId, reward);
-        }
-
-        return crate;
+        this.createPreview();
+        return true;
     }
 
     @Override
     public void onSave() {
         cfg.set("Name", this.getName());
-        cfg.set("Animation_Config", this.getAnimationConfig());
+        cfg.set("Animation_Config", this.getOpeningConfig());
         cfg.set("Preview_Config", this.getPreviewConfig());
         cfg.set("Permission_Required", this.isPermissionRequired());
         cfg.setIntArray("Attached_Citizens", this.getAttachedCitizens());
@@ -225,9 +168,8 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         cfg.set("Block.Effect.Particle.Data", this.getBlockEffect().getParticleData());
 
         cfg.set("Rewards.List", null);
-
-        for (Entry<String, ICrateReward> e : this.getRewardsMap().entrySet()) {
-            ICrateReward reward = e.getValue();
+        for (Entry<String, CrateReward> e : this.getRewardsMap().entrySet()) {
+            CrateReward reward = e.getValue();
             String path = "Rewards.List." + e.getKey() + ".";
 
             cfg.set(path + "Name", reward.getName());
@@ -240,8 +182,8 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             cfg.setItemsEncoded(path + "Items", reward.getItems());
         }
 
-        this.createPreview();
-        this.updateHologram();
+        //this.createPreview();
+        //this.updateHologram();
     }
 
     @Override
@@ -250,7 +192,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         return str -> str
             .replace(Placeholders.CRATE_ID, this.getId())
             .replace(Placeholders.CRATE_NAME, this.getName())
-            .replace(Placeholders.CRATE_ANIMATION_CONFIG, String.valueOf(this.getAnimationConfig()))
+            .replace(Placeholders.CRATE_ANIMATION_CONFIG, String.valueOf(this.getOpeningConfig()))
             .replace(Placeholders.CRATE_PREVIEW_CONFIG, String.valueOf(this.getPreviewConfig()))
             .replace(Placeholders.CRATE_PERMISSION, Perms.CRATE + this.getId())
             .replace(Placeholders.CRATE_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
@@ -290,7 +232,7 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
             this.preview = null;
         }
         if (this.rewardMap != null) {
-            this.rewardMap.values().forEach(ICrateReward::clear);
+            this.rewardMap.values().forEach(CrateReward::clear);
             this.rewardMap.clear();
             this.rewardMap = null;
         }
@@ -298,168 +240,176 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
 
     @Override
     @NotNull
-    public CrateEditorCrate getEditor() {
+    public EditorCrateMain getEditor() {
         if (this.editor == null) {
-            this.editor = new CrateEditorCrate(this.plugin, this);
+            this.editor = new EditorCrateMain(this);
         }
         return this.editor;
     }
 
-    @Override
+    @Nullable
+    public CratePreview getPreview() {
+        if (this.preview == null) {
+            this.createPreview();
+        }
+        return this.preview;
+    }
+
+    public void createPreview() {
+        if (this.getPreviewConfig() == null) {
+            return;
+        }
+        this.preview = new CratePreview(this, JYML.loadOrExtract(plugin(), Config.DIR_PREVIEWS + this.getPreviewConfig() + ".yml"));
+    }
+
+    public void openPreview(@NotNull Player player) {
+        if (this.getPreview() == null) return;
+        this.getPreview().open(player, 1);
+    }
+
     @NotNull
     public String getName() {
         return this.name;
     }
 
-    @Override
     public void setName(@NotNull String name) {
         this.name = StringUtil.color(name);
     }
 
-    @Override
     @Nullable
-    public String getAnimationConfig() {
-        return this.animationConfig;
+    public String getOpeningConfig() {
+        return this.openingConfig;
     }
 
-    @Override
-    public void setAnimationConfig(@Nullable String animationConfig) {
-        this.animationConfig = animationConfig == null ? null : animationConfig.toLowerCase();
+    public void setOpeningConfig(@Nullable String openingConfig) {
+        this.openingConfig = openingConfig == null ? null : openingConfig.toLowerCase();
     }
 
-    @Override
     @Nullable
     public String getPreviewConfig() {
         return this.previewConfig;
     }
 
-    @Override
     public void setPreviewConfig(@Nullable String previewConfig) {
         this.previewConfig = previewConfig == null ? null : previewConfig.toLowerCase();
     }
 
-    @Override
     public boolean isPermissionRequired() {
         return isPermissionRequired;
     }
 
-    @Override
     public void setPermissionRequired(boolean isPermissionRequired) {
         this.isPermissionRequired = isPermissionRequired;
     }
 
-    @Override
     public boolean hasPermission(@NotNull Player player) {
         return !this.isPermissionRequired() || (player.hasPermission(Perms.CRATE + this.getId()));
     }
 
-    @Override
     public int[] getAttachedCitizens() {
         return this.attachedCitizens;
     }
 
-    @Override
     public void setAttachedCitizens(int[] npcIds) {
         this.attachedCitizens = npcIds;
     }
 
-    @Override
+    public boolean isAttachedNPC(int id) {
+        return ArrayUtil.contains(this.getAttachedCitizens(), id);
+    }
+
     public int getOpenCooldown() {
         return this.openCooldown;
     }
 
-    @Override
     public void setOpenCooldown(int openCooldown) {
         this.openCooldown = openCooldown;
     }
 
-    @Override
     public double getOpenCost(@NotNull OpenCostType openCostType) {
         return this.openCostType.getOrDefault(openCostType, 0D);
     }
 
-    @Override
     public void setOpenCost(@NotNull OpenCostType openCost, double amount) {
         this.openCostType.put(openCost, amount);
     }
 
-    @Override
     @NotNull
     public Set<String> getKeyIds() {
         return keyIds;
     }
 
-    @Override
     public void setKeyIds(@NotNull Set<String> keyIds) {
         this.keyIds = new HashSet<>(keyIds.stream().filter(Predicate.not(String::isEmpty)).map(String::toLowerCase).toList());
     }
 
-    @Override
     @NotNull
     public ItemStack getItem() {
         return new ItemStack(this.item);
     }
 
-    @Override
     public void setItem(@NotNull ItemStack item) {
         this.item = new ItemStack(item);
         PDCUtil.setData(this.item, Keys.CRATE_ID, this.getId());
     }
 
-    @Override
     public boolean isBlockPushbackEnabled() {
         return this.blockPushbackEnabled;
     }
 
-    @Override
     public void setBlockPushbackEnabled(boolean blockPushback) {
         this.blockPushbackEnabled = blockPushback;
     }
 
-    @Override
     @NotNull
     public Set<Location> getBlockLocations() {
         return blockLocations;
     }
 
-    @Override
     public void setBlockLocations(@NotNull Set<Location> blockLocations) {
         blockLocations.removeIf(location -> location.getBlock().isEmpty());
         this.blockLocations = blockLocations;
     }
 
-    @Override
+    public void addBlockLocation(@NotNull Location location) {
+        this.getBlockLocations().add(location);
+    }
+
+    public void removeBlockLocation(@NotNull Location location) {
+        this.getBlockLocations().remove(location);
+    }
+
     public boolean isBlockHologramEnabled() {
         return this.blockHologramEnabled;
     }
 
-    @Override
     public void setBlockHologramEnabled(boolean blockHologramEnabled) {
         this.blockHologramEnabled = blockHologramEnabled;
     }
 
-    @Override
     public double getBlockHologramOffsetY() {
         return blockHologramOffsetY;
     }
 
-    @Override
     public void setBlockHologramOffsetY(double blockHologramOffsetY) {
         this.blockHologramOffsetY = blockHologramOffsetY;
     }
 
-    @Override
     @NotNull
     public List<String> getBlockHologramText() {
         return new ArrayList<>(this.blockHologramText);
     }
 
-    @Override
     public void setBlockHologramText(@NotNull List<String> blockHologramText) {
         this.blockHologramText = StringUtil.color(blockHologramText);
     }
 
-    @Override
+    @NotNull
+    public Location getBlockHologramLocation(@NotNull Location loc) {
+        double offset = this.getBlockHologramOffsetY();
+        return LocationUtil.getCenter(loc.clone()).add(0D, offset, 0D);
+    }
+
     public void createHologram() {
         if (!this.isBlockHologramEnabled()) return;
 
@@ -469,7 +419,6 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         hologramHandler.create(this);
     }
 
-    @Override
     public void removeHologram() {
         HologramHandler hologramHandler = plugin.getHologramHandler();
         if (hologramHandler == null) return;
@@ -477,13 +426,11 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         hologramHandler.remove(this);
     }
 
-    @Override
     public void updateHologram() {
         this.removeHologram();
         this.createHologram();
     }
 
-    @Override
     @NotNull
     public CrateEffectSettings getBlockEffect() {
         return this.blockEffect;
@@ -493,67 +440,66 @@ public class Crate extends AbstractLoadableItem<ExcellentCrates> implements ICra
         this.blockEffect = blockEffect;
     }
 
-    @Override
     @NotNull
-    public LinkedHashMap<String, ICrateReward> getRewardsMap() {
+    public LinkedHashMap<String, CrateReward> getRewardsMap() {
         return this.rewardMap;
     }
 
-    @Override
-    public void setRewardsMap(@NotNull LinkedHashMap<String, ICrateReward> rewards) {
+    public void setRewardsMap(@NotNull LinkedHashMap<String, CrateReward> rewards) {
         this.rewardMap = rewards;
     }
 
-    @Override
     @NotNull
-    public Collection<ICrateReward> getRewards(@NotNull Player player) {
+    public Collection<CrateReward> getRewards() {
+        return this.getRewardsMap().values();
+    }
+
+    public void setRewards(@NotNull List<CrateReward> rewards) {
+        this.setRewardsMap(rewards.stream().collect(
+            Collectors.toMap(CrateReward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
+    }
+
+    @NotNull
+    public Collection<CrateReward> getRewards(@NotNull Player player) {
         return this.getRewards().stream().filter(reward -> reward.canWin(player)).toList();
     }
 
-    @Override
+    @Nullable
+    public CrateReward getReward(@NotNull String id) {
+        return this.getRewardsMap().get(id.toLowerCase());
+    }
+
+    public void addReward(@NotNull CrateReward crateReward) {
+        this.getRewardsMap().put(crateReward.getId(), crateReward);
+    }
+
+    public void removeReward(@NotNull CrateReward crateReward) {
+        this.removeReward(crateReward.getId());
+    }
+
+    public void removeReward(@NotNull String id) {
+        this.getRewardsMap().remove(id);
+    }
+
     @NotNull
-    public ICrateReward rollReward() {
-        Map<ICrateReward, Double> map = new HashMap<>();
-        for (ICrateReward reward : this.getRewards()) {
+    public CrateReward rollReward() {
+        Map<CrateReward, Double> map = new HashMap<>();
+        for (CrateReward reward : this.getRewards()) {
             map.put(reward, reward.getChance());
         }
-        ICrateReward crate = Rnd.get(map);
+        CrateReward crate = Rnd.get(map);
         if (crate == null) {
             throw new IllegalStateException("Unable to roll crate reward for: " + this.getId());
         }
         return crate;
     }
 
-    @Override
     @Nullable
-    public ICrateReward rollReward(@NotNull Player player) {
-        Map<ICrateReward, Double> map = new HashMap<>();
-        for (ICrateReward reward : this.getRewards(player)) {
+    public CrateReward rollReward(@NotNull Player player) {
+        Map<CrateReward, Double> map = new HashMap<>();
+        for (CrateReward reward : this.getRewards(player)) {
             map.put(reward, reward.getChance());
         }
         return Rnd.get(map);
-    }
-
-    @Override
-    @Nullable
-    public CratePreview getPreview() {
-        if (this.preview == null) {
-            this.createPreview();
-        }
-        return this.preview;
-    }
-
-    @Override
-    public void createPreview() {
-        if (this.getPreviewConfig() == null) {
-            return;
-        }
-        this.preview = new CratePreview(this, JYML.loadOrExtract(plugin(), Config.DIR_PREVIEWS + this.getPreviewConfig() + ".yml"));
-    }
-
-    @Override
-    public void openPreview(@NotNull Player player) {
-        if (this.getPreview() == null) return;
-        this.getPreview().open(player, 1);
     }
 }

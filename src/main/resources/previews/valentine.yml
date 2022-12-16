@@ -6,22 +6,23 @@ Reward:
   Name: '&e%reward_preview_name%'
   Lore:
     Default:
-      - '&e&lWin Chance: &6%reward_chance%%'
-      - '&e&lWin Amount Limit: &6%reward_win_limit_amount%'
-      - '&e&lWin Cooldown: &6%reward_win_limit_cooldown%'
-      - ''
-      - '%win_limit_amount%'
-      - '%win_limit_cooldown%'
-      - '%win_limit_drained%'
-      - ''
-      - '%reward_preview_lore%'
+    - '#cdf34d&lChance: &f%reward_chance%%'
+#    - ''
+#    - '#ec7063Win Limit: &f%reward_win_limit_amount%'
+#    - '#ec7063Win Cooldown: &f%reward_win_limit_cooldown%'
+    - ''
+    - '%win_limit_amount%'
+    - '%win_limit_cooldown%'
+    - '%win_limit_drained%'
+    - ''
+    - '%reward_preview_lore%'
     Win_Limit:
       Amount:
-        - '&7You can win this reward &6%user_reward_win_limit_amount_left% more times &7(of total &f%reward_win_limit_amount%&7)'
+        - '#ec7063You can win this reward &f%user_reward_win_limit_amount_left% #ec7063more times &7(of total &f%reward_win_limit_amount%&7)'
       Cooldown:
-        - '&7You can win this reward again in &6%user_reward_win_limit_expire_in%'
+        - '#ec7063You can win this reward again in &f%user_reward_win_limit_expire_in%'
       Drained:
-        - '&cYou already won this reward, you can not win more.'
+        - '#ec7063You already won this reward, you can not win more.'
   Slots: 20,21,29,30,23,24,32,33
 
 Content:
@@ -66,7 +67,7 @@ Content:
           Enchants:
             unbreaking: 1
           Item_Flags:
-            - '*'
+          - '*'
     Slots: 53
     Type: PAGE_NEXT
 
@@ -79,6 +80,6 @@ Content:
           Enchants:
             unbreaking: 1
           Item_Flags:
-            - '*'
+          - '*'
     Slots: 45
     Type: PAGE_PREVIOUS

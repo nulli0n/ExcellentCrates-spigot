@@ -8,8 +8,8 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.Crate;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
+        Crate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
@@ -80,7 +80,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
 
         if (!sender.equals(player)) {
             plugin.getMessage(Lang.COMMAND_PREVIEW_DONE_OTHERS)
-                .replace("%player%", player.getName())
+                .replace(Placeholders.Player.replacer(player))
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .replace(Placeholders.CRATE_ID, crate.getId())
                 .send(sender);

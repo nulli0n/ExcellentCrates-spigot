@@ -4,54 +4,46 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
+import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.Crate;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
-public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
+public class PlaceholderHook {
 
-    private CratesExpansion expansion;
+    private static CratesExpansion expansion;
 
-    public PlaceholderHook(@NotNull ExcellentCrates plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
+    public static void setup() {
+        expansion = new CratesExpansion();
+        expansion.register();
     }
 
-    @Override
-    public boolean setup() {
-        this.expansion = new CratesExpansion();
-        this.expansion.register();
-
-        return true;
-    }
-
-    @Override
-    public void shutdown() {
-        if (this.expansion != null) {
-            this.expansion.unregister();
+    public static void shutdown() {
+        if (expansion != null) {
+            expansion.unregister();
         }
     }
 
-    class CratesExpansion extends PlaceholderExpansion {
+    static class CratesExpansion extends PlaceholderExpansion {
 
         @Override
         @NotNull
         public String getIdentifier() {
-            return plugin.getName().toLowerCase();
+            return ExcellentCratesAPI.PLUGIN.getName().toLowerCase();
         }
 
         @Override
         @NotNull
         public String getAuthor() {
-            return plugin.getAuthor();
+            return ExcellentCratesAPI.PLUGIN.getAuthor();
         }
 
         @Override
         @NotNull
         public String getVersion() {
-            return plugin.getDescription().getVersion();
+            return ExcellentCratesAPI.PLUGIN.getDescription().getVersion();
         }
 
         @Override
@@ -63,9 +55,10 @@ public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String tmp) {
             if (player == null) return null;
 
+            ExcellentCrates plugin = ExcellentCratesAPI.PLUGIN;
             if (tmp.startsWith("keys_")) {
                 String id = tmp.replace("keys_", "");
-                ICrate crate = plugin.getCrateManager().getCrateById(id);
+                Crate crate = plugin.getCrateManager().getCrateById(id);
                 if (crate != null) {
                     int keys = plugin.getKeyManager().getKeysAmount(player, crate);
                     return String.valueOf(keys);
@@ -73,7 +66,7 @@ public class PlaceholderHook extends AbstractHook<ExcellentCrates> {
             }
             else if (tmp.startsWith("cooldown_")) {
                 String id = tmp.replace("cooldown_", "");
-                ICrate crate = plugin.getCrateManager().getCrateById(id);
+                Crate crate = plugin.getCrateManager().getCrateById(id);
                 if (crate != null) {
                     CrateUser user = plugin.getUserManager().getUserData(player);
 

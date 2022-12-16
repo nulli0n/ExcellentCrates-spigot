@@ -4,10 +4,10 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.EffectUtil;
 import su.nexmedia.engine.utils.LocationUtil;
-import su.nightexpress.excellentcrates.crate.effect.AbstractCrateBlockEffect;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
-public class CrateEffectPulsar extends AbstractCrateBlockEffect {
+public class CrateEffectPulsar extends CrateEffectTask {
 
     public CrateEffectPulsar() {
         super(CrateEffectModel.PULSAR, 2L, 38);

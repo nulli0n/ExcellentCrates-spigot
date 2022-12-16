@@ -3,16 +3,16 @@ package su.nightexpress.excellentcrates.crate.effect.list;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.EffectUtil;
-import su.nightexpress.excellentcrates.crate.effect.AbstractCrateBlockEffect;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
-public class CrateEffectVortex extends AbstractCrateBlockEffect {
+public class CrateEffectVortex extends CrateEffectTask {
 
-    private int    strands   = 2;
-    private int    particles = 170;
-    private float  radius    = 1.5F;
-    private float  curve     = 2.0F;
-    private double rotation  = 0.7853981633974483D;
+    private static final int    STRANDS   = 2;
+    private static final int    PARTICLES = 170;
+    private static final float  RADIUS    = 1.5F;
+    private static final float  CURVE     = 2.0F;
+    private static final double ROTATION  = 0.7853981633974483D;
 
     public CrateEffectVortex() {
         super(CrateEffectModel.VORTEX, 1L, 170);
@@ -21,11 +21,11 @@ public class CrateEffectVortex extends AbstractCrateBlockEffect {
     @Override
     public void doStep(@NotNull Location loc, @NotNull String particleName, @NotNull String particleData, int step) {
         for (int boost = 0; boost < 5; boost++) {
-            for (int strand = 1; strand <= this.strands; ++strand) {
-                float progress = step / (float) this.particles;
-                double point = this.curve * progress * 2.0f * Math.PI / this.strands + 6.283185307179586 * strand / this.strands + this.rotation;
-                double addX = Math.cos(point) * progress * this.radius;
-                double addZ = Math.sin(point) * progress * this.radius;
+            for (int strand = 1; strand <= STRANDS; ++strand) {
+                float progress = step / (float) PARTICLES;
+                double point = CURVE * progress * 2.0f * Math.PI / STRANDS + 6.283185307179586 * strand / STRANDS + ROTATION;
+                double addX = Math.cos(point) * progress * RADIUS;
+                double addZ = Math.sin(point) * progress * RADIUS;
                 double addY = 3.5D - 0.02 * step;
                 Location location = loc.clone().add(addX, addY, addZ);
                 EffectUtil.playEffect(location, particleName, particleData, 0.1f, 0.1f, 0.1f, 0.0f, 1);

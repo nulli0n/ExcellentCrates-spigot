@@ -4,15 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
-import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.editor.EditorHolder;
 import su.nexmedia.engine.command.list.EditorSubCommand;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
-import su.nightexpress.excellentcrates.animation.AnimationManager;
-import su.nightexpress.excellentcrates.api.hook.HologramHandler;
+import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.command.*;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -20,8 +18,7 @@ import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.CrateUserData;
 import su.nightexpress.excellentcrates.data.UserManager;
-import su.nightexpress.excellentcrates.editor.CrateEditorHandler;
-import su.nightexpress.excellentcrates.editor.CrateEditorHub;
+import su.nightexpress.excellentcrates.editor.CrateEditorMenu;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.hooks.external.CrateCitizensListener;
@@ -38,11 +35,8 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     private CrateUserData dataHandler;
     private UserManager   userManager;
 
-    private CrateEditorHub     editorHub;
-    private CrateEditorHandler editorHandler;
-
-    private KeyManager       keyManager;
-    private AnimationManager animationManager;
+    private CrateEditorMenu editor;
+    private KeyManager      keyManager;
     private CrateManager     crateManager;
     private MenuManager      menuManager;
 
@@ -56,9 +50,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public void enable() {
-        this.animationManager = new AnimationManager(this);
-        this.animationManager.setup();
-
         this.keyManager = new KeyManager(this);
         this.keyManager.setup();
 
@@ -67,24 +58,13 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
         this.menuManager = new MenuManager(this);
         this.menuManager.setup();
-
-        this.editorHandler = new CrateEditorHandler(this);
-        this.editorHandler.setup();
     }
 
     @Override
     public void disable() {
-        if (this.editorHub != null) {
-            this.editorHub.clear();
-            this.editorHub = null;
-        }
-        if (this.editorHandler != null) {
-            this.editorHandler.shutdown();
-            this.editorHandler = null;
-        }
-        if (this.animationManager != null) {
-            this.animationManager.shutdown();
-            this.animationManager = null;
+        if (this.editor != null) {
+            this.editor.clear();
+            this.editor = null;
         }
         if (this.keyManager != null) {
             this.keyManager.shutdown();
@@ -98,6 +78,13 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
             this.menuManager.shutdown();
             this.menuManager = null;
         }
+        if (this.hologramHandler != null) {
+            this.hologramHandler.shutdown();
+            this.hologramHandler = null;
+        }
+        if (Hooks.hasPlaceholderAPI()) {
+            PlaceholderHook.shutdown();
+        }
     }
 
     @Override
@@ -108,19 +95,20 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     @Override
     public void loadLang() {
         this.getLangManager().loadMissing(Lang.class);
+        this.getLangManager().setupEditorEnum(CrateEditorType.class);
     }
 
     @Override
     public void registerHooks() {
         if (Hooks.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
-            this.hologramHandler = this.registerHook(HookId.HOLOGRAPHIC_DISPLAYS, HologramHandlerHD.class);
+            this.hologramHandler = new HologramHandlerHD(this);
         }
         else if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
-            this.hologramHandler = this.registerHook(HookId.DECENT_HOLOGRAMS, HologramHandlerDecent.class);
+            this.hologramHandler = new HologramHandlerDecent(this);
         }
 
         if (Hooks.hasPlaceholderAPI()) {
-            this.registerHook(Hooks.PLACEHOLDER_API, PlaceholderHook.class);
+            PlaceholderHook.setup();
         }
         if (Hooks.hasCitizens()) {
             CitizensHook.addListener(this, new CrateCitizensListener(this));
@@ -143,7 +131,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public void registerPermissions() {
-        // TODO
+        this.registerPermissions(Perms.class);
     }
 
     @Override
@@ -176,11 +164,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     }
 
     @NotNull
-    public AnimationManager getAnimationManager() {
-        return animationManager;
-    }
-
-    @NotNull
     public KeyManager getKeyManager() {
         return keyManager;
     }
@@ -202,16 +185,10 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     @NotNull
-    public CrateEditorHub getEditor() {
-        if (this.editorHub == null) {
-            JYML cfg = JYML.loadOrExtract(this, "/editor/main.yml");
-            this.editorHub = new CrateEditorHub(this, cfg);
+    public CrateEditorMenu getEditor() {
+        if (this.editor == null) {
+            this.editor = new CrateEditorMenu(this);
         }
-        return this.editorHub;
-    }
-
-    @NotNull
-    public CrateEditorHandler getEditorHandler() {
-        return editorHandler;
+        return this.editor;
     }
 }

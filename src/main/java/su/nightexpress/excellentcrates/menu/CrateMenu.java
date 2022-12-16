@@ -8,19 +8,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
+import su.nexmedia.engine.api.manager.ICleanable;
+import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.api.menu.*;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateMenu;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.crate.Crate;
 
 import java.util.function.UnaryOperator;
 
-public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements ICrateMenu {
+public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements ICleanable, IPlaceholder {
 
     private Menu menu;
 
@@ -49,13 +50,11 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
         }
     }
 
-    @Override
     @NotNull
     public IMenu getMenu() {
         return this.menu;
     }
 
-    @Override
     public void open(@NotNull Player player) {
         if (this.menu == null) {
             this.menu = new Menu(this.plugin(), this.getConfig(), "");
@@ -92,7 +91,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
                 if (menuItem == null) return;
 
                 String crateId = menuItem.getId();
-                ICrate crate = plugin.getCrateManager().getCrateById(crateId);
+                Crate crate = plugin.getCrateManager().getCrateById(crateId);
                 if (crate == null) return;
 
                 ClickType clickType = ClickType.from(e);
@@ -104,7 +103,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
             };
 
             for (String id : cfg.getSection("Crates")) {
-                ICrate crate = plugin.getCrateManager().getCrateById(id);
+                Crate crate = plugin.getCrateManager().getCrateById(id);
                 if (crate == null) {
                     plugin.error("Invalid crate '" + id + "' in '" + CrateMenu.this.getId() + "' menu!");
                     continue;
@@ -133,7 +132,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return;
 
-            ICrate crate = plugin.getCrateManager().getCrateById(menuItem.getId());
+            Crate crate = plugin.getCrateManager().getCrateById(menuItem.getId());
             if (crate == null) return;
 
             ItemUtil.replace(item, crate.replacePlaceholders());

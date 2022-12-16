@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.command;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.command.AbstractCommand;
@@ -14,9 +15,9 @@ import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrateKey;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.CrateUser;
+import su.nightexpress.excellentcrates.key.CrateKey;
 
 import java.util.*;
 
@@ -61,7 +62,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
 
         protected final Mode mode;
 
-        public ManageCommand(@NotNull ExcellentCrates plugin, @NotNull String[] aliases, @Nullable String permission, @NotNull Mode mode) {
+        public ManageCommand(@NotNull ExcellentCrates plugin, @NotNull String[] aliases, @Nullable Permission permission, @NotNull Mode mode) {
             super(plugin, aliases, permission);
             this.mode = mode;
         }
@@ -82,7 +83,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
             if (arg == 2) {
                 List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
-                list.add(0, Placeholders.MASK_ANY);
+                list.add(0, Placeholders.WILDCARD);
                 return list;
             }
             if (arg == 3) {
@@ -101,7 +102,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                 return;
             }
 
-            ICrateKey crateKey = plugin.getKeyManager().getKeyById(args[3]);
+            CrateKey crateKey = plugin.getKeyManager().getKeyById(args[3]);
             if (crateKey == null) {
                 plugin.getMessage(Lang.CRATE_KEY_ERROR_INVALID).send(sender);
                 return;
@@ -115,7 +116,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
 
             String pName = args[2];
             Set<String> playerNames = new HashSet<>();
-            if (pName.equalsIgnoreCase(Placeholders.MASK_ANY)) {
+            if (pName.equalsIgnoreCase(Placeholders.WILDCARD)) {
                 playerNames.addAll(PlayerUtil.getPlayerNames());
             }
             else playerNames.add(pName);
@@ -127,7 +128,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                     case TAKE -> plugin.getKeyManager().takeKey(name, crateKey, amount);
                 };
                 if (!isDone) {
-                    this.plugin.getMessage(Lang.COMMAND_KEY_ERROR_PLAYER).replace("%player%", name).send(sender);
+                    this.plugin.getMessage(Lang.COMMAND_KEY_ERROR_PLAYER).replace(Placeholders.Player.NAME, name).send(sender);
                     //this.getMessageError().send(sender);
                     return;
                 }
@@ -135,14 +136,14 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                 Player target = plugin.getServer().getPlayer(name);
                 if (target != null) {
                     this.getMessageNotify()
-                        .replace("%amount%", amount)
+                        .replace(Placeholders.GENERIC_AMOUNT, amount)
                         .replace(crateKey.replacePlaceholders())
                         .send(target);
                 }
 
                 this.getMessageDone()
-                    .replace("%player%", name)
-                    .replace("%amount%", amount)
+                    .replace(Placeholders.Player.NAME, name)
+                    .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(crateKey.replacePlaceholders())
                     .send(sender);
             });
@@ -307,8 +308,8 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
             }
 
             Player player = user.getPlayer();
-            Map<ICrateKey, Integer> keys = new HashMap<>();
-            for (ICrateKey key : plugin.getKeyManager().getKeys()) {
+            Map<CrateKey, Integer> keys = new HashMap<>();
+            for (CrateKey key : plugin.getKeyManager().getKeys()) {
                 int has;
                 if (!key.isVirtual()) {
                     has = player != null ? plugin.getKeyManager().getKeysAmount(player, key) : -2;
@@ -319,17 +320,17 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                 keys.put(key, has);
             }
 
-            plugin.getMessage(Lang.COMMAND_KEY_SHOW_FORMAT_LIST).replace("%player%", user.getName()).asList().forEach(line -> {
+            plugin.getMessage(Lang.COMMAND_KEY_SHOW_FORMAT_LIST).replace(Placeholders.Player.NAME, user.getName()).asList().forEach(line -> {
                 if (line.contains(Placeholders.KEY_NAME)) {
                     keys.forEach((key, amount) -> {
-                        MessageUtil.sendWithJSON(sender, line
+                        MessageUtil.sendWithJson(sender, line
                             .replace(Placeholders.KEY_NAME, key.getName())
-                            .replace("%amount%", amount == -2 ? "?" : String.valueOf(amount))
+                            .replace(Placeholders.GENERIC_AMOUNT, amount == -2 ? "?" : String.valueOf(amount))
                         );
                     });
                     return;
                 }
-                MessageUtil.sendWithJSON(sender, line);
+                MessageUtil.sendWithJson(sender, line);
             });
         }
     }

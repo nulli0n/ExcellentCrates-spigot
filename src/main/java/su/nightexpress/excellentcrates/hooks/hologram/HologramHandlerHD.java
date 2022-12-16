@@ -5,28 +5,28 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
-import su.nightexpress.excellentcrates.api.hook.HologramHandler;
+import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
+import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.CrateReward;
 
 import java.util.*;
 
-public class HologramHandlerHD extends AbstractHook<ExcellentCrates> implements HologramHandler {
+public class HologramHandlerHD implements HologramHandler {
 
-    private Map<String, Set<Hologram>> holoCrates;
+    private final ExcellentCrates            plugin;
+    private       Map<String, Set<Hologram>> holoCrates;
     private Map<Player, Hologram>      holoRewards;
 
-    public HologramHandlerHD(@NotNull ExcellentCrates plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
+    public HologramHandlerHD(@NotNull ExcellentCrates plugin) {
+        this.plugin = plugin;
+        this.holoCrates = new HashMap<>();
+        this.holoRewards = new WeakHashMap<>();
     }
 
     @Override
-    public boolean setup() {
-        this.holoCrates = new HashMap<>();
-        this.holoRewards = new WeakHashMap<>();
-        return true;
+    public void setup() {
+
     }
 
     @Override
@@ -44,11 +44,11 @@ public class HologramHandlerHD extends AbstractHook<ExcellentCrates> implements 
     }
 
     @Override
-    public void create(@NotNull ICrate crate) {
+    public void create(@NotNull Crate crate) {
         String id = crate.getId();
 
         crate.getBlockLocations().forEach(loc -> {
-            Hologram hologram = HologramsAPI.createHologram(plugin, crate.getBlockHologramLocation(loc));
+            Hologram hologram = HologramsAPI.createHologram(this.plugin, crate.getBlockHologramLocation(loc));
             for (String line : crate.getBlockHologramText()) {
                 hologram.appendTextLine(line);
             }
@@ -57,7 +57,7 @@ public class HologramHandlerHD extends AbstractHook<ExcellentCrates> implements 
     }
 
     @Override
-    public void remove(@NotNull ICrate crate) {
+    public void remove(@NotNull Crate crate) {
         Set<Hologram> set = this.holoCrates.remove(crate.getId());
         if (set == null) return;
 
@@ -65,11 +65,11 @@ public class HologramHandlerHD extends AbstractHook<ExcellentCrates> implements 
     }
 
     @Override
-    public void createReward(@NotNull Player player, @NotNull ICrateReward reward, @NotNull Location location) {
+    public void createReward(@NotNull Player player, @NotNull CrateReward reward, @NotNull Location location) {
         this.removeReward(player);
 
-        ICrate crate = reward.getCrate();
-        Hologram hologram = HologramsAPI.createHologram(plugin, location);
+        Crate crate = reward.getCrate();
+        Hologram hologram = HologramsAPI.createHologram(this.plugin, location);
         hologram.appendTextLine(reward.getName());
         hologram.appendItemLine(reward.getPreview());
         hologram.getVisibilityManager().setVisibleByDefault(false);

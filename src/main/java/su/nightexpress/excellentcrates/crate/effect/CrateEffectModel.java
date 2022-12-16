@@ -7,13 +7,13 @@ public enum CrateEffectModel {
 
     HELIX, PULSAR, BEACON, TORNADO, VORTEX, SIMPLE, NONE;
 
-    private AbstractCrateBlockEffect effect;
+    private CrateEffectTask effect;
 
     public static void start() {
         for (CrateEffectModel model : CrateEffectModel.values()) {
             if (model.effect != null && !model.effect.isCancelled()) continue;
 
-            AbstractCrateBlockEffect effect = model.createEffect();
+            CrateEffectTask effect = model.createEffect();
             if (effect == null) continue;
 
             effect.start();
@@ -30,7 +30,7 @@ public enum CrateEffectModel {
     }
 
     @Nullable
-    private AbstractCrateBlockEffect createEffect() {
+    private CrateEffectTask createEffect() {
         if (this.effect != null) return this.effect;
 
         return switch (this) {

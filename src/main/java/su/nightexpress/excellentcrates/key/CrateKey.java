@@ -6,6 +6,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
+import su.nexmedia.engine.api.manager.ICleanable;
+import su.nexmedia.engine.api.manager.IEditable;
+import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
@@ -14,19 +17,18 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrateKey;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.key.editor.KeyEditorKey;
+import su.nightexpress.excellentcrates.key.editor.EditorKeyMain;
 
 import java.util.function.UnaryOperator;
 
-public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements ICrateKey {
+public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements IEditable, ICleanable, IPlaceholder {
 
     private String    name;
     private boolean   isVirtual;
     private ItemStack item;
 
-    private KeyEditorKey editor;
+    private EditorKeyMain editor;
 
     public CrateKey(@NotNull ExcellentCrates plugin, @NotNull String id) {
         super(plugin, plugin.getDataFolder() + Config.DIR_KEYS + id.toLowerCase() + ".yml");
@@ -48,7 +50,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 
         this.setName(cfg.getString("Name", this.getId()));
         this.setVirtual(cfg.getBoolean("Virtual"));
-        ItemStack item = cfg.getItem("Item", this.getId());
+        ItemStack item = cfg.getItem("Item");
         if (item.getType().isAir() && !this.isVirtual()) {
             throw new IllegalStateException("Key item can not be AIR!");
         }
@@ -93,9 +95,9 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 
     @Override
     @NotNull
-    public KeyEditorKey getEditor() {
+    public EditorKeyMain getEditor() {
         if (this.editor == null) {
-            this.editor = new KeyEditorKey(plugin, this);
+            this.editor = new EditorKeyMain(this);
         }
         return this.editor;
     }

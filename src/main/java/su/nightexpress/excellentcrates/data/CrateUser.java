@@ -6,8 +6,8 @@ import su.nexmedia.engine.api.data.AbstractUser;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
+import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.CrateReward;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     @NotNull
-    public UnaryOperator<String> replacePlaceholers(@NotNull ICrateReward reward) {
+    public UnaryOperator<String> replacePlaceholers(@NotNull CrateReward reward) {
         UserRewardWinLimit rewardLimit = this.getRewardWinLimit(reward);
 
         int amountLeft = rewardLimit == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardLimit.getAmount();
@@ -68,16 +68,16 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         return this.openCooldowns;
     }
 
-    public void setCrateCooldown(@NotNull ICrate crate, long endDate) {
+    public void setCrateCooldown(@NotNull Crate crate, long endDate) {
         this.setCrateCooldown(crate.getId(), endDate);
     }
 
     public void setCrateCooldown(@NotNull String id, long endDate) {
         this.getCrateCooldowns().put(id.toLowerCase(), endDate);
-        this.plugin.runTask(c -> this.saveData(this.plugin), true);
+        this.saveData(this.plugin);
     }
 
-    public boolean isCrateOnCooldown(@NotNull ICrate crate) {
+    public boolean isCrateOnCooldown(@NotNull Crate crate) {
         return this.getCrateCooldown(crate.getId()) != 0;
     }
 
@@ -85,7 +85,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         return this.getCrateCooldown(id) != 0;
     }
 
-    public long getCrateCooldown(@NotNull ICrate crate) {
+    public long getCrateCooldown(@NotNull Crate crate) {
         return this.getCrateCooldown(crate.getId());
     }
 
@@ -114,7 +114,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void setKeys(@NotNull String id, int amount) {
         this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
-        this.plugin.runTask(c -> this.saveData(this.plugin), true);
+        this.saveData(this.plugin);
     }
 
     public int getKeys(@NotNull String id) {
@@ -123,7 +123,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void addKeysOnHold(@NotNull String id, int amount) {
         this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
-        this.plugin.runTask(c -> this.saveData(this.plugin), true);
+        this.saveData(this.plugin);
     }
 
     public int getKeysOnHold(@NotNull String id) {
@@ -132,7 +132,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void cleanKeysOnHold() {
         this.getKeysOnHold().clear();
-        this.plugin.runTask(c -> this.saveData(this.plugin), true);
+        this.saveData(this.plugin);
     }
 
     @NotNull
@@ -141,7 +141,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     @Nullable
-    public UserRewardWinLimit getRewardWinLimit(@NotNull ICrateReward reward) {
+    public UserRewardWinLimit getRewardWinLimit(@NotNull CrateReward reward) {
         return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
     }
 
@@ -151,22 +151,24 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
             .get(rewardId.toLowerCase());
     }
 
-    public void setRewardWinLimit(@NotNull ICrateReward reward, @NotNull UserRewardWinLimit rewardLimit) {
+    public void setRewardWinLimit(@NotNull CrateReward reward, @NotNull UserRewardWinLimit rewardLimit) {
         this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
     }
 
     public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardWinLimit rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
-        this.plugin.runTask(c -> this.saveData(this.plugin), true);
+        this.saveData(this.plugin);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId) {
         this.getRewardWinLimits().remove(crateId.toLowerCase());
+        this.saveData(this.plugin);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
         this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
             .remove(rewardId.toLowerCase());
+        this.saveData(this.plugin);
     }
 }

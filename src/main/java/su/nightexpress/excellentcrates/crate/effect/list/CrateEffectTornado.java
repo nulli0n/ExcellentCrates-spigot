@@ -4,18 +4,18 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.EffectUtil;
-import su.nightexpress.excellentcrates.crate.effect.AbstractCrateBlockEffect;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrateEffectTornado extends AbstractCrateBlockEffect {
+public class CrateEffectTornado extends CrateEffectTask {
 
-    private final double yOffset          = 0.15D;
-    private final float  tornadoHeight    = 3.15F;
-    private final float  maxTornadoRadius = 2.25F;
-    private final double distance         = 0.375D;
+    private static final double Y_OFFSET           = 0.15D;
+    private static final float  TORNADO_HEIGHT     = 3.15F;
+    private static final float  MAX_TORNADO_RADIUS = 2.25F;
+    private static final double DISTANCE           = 0.375D;
 
     public CrateEffectTornado() {
         super(CrateEffectModel.TORNADO, 4L, 7);
@@ -24,18 +24,18 @@ public class CrateEffectTornado extends AbstractCrateBlockEffect {
     @Override
     public void doStep(@NotNull Location loc2, @NotNull String particleName, @NotNull String particleData, int step) {
         Location loc = loc2.clone().add(0.0D, 0.5D, 0.0D);
-        double offset = 0.25D * (this.maxTornadoRadius * (2.35D / this.tornadoHeight));
-        double vertical = this.tornadoHeight - this.distance * step;
+        double offset = 0.25D * (MAX_TORNADO_RADIUS * (2.35D / TORNADO_HEIGHT));
+        double vertical = TORNADO_HEIGHT - DISTANCE * step;
 
         double radius = offset * vertical;
-        if (radius > this.maxTornadoRadius) {
-            radius = this.maxTornadoRadius;
+        if (radius > MAX_TORNADO_RADIUS) {
+            radius = MAX_TORNADO_RADIUS;
         }
         for (Vector vector : this.createCircle(vertical, radius)) {
             EffectUtil.playEffect(loc.add(vector), particleName, particleData, 0.1f, 0.1f, 0.1f, 0.0f, 3);
             loc.subtract(vector);
         }
-        loc.subtract(0.0D, this.yOffset, 0.0D);
+        loc.subtract(0.0D, Y_OFFSET, 0.0D);
     }
 
     private List<Vector> createCircle(double vertical, double radius) {

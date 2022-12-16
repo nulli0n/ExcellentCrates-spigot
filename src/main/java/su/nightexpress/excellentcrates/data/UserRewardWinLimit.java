@@ -1,7 +1,7 @@
 package su.nightexpress.excellentcrates.data;
 
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
+import su.nightexpress.excellentcrates.crate.CrateReward;
 
 public class UserRewardWinLimit {
 
@@ -33,7 +33,7 @@ public class UserRewardWinLimit {
         return this.getExpireDate() >= 0 && System.currentTimeMillis() >= this.getExpireDate();
     }
 
-    public boolean isDrained(@NotNull ICrateReward reward) {
+    public boolean isDrained(@NotNull CrateReward reward) {
         if (reward.isWinLimitedCooldown() && this.getExpireDate() < 0) return true;
         if (reward.isWinLimitedAmount() && this.getAmount() >= reward.getWinLimitAmount()) return true;
         return false;

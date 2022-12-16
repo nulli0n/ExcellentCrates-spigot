@@ -2,6 +2,9 @@ package su.nightexpress.excellentcrates;
 
 public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
 
+    public static final String GENERIC_AMOUNT = "%amount%";
+    public static final String GENERIC_TIME = "%time%";
+
     public static final String CRATE_ID                         = "%crate_id%";
     public static final String CRATE_NAME                       = "%crate_name%";
     public static final String CRATE_ANIMATION_CONFIG           = "%crate_animation_config%";

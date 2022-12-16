@@ -13,8 +13,8 @@ import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.Crate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +70,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        ICrate crate = plugin.getCrateManager().getCrateById(args[1]);
+        Crate crate = plugin.getCrateManager().getCrateById(args[1]);
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).replace(Placeholders.CRATE_ID, args[1]).send(sender);
             return;
@@ -78,7 +78,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
         World world = plugin.getServer().getWorld(args[2]);
         if (world == null) {
-            plugin.getMessage(Lang.ERROR_WORLD_INVALID).replace("%world%", args[2]).send(sender);
+            plugin.getMessage(Lang.ERROR_WORLD_INVALID).send(sender);
             return;
         }
 
@@ -92,10 +92,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
         plugin.getMessage(Lang.COMMAND_DROP_DONE)
             .replace(Placeholders.CRATE_ID, crate.getId())
             .replace(Placeholders.CRATE_NAME, crate.getName())
-            .replace("%x%", NumberUtil.format(x))
-            .replace("%y%", NumberUtil.format(y))
-            .replace("%z%", NumberUtil.format(z))
-            .replace("%world%", EngineConfig.getWorldName(world.getName()))
+            .replace(Placeholders.LOCATION.replacer(location))
             .send(sender);
     }
 }

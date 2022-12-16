@@ -3,17 +3,17 @@ package su.nightexpress.excellentcrates.crate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.manager.ICleanable;
+import su.nexmedia.engine.api.manager.IEditable;
+import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.editor.CrateEditorReward;
+import su.nightexpress.excellentcrates.crate.editor.EditorCrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.UserRewardWinLimit;
 
@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public class CrateReward implements ICrateReward {
+public class CrateReward implements IEditable, ICleanable, IPlaceholder {
 
-    private final ICrate crate;
+    private final Crate crate;
     private final String id;
 
     private String          name;
@@ -35,9 +35,9 @@ public class CrateReward implements ICrateReward {
     private List<ItemStack> items;
     private List<String>    commands;
 
-    private CrateEditorReward editor;
+    private EditorCrateReward editor;
 
-    public CrateReward(@NotNull ICrate crate, @NotNull String id) {
+    public CrateReward(@NotNull Crate crate, @NotNull String id) {
         this(
             crate,
             id,
@@ -56,7 +56,7 @@ public class CrateReward implements ICrateReward {
     }
 
     public CrateReward(
-        @NotNull ICrate crate,
+        @NotNull Crate crate,
         @NotNull String id,
 
         @NotNull String name,
@@ -93,10 +93,6 @@ public class CrateReward implements ICrateReward {
     @Override
     @NotNull
     public UnaryOperator<String> replacePlaceholders() {
-        ItemStack preview = this.getPreview();
-        ItemMeta meta = preview.getItemMeta();
-        List<String> lore = meta != null ? meta.getLore() : null;
-
         String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().getMessage(Lang.OTHER_INFINITY).getLocalized();
         String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().getMessage(Lang.OTHER_ONE_TIMED).getLocalized()) : plugin().getMessage(Lang.OTHER_NO).getLocalized();
 
@@ -105,8 +101,8 @@ public class CrateReward implements ICrateReward {
             .replace(Placeholders.REWARD_NAME, this.getName())
             .replace(Placeholders.REWARD_CHANCE, NumberUtil.format(this.getChance()))
             .replace(Placeholders.REWARD_BROADCAST, LangManager.getBoolean(this.isBroadcast()))
-            .replace(Placeholders.REWARD_PREVIEW_NAME, ItemUtil.getItemName(preview))
-            .replace(Placeholders.REWARD_PREVIEW_LORE, String.join("\n", lore == null ? new ArrayList<>() : lore))
+            .replace(Placeholders.REWARD_PREVIEW_NAME, ItemUtil.getItemName(this.getPreview()))
+            .replace(Placeholders.REWARD_PREVIEW_LORE, String.join("\n", ItemUtil.getLore(this.getPreview())))
             .replace(Placeholders.REWARD_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
             .replace(Placeholders.REWARD_WIN_LIMIT_AMOUNT, winAmount)
             .replace(Placeholders.REWARD_WIN_LIMIT_COOLDOWN, winCooldown)
@@ -115,9 +111,9 @@ public class CrateReward implements ICrateReward {
 
     @Override
     @NotNull
-    public CrateEditorReward getEditor() {
+    public EditorCrateReward getEditor() {
         if (this.editor == null) {
-            this.editor = new CrateEditorReward(this.plugin(), this);
+            this.editor = new EditorCrateReward(this);
         }
         return this.editor;
     }
@@ -130,70 +126,69 @@ public class CrateReward implements ICrateReward {
         }
     }
 
-    @Override
     @NotNull
     public String getId() {
         return this.id;
     }
 
-    @Override
     @NotNull
-    public ICrate getCrate() {
+    public Crate getCrate() {
         return this.crate;
     }
 
-    @Override
     @NotNull
     public String getName() {
         return this.name;
     }
 
-    @Override
     public void setName(@NotNull String name) {
         this.name = StringUtil.color(name);
     }
 
-    @Override
     public double getChance() {
         return this.chance;
     }
 
-    @Override
     public void setChance(double chance) {
-        this.chance = chance;
+        this.chance = Math.max(0, chance);
     }
 
-    @Override
     public boolean isBroadcast() {
         return broadcast;
     }
 
-    @Override
     public void setBroadcast(boolean broadcast) {
         this.broadcast = broadcast;
     }
 
-    @Override
+    public boolean isWinLimitedAmount() {
+        return this.getWinLimitAmount() >= 0;
+    }
+
+    public boolean isWinLimitedCooldown() {
+        return this.getWinLimitCooldown() != 0;
+    }
+
+    public boolean isWinLimitedOnce() {
+        return this.getWinLimitAmount() == 1 || this.getWinLimitCooldown() < 0;
+    }
+
     public int getWinLimitAmount() {
         return winLimitAmount;
     }
 
-    @Override
     public void setWinLimitAmount(int winLimitAmount) {
         this.winLimitAmount = winLimitAmount;
     }
 
-    @Override
     public long getWinLimitCooldown() {
         return winLimitCooldown;
     }
 
-    @Override
     public void setWinLimitCooldown(long winLimitCooldown) {
         this.winLimitCooldown = winLimitCooldown;
     }
 
-    @Override
     public boolean canWin(@NotNull Player player) {
         if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
             CrateUser user = plugin().getUserManager().getUserData(player);
@@ -204,42 +199,35 @@ public class CrateReward implements ICrateReward {
         return true;
     }
 
-    @Override
     @NotNull
     public ItemStack getPreview() {
         return new ItemStack(this.preview);
     }
 
-    @Override
     public void setPreview(@NotNull ItemStack item) {
         this.preview = new ItemStack(item);
     }
 
-    @Override
     @NotNull
     public List<String> getCommands() {
         return this.commands;
     }
 
-    @Override
     public void setCommands(@NotNull List<String> commands) {
         this.commands = new ArrayList<>(commands);
         this.commands.removeIf(String::isEmpty);
     }
 
-    @Override
     @NotNull
     public List<ItemStack> getItems() {
         return this.items;
     }
 
-    @Override
     public void setItems(@NotNull List<ItemStack> items) {
         this.items = new ArrayList<>(items);
         this.items.removeIf(item -> item == null || item.getType().isAir());
     }
 
-    @Override
     public void give(@NotNull Player player) {
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
@@ -255,7 +243,7 @@ public class CrateReward implements ICrateReward {
 
         if (this.isBroadcast()) {
             this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_BROADCAST)
-                .replace("%player%", player.getName())
+                .replace(Placeholders.Player.replacer(player))
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .replace(Placeholders.REWARD_NAME, this.getName())
                 .broadcast();

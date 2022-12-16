@@ -8,9 +8,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +20,9 @@ import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.config.Config;
+
+import java.util.stream.Stream;
 
 public class CrateListener extends AbstractListener<ExcellentCrates> {
 
@@ -35,7 +38,7 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
         Player player = e.getPlayer();
         ItemStack item = e.getItem();
         Block block = null;
-        ICrate crate = null;
+        Crate crate = null;
 
         if (item != null && !item.getType().isAir()) {
             if (e.useItemInHand() == Event.Result.DENY) return;
@@ -81,6 +84,14 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
 
         if ((first != null && this.crateManager.isCrate(first)) || (second != null && this.crateManager.isCrate(second))) {
             e.setResult(null);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onCrateCraftShop(CraftItemEvent e) {
+        CraftingInventory inventory = e.getInventory();
+        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.crateManager.isCrate(item))) {
+            e.setCancelled(true);
         }
     }
 }

@@ -10,8 +10,8 @@ import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.hooks.external.citizens.CitizensListener;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.crate.Crate;
 
 public class CrateCitizensListener implements CitizensListener {
 
@@ -33,7 +33,7 @@ public class CrateCitizensListener implements CitizensListener {
 
     private void process(@NotNull NPCClickEvent e) {
         int id = e.getNPC().getId();
-        ICrate crate = this.plugin.getCrateManager().getCrateByNPC(id);
+        Crate crate = this.plugin.getCrateManager().getCrateByNPC(id);
         if (crate == null) return;
 
         boolean isLeftEvent = e instanceof NPCLeftClickEvent;

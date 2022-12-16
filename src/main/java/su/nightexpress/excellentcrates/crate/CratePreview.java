@@ -15,21 +15,19 @@ import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
-import su.nightexpress.excellentcrates.api.crate.ICrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.UserRewardWinLimit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward> {
+public class CratePreview extends AbstractMenuAuto<ExcellentCrates, CrateReward> {
 
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
     private static final String PLACEHOLDER_WIN_LIMIT_DRAINED  = "%win_limit_drained%";
 
-    private final ICrate crate;
+    private final Crate crate;
     private final int[]        rewardSlots;
     private final String       rewardName;
     private final List<String> rewardLore;
@@ -38,7 +36,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
     private final List<String> rewardLoreLimitDrained;
     private final boolean      hideDrainedRewards;
 
-    public CratePreview(@NotNull ICrate crate, @NotNull JYML cfg) {
+    public CratePreview(@NotNull Crate crate, @NotNull JYML cfg) {
         super(crate.plugin(), cfg, "");
         this.crate = crate;
         this.title = crate.replacePlaceholders().apply(this.title);
@@ -77,13 +75,13 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
 
     @Override
     @NotNull
-    protected List<ICrateReward> getObjects(@NotNull Player player) {
+    protected List<CrateReward> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards());
     }
 
     @Override
     @NotNull
-    protected ItemStack getObjectStack(@NotNull Player player, @NotNull ICrateReward reward) {
+    protected ItemStack getObjectStack(@NotNull Player player, @NotNull CrateReward reward) {
         ItemStack item = reward.getPreview();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
@@ -114,7 +112,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, ICrateReward
 
     @Override
     @NotNull
-    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull ICrateReward reward) {
+    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull CrateReward reward) {
         return (player1, type, e) -> {
 
         };

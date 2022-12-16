@@ -9,8 +9,8 @@ import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.crate.ICrate;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.Crate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 1) {
             List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
-            list.add(0, Placeholders.MASK_ANY);
+            list.add(0, Placeholders.WILDCARD);
             return list;
         }
         if (arg == 2) {
@@ -67,13 +67,13 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
         String crateId = args[2];
         int amount = args.length >= 4 ? StringUtil.getInteger(args[3], 1) : 1;
 
-        ICrate crate = plugin.getCrateManager().getCrateById(crateId);
+        Crate crate = plugin.getCrateManager().getCrateById(crateId);
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
-        if (pName.equalsIgnoreCase(Placeholders.MASK_ANY)) {
+        if (pName.equalsIgnoreCase(Placeholders.WILDCARD)) {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
                 plugin.getCrateManager().giveCrate(player, crate, amount);
             }
@@ -86,14 +86,14 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
             }
             plugin.getCrateManager().giveCrate(player, crate, amount);
             plugin.getMessage(Lang.COMMAND_GIVE_NOTIFY)
-                .replace("%amount%", amount)
+                .replace(Placeholders.GENERIC_AMOUNT, amount)
                 .replace(Placeholders.CRATE_NAME, crate.getName())
                 .send(player);
         }
 
         plugin.getMessage(Lang.COMMAND_GIVE_DONE)
-            .replace("%player%", pName)
-            .replace("%amount%", amount)
+            .replace(Placeholders.Player.NAME, pName)
+            .replace(Placeholders.GENERIC_AMOUNT, amount)
             .replace(Placeholders.CRATE_NAME, crate.getName())
             .replace(Placeholders.CRATE_ID, crate.getId())
             .send(sender);
