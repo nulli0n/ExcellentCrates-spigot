@@ -163,6 +163,7 @@ public class EditorCrateMain extends AbstractEditorMenu<ExcellentCrates, Crate> 
                         }
                         else {
                             crate.getBlockLocations().clear();
+                            crate.updateHologram();
                         }
                     }
                     case CRATE_CHANGE_BLOCK_EFFECT -> {
@@ -353,6 +354,7 @@ public class EditorCrateMain extends AbstractEditorMenu<ExcellentCrates, Crate> 
 
             Crate crate = (Crate) editor.getObject();
             crate.getBlockLocations().add(block.getLocation());
+            crate.updateHologram();
             crate.save();
             EditorManager.endEdit(player);
         }
