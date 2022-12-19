@@ -96,6 +96,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     public void loadLang() {
         this.getLangManager().loadMissing(Lang.class);
         this.getLangManager().setupEditorEnum(CrateEditorType.class);
+        this.getLang().saveChanges();
     }
 
     @Override
