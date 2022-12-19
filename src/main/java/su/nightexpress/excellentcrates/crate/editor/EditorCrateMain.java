@@ -75,7 +75,10 @@ public class EditorCrateMain extends AbstractEditorMenu<ExcellentCrates, Crate> 
                     crate2.setAttachedCitizens(has.stream().mapToInt(i -> i).toArray());
                 }
                 case CRATE_CHANGE_CONFIG_OPENING -> crate2.setOpeningConfig(EditorManager.fineId(msg));
-                case CRATE_CHANGE_CONFIG_PREVIEW -> crate2.setPreviewConfig(EditorManager.fineId(msg));
+                case CRATE_CHANGE_CONFIG_PREVIEW -> {
+                    crate2.setPreviewConfig(EditorManager.fineId(msg));
+                    crate2.createPreview();
+                }
                 case CRATE_CHANGE_NAME -> crate2.setName(msg);
                 case CRATE_CHANGE_KEYS -> crate2.getKeyIds().add(EditorManager.fineId(msg));
                 case CRATE_CHANGE_OPEN_COST_MONEY -> {

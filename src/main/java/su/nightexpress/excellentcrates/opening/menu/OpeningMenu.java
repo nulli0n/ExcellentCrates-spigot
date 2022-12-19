@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.opening.menu;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -50,11 +51,12 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
             long rollTickInterval = cfg.getInt(path2 + "Roll_Tick_Interval");
             long rollSlowdownEvery = cfg.getInt(path2 + "Roll_Slowdown_Every");
             long rollSlowdownTicks = cfg.getInt(path2 + "Roll_Slowdown_Ticks");
+            Sound soundTick = cfg.getEnum(path2 + "Tick_Sound", Sound.class);
             int[] slots = cfg.getIntArray(path2 + "Slots");
             SliderInfo.Mode mode = cfg.getEnum(path2 + "Slots_Mode", SliderInfo.Mode.class, SliderInfo.Mode.INDEPENDENT);
             int[] winSlots = cfg.getIntArray(path2 + "Win_Slots");
 
-            SliderInfo info = new SliderInfo(sId, startAction, startChance, startDelay, rollTimes, rollTickInterval, rollSlowdownEvery, rollSlowdownTicks, slots, mode, winSlots);
+            SliderInfo info = new SliderInfo(sId, startAction, startChance, startDelay, rollTimes, rollTickInterval, rollSlowdownEvery, rollSlowdownTicks, soundTick, slots, mode, winSlots);
             this.sliders.put(info.getId(), info);
         }
 
@@ -66,13 +68,14 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
             int[] slots = cfg.getIntArray(path2 + "Slots");
             AnimationInfo.Mode mode = cfg.getEnum(path2 + "Mode", AnimationInfo.Mode.class, AnimationInfo.Mode.TOGETHER);
             int tickInterval = cfg.getInt(path2 + "Tick_Interval");
+            Sound soundTick = cfg.getEnum(path2 + "Tick_Sound", Sound.class);
 
             List<ItemStack> items = new ArrayList<>();
             cfg.getSection(path2 + "Items").forEach(sId2 -> {
                 items.add(cfg.getItem(path2 + "Items." + sId2));
             });
 
-            AnimationInfo item = new AnimationInfo(sId, startAction, startDelay, slots, mode, tickInterval, items);
+            AnimationInfo item = new AnimationInfo(sId, startAction, startDelay, slots, mode, tickInterval, soundTick, items);
             this.animations.put(item.getId(), item);
         }
 

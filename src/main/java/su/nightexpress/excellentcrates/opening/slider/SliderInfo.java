@@ -1,6 +1,8 @@
 package su.nightexpress.excellentcrates.opening.slider;
 
+import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.opening.task.TaskStartAction;
 
 public class SliderInfo {
@@ -17,6 +19,7 @@ public class SliderInfo {
     private final long rollTickInterval;
     private final long  rollSlowdownEvery;
     private final long  rollSlowdownTicks;
+    private final Sound soundTick;
     private final int[] slots;
     private final Mode  mode;
     private final int[] winSlots;
@@ -30,6 +33,7 @@ public class SliderInfo {
         long rollTickInterval,
         long rollSlowdownEvery,
         long rollSlowdownTicks,
+        @Nullable Sound soundTick,
         int[] slot,
         @NotNull SliderInfo.Mode mode,
         int[] winSlots
@@ -42,6 +46,7 @@ public class SliderInfo {
         this.rollTickInterval = Math.max(1, rollTickInterval);
         this.rollSlowdownEvery = rollSlowdownEvery;
         this.rollSlowdownTicks = rollSlowdownTicks;
+        this.soundTick = soundTick;
         this.slots = slot;
         this.mode = mode;
         this.winSlots = winSlots;
@@ -79,6 +84,11 @@ public class SliderInfo {
 
     public long getRollSlowdownEvery() {
         return rollSlowdownEvery;
+    }
+
+    @Nullable
+    public Sound getSoundTick() {
+        return soundTick;
     }
 
     public int[] getSlots() {

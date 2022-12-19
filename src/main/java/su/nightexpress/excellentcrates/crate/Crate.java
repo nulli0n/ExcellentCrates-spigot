@@ -259,6 +259,10 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         if (this.getPreviewConfig() == null) {
             return;
         }
+        if (this.preview != null) {
+            this.preview.clear();
+            this.preview = null;
+        }
         this.preview = new CratePreview(this, JYML.loadOrExtract(plugin(), Config.DIR_PREVIEWS + this.getPreviewConfig() + ".yml"));
     }
 

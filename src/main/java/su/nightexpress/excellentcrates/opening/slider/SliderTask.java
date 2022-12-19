@@ -1,7 +1,9 @@
 package su.nightexpress.excellentcrates.opening.slider;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.PDCUtil;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
@@ -96,6 +98,8 @@ public class SliderTask extends OpeningTask {
                 this.data.getInventory().setItem(slot, preview);
             }
         }
+
+        this.getData().getInventory().getViewers().forEach(player -> MessageUtil.sound((Player) player, this.parent.getSoundTick()));
 
         if (++this.rolls >= this.getParent().getRollTimes()) {
             this.cancel();
