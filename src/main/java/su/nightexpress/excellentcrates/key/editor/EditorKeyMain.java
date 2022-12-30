@@ -6,8 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
@@ -34,7 +34,7 @@ public class EditorKeyMain extends AbstractEditorMenu<ExcellentCrates, CrateKey>
             return true;
         };
 
-        IMenuClick clickHandler = (player, type, e) -> {
+        MenuClick clickHandler = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     this.plugin.getEditor().getKeysEditor().open(player, 1);
@@ -81,7 +81,7 @@ public class EditorKeyMain extends AbstractEditorMenu<ExcellentCrates, CrateKey>
     }
 
     @Override
-    public void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
+    public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
 
         if (menuItem.getType() == CrateEditorType.KEY_CHANGE_ITEM) {

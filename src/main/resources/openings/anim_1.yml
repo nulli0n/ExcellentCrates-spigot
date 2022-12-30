@@ -59,6 +59,7 @@ Animations:
     Slots: 0,2,4,6,8
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_PLACE'
     Items:
       pane:
         Material: MAGENTA_STAINED_GLASS_PANE
@@ -69,6 +70,7 @@ Animations:
     Slots: 9,11,13,15,17
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_PLACE'
     Items:
       pane:
         Material: MAGENTA_STAINED_GLASS_PANE
@@ -79,6 +81,7 @@ Animations:
     Slots: 18,20,22,24,26
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_PLACE'
     Items:
       pane:
         Material: MAGENTA_STAINED_GLASS_PANE
@@ -89,6 +92,7 @@ Animations:
     Slots: 27,29,31,33,35
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_PLACE'
     Items:
       pane:
         Material: MAGENTA_STAINED_GLASS_PANE
@@ -99,6 +103,7 @@ Animations:
     Slots: 36,38,40,42,44
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_PLACE'
     Items:
       pane:
         Material: MAGENTA_STAINED_GLASS_PANE
@@ -109,6 +114,7 @@ Animations:
     Slots: 1,37
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -118,6 +124,7 @@ Animations:
     Slots: 10,28
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -128,6 +135,7 @@ Animations:
     Slots: 3,39
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -137,6 +145,7 @@ Animations:
     Slots: 12,30
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -147,6 +156,7 @@ Animations:
     Slots: 5,41
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -156,6 +166,7 @@ Animations:
     Slots: 14,32
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -166,6 +177,7 @@ Animations:
     Slots: 7,43
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -175,6 +187,7 @@ Animations:
     Slots: 16,34
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Items:
       pane:
         Material: PINK_STAINED_GLASS_PANE
@@ -185,6 +198,7 @@ Animations:
     Slots: 19
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_BREAK'
     Items:
       pane:
         Material: PLAYER_HEAD
@@ -197,6 +211,7 @@ Animations:
     Slots: 21
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_BREAK'
     Items:
       pane:
         Material: PLAYER_HEAD
@@ -209,6 +224,7 @@ Animations:
     Slots: 23
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_BREAK'
     Items:
       pane:
         Material: PLAYER_HEAD
@@ -221,6 +237,7 @@ Animations:
     Slots: 25
     Mode: TOGETHER
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_GLASS_BREAK'
     Items:
       pane:
         Material: PLAYER_HEAD

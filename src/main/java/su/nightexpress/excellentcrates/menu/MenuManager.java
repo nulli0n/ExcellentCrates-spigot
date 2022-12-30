@@ -20,7 +20,7 @@ public class MenuManager extends AbstractManager<ExcellentCrates> {
     @Override
     public void onLoad() {
         this.menuMap = new HashMap<>();
-        this.plugin.getConfigManager().extract(Config.DIR_MENUS);
+        this.plugin.getConfigManager().extractResources(Config.DIR_MENUS);
 
         for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_MENUS, true)) {
             try {

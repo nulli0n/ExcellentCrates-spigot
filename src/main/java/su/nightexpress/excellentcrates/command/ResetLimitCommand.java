@@ -15,6 +15,7 @@ import su.nightexpress.excellentcrates.crate.CrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 import java.util.List;
+import java.util.Map;
 
 public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
 
@@ -58,7 +59,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         if (args.length < 3) {
             this.printUsage(sender);
             return;

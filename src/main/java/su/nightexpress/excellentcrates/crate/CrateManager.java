@@ -50,9 +50,9 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
     public void onLoad() {
         this.crates = new HashMap<>();
         this.openings = new HashMap<>();
-        this.plugin.getConfigManager().extract(Config.DIR_CRATES);
-        this.plugin.getConfigManager().extract(Config.DIR_PREVIEWS);
-        this.plugin.getConfigManager().extract(Config.DIR_OPENINGS);
+        this.plugin.getConfigManager().extractResources(Config.DIR_CRATES);
+        this.plugin.getConfigManager().extractResources(Config.DIR_PREVIEWS);
+        this.plugin.getConfigManager().extractResources(Config.DIR_OPENINGS);
 
         for (JYML cfg : JYML.loadAll(this.plugin.getDataFolder() + Config.DIR_OPENINGS, true)) {
             try {

@@ -12,6 +12,7 @@ Rewards:
     Roll_Tick_Interval: 2
     Roll_Slowdown_Every: 0
     Roll_Slowdown_Ticks: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Slots: '22'
     Slots_Mode: INHERITANCE
     Win_Slots: '22'
@@ -107,6 +108,7 @@ Animations:
     Slots: 0,9,18,27,36,8,17,26,35,44
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: BLACK_STAINED_GLASS_PANE
@@ -116,6 +118,7 @@ Animations:
     Slots: 1,10,19,28,37,7,16,25,34,43
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: BLACK_STAINED_GLASS_PANE
@@ -125,6 +128,7 @@ Animations:
     Slots: 2,11,20,29,38,6,15,24,33,42
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: GRAY_STAINED_GLASS_PANE
@@ -134,6 +138,7 @@ Animations:
     Slots: 3,5,39,41
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: GRAY_STAINED_GLASS_PANE
@@ -143,6 +148,7 @@ Animations:
     Slots: 4,40
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: GRAY_STAINED_GLASS_PANE
@@ -152,6 +158,7 @@ Animations:
     Slots: 12,21,30,14,23,32
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: WHITE_STAINED_GLASS_PANE
@@ -161,6 +168,7 @@ Animations:
     Slots: 13,31
     Mode: SINGLE # TOGETHER SINGLE
     Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
     Items:
       i_like_tea:
         Material: WHITE_STAINED_GLASS_PANE

@@ -13,6 +13,7 @@ import su.nightexpress.excellentcrates.crate.Crate;
 import su.nightexpress.excellentcrates.data.CrateUser;
 
 import java.util.List;
+import java.util.Map;
 
 public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
 
@@ -50,7 +51,7 @@ public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         if (args.length != 3) {
             this.printUsage(sender);
             return;

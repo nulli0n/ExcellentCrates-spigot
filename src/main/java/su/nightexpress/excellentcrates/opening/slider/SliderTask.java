@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.opening.slider;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.MessageUtil;
@@ -36,15 +37,22 @@ public class SliderTask extends OpeningTask {
     }
 
     @Override
+    public boolean canSkip() {
+        return this.rolls < (Math.max(1, this.getParent().getRollTimes() - 3));
+    }
+
+    @Override
     protected boolean onStop(boolean force) {
         if (!force) {
-            if (this.rolls >= (this.getParent().getRollTimes() - 1)) return false;
+            if (!this.canSkip()) return false;
         }
 
         if (Rnd.chance(this.getParent().getStartChance())) {
-            CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
-            if (reward != null) {
-                reward.give(this.data.getPlayer());
+            for (int count = 0; count < this.getParent().getWinSlots().length; count++) {
+                CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
+                if (reward != null) {
+                    reward.give(this.data.getPlayer());
+                }
             }
         }
         return this.isStarted();
@@ -55,6 +63,7 @@ public class SliderTask extends OpeningTask {
         if (this.rolls == 0) {
             if (!Rnd.chance(this.getParent().getStartChance())) {
                 this.cancel();
+                this.maybeClose();
                 return;
             }
         }
@@ -104,6 +113,7 @@ public class SliderTask extends OpeningTask {
         if (++this.rolls >= this.getParent().getRollTimes()) {
             this.cancel();
             this.checkRewards();
+            this.maybeClose();
             return;
         }
         if (this.parent.getRollSlowdownEvery() > 0) {
@@ -111,6 +121,17 @@ public class SliderTask extends OpeningTask {
                 this.rollSpeed += this.getParent().getRollSlowdownTicks();
             }
         }
+    }
+
+    private void maybeClose() {
+        if (!this.getData().isCompleted()) return;
+
+        ExcellentCratesAPI.PLUGIN.getScheduler().runTaskLater(ExcellentCratesAPI.PLUGIN, c -> {
+            Inventory opened = this.getData().getPlayer().getOpenInventory().getTopInventory();
+            if (this.getData().getInventory().equals(opened)) {
+                this.getData().getPlayer().closeInventory();
+            }
+        }, 20L);
     }
 
     private void checkRewards() {

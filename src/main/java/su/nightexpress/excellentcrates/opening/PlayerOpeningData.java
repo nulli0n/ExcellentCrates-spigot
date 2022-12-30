@@ -58,6 +58,10 @@ public final class PlayerOpeningData {
         this.getAnimationTasks().values().forEach(task -> task.stop(force));
     }
 
+    public boolean canSkip() {
+        return this.getSliderTasks().values().stream().allMatch(SliderTask::canSkip) && this.getAnimationTasks().values().stream().allMatch(AnimationTask::canSkip);
+    }
+
     public boolean isActive() {
         return this.getSliderTasks().values().stream().allMatch(task -> task.isStarted() && !task.isCancelled());
     }

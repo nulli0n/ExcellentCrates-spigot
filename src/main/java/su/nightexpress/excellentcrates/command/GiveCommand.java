@@ -15,6 +15,7 @@ import su.nightexpress.excellentcrates.crate.Crate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class GiveCommand extends AbstractCommand<ExcellentCrates> {
 
@@ -57,7 +58,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         if (args.length < 3) {
             this.printUsage(sender);
             return;

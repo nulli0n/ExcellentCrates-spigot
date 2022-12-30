@@ -4,14 +4,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.menu.AbstractMenu;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nexmedia.engine.editor.EditorManager;
@@ -56,7 +57,7 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
             return true;
         };
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             ClickType clickType = e.getClick();
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
@@ -154,7 +155,7 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
     }
 
     @Override
-    public void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
+    public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
         super.onItemPrepare(player, menuItem, item);
 
         if (menuItem.getType() == CrateEditorType.REWARD_CHANGE_PREVIEW) {
@@ -168,6 +169,11 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
     @Override
     public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return slotType != SlotType.PLAYER && slotType != SlotType.EMPTY_PLAYER;
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull InventoryDragEvent inventoryDragEvent) {
+        return true;
     }
 
     static class ContentEditor extends AbstractMenu<ExcellentCrates> {
@@ -190,13 +196,19 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
         }
 
         @Override
-        public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
-            inventory.setContents(this.reward.getItems().stream().map(ItemStack::new).toList().toArray(new ItemStack[0]));
+        public boolean cancelClick(@NotNull InventoryDragEvent inventoryDragEvent) {
+            return false;
         }
 
         @Override
-        public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
+        public boolean onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
+            inventory.setContents(this.reward.getItems().stream().map(ItemStack::new).toList().toArray(new ItemStack[0]));
+            return true;
+        }
 
+        @Override
+        public boolean onReady(@NotNull Player player, @NotNull Inventory inventory) {
+            return true;
         }
 
         @Override

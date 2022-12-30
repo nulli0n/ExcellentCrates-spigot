@@ -30,7 +30,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
     @Override
     public void onLoad() {
         this.keysMap = new HashMap<>();
-        this.plugin.getConfigManager().extract(Config.DIR_KEYS);
+        this.plugin.getConfigManager().extractResources(Config.DIR_KEYS);
 
         for (JYML cfgLegacy : JYML.loadAll(plugin.getDataFolder().getParentFile() + "/GoldenCrates/keys/", true)) {
             File exist = new File(plugin.getDataFolder() + Config.DIR_KEYS + cfgLegacy.getFile().getName());

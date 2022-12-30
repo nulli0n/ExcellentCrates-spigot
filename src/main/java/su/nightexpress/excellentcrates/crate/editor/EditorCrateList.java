@@ -2,12 +2,13 @@ package su.nightexpress.excellentcrates.crate.editor;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
-import su.nexmedia.engine.api.menu.IMenuClick;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenuAuto;
 import su.nexmedia.engine.editor.EditorManager;
@@ -40,7 +41,7 @@ public class EditorCrateList extends AbstractEditorMenuAuto<ExcellentCrates, Cra
             return true;
         };
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     plugin.getEditor().open(player, 1);
@@ -97,7 +98,7 @@ public class EditorCrateList extends AbstractEditorMenuAuto<ExcellentCrates, Cra
 
     @Override
     @NotNull
-    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull Crate crate) {
+    protected MenuClick getObjectClick(@NotNull Player player, @NotNull Crate crate) {
         return (player1, type, e) -> {
             if (e.isShiftClick() && e.isRightClick()) {
                 this.parent.delete(crate);
@@ -110,6 +111,11 @@ public class EditorCrateList extends AbstractEditorMenuAuto<ExcellentCrates, Cra
 
     @Override
     public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
+        return true;
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull InventoryDragEvent inventoryDragEvent) {
         return true;
     }
 }

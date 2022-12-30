@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.editor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
-import su.nexmedia.engine.api.menu.IMenuClick;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenu;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -23,7 +23,7 @@ public class CrateEditorMenu extends AbstractEditorMenu<ExcellentCrates, Excelle
     public CrateEditorMenu(@NotNull ExcellentCrates plugin) {
         super(plugin, plugin, "ExcellentCrates Editor", 27);
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 this.onItemClickDefault(player, type2);
             }

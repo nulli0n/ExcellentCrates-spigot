@@ -1,20 +1,18 @@
-Title: 'Opening Crate'
+Title: Opening Crate
 Size: 27
 
 Content:
   button:
-    Display:
-      default:
-        Item:
-          Material: ENDER_CHEST
-          Name: '&d&l[?] MYSTERY CRATE [?]'
-          Lore:
-          - '&7What''s in the crate?'
-          - '&7'
-          - '&d&lClick me to Roll!'
     Slots: 13
-    Start_Reward: 'main'
-    Start_Animation: 'panes'
+    Start_Reward: main
+    Start_Animation: panes
+    Item:
+      Material: ENDER_CHEST
+      Name: '&d&l[?] MYSTERY CRATE [?]'
+      Lore:
+      - '&7What''s in the crate?'
+      - '&7'
+      - '&d&lClick me to Roll!'
 
 Rewards:
   main:
@@ -25,6 +23,7 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Slots: '13'
     Slots_Mode: INDEPENDENT
     Win_Slots: '13'

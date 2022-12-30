@@ -66,7 +66,17 @@ public class CrateUserData extends AbstractUserDataHandler<ExcellentCrates, Crat
 
     @Override
     public void onSynchronize() {
-        // TODO Load user data and put it to the current one to synchronize keys, cooldowns and rewards.
+        for (CrateUser user : this.plugin.getUserManager().getUsersLoaded()) {
+            CrateUser fresh = this.getUser(user.getId());
+            if (fresh == null) continue;
+
+            user.getKeysMap().clear();
+            user.getKeysMap().putAll(fresh.getKeysMap());
+            user.getCrateCooldowns().clear();
+            user.getCrateCooldowns().putAll(fresh.getCrateCooldowns());
+            user.getRewardWinLimits().clear();
+            user.getRewardWinLimits().putAll(fresh.getRewardWinLimits());
+        }
     }
 
     @Override

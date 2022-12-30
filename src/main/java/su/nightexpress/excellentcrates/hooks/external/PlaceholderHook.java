@@ -37,7 +37,7 @@ public class PlaceholderHook {
         @Override
         @NotNull
         public String getAuthor() {
-            return ExcellentCratesAPI.PLUGIN.getAuthor();
+            return ExcellentCratesAPI.PLUGIN.getDescription().getAuthors().get(0);
         }
 
         @Override

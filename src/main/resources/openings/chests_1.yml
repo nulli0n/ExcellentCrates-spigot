@@ -1,38 +1,32 @@
-Title: 'Opening Crate'
+Title: Opening Crate
 Size: 27
 
 Content:
   button_1:
-    Display:
-      default:
-        Item:
-          Material: CHEST
-          Name: '&e&lClick for Reward!'
     Slots: 11
-    Start_Reward: 'main1'
-    Start_Animation: 'panes'
-
+    Start_Reward: main1
+    Start_Animation: panes
+    Item:
+      Material: CHEST
+      Name: '&e&lClick for Reward!'
+  
   button_2:
-    Display:
-      default:
-        Item:
-          Material: CHEST
-          Name: '&e&lClick for Reward!'
-          Amount: 2
     Slots: 13
-    Start_Reward: 'main2'
-    Start_Animation: 'panes'
-
+    Start_Reward: main2
+    Start_Animation: panes
+    Item:
+      Material: CHEST
+      Amount: 2
+      Name: '&e&lClick for Reward!'
+  
   button_3:
-    Display:
-      default:
-        Item:
-          Material: CHEST
-          Name: '&e&lClick for Reward!'
-          Amount: 3
     Slots: 15
-    Start_Reward: 'main3'
-    Start_Animation: 'panes'
+    Start_Reward: main3
+    Start_Animation: panes
+    Item:
+      Material: CHEST
+      Amount: 3
+      Name: '&e&lClick for Reward!'
 
 Rewards:
   main1:
@@ -43,10 +37,11 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Slots: '11'
     Slots_Mode: INDEPENDENT
     Win_Slots: '11'
-
+  
   main2:
     Start_Action: CLICK
     Start_Chance: 100.0
@@ -55,10 +50,11 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Slots: '13'
     Slots_Mode: INDEPENDENT
     Win_Slots: '13'
-
+  
   main3:
     Start_Action: CLICK
     Start_Chance: 100.0
@@ -67,6 +63,7 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
     Slots: '15'
     Slots_Mode: INDEPENDENT
     Win_Slots: '15'

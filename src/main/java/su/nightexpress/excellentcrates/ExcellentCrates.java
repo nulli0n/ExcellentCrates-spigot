@@ -111,7 +111,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         if (Hooks.hasPlaceholderAPI()) {
             PlaceholderHook.setup();
         }
-        if (Hooks.hasCitizens()) {
+        if (Hooks.hasCitizens() && this.getPluginManager().isPluginEnabled(Hooks.CITIZENS) /* заебали, каждый второй с этой хуйней */) {
             CitizensHook.addListener(this, new CrateCitizensListener(this));
         }
     }

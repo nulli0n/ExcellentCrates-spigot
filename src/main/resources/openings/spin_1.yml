@@ -1,43 +1,34 @@
 # Spin animation
-Title: 'Opening Crate'
+Title: Opening Crate
 Size: 45
 
 Content:
   button:
-    Display:
-      default:
-        Item:
-          Material: STONE_BUTTON
-          Name: '&b&lSpin!'
     Slots: 22
-    Start_Reward: 'main'
-    Start_Animation: 'light_black,light_red'
-
+    Start_Reward: main
+    Start_Animation: light_black,light_red
+    Item:
+      Material: STONE_BUTTON
+      Name: '&b&lSpin!'
+  
   blackpane:
-    Display:
-      default:
-        Item:
-          Material: BLACK_STAINED_GLASS_PANE
-          Name: ''
     Slots: 0,1,2,3,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,32,33,34,35,36,37,38,39,41,42,43,44
+    Item:
+      Material: BLACK_STAINED_GLASS_PANE
   
   win_right:
-    Display:
-      default:
-        Item:
-          Material: PLAYER_HEAD
-          Name: '#e72e1b&lYOUR PRIZE →'
-          Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTZhZjIxN2FlZGRmMGY0MDA2NDk2OWViYjIwNDJmN2FlYWZiYzdkMGYxNzVhMjc2MjQxMzNhM2JlZmQxMDI4MSJ9fX0='
     Slots: 21
-
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTZhZjIxN2FlZGRmMGY0MDA2NDk2OWViYjIwNDJmN2FlYWZiYzdkMGYxNzVhMjc2MjQxMzNhM2JlZmQxMDI4MSJ9fX0=
+      Name: '&x&E&7&2&E&1&B&lYOUR PRIZE →'
+  
   win_left:
-    Display:
-      default:
-        Item:
-          Material: PLAYER_HEAD
-          Name: '#e72e1b&l← YOUR PRIZE'
-          Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM1YThhYThhNGMwMzYwMGEyYjVhNGViNmJlYjUxZDU5MDI2MGIwOTVlZTFjZGFhOTc2YjA5YmRmZTU2NjFjNiJ9fX0='
     Slots: 23
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM1YThhYThhNGMwMzYwMGEyYjVhNGViNmJlYjUxZDU5MDI2MGIwOTVlZTFjZGFhOTc2YjA5YmRmZTU2NjFjNiJ9fX0=
+      Name: '&x&E&7&2&E&1&B&l← YOUR PRIZE'
 
 Rewards:
   main:
@@ -48,7 +39,8 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
-    Slots: '4,13,22,31,40'
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+    Slots: 4,13,22,31,40
     Slots_Mode: INHERITANCE
     Win_Slots: '22'
 

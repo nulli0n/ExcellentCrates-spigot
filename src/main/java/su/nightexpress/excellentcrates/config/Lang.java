@@ -43,7 +43,7 @@ public class Lang extends EngineLang {
     public static final LangKey COMMAND_KEY_SHOW_DESC        = new LangKey("Command.Key.Show.Desc", "Show amount of your or other player keys.");
     public static final LangKey COMMAND_KEY_SHOW_USAGE       = new LangKey("Command.Key.Show.Usage", "[player]");
     public static final LangKey COMMAND_KEY_SHOW_FORMAT_LIST = new LangKey("Command.Key.Show.Format.List", """
-        {message: ~prefix: false;}
+        <!prefix:"false"!>
         &6&m              &6&l[ &a%player_name% &e&lCrate Keys &6&l]&6&m              &6
         &7
         &6▸ &e%key_name%: &6%amount%

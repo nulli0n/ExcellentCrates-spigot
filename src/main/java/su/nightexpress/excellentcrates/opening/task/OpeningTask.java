@@ -13,6 +13,8 @@ public abstract class OpeningTask extends BukkitRunnable {
         this.data = data;
     }
 
+    public abstract boolean canSkip();
+
     public final boolean start() {
         if (this.isStarted()) return false;
 

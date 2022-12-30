@@ -3,13 +3,14 @@ package su.nightexpress.excellentcrates.crate.editor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorInput;
-import su.nexmedia.engine.api.menu.IMenuClick;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.editor.AbstractEditorMenuAuto;
 import su.nexmedia.engine.editor.EditorManager;
@@ -50,7 +51,7 @@ public class EditorCrateRewardList extends AbstractEditorMenuAuto<ExcellentCrate
             return true;
         };
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.RETURN) {
                     crate.getEditor().open(player, 1);
@@ -92,7 +93,7 @@ public class EditorCrateRewardList extends AbstractEditorMenuAuto<ExcellentCrate
                         comparator = Comparator.comparing(r -> r.getPreview().getType().name());
                     }
                     else {
-                        comparator = (r1,r2) -> (int) (r2.getChance() - r1.getChance());
+                        comparator = Comparator.comparingDouble(CrateReward::getChance).reversed();
                     }
                     crate.setRewards(crate.getRewards().stream().sorted(comparator).toList());
                     crate.save();
@@ -143,10 +144,11 @@ public class EditorCrateRewardList extends AbstractEditorMenuAuto<ExcellentCrate
 
     @Override
     @NotNull
-    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull CrateReward reward) {
+    protected MenuClick getObjectClick(@NotNull Player player, @NotNull CrateReward reward) {
         return (player1, type, e) -> {
             if (e.getClick() == ClickType.DROP) {
                 this.parent.removeReward(reward);
+                this.parent.save();
                 this.open(player1, this.getPage(player1));
                 return;
             }
@@ -184,5 +186,10 @@ public class EditorCrateRewardList extends AbstractEditorMenuAuto<ExcellentCrate
     @Override
     public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return slotType != SlotType.EMPTY_PLAYER && slotType != SlotType.PLAYER;
+    }
+
+    @Override
+    public boolean cancelClick(@NotNull InventoryDragEvent inventoryDragEvent) {
+        return true;
     }
 }

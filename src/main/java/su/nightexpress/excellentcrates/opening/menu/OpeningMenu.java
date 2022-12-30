@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenu;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
 import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -79,11 +78,11 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
             this.animations.put(item.getId(), item);
         }
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             PlayerOpeningData data = PlayerOpeningData.get(player);
             if (data == null) return;
 
-            IMenuItem menuItem = this.getItem(e.getRawSlot());
+            MenuItem menuItem = this.getItem(e.getRawSlot());
             if (!(menuItem instanceof CrateMenuItem crateMenuItem)) return;
 
             String[] rewardIds = crateMenuItem.getRewardId();
@@ -111,13 +110,13 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
             CrateMenuItem menuItem = new CrateMenuItem(cfg.getMenuItem("Content." + sId));
             menuItem.setRewardId(cfg.getString("Content." + sId + ".Start_Reward", ""));
             menuItem.setAnimationId(cfg.getString("Content." + sId + ".Start_Animation", ""));
-            menuItem.setClick(click);
+            menuItem.setClickHandler(click);
             this.addItem(menuItem);
         }
     }
 
     @Override
-    public void open(@NotNull Player player, int page) {
+    public boolean open(@NotNull Player player, int page) {
         throw new IllegalStateException("Attempt to open crate opening GUI without the crate instance!");
     }
 
@@ -143,22 +142,16 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
         });
     }
 
-    @Override
-    public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
-
-    }
-
-    @Override
-    public void onReady(@NotNull Player player, @NotNull final Inventory inventory) {
-
-    }
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInvClose14(@NotNull InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
         PlayerOpeningData data = PlayerOpeningData.get(player);
-        if (data == null || data.isActive()) return;
+        if (data == null) return;
 
+        if (data.isActive()) {
+            if (!data.canSkip()) return;
+            data.stop(false);
+        }
         PlayerOpeningData.clean(player);
     }
 
@@ -187,7 +180,7 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
         private String[] rewardId;
         private String[] animationId;
 
-        public CrateMenuItem(@NotNull IMenuItem menuItem) {
+        public CrateMenuItem(@NotNull MenuItem menuItem) {
             super(menuItem);
         }
 

@@ -3,21 +3,17 @@ Size: 54
 
 Content:
   netherstar1:
-    Display:
-      default:
-        Item:
-          Material: NETHER_STAR
-          Name: '&c&l↓ PRIZE ↓'
     Slots: 4
     Type: NONE
+    Item:
+      Material: NETHER_STAR
+      Name: '&c&l↓ PRIZE ↓'
   netherstar2:
-    Display:
-      default:
-        Item:
-          Material: NETHER_STAR
-          Name: '&c&l↑ PRIZE ↑'
     Slots: 22
     Type: NONE
+    Item:
+      Material: NETHER_STAR
+      Name: '&c&l↑ PRIZE ↑'
 
 Rewards:
   example1:
@@ -28,7 +24,8 @@ Rewards:
     Roll_Tick_Interval: 1
     Roll_Slowdown_Every: 10
     Roll_Slowdown_Ticks: 1
-    Slots: '14,15,16,25,34,43,42,41,40,39,38,37,28,19,10,11,12,13'
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+    Slots: 14,15,16,25,34,43,42,41,40,39,38,37,28,19,10,11,12,13
     Slots_Mode: INHERITANCE
     Win_Slots: '13'
 
@@ -70,4 +67,4 @@ Animations:
         Material: MAGENTA_STAINED_GLASS_PANE
       pink:
         Material: PINK_STAINED_GLASS_PANE
-      
+

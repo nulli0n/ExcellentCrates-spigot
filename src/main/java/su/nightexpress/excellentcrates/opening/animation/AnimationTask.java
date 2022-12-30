@@ -36,6 +36,11 @@ public class AnimationTask extends OpeningTask {
     }
 
     @Override
+    public boolean canSkip() {
+        return true;
+    }
+
+    @Override
     public void run() {
         if (this.data.isCompleted()) {
             this.cancel();

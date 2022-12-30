@@ -2,7 +2,6 @@ package su.nightexpress.excellentcrates.menu;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,10 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.manager.IPlaceholder;
-import su.nexmedia.engine.api.menu.*;
+import su.nexmedia.engine.api.menu.AbstractMenu;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -51,7 +53,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
     }
 
     @NotNull
-    public IMenu getMenu() {
+    public AbstractMenu<?> getMenu() {
         return this.menu;
     }
 
@@ -67,7 +69,7 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
         Menu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg, @NotNull String path) {
             super(plugin, cfg, path);
 
-            IMenuClick click = (p, type, e) -> {
+            MenuClick click = (p, type, e) -> {
                 if (!(type instanceof MenuItemType type2)) return;
 
                 if (type2 == MenuItemType.CLOSE) {
@@ -76,18 +78,18 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
             };
 
             for (String id : cfg.getSection("Content")) {
-                IMenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
+                MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
 
                 if (menuItem.getType() != null) {
-                    menuItem.setClick(click);
+                    menuItem.setClickHandler(click);
                 }
                 this.addItem(menuItem);
             }
 
-            IMenuClick clickCrate = (player, type, e) -> {
+            MenuClick clickCrate = (player, type, e) -> {
                 int slot = e.getRawSlot();
 
-                IMenuItem menuItem = this.getItem(player, slot);
+                MenuItem menuItem = this.getItem(player, slot);
                 if (menuItem == null) return;
 
                 String crateId = menuItem.getId();
@@ -109,24 +111,14 @@ public class CrateMenu extends AbstractLoadableItem<ExcellentCrates> implements 
                     continue;
                 }
 
-                IMenuItem menuItem = cfg.getMenuItem("Crates." + id);
-                menuItem.setClick(clickCrate);
+                MenuItem menuItem = cfg.getMenuItem("Crates." + id);
+                menuItem.setClickHandler(clickCrate);
                 this.addItem(menuItem);
             }
         }
 
         @Override
-        public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
-
-        }
-
-        @Override
-        public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
-
-        }
-
-        @Override
-        public void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
+        public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
             super.onItemPrepare(player, menuItem, item);
 
             ItemMeta meta = item.getItemMeta();

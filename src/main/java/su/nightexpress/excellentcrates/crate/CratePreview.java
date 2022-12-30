@@ -2,14 +2,13 @@ package su.nightexpress.excellentcrates.crate;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.menu.AbstractMenuAuto;
-import su.nexmedia.engine.api.menu.IMenuClick;
-import su.nexmedia.engine.api.menu.IMenuItem;
+import su.nexmedia.engine.api.menu.MenuClick;
+import su.nexmedia.engine.api.menu.MenuItem;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -49,7 +48,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, CrateReward>
         this.rewardLoreLimitCoolown = StringUtil.color(cfg.getStringList("Reward.Lore.Win_Limit.Cooldown"));
         this.rewardLoreLimitDrained = StringUtil.color(cfg.getStringList("Reward.Lore.Win_Limit.Drained"));
 
-        IMenuClick click = (player, type, e) -> {
+        MenuClick click = (player, type, e) -> {
             if (type instanceof MenuItemType type2) {
                 if (type2 == MenuItemType.CLOSE) {
                     player.closeInventory();
@@ -59,10 +58,10 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, CrateReward>
         };
 
         for (String id : cfg.getSection("Content")) {
-            IMenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
+            MenuItem menuItem = cfg.getMenuItem("Content." + id, MenuItemType.class);
 
             if (menuItem.getType() != null) {
-                menuItem.setClick(click);
+                menuItem.setClickHandler(click);
             }
             this.addItem(menuItem);
         }
@@ -112,7 +111,7 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, CrateReward>
 
     @Override
     @NotNull
-    protected IMenuClick getObjectClick(@NotNull Player player, @NotNull CrateReward reward) {
+    protected MenuClick getObjectClick(@NotNull Player player, @NotNull CrateReward reward) {
         return (player1, type, e) -> {
 
         };
@@ -121,10 +120,5 @@ public class CratePreview extends AbstractMenuAuto<ExcellentCrates, CrateReward>
     @Override
     public boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return true;
-    }
-
-    @Override
-    public void onReady(@NotNull Player player, @NotNull Inventory inventory) {
-
     }
 }

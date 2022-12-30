@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.utils.LocationUtil;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -18,6 +17,7 @@ import su.nightexpress.excellentcrates.crate.Crate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
@@ -64,7 +64,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         if (args.length != 6) {
             this.printUsage(sender);
             return;

@@ -249,9 +249,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     @Nullable
     public CratePreview getPreview() {
-        if (this.preview == null) {
-            this.createPreview();
-        }
         return this.preview;
     }
 

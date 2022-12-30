@@ -50,7 +50,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
 
     }
 
@@ -96,7 +96,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         }
 
         @Override
-        protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
             if (args.length < 5) {
                 this.printUsage(sender);
                 return;
@@ -294,7 +294,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         }
 
         @Override
-        public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
             if (args.length >= 3 && !sender.hasPermission(Perms.COMMAND_KEY_SHOW_OTHERS)) {
                 this.errorPermission(sender);
                 return;
@@ -323,14 +323,14 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
             plugin.getMessage(Lang.COMMAND_KEY_SHOW_FORMAT_LIST).replace(Placeholders.Player.NAME, user.getName()).asList().forEach(line -> {
                 if (line.contains(Placeholders.KEY_NAME)) {
                     keys.forEach((key, amount) -> {
-                        MessageUtil.sendWithJson(sender, line
+                        MessageUtil.sendCustom(sender, line
                             .replace(Placeholders.KEY_NAME, key.getName())
                             .replace(Placeholders.GENERIC_AMOUNT, amount == -2 ? "?" : String.valueOf(amount))
                         );
                     });
                     return;
                 }
-                MessageUtil.sendWithJson(sender, line);
+                MessageUtil.sendCustom(sender, line);
             });
         }
     }
