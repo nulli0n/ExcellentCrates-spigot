@@ -1,0 +1,155 @@
+Command:
+  Drop:
+    Usage: <crateId> <world> <x> <y> <z>
+    Desc: 把宝箱放在某个位置
+    Done: 宝箱 &a%crate%&7 在 &a%x%&7, &a%y%&7, &a%z%&7 世界为 &a%world%
+  ForceOpen:
+    Desc: 为玩家强行打开一个宝箱
+    Usage: <crateId> [player]
+    Done: 强制打开&6%crate_name%&7 为 &6%player%
+    Notify: 你已被迫打开 &6%crate_name%
+  Give:
+    Usage: <player | *> <crateId> [amount]
+    Desc: 给予宝箱给玩家
+    Done: 给予 &ax%amount% %crate% &7宝箱给 &a%player%
+    Notify: 你收到了 &ax%amount% &a%crate%
+  GiveKey:
+    Usage: <player | *> <keyId> [amount]
+    Desc: 给予玩家一个特定的密钥
+    Done: 给予 &ax%amount% &a%key% &7密钥给 &a%player%
+    Notify: 你收到了 &ax%amount% %key% &7密钥！
+  TakeKey:
+    Usage: <player | *> <keyId> [amount]
+    Desc: 从玩家手中夺取宝箱的密钥
+    Done: 获取 &6x%amount% &6%key_name% &7key(s) 来自 &6%player%
+    Notify: 你失去了 &6x%amount% &6%key_name%&7！
+    Error: '&c不能拿密钥: &e没有找到该玩家或没有这样数量的密钥'
+  CheckKey:
+    Desc: 显示你或其他玩家的密钥数量
+    Usage: '[player]'
+    Format:
+      List:
+      - '{message: ~prefix: false;}'
+      - '&8&m              &8&l[ &e%player% &7宝箱密钥数量 &8&l]&8&m              &8'
+      - '&7'
+      - '&6▸ &e%key_name%: &6%amount%'
+      OfflineItem: '&c<玩家离线>'
+  Preview:
+    Desc: 打开宝箱预览
+    Usage: <crateId> [player]
+    Done:
+      Others: 打开了 &6%crate_name%&7 预览玩家为 &6%player%
+  ResetLimit:
+    Desc: 重置指定宝箱和奖励的得到的概率限制
+    Usage: <player> <crateId> [rewardId]
+    Done:
+      Crate: 为 &6%player% &7重置所有奖励的获取概率 &6%crate_name%
+      Reward: 为 &6%player% &7得到的概率 &6%reward_name% &7奖励的 &6%crate_name%
+  ResetCooldown:
+    Desc: 重置玩家对指定宝箱的冷却时间
+    Usage: <player> <crateId>
+    Done: 重置 &6%player% &7对宝箱的 &6%crate_name%&7的冷却时间
+  Menu:
+    Usage: '[menu]'
+    Desc: 打开宝箱界面
+    Done:
+      Others: 打开了 &6%menu_id%&7 的宝箱界面 &6%player%
+  Key:
+    Desc: 管理或查看其它玩家的密钥
+    Error:
+      Player: '&c无法处理离线/无效玩家 &e%player%&c！'
+    Give:
+      Usage: <player | *> <crateId> [amount]
+      Desc: 给予宝箱给玩家
+      Done: 给予 &ax%amount% %crate% &7宝箱给 &a%player%
+      Notify: 你收到了 &ax%amount% &a%crate%
+    Take:
+      Usage: <player | *> <keyId> [amount]
+      Desc: 从玩家手中夺取宝箱的密钥
+      Done: 获取 &6x%amount% &6%key_name% &7key(s) 来自 &6%player%
+      Notify: 你失去了 &6x%amount% &6%key_name%&7！
+    Set:
+      Usage: <player | *> <keyId> <amount>
+      Desc: 设置玩家密钥数量
+      Done: Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player_name%&7.
+      Notify: 你的 &e%key_name%&7 密钥数量被设置为 &ex%amount%&7！
+    Show:
+      Desc: 显示玩家密钥数量
+      Usage: '[player]'
+      Format:
+        List:
+        - '{message: ~prefix: false;}'
+        - '&8&m              &8&l[ &e%player% &7宝箱密钥数量 &8&l]&8&m              &8'
+        - '&7'
+        - '&6▸ &e%key_name%: &6%amount%'
+Crate:
+  Error:
+    Invalid: '&c无效的宝箱！'
+  Open:
+    Error:
+      InventorySpace: '&c您的背包空间不足,请先清理背包'
+      Cooldown:
+        Temporary: '&c你必须等待 &6%time% &7才能再次打开这个宝箱 &6%crate_name%&7'
+        OneTimed: '&c你已经打开过了这个宝箱，你不能再打开它了！'
+      NoKey: '&c您没有这个宝箱的密钥,获取密钥请输入 &f/keys &c查看获得方法'
+      NoRewards: '&c这个宝箱里没有任何奖励给你！'
+      Cost:
+        Money: '&c你没有足够的钱来打开这个宝箱！'
+        Exp: '&c你没有足够的经验等级来打开这个宝箱！'
+    Reward:
+      Info: '&7你打开了 &6%crate_name% &7获得了 &7[ &f%reward_name% &7]'
+      Broadcast: '&6恭喜玩家 &f%player% &6抽到了 &f%reward_name% &6发送 [ &e666 &6] 祝贺他吧'
+  Key:
+    Error:
+      Invalid: '&c无效密钥！'
+  Placeholder:
+    Cooldown:
+      Blank: 你可以开箱了！
+Menu:
+  Invalid: '&c菜单不存在！'
+Editor:
+  Crate:
+    Enter:
+      Id: '&7输入ID'
+      DisplayName: '&7请输入新名字'
+      Particle:
+        Name: '&7请输入新名字'
+        Data: '&7输入粒子数据'
+      KeyId: '&7输入密钥ID'
+      BlockLocation: '&7点击一个方块创建宝箱'
+      BlockHologramText: '&77输入一行新的字'
+      BlockHologramOffset: '&7输入偏移值'
+      Cooldown: '&7输入冷却时间（秒）'
+      Citizens: '&7输入NPC的ID'
+      AnimationConfig: '&7输入模板的名字'
+      PreviewConfig: '&7输入被预览的ID'
+      OpenCost:
+        Money: '&7输入金币数值'
+        Exp: '&7输入经验等级'
+      Block:
+        Location: '&7点击一个 &a方块 &7绑定宝箱'
+        Hologram:
+          Text: '&7输入 &a文字 &7行数……'
+          Offset: '&7输入 &a偏移 &7数值……'
+    Error:
+      Create:
+        Exists: '&c同样名字的宝箱早已存在！'
+  Reward:
+    Enter:
+      Id: '&7输入奖励ID'
+      DisplayName: '&7输入奖励显示名称'
+      Chance: '&7输入奖励获得概率'
+      Command: '&7输入一个指令'
+      WinLimit:
+        Amount: '&7输入奖励的数量'
+        Cooldown: '&7输入冷却时间'
+    Error:
+      Create:
+        Exist: '&c同样名字的宝箱早已存在！'
+  Key:
+    Error:
+      Create:
+        Exist: 同样名字的密钥早已存在！
+Other:
+  All:
+    Online: 所有在线玩家
