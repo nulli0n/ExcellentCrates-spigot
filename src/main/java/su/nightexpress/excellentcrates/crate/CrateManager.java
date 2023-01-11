@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CrateManager extends AbstractManager<ExcellentCrates> {
 
@@ -48,7 +49,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
     @Override
     public void onLoad() {
-        this.crates = new HashMap<>();
+        this.crates = new ConcurrentHashMap<>();
         this.openings = new HashMap<>();
         this.plugin.getConfigManager().extractResources(Config.DIR_CRATES);
         this.plugin.getConfigManager().extractResources(Config.DIR_PREVIEWS);
