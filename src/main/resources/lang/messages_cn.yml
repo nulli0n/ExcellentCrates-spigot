@@ -1,155 +1,550 @@
 Command:
   Drop:
-    Usage: <crateId> <world> <x> <y> <z>
-    Desc: 把宝箱放在某个位置
-    Done: 宝箱 &a%crate%&7 在 &a%x%&7, &a%y%&7, &a%z%&7 世界为 &a%world%
+    Usage: <宝箱ID> <世界名称> <x> <y> <z>
+    Desc: 在指定世界的指定位置生成一个宝箱.
+    Done: 宝箱 &6%crate_name%&7 已放置在世界 &6%location_world% 的 &6%location_x%&7, &6%location_y%&7, &6%location_z%&7 位置.
   ForceOpen:
-    Desc: 为玩家强行打开一个宝箱
-    Usage: <crateId> [player]
-    Done: 强制打开&6%crate_name%&7 为 &6%player%
-    Notify: 你已被迫打开 &6%crate_name%
+    Desc: 强制为玩家打开一个宝箱.
+    Usage: <宝箱ID> [玩家名]
+    Done: 强制打开 &6%crate_name%&7 for &6%player_name%&7.
+    Notify: 你已被迫打开 &6%crate_name%&7.
   Give:
-    Usage: <player | *> <crateId> [amount]
-    Desc: 给予宝箱给玩家
-    Done: 给予 &ax%amount% %crate% &7宝箱给 &a%player%
-    Notify: 你收到了 &ax%amount% &a%crate%
-  GiveKey:
-    Usage: <player | *> <keyId> [amount]
-    Desc: 给予玩家一个特定的密钥
-    Done: 给予 &ax%amount% &a%key% &7密钥给 &a%player%
-    Notify: 你收到了 &ax%amount% %key% &7密钥！
-  TakeKey:
-    Usage: <player | *> <keyId> [amount]
-    Desc: 从玩家手中夺取宝箱的密钥
-    Done: 获取 &6x%amount% &6%key_name% &7key(s) 来自 &6%player%
-    Notify: 你失去了 &6x%amount% &6%key_name%&7！
-    Error: '&c不能拿密钥: &e没有找到该玩家或没有这样数量的密钥'
-  CheckKey:
-    Desc: 显示你或其他玩家的密钥数量
-    Usage: '[player]'
-    Format:
-      List:
-      - '{message: ~prefix: false;}'
-      - '&8&m              &8&l[ &e%player% &7宝箱密钥数量 &8&l]&8&m              &8'
-      - '&7'
-      - '&6▸ &e%key_name%: &6%amount%'
-      OfflineItem: '&c<玩家离线>'
-  Preview:
-    Desc: 打开宝箱预览
-    Usage: <crateId> [player]
-    Done:
-      Others: 打开了 &6%crate_name%&7 预览玩家为 &6%player%
-  ResetLimit:
-    Desc: 重置指定宝箱和奖励的得到的概率限制
-    Usage: <player> <crateId> [rewardId]
-    Done:
-      Crate: 为 &6%player% &7重置所有奖励的获取概率 &6%crate_name%
-      Reward: 为 &6%player% &7得到的概率 &6%reward_name% &7奖励的 &6%crate_name%
-  ResetCooldown:
-    Desc: 重置玩家对指定宝箱的冷却时间
-    Usage: <player> <crateId>
-    Done: 重置 &6%player% &7对宝箱的 &6%crate_name%&7的冷却时间
-  Menu:
-    Usage: '[menu]'
-    Desc: 打开宝箱界面
-    Done:
-      Others: 打开了 &6%menu_id%&7 的宝箱界面 &6%player%
+    Usage: <玩家ID | *(全体玩家)> <宝箱ID> [数量]
+    Desc: 将特定的宝箱给予指定或全体玩家.
+    Done: 成功给予 &6&6%crate_name% &7%amount% 宝箱给 &a%player_name%&7.
+    Notify: 你收到了 &6%amount% &7个 &6%crate_name%&7!
   Key:
-    Desc: 管理或查看其它玩家的密钥
+    Desc: 管理或查看玩家现有的宝箱钥匙.
     Error:
-      Player: '&c无法处理离线/无效玩家 &e%player%&c！'
+      Player: '&c无法操作无效或非在线玩家 &e%player_name%&c!'
     Give:
-      Usage: <player | *> <crateId> [amount]
-      Desc: 给予宝箱给玩家
-      Done: 给予 &ax%amount% %crate% &7宝箱给 &a%player%
-      Notify: 你收到了 &ax%amount% &a%crate%
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 给予玩家特定宝箱的钥匙
+      Done: 成功给予 &a%amount% &7个 &a%key_name% &7钥匙至玩家 &a%player_name%&7.
+      Notify: 你收到了 &a%amount% &7个 &a%key_name%&7!
     Take:
-      Usage: <player | *> <keyId> [amount]
-      Desc: 从玩家手中夺取宝箱的密钥
-      Done: 获取 &6x%amount% &6%key_name% &7key(s) 来自 &6%player%
-      Notify: 你失去了 &6x%amount% &6%key_name%&7！
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 从玩家处拿走宝箱钥匙.
+      Done: 成功从玩家 &c%player_name% &7处拿走了 &c%amount%  个 &c%key_name% &7钥匙.
+      Notify: 你失去了 &c%amount% 个 &c%key_name%&7 钥匙!
     Set:
-      Usage: <player | *> <keyId> <amount>
-      Desc: 设置玩家密钥数量
-      Done: Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player_name%&7.
-      Notify: 你的 &e%key_name%&7 密钥数量被设置为 &ex%amount%&7！
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 设置玩家的宝箱钥匙数量.
+      Done: 成功将玩家 &e%player_name%&7 的宝箱钥匙 &e%key_name% &7数量设置为 &e%amount%.
+      Notify: 你的 &e%key_name%&7 钥匙数量已被设置为 &e%amount%&7 个!
     Show:
-      Desc: 显示玩家密钥数量
-      Usage: '[player]'
+      Desc: 显示你自己或指定玩家的钥匙数量.
+      Usage: '[玩家名]'
       Format:
         List:
-        - '{message: ~prefix: false;}'
-        - '&8&m              &8&l[ &e%player% &7宝箱密钥数量 &8&l]&8&m              &8'
-        - '&7'
-        - '&6▸ &e%key_name%: &6%amount%'
+          - <!prefix:"false"!>
+          - '&6&m              &6&l[ &a%player_name% &e&l的宝箱钥匙 &6&l]&6&m              &6'
+          - '&7'
+          - '&6▸ &e%key_name%: &6%amount%'
+  预览:
+    Desc: 预览宝箱的内容.
+    Usage: <宝箱ID> [玩家名]
+    Done:
+      Others: 成功为玩家 &6%player_display_name% &7打开了 &6%crate_name%&7 的预览界面.
+  ResetLimit:
+    Desc: 重置宝箱奖励相关数据.
+    Usage: <玩家ID> <宝箱ID> [奖品ID]
+    Done:
+      Crate: 成功将玩家 &6%player_name% &7的宝箱 &6%crate_name%&7 奖品获取概率重置.
+      Reward: 成功将玩家 &6%player_name% &7的宝箱 &6%crate_name%&7 的奖品几率 &6%reward_name% &7重置.
+  ResetCooldown:
+    Desc: 重置玩家对指定宝箱的冷却时间.
+    Usage: <玩家ID> <宝箱ID>
+    Done: 成功重置了 &6%player_name% &7对宝箱的 &6%crate_name%&7的冷却时间.
+  Menu:
+    Usage: '[菜单ID]'
+    Desc: 打开宝箱界面.
+    Done:
+      Others: 成功为玩家 &6%player_display_name%&7 打开了宝箱界面  &6%menu_id%&7 .
 Crate:
   Error:
-    Invalid: '&c无效的宝箱！'
+    Invalid: '&c无效宝箱!'
   Open:
     Error:
-      InventorySpace: '&c您的背包空间不足,请先清理背包'
+      InventorySpace: '&c您的背包空间不足,请先清理背包!'
       Cooldown:
-        Temporary: '&c你必须等待 &6%time% &7才能再次打开这个宝箱 &6%crate_name%&7'
-        OneTimed: '&c你已经打开过了这个宝箱，你不能再打开它了！'
-      NoKey: '&c您没有这个宝箱的密钥,获取密钥请输入 &f/keys &c查看获得方法'
-      NoRewards: '&c这个宝箱里没有任何奖励给你！'
+        Temporary: '&c你必须等待 &6%time% &7才能再次打开宝箱 &6%crate_name%'
+        OneTimed: '&c你已经打开过了这个奖箱,不能再次打开!'
+      NoKey: '&c缺少钥匙!'
+      NoRewards: '&c宝箱无奖励!'
       Cost:
-        Money: '&c你没有足够的钱来打开这个宝箱！'
-        Exp: '&c你没有足够的经验等级来打开这个宝箱！'
+        Money: '&c你没有足够的钱!'
+        Exp: '&c你没有足够的经验!'
     Reward:
-      Info: '&7你打开了 &6%crate_name% &7获得了 &7[ &f%reward_name% &7]'
-      Broadcast: '&6恭喜玩家 &f%player% &6抽到了 &f%reward_name% &6发送 [ &e666 &6] 祝贺他吧'
+      Broadcast: '&7玩家 &6&l%player_name% &7打开了 &b%crate_name% &7获得了以下奖励: &f%reward_name%'
+      Info: ''
   Key:
     Error:
-      Invalid: '&c无效密钥！'
+      Invalid: '&c无效钥匙!'
   Placeholder:
     Cooldown:
-      Blank: 你可以开箱了！
+      Blank: 冷却时间已到!你可以开启宝箱了!
 Menu:
-  Invalid: '&c菜单不存在！'
+  Invalid: '&c无效菜单!'
 Editor:
   Crate:
     Enter:
-      Id: '&7输入ID'
-      DisplayName: '&7请输入新名字'
+      Id: '&7输入ID...'
+      DisplayName: '&7请输入新的名字...'
       Particle:
-        Name: '&7请输入新名字'
-        Data: '&7输入粒子数据'
-      KeyId: '&7输入密钥ID'
-      BlockLocation: '&7点击一个方块创建宝箱'
-      BlockHologramText: '&77输入一行新的字'
-      BlockHologramOffset: '&7输入偏移值'
-      Cooldown: '&7输入冷却时间（秒）'
-      Citizens: '&7输入NPC的ID'
-      AnimationConfig: '&7输入模板的名字'
-      PreviewConfig: '&7输入被预览的ID'
-      OpenCost:
-        Money: '&7输入金币数值'
-        Exp: '&7输入经验等级'
+        Name: '&7请输入新名字...'
+        Data: '&7输入粒子效果名称...'
+      KeyId: '&7输入钥匙ID...'
       Block:
-        Location: '&7点击一个 &a方块 &7绑定宝箱'
+        Location: '&7鼠标左键来选中面前的方块作为宝箱...'
         Hologram:
-          Text: '&7输入 &a文字 &7行数……'
-          Offset: '&7输入 &a偏移 &7数值……'
+          Text: '&7输入文本内容...'
+          Offset: '&7输入偏移量...'
+      Cooldown: '&7输入冷却时间(单位为秒)...'
+      Citizens: '&7输入NPC ID...'
+      AnimationConfig: '&7输入模板的名字...'
+      PreviewConfig: '&7输入预览界面的ID...'
+      OpenCost:
+        Money: '&7输入金币的值...'
+        Exp: '&7输入经验等级...'
     Error:
       Create:
-        Exists: '&c同样名字的宝箱早已存在！'
+        Exists: '&c宝箱名字重复!'
   Reward:
     Enter:
-      Id: '&7输入奖励ID'
-      DisplayName: '&7输入奖励显示名称'
-      Chance: '&7输入奖励获得概率'
-      Command: '&7输入一个指令'
+      Id: '&7输入奖励物品的ID...'
+      DisplayName: '&7输入奖励显示名称...'
+      Chance: '&7输入奖励获得概率...'
+      Command: '&7输入奖励指令...'
       WinLimit:
-        Amount: '&7输入奖励的数量'
-        Cooldown: '&7输入冷却时间'
+        Amount: '&7输入奖励数量...'
+        Cooldown: '&7输入冷却时间...'
     Error:
       Create:
-        Exist: '&c同样名字的宝箱早已存在！'
+        Exist: '&c奖励名称重复!'
   Key:
     Error:
       Create:
-        Exist: 同样名字的密钥早已存在！
-Other:
-  All:
-    Online: 所有在线玩家
+        Exist: 钥匙名字重复!
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: 宝箱编辑器
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7在此处创建和编辑你的宝箱!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f进入界面'
+    EDITOR_KEYS:
+      Name: 钥匙编辑器
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7在此处创建和编辑你的钥匙!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f进入界面'
+    CRATE_OBJECT:
+      Name: '&e%crate_name% &7(ID: &f%crate_id%&7)'
+      Lore:
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f删除 &7(不可撤销)'
+    CRATE_CREATE:
+      Name: 创建一个宝箱
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7创建一个新的宝箱.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f创建'
+    CRATE_CHANGE_NAME:
+      Name: Crate Display Name
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%crate_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱的显示名称. 该名称将会用在'
+        - '&7消息提醒, 菜单界面, 以及悬浮字上.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改'
+    CRATE_CHANGE_PERMISSION:
+      Name: 权限限制
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a是否启用: &f%crate_permission_required%'
+        - '&a权限节点: &f%crate_permission%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置打开宝箱所需的权限.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'
+    CRATE_CHANGE_COOLDOWN:
+      Name: 开启冷却
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%crate_opening_cooldown%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱开启的冷却时间.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0设置为负值时表示仅能开启一次.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改'
+        - '&x&8&6&d&e&2&a鼠标右键 &f禁用'
+        - '&x&8&6&d&e&2&a键盘 Q 键 &f设置为一次性'
+    CRATE_CHANGE_CONFIG:
+      Name: GUI 排版
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a预览: &f%crate_preview_config%'
+        - '&a开箱: &f%crate_animation_config%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱的预览界面和开启界面.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0可在本插件的 previews 文件夹中设置宝箱的预览界面排版.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0可在本插件的 previews 文件夹中设置宝箱的抽奖界面排版.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改抽奖界面'
+        - '&x&8&6&d&e&2&a鼠标右键 &f禁用抽奖界面'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f修改抽奖预览界面'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f禁用抽奖预览界面'
+    CRATE_CHANGE_KEYS:
+      Name: 设置钥匙
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%crate_key_ids%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置可以用于开启此宝箱的钥匙.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0若不设置所需钥匙则宝箱可随意开启.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9请确保设置正确宝箱的钥匙 ID!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f添加钥匙'
+        - '&x&8&6&d&e&2&a鼠标右键 &f清除列表'
+    CRATE_CHANGE_CITIZENS:
+      Name: Citizens NPC 绑定
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a绑定 NPC ID:'
+        - '&a%crate_attached_citizens%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置绑定 NPC ID, 左键 NPC 时会打开宝箱的预览界面.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9在使用此功能前必须先安装 Citizens!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f添加绑定 NPC'
+        - '&x&8&6&d&e&2&a鼠标右键 &f清除绑定列表'
+    CRATE_CHANGE_OPEN_COST:
+      Name: 打开消耗金币/等级
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a所需金币: &f$%crate_opening_cost_money%'
+        - '&a所需等级: &f%crate_opening_cost_exp%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置玩家打开宝箱所需要的金币和经验.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9必须安装 Vault 和任意经济此插件才可使'
+        - '&x&c&7&0&0&3&9该模块正确工作!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改金钱条件'
+        - '&x&8&6&d&e&2&a鼠标右键 &f修改经验条件'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f取消设置金钱条件'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f取消设置经验条件'
+    CRATE_CHANGE_ITEM:
+      Name: 宝箱物品展示样式
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%crate_item_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱的物品样式'
+        - '&7将会显示在玩家或抽奖界面中.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0请预先设置好物品的描述和名称后再放入'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖拽物品 &f替换'
+        - '&x&8&6&d&e&2&a鼠标右键 &f获取物品'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: 方块位置 & 物品不足时推开玩家
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%crate_block_locations%'
+        - '&a是否启用推开玩家: &f%crate_block_pushback_enabled%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱将会出现的位置. 左键宝箱可查看预览.'
+        - '&7也同时可以设置在玩家不能打开宝箱时是否推开玩家.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f设置位置'
+        - '&x&8&6&d&e&2&a鼠标右键 &f清除设置'
+        - '&x&8&6&d&e&2&a键盘 Q 键 &f切换推开状态'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: 宝箱悬浮字
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a是否启用: &f%crate_block_hologram_enabled%'
+        - '&aY 偏移量: &f%crate_block_hologram_offset_y%'
+        - '&a文本:'
+        - '&a%crate_block_hologram_text%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置宝箱附近的悬浮字内容.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9你必须安装下列之一的插件才可使功能正常工作:'
+        - '&x&c&7&0&0&3&9- HolographicDisplays'
+        - '&x&c&7&0&0&3&9- DecentHolograms'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f添加一行文本'
+        - '&x&8&6&d&e&2&a鼠标右键 &f清除文本'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f切换悬浮字'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f修改 Y 偏移量'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: 方块效果
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a模型: &f%crate_block_effect_model%'
+        - '&a粒子效果: &f%crate_block_effect_particle_name%'
+        - '&a数据值: &f%crate_block_effect_particle_data%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置围绕宝箱的粒子效果样式.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0彩色粒子效果数据值设置格式: ''R,G,B'''
+        - '&x&f&f&c&3&0&0(255,0,0)'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0物品/方块粒子效果数据值设置格式: MATERIAL_NAME'
+        - '&x&f&f&c&3&0&0(SAND)'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a键盘 Q 键 &f切换模型'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改粒子效果'
+        - '&x&8&6&d&e&2&a鼠标右键 &f修改数据值'
+    CRATE_CHANGE_REWARDS:
+      Name: Crate Rewards
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7在这里你可以创建和管理宝箱的奖品.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f进入界面'
+    REWARD_OBJECT:
+      Name: '&e%reward_name% &7(ID: &f%reward_id%&7)'
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7奖品几率: &f%reward_chance%%'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'
+        - '&x&8&6&d&e&2&a键盘 Q 键 &f删除 &7(不可撤销)'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f向前移动'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f向后移动'
+    REWARD_CREATE:
+      Name: Create Reward
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7为宝箱设置一个新的奖品.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f创建'
+        - '&x&8&6&d&e&2&a拖拽物品 &f快速创建'
+    REWARD_SORT:
+      Name: 奖品整理
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7将奖品按照特定数据的值排序.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f以几率排序'
+        - '&x&8&6&d&e&2&a鼠标右键 &f以类型排序'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f以名称排序'
+    REWARD_CHANGE_NAME:
+      Name: 预览奖品显示名称
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%reward_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置奖励的名称, 此项多用在消息文本中.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9此项不设置预览图标物品名称!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改'
+        - '&x&8&6&d&e&2&a鼠标右键 &f与预览名称异步'
+    REWARD_CHANGE_PREVIEW:
+      Name: 预览奖品图标
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%reward_preview_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置该奖品的物品预览图标.'
+        - '&7该项将会在抽奖的预览界面中用到.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0请先将物品的自定义名称和描述预先设置.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖拽物品 &f替换'
+        - '&x&8&6&d&e&2&a鼠标右键 &f获取物品'
+    REWARD_CHANGE_CHANCE:
+      Name: 中奖概率
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%reward_chance%%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置奖品抽中的几率.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0奖品机制通过权重实现, 因此可不必设置为百分百.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改'
+    REWARD_CHANGE_COMMANDS:
+      Name: 奖励命令
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%reward_commands%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7当抽到该奖品时将会执行的命令列表.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0添加命令时请在聊天栏中输入.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f添加命令'
+        - '&x&8&6&d&e&2&a鼠标右键 &f清除命令'
+    REWARD_CHANGE_ITEMS:
+      Name: 奖励物品
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7将会添加至玩家背包中的物品列表.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0关闭此界面即可保存并返回至上一级界面.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f进入界面'
+    REWARD_CHANGE_BROADCAST:
+      Name: Broadcast
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a是否启用: &f%reward_broadcast%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置玩家抽到此物品时是否发送公告.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: Win Limits
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a数量: &f%reward_win_limit_amount%'
+        - '&a冷却: &f%reward_win_limit_cooldown%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置玩家可抽到该物品的总数量和间隔.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0将数量设置为 -1 可设置奖励数量不限.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0将冷却设置为 -1 可将奖品设置为一次性.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9限制仅对单个玩家有效, 非全局限制.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改 数量'
+        - '&x&8&6&d&e&2&a鼠标右键 &f修改 冷却'
+        - '&x&8&6&d&e&2&a键盘 Q 键 &f禁用'
+    KEY_OBJECT:
+      Name: '&e%key_name% &7(ID: &f%key_id%&7)'
+      Lore:
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0是否虚拟: &f%key_virtual%'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'
+        - '&x&8&6&d&e&2&aShift+鼠标左键 &f删除 &7(不可撤销)'
+    KEY_CREATE:
+      Name: 创建钥匙
+      Lore:
+        - '&6&l[?] 描述:'
+        - '&7创建一个新的宝箱钥匙.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f创建'
+    KEY_CHANGE_NAME:
+      Name: 宝箱钥匙展示名称
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%key_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置钥匙物品名称, 此项多用于消息文本.'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&c&7&0&0&3&9此项不影响钥匙物品本身名称!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f修改'
+    KEY_CHANGE_ITEM:
+      Name: 宝箱钥匙展示样式
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a%key_item_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置钥匙展示样式, 当物品给予玩家时会使用该样式.'
+        - ' '
+        - '&e&l[!] 提示:'
+        - '&x&f&f&c&3&0&0请在放入前自行编辑好物品的描述与名称.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖拽物品 &f替换'
+        - '&x&8&6&d&e&2&a鼠标右键 &f获取物品'
+    KEY_CHANGE_VIRTUAL:
+      Name: 虚拟钥匙
+      Lore:
+        - '&b&l[?] 当前:'
+        - '&a是否虚拟: &f%key_virtual%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7设置钥匙是否为虚拟钥匙'
+        - '&7若设置开启, 该钥匙将不能被物品形式给予玩家, 而是存储在数据库中.'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a鼠标左键 &f编辑'

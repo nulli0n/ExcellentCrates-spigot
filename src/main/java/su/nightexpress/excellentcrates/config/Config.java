@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -12,13 +13,24 @@ import java.util.Map;
 
 public class Config {
 
-    public static final String DIR_CRATES     = "/crates/";
-    public static final String DIR_PREVIEWS   = "/previews/";
-    public static final String DIR_KEYS       = "/keys/";
+    public static final String DIR_CRATES   = "/crates/";
+    public static final String DIR_PREVIEWS = "/previews/";
+    public static final String DIR_KEYS     = "/keys/";
     public static final String DIR_MENUS    = "/menu/";
     public static final String DIR_OPENINGS = "/openings/";
 
-    public static double CRATE_PUSHBACK_Y;
+    public static final JOption<String> EDITOR_TITLE_CRATE = JOption.create("Editor.Title.Crate", "Crate Editor",
+        "Title for the Crate Editor GUIs.");
+    public static final JOption<String> EDITOR_TITLE_KEY = JOption.create("Editor.Title.Key", "Key Editor",
+        "Title for the Key Editor GUIs.");
+
+    public static final JOption<Boolean> CRATE_PLACEHOLDER_API_FOR_REWARDS = JOption.create("Crate.PlaceholderAPI_For_Rewards", false,
+        "When 'true' applies PlaceholderAPI placeholders for crate reward items when they're about to be given to a player.");
+
+    public static final JOption<Boolean> CRATE_PREVENT_OPENING_SKIP = JOption.create("Crate.Prevent_Opening_Skip", false,
+    "When 'true' prevents force closing opening animations to get reward instantly.");
+
+    public static double                 CRATE_PUSHBACK_Y;
     public static double CRATE_PUSHBACK_MULTIPLY;
     private static Map<ClickType, CrateClickAction> CRATE_CLICK_ACTIONS;
 

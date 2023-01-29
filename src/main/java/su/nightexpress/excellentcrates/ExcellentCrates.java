@@ -90,6 +90,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     @Override
     public void loadConfig() {
         Config.load(this);
+        this.getConfig().initializeOptions(Config.class);
     }
 
     @Override

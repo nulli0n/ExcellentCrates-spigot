@@ -12,13 +12,16 @@ import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.editor.EditorCrateReward;
 import su.nightexpress.excellentcrates.data.CrateUser;
 import su.nightexpress.excellentcrates.data.UserRewardWinLimit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 public class CrateReward implements IEditable, ICleanable, IPlaceholder {
@@ -33,7 +36,8 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
     private long            winLimitCooldown;
     private ItemStack       preview;
     private List<ItemStack> items;
-    private List<String>    commands;
+    private List<String> commands;
+    private Set<String>  ignoredForPermissions;
 
     private EditorCrateReward editor;
 
@@ -51,7 +55,8 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
 
             new ItemStack(Material.EMERALD),
             new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<>(),
+            new HashSet<>()
         );
     }
 
@@ -68,7 +73,8 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
 
         @NotNull ItemStack preview,
         @NotNull List<ItemStack> items,
-        @NotNull List<String> commands
+        @NotNull List<String> commands,
+        @NotNull Set<String> ignoredForPermissions
     ) {
         this.crate = crate;
         this.id = id.toLowerCase();
@@ -83,6 +89,7 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
         this.setItems(items);
         this.setCommands(commands);
         this.setPreview(preview);
+        this.setIgnoredForPermissions(ignoredForPermissions);
     }
 
     @NotNull
@@ -106,6 +113,7 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
             .replace(Placeholders.REWARD_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
             .replace(Placeholders.REWARD_WIN_LIMIT_AMOUNT, winAmount)
             .replace(Placeholders.REWARD_WIN_LIMIT_COOLDOWN, winCooldown)
+            .replace(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS, String.join("\n", this.getIgnoredForPermissions()))
             ;
     }
 
@@ -196,7 +204,7 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
             if (winLimit == null) return true;
             if (!winLimit.isExpired() || winLimit.isDrained(this)) return false;
         }
-        return true;
+        return this.getIgnoredForPermissions().stream().noneMatch(player::hasPermission);
     }
 
     @NotNull
@@ -219,19 +227,30 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
     }
 
     @NotNull
+    public Set<String> getIgnoredForPermissions() {
+        return ignoredForPermissions;
+    }
+
+    public void setIgnoredForPermissions(@NotNull Set<String> ignoredForPermissions) {
+        this.ignoredForPermissions = ignoredForPermissions;
+    }
+
+    @NotNull
     public List<ItemStack> getItems() {
         return this.items;
     }
 
     public void setItems(@NotNull List<ItemStack> items) {
-        this.items = new ArrayList<>(items);
+        this.items = new ArrayList<>(items.stream().limit(27).toList());
         this.items.removeIf(item -> item == null || item.getType().isAir());
     }
 
     public void give(@NotNull Player player) {
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
-            ItemUtil.setPlaceholderAPI(player, give);
+            if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
+                ItemUtil.setPlaceholderAPI(player, give);
+            }
             PlayerUtil.addItem(player, give);
         });
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));

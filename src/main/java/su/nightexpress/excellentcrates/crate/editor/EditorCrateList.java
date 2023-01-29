@@ -14,10 +14,10 @@ import su.nexmedia.engine.editor.AbstractEditorMenuAuto;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.Crate;
 import su.nightexpress.excellentcrates.crate.CrateManager;
-import su.nightexpress.excellentcrates.editor.CrateEditorMenu;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 public class EditorCrateList extends AbstractEditorMenuAuto<ExcellentCrates, CrateManager, Crate> {
 
     public EditorCrateList(@NotNull CrateManager crateManager) {
-        super(crateManager.plugin(), crateManager, CrateEditorMenu.TITLE_CRATE, 45);
+        super(crateManager.plugin(), crateManager, Config.EDITOR_TITLE_CRATE.get(), 45);
 
         EditorInput<CrateManager, CrateEditorType> input = (player, crateManager2, type, e) -> {
             if (type == CrateEditorType.CRATE_CREATE) {

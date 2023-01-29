@@ -139,6 +139,10 @@ public enum CrateEditorType implements EditorButtonType {
         EditorButtonType.click("Left-Click to &fChange Amount\nRight-Click to &fChange Cooldown\n[Q] Key to &fDisable")),
     REWARD_CHANGE_WIN_LIMITS_AMOUNT,
     REWARD_CHANGE_WIN_LIMITS_COOLDOWN,
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS(Material.DAYLIGHT_DETECTOR, "Ignored Player Permissions",
+        EditorButtonType.current(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS),
+        EditorButtonType.info("A list of permissions to prevent giving this reward away if player has any of them."),
+        EditorButtonType.click("Left-Click to &fAdd Permission\nRight-Click to &fClear List")),
 
     KEY_OBJECT(Material.TRIPWIRE_HOOK, "&e" + Placeholders.KEY_NAME + " &7(ID: &f" + Placeholders.KEY_ID + "&7)",
         EditorButtonType.note("Is Virtual: &f" + Placeholders.KEY_VIRTUAL),

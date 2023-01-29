@@ -14,9 +14,6 @@ import java.util.Map;
 
 public class CrateEditorMenu extends AbstractEditorMenu<ExcellentCrates, ExcellentCrates> {
 
-    public static final String TITLE_CRATE = "Crate Editor";
-    public static final String TITLE_KEY = "Key Editor";
-
     private EditorCrateList editorCrateList;
     private EditorKeyList   editorKeyList;
 

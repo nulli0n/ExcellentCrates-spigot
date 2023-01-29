@@ -101,6 +101,7 @@ public class Lang extends EngineLang {
     public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME       = new LangKey("Editor.Reward.Enter.DisplayName", "&7Enter reward &adisplay name&7...");
     public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = new LangKey("Editor.Reward.Enter.Chance", "&7Enter win &achance&7...");
     public static final LangKey EDITOR_REWARD_ENTER_COMMAND            = new LangKey("Editor.Reward.Enter.Command", "&7Enter a &acommand&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_PERMISSION         = new LangKey("Editor.Reward.Enter.Permissions", "&7Enter a &apermission&7...");
     public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = new LangKey("Editor.Reward.Enter.WinLimit.Amount", "&7Enter win limit &aamount&7...");
     public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN = new LangKey("Editor.Reward.Enter.WinLimit.Cooldown", "&7Enter win limit &acooldown&7...");
     public static final LangKey EDITOR_REWARD_ERROR_CREATE_EXIST       = new LangKey("Editor.Reward.Error.Create.Exist", "&cReward with such id is already exists!");

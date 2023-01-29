@@ -14,8 +14,8 @@ import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.editor.CrateEditorMenu;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 import su.nightexpress.excellentcrates.key.CrateKey;
 
@@ -24,7 +24,7 @@ import java.util.Map;
 public class EditorKeyMain extends AbstractEditorMenu<ExcellentCrates, CrateKey> {
 
     public EditorKeyMain(@NotNull CrateKey crateKey) {
-        super(crateKey.plugin(), crateKey, CrateEditorMenu.TITLE_KEY, 45);
+        super(crateKey.plugin(), crateKey, Config.EDITOR_TITLE_KEY.get(), 45);
 
         EditorInput<CrateKey, CrateEditorType> input = (player, key, type, e) -> {
             if (type == CrateEditorType.KEY_CHANGE_NAME) {

@@ -37,7 +37,7 @@ public abstract class CrateEffectTask extends BukkitRunnable {
         if (this.count++ % (int) this.getInterval() != 0) return;
         if (this.step < 0) return;
 
-        PLUGIN.getCrateManager().getCrates().stream().filter(crate -> crate.getBlockEffect().getModel() == this.model).forEach(crate -> {
+        PLUGIN.getCrateManager().getCrates().stream().collect(Collectors.toUnmodifiableSet()).stream().filter(crate -> crate.getBlockEffect().getModel() == this.model).forEach(crate -> {
             CrateEffectSettings effect = crate.getBlockEffect();
             crate.getBlockLocations().stream().collect(Collectors.toUnmodifiableSet()).forEach(loc -> {
                 this.doStep(LocationUtil.getCenter(loc.clone(), false), effect.getParticleName(), effect.getParticleData(), this.step);

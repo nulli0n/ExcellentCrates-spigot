@@ -20,10 +20,12 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     private final Map<String, Integer>                         keys;
     private final Map<String, Integer>                         keysOnHold;
     private final Map<String, Long>                            openCooldowns;
+    private final Map<String, Integer> openingsAmount;
     private final Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits;
 
     public CrateUser(@NotNull ExcellentCrates plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
+            new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
@@ -41,12 +43,14 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         @NotNull Map<String, Integer> keys,
         @NotNull Map<String, Integer> keysOnHold,
         @NotNull Map<String, Long> openCooldowns,
+        @NotNull Map<String, Integer> openingsAmount,
         @NotNull Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits
     ) {
         super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
         this.keysOnHold = keysOnHold;
         this.openCooldowns = openCooldowns;
+        this.openingsAmount = openingsAmount;
         this.rewardWinLimits = rewardWinLimits;
     }
 
@@ -92,6 +96,27 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public long getCrateCooldown(@NotNull String id) {
         this.getCrateCooldowns().values().removeIf(endDate -> endDate >= 0 && endDate < System.currentTimeMillis());
         return this.getCrateCooldowns().getOrDefault(id.toLowerCase(), 0L);
+    }
+
+    @NotNull
+    public Map<String, Integer> getOpeningsAmountMap() {
+        return openingsAmount;
+    }
+
+    public int getOpeningsAmount(@NotNull Crate crate) {
+        return this.getOpeningsAmount(crate.getId());
+    }
+
+    public int getOpeningsAmount(@NotNull String id) {
+        return this.getOpeningsAmountMap().getOrDefault(id.toLowerCase(), 0);
+    }
+
+    public void setOpeningsAmount(@NotNull Crate crate, int amount) {
+        this.setOpeningsAmount(crate.getId(), amount);
+    }
+
+    public void setOpeningsAmount(@NotNull String id, int amount) {
+        this.getOpeningsAmountMap().put(id.toLowerCase(), amount);
     }
 
     @NotNull

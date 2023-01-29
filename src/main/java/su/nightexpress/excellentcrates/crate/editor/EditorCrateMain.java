@@ -28,7 +28,6 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.Crate;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectSettings;
-import su.nightexpress.excellentcrates.editor.CrateEditorMenu;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 
 import java.util.*;
@@ -42,7 +41,7 @@ public class EditorCrateMain extends AbstractEditorMenu<ExcellentCrates, Crate> 
     private EditorCrateRewardList editorRewards;
 
     public EditorCrateMain(@NotNull Crate crate) {
-        super(crate.plugin(), crate, CrateEditorMenu.TITLE_CRATE, 45);
+        super(crate.plugin(), crate, Config.EDITOR_TITLE_CRATE.get(), 45);
         this.crate = crate;
 
         EditorInput<Crate, CrateEditorType> input = (player, crate2, type, e) -> {

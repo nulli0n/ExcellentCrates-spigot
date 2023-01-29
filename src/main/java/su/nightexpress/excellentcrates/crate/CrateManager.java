@@ -322,6 +322,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         this.setCrateCooldown(player, crate);
+        user.setOpeningsAmount(crate, user.getOpeningsAmount(crate) + 1);
         return true;
     }
 

@@ -130,10 +130,11 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
             List<String> rewCmds = cfg.getStringList(path + "Commands");
             List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemsEncoded(path + "Items")).toList());
+            Set<String> ignoredForPerms = cfg.getStringSet(path + "Ignored_For_Permissions");
 
             CrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rBroadcast,
                 winLimitAmount, winLimitCooldown,
-                rewPreview, rewItem, rewCmds);
+                rewPreview, rewItem, rewCmds, ignoredForPerms);
             this.rewardMap.put(rewId, reward);
         }
 
@@ -180,6 +181,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             cfg.setItemEncoded(path + "Preview", reward.getPreview());
             cfg.set(path + "Commands", reward.getCommands());
             cfg.setItemsEncoded(path + "Items", reward.getItems());
+            cfg.set(path + "Ignored_For_Permissions", reward.getIgnoredForPermissions());
         }
 
         //this.createPreview();

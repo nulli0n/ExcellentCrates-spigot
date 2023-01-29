@@ -20,36 +20,37 @@ import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.Crate;
 import su.nightexpress.excellentcrates.crate.CrateReward;
-import su.nightexpress.excellentcrates.editor.CrateEditorMenu;
 import su.nightexpress.excellentcrates.editor.CrateEditorType;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, CrateReward> {
 
     public EditorCrateReward(@NotNull CrateReward reward) {
-        super(reward.plugin(), reward, CrateEditorMenu.TITLE_CRATE, 45);
+        super(reward.plugin(), reward, Config.EDITOR_TITLE_CRATE.get(), 45);
         Crate crate = reward.getCrate();
 
         EditorInput<CrateReward, CrateEditorType> input = (player, reward2, type, e) -> {
-            String msg = StringUtil.color(e.getMessage());
+            String msg = StringUtil.colorOff(e.getMessage());
             switch (type) {
                 case REWARD_CHANGE_CHANCE -> {
-                    double chance = StringUtil.getDouble(StringUtil.colorOff(msg), -1);
+                    double chance = StringUtil.getDouble(msg, -1);
                     if (chance < 0) {
                         EditorManager.error(player, plugin.getMessage(Lang.EDITOR_ERROR_NUMBER_GENERIC).getLocalized());
                         return false;
                     }
                     reward.setChance(chance);
                 }
-                case REWARD_CHANGE_COMMANDS -> reward.getCommands().add(StringUtil.colorOff(msg));
+                case REWARD_CHANGE_COMMANDS -> reward.getCommands().add(msg);
+                case REWARD_CHANGE_IGNORED_FOR_PERMISSIONS -> reward.getIgnoredForPermissions().add(msg);
                 case REWARD_CHANGE_NAME -> reward.setName(msg);
-                case REWARD_CHANGE_WIN_LIMITS_AMOUNT -> reward.setWinLimitAmount(StringUtil.getInteger(StringUtil.colorOff(msg), -1, true));
-                case REWARD_CHANGE_WIN_LIMITS_COOLDOWN -> reward.setWinLimitCooldown(StringUtil.getInteger(StringUtil.colorOff(msg), 0, true));
+                case REWARD_CHANGE_WIN_LIMITS_AMOUNT -> reward.setWinLimitAmount(StringUtil.getInteger(msg, -1, true));
+                case REWARD_CHANGE_WIN_LIMITS_COOLDOWN -> reward.setWinLimitCooldown(StringUtil.getInteger(msg, 0, true));
                 default -> { }
             }
 
@@ -112,6 +113,17 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
                             return;
                         }
                     }
+                    case REWARD_CHANGE_IGNORED_FOR_PERMISSIONS -> {
+                        if (e.isRightClick()) {
+                            reward.getIgnoredForPermissions().clear();
+                        }
+                        else {
+                            EditorManager.startEdit(player, reward, type2, input);
+                            EditorManager.tip(player, plugin.getMessage(Lang.EDITOR_REWARD_ENTER_COMMAND).getLocalized());
+                            player.closeInventory();
+                            return;
+                        }
+                    }
                     case REWARD_CHANGE_WIN_LIMITS -> {
                         if (e.getClick() == ClickType.DROP) {
                             reward.setWinLimitAmount(-1);
@@ -150,6 +162,7 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
         map.put(CrateEditorType.REWARD_CHANGE_CHANCE, 13);
         map.put(CrateEditorType.REWARD_CHANGE_COMMANDS, 14);
         map.put(CrateEditorType.REWARD_CHANGE_ITEMS, 15);
+        map.put(CrateEditorType.REWARD_CHANGE_IGNORED_FOR_PERMISSIONS, 16);
 
         map.put(CrateEditorType.REWARD_CHANGE_WIN_LIMITS, 22);
     }
@@ -214,16 +227,7 @@ public class EditorCrateReward extends AbstractEditorMenu<ExcellentCrates, Crate
         @Override
         public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
             Inventory inventory = e.getInventory();
-            ItemStack[] items = new ItemStack[this.getSize()];
-
-            for (int slot = 0; slot < items.length; slot++) {
-                ItemStack item = inventory.getItem(slot);
-                if (item == null) continue;
-
-                items[slot] = new ItemStack(item);
-            }
-
-            this.reward.setItems(Arrays.asList(items));
+            this.reward.setItems(Stream.of(inventory.getContents()).toList());
             this.reward.getCrate().save();
             super.onClose(player, e);
 
