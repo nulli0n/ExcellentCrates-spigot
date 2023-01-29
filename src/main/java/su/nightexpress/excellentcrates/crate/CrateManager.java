@@ -22,6 +22,7 @@ import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.api.OpenCostType;
+import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.api.event.CrateOpenEvent;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
@@ -299,6 +300,9 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             CrateReward reward = crate.rollReward(player);
             if (reward != null) {
                 reward.give(player);
+
+                CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, player);
+                plugin.getPluginManager().callEvent(rewardEvent);
 
                 if (block != null) {
                     if (block.getState() instanceof Lidded lidded) {

@@ -9,6 +9,7 @@ import su.nexmedia.engine.utils.PDCUtil;
 import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.crate.CrateReward;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.task.OpeningTask;
@@ -52,6 +53,9 @@ public class SliderTask extends OpeningTask {
                 CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
                 if (reward != null) {
                     reward.give(this.data.getPlayer());
+
+                    CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, this.getData().getPlayer());
+                    ExcellentCratesAPI.PLUGIN.getPluginManager().callEvent(rewardEvent);
                 }
             }
         }
@@ -146,6 +150,9 @@ public class SliderTask extends OpeningTask {
             if (reward == null) continue;
 
             reward.give(this.data.getPlayer());
+
+            CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, this.getData().getPlayer());
+            ExcellentCratesAPI.PLUGIN.getPluginManager().callEvent(rewardEvent);
         }
     }
 
