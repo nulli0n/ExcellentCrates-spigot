@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.api.event;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.crate.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 
 public class CrateObtainRewardEvent extends CrateEvent {
 

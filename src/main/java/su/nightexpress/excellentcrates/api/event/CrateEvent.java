@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 public abstract class CrateEvent extends Event {
 

@@ -12,13 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.AbstractMenu;
-import su.nexmedia.engine.api.menu.MenuClick;
-import su.nexmedia.engine.api.menu.MenuItem;
+import su.nexmedia.engine.api.manager.IListener;
+import su.nexmedia.engine.api.menu.impl.ConfigMenu;
+import su.nexmedia.engine.api.menu.item.MenuItem;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.animation.AnimationInfo;
 import su.nightexpress.excellentcrates.opening.animation.AnimationTask;
@@ -31,13 +31,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
+public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements IListener {
 
     private final Map<String, SliderInfo>    sliders;
     private final Map<String, AnimationInfo> animations;
 
     public OpeningMenu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
-        super(plugin, cfg, "");
+        super(plugin, cfg);
         this.sliders = new LinkedHashMap<>();
         this.animations = new LinkedHashMap<>();
 
@@ -79,14 +79,33 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
             this.animations.put(item.getId(), item);
         }
 
-        MenuClick click = (player, type, e) -> {
+        this.load();
+        this.registerListeners();
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        this.unregisterListeners();
+    }
+
+    @Override
+    public void registerListeners() {
+        this.plugin.getPluginManager().registerEvents(this, this.plugin);
+    }
+
+    @Override
+    @NotNull
+    protected MenuItem readItem(@NotNull String path) {
+        CrateMenuItem menuItem = new CrateMenuItem(super.readItem(path));
+        menuItem.setRewardId(cfg.getString(path + ".Start_Reward", ""));
+        menuItem.setAnimationId(cfg.getString(path + ".Start_Animation", ""));
+        menuItem.setClick((viewer, event) -> {
+            Player player = viewer.getPlayer();
             PlayerOpeningData data = PlayerOpeningData.get(player);
             if (data == null) return;
 
-            MenuItem menuItem = this.getItem(e.getRawSlot());
-            if (!(menuItem instanceof CrateMenuItem crateMenuItem)) return;
-
-            String[] rewardIds = crateMenuItem.getRewardId();
+            String[] rewardIds = menuItem.getRewardId();
             if (rewardIds != null) {
                 for (String rewardId : rewardIds) {
                     SliderTask task = data.getSliderTasks().get(rewardId);
@@ -96,7 +115,7 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
                 }
             }
 
-            String[] animationIds = crateMenuItem.getAnimationId();
+            String[] animationIds = menuItem.getAnimationId();
             if (animationIds != null) {
                 for (String animationId : animationIds) {
                     AnimationTask task = data.getAnimationTasks().get(animationId);
@@ -105,15 +124,8 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
                     task.start();
                 }
             }
-        };
-
-        for (String sId : cfg.getSection("Content")) {
-            CrateMenuItem menuItem = new CrateMenuItem(cfg.getMenuItem("Content." + sId));
-            menuItem.setRewardId(cfg.getString("Content." + sId + ".Start_Reward", ""));
-            menuItem.setAnimationId(cfg.getString("Content." + sId + ".Start_Animation", ""));
-            menuItem.setClickHandler(click);
-            this.addItem(menuItem);
-        }
+        });
+        return menuItem;
     }
 
     @Override
@@ -170,18 +182,13 @@ public class OpeningMenu extends AbstractMenu<ExcellentCrates> {
         PlayerOpeningData.clean(player);
     }
 
-    @Override
-    public boolean cancelClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull SlotType slotType) {
-        return true;
-    }
-
     static class CrateMenuItem extends MenuItem {
 
         private String[] rewardId;
         private String[] animationId;
 
         public CrateMenuItem(@NotNull MenuItem menuItem) {
-            super(menuItem);
+            super(menuItem.getItem(), menuItem.getPriority(), menuItem.getOptions(), menuItem.getSlots());
         }
 
         public void setRewardId(@NotNull String rewardId) {

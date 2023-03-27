@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
@@ -44,7 +44,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
             return plugin.getMenuManager().getMenuIds();
         }
         if (arg == 2 && player.hasPermission(Perms.COMMAND_KEY_SHOW_OTHERS)) {
-            return PlayerUtil.getPlayerNames();
+            return CollectionsUtil.playerNames(player);
         }
         return super.getTab(player, arg, args);
     }

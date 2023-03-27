@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
-import su.nightexpress.excellentcrates.crate.Crate;
-import su.nightexpress.excellentcrates.crate.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 
 import java.util.*;
 

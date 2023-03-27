@@ -44,7 +44,4 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String REWARD_WIN_LIMIT_AMOUNT   = "%reward_win_limit_amount%";
     public static final String REWARD_WIN_LIMIT_COOLDOWN      = "%reward_win_limit_cooldown%";
     public static final String REWARD_IGNORED_FOR_PERMISSIONS = "%reward_ignored_for_permissions%";
-
-    public static final String USER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
-    public static final String USER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
 }

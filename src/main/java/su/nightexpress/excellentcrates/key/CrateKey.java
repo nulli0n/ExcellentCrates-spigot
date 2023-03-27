@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractLoadableItem;
 import su.nexmedia.engine.api.manager.ICleanable;
-import su.nexmedia.engine.api.manager.IEditable;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.LangManager;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -18,17 +18,17 @@ import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.key.editor.EditorKeyMain;
+import su.nightexpress.excellentcrates.key.editor.KeyMainEditor;
 
 import java.util.function.UnaryOperator;
 
-public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements IEditable, ICleanable, IPlaceholder {
+public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements ICleanable, IPlaceholder {
 
     private String    name;
     private boolean   isVirtual;
     private ItemStack item;
 
-    private EditorKeyMain editor;
+    private KeyMainEditor editor;
 
     public CrateKey(@NotNull ExcellentCrates plugin, @NotNull String id) {
         super(plugin, plugin.getDataFolder() + Config.DIR_KEYS + id.toLowerCase() + ".yml");
@@ -93,11 +93,10 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
         }
     }
 
-    @Override
     @NotNull
-    public EditorKeyMain getEditor() {
+    public KeyMainEditor getEditor() {
         if (this.editor == null) {
-            this.editor = new EditorKeyMain(this);
+            this.editor = new KeyMainEditor(this);
         }
         return this.editor;
     }
@@ -108,7 +107,7 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
     }
 
     public void setName(@NotNull String name) {
-        this.name = StringUtil.color(name);
+        this.name = Colorizer.apply(name);
     }
 
     public boolean isVirtual() {
@@ -126,6 +125,6 @@ public class CrateKey extends AbstractLoadableItem<ExcellentCrates> implements I
 
     public void setItem(@NotNull ItemStack item) {
         this.item = new ItemStack(item);
-        PDCUtil.setData(this.item, Keys.CRATE_KEY_ID, this.getId());
+        PDCUtil.set(this.item, Keys.CRATE_KEY_ID, this.getId());
     }
 }

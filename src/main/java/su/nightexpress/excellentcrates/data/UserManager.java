@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.data;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.data.AbstractUserManager;
 import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 import java.util.UUID;
 

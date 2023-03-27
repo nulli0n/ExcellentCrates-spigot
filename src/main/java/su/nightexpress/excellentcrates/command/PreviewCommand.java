@@ -4,12 +4,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCrates> {
             return plugin.getCrateManager().getCrateIds(false);
         }
         if (arg == 2 && player.hasPermission(Perms.COMMAND_PREVIEW_OTHERS)) {
-            return PlayerUtil.getPlayerNames();
+            return CollectionsUtil.playerNames(player);
         }
         return super.getTab(player, arg, args);
     }

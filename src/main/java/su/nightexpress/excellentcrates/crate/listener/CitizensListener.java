@@ -1,32 +1,32 @@
-package su.nightexpress.excellentcrates.hooks.external;
+package su.nightexpress.excellentcrates.crate.listener;
 
 import net.citizensnpcs.api.event.NPCClickEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.type.ClickType;
-import su.nexmedia.engine.hooks.external.citizens.CitizensListener;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 
-public class CrateCitizensListener implements CitizensListener {
+public class CitizensListener extends AbstractListener<ExcellentCrates> {
 
-    private final ExcellentCrates plugin;
-
-    public CrateCitizensListener(@NotNull ExcellentCrates plugin) {
-        this.plugin = plugin;
+    public CitizensListener(@NotNull ExcellentCrates plugin) {
+        super(plugin);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onLeftClick(NPCLeftClickEvent e) {
         this.process(e);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onRightClick(NPCRightClickEvent e) {
         this.process(e);
     }

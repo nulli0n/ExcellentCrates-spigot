@@ -1,6 +1,9 @@
 package su.nightexpress.excellentcrates.crate;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lidded;
@@ -10,12 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.api.menu.AbstractMenu;
+import su.nexmedia.engine.api.menu.impl.Menu;
+import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.VaultHook;
-import su.nexmedia.engine.utils.LocationUtil;
-import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.TimeUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Perms;
@@ -28,20 +30,21 @@ import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
-import su.nightexpress.excellentcrates.data.CrateUser;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.listener.CitizensListener;
+import su.nightexpress.excellentcrates.crate.listener.CrateListener;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.menu.OpeningMenu;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CrateManager extends AbstractManager<ExcellentCrates> {
 
-    private Map<String, Crate> crates;
+    private Map<String, Crate>       crates;
     private Map<String, OpeningMenu> openings;
 
     public CrateManager(@NotNull ExcellentCrates plugin) {
@@ -57,15 +60,9 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         this.plugin.getConfigManager().extractResources(Config.DIR_OPENINGS);
 
         for (JYML cfg : JYML.loadAll(this.plugin.getDataFolder() + Config.DIR_OPENINGS, true)) {
-            try {
-                OpeningMenu opening = new OpeningMenu(plugin, cfg);
-                String id = cfg.getFile().getName().replace(".yml", "").toLowerCase();
-                this.openings.put(id, opening);
-            }
-            catch (Exception e) {
-                this.plugin.error("Crate opening not loaded: " + cfg.getFile().getName());
-                e.printStackTrace();
-            }
+            OpeningMenu opening = new OpeningMenu(plugin, cfg);
+            String id = cfg.getFile().getName().replace(".yml", "").toLowerCase();
+            this.openings.put(id, opening);
         }
 
         this.plugin.getServer().getScheduler().runTask(this.plugin, c -> {
@@ -74,15 +71,16 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
                 if (crate.load()) {
                     this.crates.put(crate.getId(), crate);
                 }
-                else {
-                    this.plugin.error("Crate not loaded: " + cfg.getFile().getName());
-                }
+                else this.plugin.error("Crate not loaded: " + cfg.getFile().getName());
             }
             this.plugin.info("Loaded " + this.getCratesMap().size() + " crates.");
             CrateEffectModel.start();
         });
 
         this.addListener(new CrateListener(this));
+        if (Hooks.hasCitizens()) {
+            this.addListener(new CitizensListener(this.plugin));
+        }
     }
 
     @Override
@@ -93,7 +91,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         CrateEffectModel.shutdown();
 
         if (this.openings != null) {
-            this.openings.values().forEach(AbstractMenu::clear);
+            this.openings.values().forEach(Menu::clear);
             this.openings.clear();
         }
         if (this.crates != null) {
@@ -119,12 +117,33 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
     }
 
     public boolean create(@NotNull String id) {
+        id = StringUtil.lowerCaseUnderscore(id);
         if (this.getCrateById(id) != null) {
             return false;
         }
 
-        Crate crate = new Crate(this.plugin(), id);
+        JYML cfg = new JYML(this.plugin.getDataFolder() + Config.DIR_CRATES, id + ".yml");
+        Crate crate = new Crate(this.plugin, cfg);
+        crate.setName(ChatColor.GREEN + ChatColor.BOLD.toString() + StringUtil.capitalizeUnderscored(crate.getId()) + " Crate");
+        crate.setOpeningConfig(null);
+        crate.setPreviewConfig(Placeholders.DEFAULT);
+
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTZkN2ZkYjUwZjE0YzczMWM3MjdiMGUwZDE4OWI2YTg3NDMxOWZjMGQ3OWM4YTA5OWFjZmM3N2M3YjJkOTE5NiJ9fX0=");
+        ItemUtil.mapMeta(item, meta -> {
+            meta.setDisplayName(crate.getName());
+        });
+        crate.setItem(item);
+
+        crate.setBlockPushbackEnabled(true);
+        crate.setBlockHologramEnabled(false);
+        crate.setBlockHologramOffsetY(1.5D);
+        crate.setBlockHologramText(Arrays.asList("&c&l" + crate.getName().toUpperCase(), "&7Buy a key at &cwww.myserver.com"));
+        crate.setBlockEffectModel(CrateEffectModel.HELIX);
+        crate.setBlockEffectParticle(SimpleParticle.of(Particle.FLAME));
         crate.save();
+        crate.load();
+
         this.getCratesMap().put(crate.getId(), crate);
         return true;
     }
@@ -169,7 +188,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
     @Nullable
     public Crate getCrateByItem(@NotNull ItemStack item) {
-        String id = PDCUtil.getStringData(item, Keys.CRATE_ID);
+        String id = PDCUtil.getString(item, Keys.CRATE_ID).orElse(null);
         return id != null ? this.getCrateById(id) : null;
     }
 

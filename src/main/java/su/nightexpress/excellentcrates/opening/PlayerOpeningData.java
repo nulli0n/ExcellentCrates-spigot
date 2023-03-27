@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.opening.animation.AnimationTask;
 import su.nightexpress.excellentcrates.opening.slider.SliderTask;
 
@@ -16,8 +16,8 @@ public final class PlayerOpeningData {
 
     public static final Map<Player, PlayerOpeningData> PLAYERS = new WeakHashMap<>();
 
-    private final Player player;
-    private final Crate crate;
+    private final Player                     player;
+    private final Crate                      crate;
     private final Inventory                  inventory;
     private final Map<String, SliderTask>    sliderTasks;
     private final Map<String, AnimationTask> animationTasks;

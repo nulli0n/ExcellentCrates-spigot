@@ -7,8 +7,7 @@ public class Perms {
     private static final String PREFIX         = "excellentcrates.";
     private static final String PREFIX_COMMAND = PREFIX + "command.";
     private static final String PREFIX_BYPASS  = PREFIX + "bypass.";
-
-    public static final String CRATE = PREFIX + "crate.";
+    public static final String PREFIX_CRATE = PREFIX + "crate.";
 
     public static final JPermission PLUGIN  = new JPermission(PREFIX + Placeholders.WILDCARD, "Access to all the plugin functions.");
     public static final JPermission COMMAND = new JPermission(PREFIX_COMMAND + Placeholders.WILDCARD, "Access to all the plugin commands.");

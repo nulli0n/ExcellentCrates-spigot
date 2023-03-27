@@ -2,9 +2,9 @@ package su.nightexpress.excellentcrates.crate.effect.list;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.EffectUtil;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
+import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 
 public class CrateEffectVortex extends CrateEffectTask {
 
@@ -19,7 +19,7 @@ public class CrateEffectVortex extends CrateEffectTask {
     }
 
     @Override
-    public void doStep(@NotNull Location loc, @NotNull String particleName, @NotNull String particleData, int step) {
+    public void doStep(@NotNull Location loc, @NotNull SimpleParticle particle, int step) {
         for (int boost = 0; boost < 5; boost++) {
             for (int strand = 1; strand <= STRANDS; ++strand) {
                 float progress = step / (float) PARTICLES;
@@ -28,7 +28,7 @@ public class CrateEffectVortex extends CrateEffectTask {
                 double addZ = Math.sin(point) * progress * RADIUS;
                 double addY = 3.5D - 0.02 * step;
                 Location location = loc.clone().add(addX, addY, addZ);
-                EffectUtil.playEffect(location, particleName, particleData, 0.1f, 0.1f, 0.1f, 0.0f, 1);
+                particle.play(location, 0.1f, 0.0f, 1);
             }
             step++;
         }

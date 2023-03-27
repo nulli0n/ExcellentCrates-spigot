@@ -7,9 +7,6 @@ Reward:
   Lore:
     Default:
     - '#cdf34d&lChance: &f%reward_chance%%'
-#    - ''
-#    - '#ec7063Win Limit: &f%reward_win_limit_amount%'
-#    - '#ec7063Win Cooldown: &f%reward_win_limit_cooldown%'
     - ''
     - '%win_limit_amount%'
     - '%win_limit_cooldown%'

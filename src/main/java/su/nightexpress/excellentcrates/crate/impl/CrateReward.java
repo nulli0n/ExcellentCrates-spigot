@@ -1,12 +1,13 @@
-package su.nightexpress.excellentcrates.crate;
+package su.nightexpress.excellentcrates.crate.impl;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.ICleanable;
-import su.nexmedia.engine.api.manager.IEditable;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -14,17 +15,16 @@ import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.editor.EditorCrateReward;
-import su.nightexpress.excellentcrates.data.CrateUser;
-import su.nightexpress.excellentcrates.data.UserRewardWinLimit;
+import su.nightexpress.excellentcrates.crate.editor.CrateRewardMainEditor;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
+import su.nightexpress.excellentcrates.data.impl.UserRewardData;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 
-public class CrateReward implements IEditable, ICleanable, IPlaceholder {
+public class CrateReward implements ICleanable, Placeholder {
 
     private final Crate crate;
     private final String id;
@@ -39,14 +39,16 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
     private List<String> commands;
     private Set<String>  ignoredForPermissions;
 
-    private EditorCrateReward editor;
+    private CrateRewardMainEditor editor;
+
+    private final PlaceholderMap placeholderMap;
 
     public CrateReward(@NotNull Crate crate, @NotNull String id) {
         this(
             crate,
             id,
 
-            "&a" + StringUtil.capitalizeFully(id) + " Reward",
+            ChatColor.GREEN + StringUtil.capitalizeUnderscored(id),
             25D,
             false,
 
@@ -90,6 +92,31 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
         this.setCommands(commands);
         this.setPreview(preview);
         this.setIgnoredForPermissions(ignoredForPermissions);
+
+        this.placeholderMap = new PlaceholderMap()
+            .add(Placeholders.REWARD_ID, this::getId)
+            .add(Placeholders.REWARD_NAME, this::getName)
+            .add(Placeholders.REWARD_CHANCE, () -> NumberUtil.format(this.getChance()))
+            .add(Placeholders.REWARD_BROADCAST, () -> LangManager.getBoolean(this.isBroadcast()))
+            .add(Placeholders.REWARD_PREVIEW_NAME, () -> ItemUtil.getItemName(this.getPreview()))
+            .add(Placeholders.REWARD_PREVIEW_LORE, () -> String.join("\n", ItemUtil.getLore(this.getPreview())))
+            .add(Placeholders.REWARD_COMMANDS, () -> String.join("\n", this.getCommands()))
+            .add(Placeholders.REWARD_WIN_LIMIT_AMOUNT, () -> {
+                if (!this.isWinLimitedAmount()) return LangManager.getPlain(Lang.OTHER_INFINITY);
+                return String.valueOf(this.getWinLimitAmount());
+            })
+            .add(Placeholders.REWARD_WIN_LIMIT_COOLDOWN, () -> {
+                if (!this.isWinLimitedCooldown()) return LangManager.getPlain(Lang.OTHER_NO);
+                return this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : LangManager.getPlain(Lang.OTHER_ONE_TIMED);
+            })
+            .add(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS, () -> String.join("\n", this.getIgnoredForPermissions()))
+        ;
+    }
+
+    @Override
+    @NotNull
+    public PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
     }
 
     @NotNull
@@ -97,31 +124,10 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
         return this.getCrate().plugin();
     }
 
-    @Override
     @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        String winAmount = this.isWinLimitedAmount() ? String.valueOf(this.getWinLimitAmount()) : plugin().getMessage(Lang.OTHER_INFINITY).getLocalized();
-        String winCooldown = this.isWinLimitedCooldown() ? (this.getWinLimitCooldown() > 0 ? TimeUtil.formatTime(this.getWinLimitCooldown() * 1000L) : plugin().getMessage(Lang.OTHER_ONE_TIMED).getLocalized()) : plugin().getMessage(Lang.OTHER_NO).getLocalized();
-
-        return str -> str
-            .replace(Placeholders.REWARD_ID, this.getId())
-            .replace(Placeholders.REWARD_NAME, this.getName())
-            .replace(Placeholders.REWARD_CHANCE, NumberUtil.format(this.getChance()))
-            .replace(Placeholders.REWARD_BROADCAST, LangManager.getBoolean(this.isBroadcast()))
-            .replace(Placeholders.REWARD_PREVIEW_NAME, ItemUtil.getItemName(this.getPreview()))
-            .replace(Placeholders.REWARD_PREVIEW_LORE, String.join("\n", ItemUtil.getLore(this.getPreview())))
-            .replace(Placeholders.REWARD_COMMANDS, String.join(DELIMITER_DEFAULT, this.getCommands()))
-            .replace(Placeholders.REWARD_WIN_LIMIT_AMOUNT, winAmount)
-            .replace(Placeholders.REWARD_WIN_LIMIT_COOLDOWN, winCooldown)
-            .replace(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS, String.join("\n", this.getIgnoredForPermissions()))
-            ;
-    }
-
-    @Override
-    @NotNull
-    public EditorCrateReward getEditor() {
+    public CrateRewardMainEditor getEditor() {
         if (this.editor == null) {
-            this.editor = new EditorCrateReward(this);
+            this.editor = new CrateRewardMainEditor(this);
         }
         return this.editor;
     }
@@ -150,7 +156,7 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
     }
 
     public void setName(@NotNull String name) {
-        this.name = StringUtil.color(name);
+        this.name = Colorizer.apply(name);
     }
 
     public double getChance() {
@@ -198,13 +204,16 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
     }
 
     public boolean canWin(@NotNull Player player) {
+        if (this.getIgnoredForPermissions().stream().anyMatch(player::hasPermission)) {
+            return false;
+        }
         if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
             CrateUser user = plugin().getUserManager().getUserData(player);
-            UserRewardWinLimit winLimit = user.getRewardWinLimit(this);
+            UserRewardData winLimit = user.getRewardWinLimit(this);
             if (winLimit == null) return true;
-            if (!winLimit.isExpired() || winLimit.isDrained(this)) return false;
+            return winLimit.isExpired() && !winLimit.isDrained(this);
         }
-        return this.getIgnoredForPermissions().stream().noneMatch(player::hasPermission);
+        return true;
     }
 
     @NotNull
@@ -256,22 +265,22 @@ public class CrateReward implements IEditable, ICleanable, IPlaceholder {
         this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
 
         this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_INFO)
-            .replace(Placeholders.CRATE_NAME, crate.getName())
-            .replace(Placeholders.REWARD_NAME, this.getName())
+            .replace(this.getCrate().replacePlaceholders())
+            .replace(this.replacePlaceholders())
             .send(player);
 
         if (this.isBroadcast()) {
             this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_BROADCAST)
                 .replace(Placeholders.Player.replacer(player))
-                .replace(Placeholders.CRATE_NAME, crate.getName())
-                .replace(Placeholders.REWARD_NAME, this.getName())
+                .replace(this.getCrate().replacePlaceholders())
+                .replace(this.replacePlaceholders())
                 .broadcast();
         }
 
         if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
             CrateUser user = plugin().getUserManager().getUserData(player);
-            UserRewardWinLimit winLimit = user.getRewardWinLimit(this);
-            if (winLimit == null) winLimit = new UserRewardWinLimit(0, 0);
+            UserRewardData winLimit = user.getRewardWinLimit(this);
+            if (winLimit == null) winLimit = new UserRewardData(0, 0);
 
             if (!player.hasPermission(Perms.BYPASS_REWARD_LIMIT_AMOUNT)) {
                 if (this.isWinLimitedAmount()) winLimit.setAmount(winLimit.getAmount() + 1);

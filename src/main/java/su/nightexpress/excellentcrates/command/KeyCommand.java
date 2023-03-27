@@ -9,14 +9,14 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.command.list.HelpSubCommand;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.MessageUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.data.CrateUser;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
 
 import java.util.*;
@@ -82,7 +82,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @NotNull
         public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
             if (arg == 2) {
-                List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
+                List<String> list = new ArrayList<>(CollectionsUtil.playerNames(player));
                 list.add(0, Placeholders.WILDCARD);
                 return list;
             }
@@ -117,7 +117,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
             String pName = args[2];
             Set<String> playerNames = new HashSet<>();
             if (pName.equalsIgnoreCase(Placeholders.WILDCARD)) {
-                playerNames.addAll(PlayerUtil.getPlayerNames());
+                playerNames.addAll(CollectionsUtil.playerNames());
             }
             else playerNames.add(pName);
 
@@ -288,7 +288,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         @NotNull
         public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
             if (arg == 2 && player.hasPermission(Perms.COMMAND_KEY_SHOW_OTHERS)) {
-                return PlayerUtil.getPlayerNames();
+                return CollectionsUtil.playerNames(player);
             }
             return super.getTab(player, arg, args);
         }

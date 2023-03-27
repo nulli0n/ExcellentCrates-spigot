@@ -1,14 +1,14 @@
-package su.nightexpress.excellentcrates.data;
+package su.nightexpress.excellentcrates.data.impl;
 
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.crate.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 
-public class UserRewardWinLimit {
+public class UserRewardData {
 
     private int  amount;
     private long expireDate;
 
-    public UserRewardWinLimit(int amount, long expireDate) {
+    public UserRewardData(int amount, long expireDate) {
         this.setAmount(amount);
         this.setExpireDate(expireDate);
     }

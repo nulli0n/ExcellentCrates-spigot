@@ -1,24 +1,8 @@
 Plugin:
   Command_Aliases: 'excellentcrates,ecrates,crates,crate,case,cases'
-  Language: en
-  Name: 'ExcellentCrates'
-  Prefix: '&e%plugin_name% &8» &7'
 
 Database:
-  Auto_Save_Interval: 20
-  Sync_Interval: -1
-  Type: SQLITE
   Table_Prefix: 'excellentcrates'
-  MySQL:
-    Username: root
-    Password: root
-    Host: localhost
-    Database: minecraft
-  SQLite:
-    FileName: data.db
-  Purge:
-    Enabled: false
-    For_Period: 60
 
 Crate:
   Click_Actions:

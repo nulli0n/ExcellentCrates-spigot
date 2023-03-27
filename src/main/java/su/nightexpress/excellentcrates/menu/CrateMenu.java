@@ -19,7 +19,7 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 import java.util.function.UnaryOperator;
 

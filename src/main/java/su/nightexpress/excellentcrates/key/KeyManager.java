@@ -11,8 +11,8 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.Crate;
-import su.nightexpress.excellentcrates.data.CrateUser;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 import java.io.File;
 import java.util.*;
@@ -110,9 +110,9 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
     @Nullable
     public CrateKey getKeyByItem(@NotNull ItemStack item) {
-        String id = PDCUtil.getStringData(item, Keys.CRATE_KEY_ID);
+        String id = PDCUtil.getString(item, Keys.CRATE_KEY_ID).orElse(null);
         if (id == null) {
-            id = PDCUtil.getStringData(item, Keys.OLD_CRATES_KEY_ID);
+            id = PDCUtil.getString(item, Keys.OLD_CRATES_KEY_ID).orElse(null);
         }
         return id == null ? null : this.getKeyById(id);
     }

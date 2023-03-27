@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.crate;
+package su.nightexpress.excellentcrates.crate.listener;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,6 +21,8 @@ import su.nexmedia.engine.api.type.ClickType;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.CrateManager;
 
 import java.util.stream.Stream;
 
@@ -87,7 +89,7 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onCrateCraftShop(CraftItemEvent e) {
+    public void onCrateCraftStop(CraftItemEvent e) {
         CraftingInventory inventory = e.getInventory();
         if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.crateManager.isCrate(item))) {
             e.setCancelled(true);

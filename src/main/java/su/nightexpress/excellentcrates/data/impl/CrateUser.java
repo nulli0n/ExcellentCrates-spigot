@@ -1,27 +1,24 @@
-package su.nightexpress.excellentcrates.data;
+package su.nightexpress.excellentcrates.data.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.data.AbstractUser;
-import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.crate.Crate;
-import su.nightexpress.excellentcrates.crate.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     private final Map<String, Integer>                         keys;
     private final Map<String, Integer>                         keysOnHold;
     private final Map<String, Long>                            openCooldowns;
-    private final Map<String, Integer> openingsAmount;
-    private final Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits;
+    private final Map<String, Integer>                     openingsAmount;
+    private final Map<String, Map<String, UserRewardData>> rewardWinLimits;
 
     public CrateUser(@NotNull ExcellentCrates plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
@@ -44,7 +41,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         @NotNull Map<String, Integer> keysOnHold,
         @NotNull Map<String, Long> openCooldowns,
         @NotNull Map<String, Integer> openingsAmount,
-        @NotNull Map<String, Map<String, UserRewardWinLimit>> rewardWinLimits
+        @NotNull Map<String, Map<String, UserRewardData>> rewardWinLimits
     ) {
         super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
@@ -52,19 +49,6 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         this.openCooldowns = openCooldowns;
         this.openingsAmount = openingsAmount;
         this.rewardWinLimits = rewardWinLimits;
-    }
-
-    @NotNull
-    public UnaryOperator<String> replacePlaceholers(@NotNull CrateReward reward) {
-        UserRewardWinLimit rewardLimit = this.getRewardWinLimit(reward);
-
-        int amountLeft = rewardLimit == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardLimit.getAmount();
-        long expireIn = rewardLimit == null ? 0L : rewardLimit.getExpireDate();
-
-        return str -> str
-            .replace(Placeholders.USER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
-            .replace(Placeholders.USER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
-            ;
     }
 
     @NotNull
@@ -161,26 +145,26 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     @NotNull
-    public Map<String, Map<String, UserRewardWinLimit>> getRewardWinLimits() {
+    public Map<String, Map<String, UserRewardData>> getRewardWinLimits() {
         return rewardWinLimits;
     }
 
     @Nullable
-    public UserRewardWinLimit getRewardWinLimit(@NotNull CrateReward reward) {
+    public UserRewardData getRewardWinLimit(@NotNull CrateReward reward) {
         return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
     }
 
     @Nullable
-    public UserRewardWinLimit getRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
+    public UserRewardData getRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
         return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
             .get(rewardId.toLowerCase());
     }
 
-    public void setRewardWinLimit(@NotNull CrateReward reward, @NotNull UserRewardWinLimit rewardLimit) {
+    public void setRewardWinLimit(@NotNull CrateReward reward, @NotNull UserRewardData rewardLimit) {
         this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
     }
 
-    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardWinLimit rewardLimit) {
+    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardData rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
         this.saveData(this.plugin);

@@ -2,9 +2,10 @@ package su.nightexpress.excellentcrates.crate.effect.list;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.utils.EffectUtil;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
 
 public class CrateEffectSimple extends CrateEffectTask {
 
@@ -13,7 +14,7 @@ public class CrateEffectSimple extends CrateEffectTask {
     }
 
     @Override
-    public void doStep(@NotNull Location loc, @NotNull String particleName, @NotNull String particleData, int step) {
-        EffectUtil.playEffect(loc.clone().add(0, 0.5D, 0), particleName, particleData, 0.3f, 0.3f, 0.3f, 0.1f, 30);
+    public void doStep(@NotNull Location loc, @NotNull SimpleParticle particle, int step) {
+        particle.play(loc.clone().add(0, 0.5D, 0), 0.3f, 0.3f, 0.3f, 0.1f, 30);
     }
 }

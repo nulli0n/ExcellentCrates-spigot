@@ -1,8 +1,10 @@
 package su.nightexpress.excellentcrates.crate.effect;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.utils.LocationUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
@@ -37,10 +39,14 @@ public abstract class CrateEffectTask extends BukkitRunnable {
         if (this.count++ % (int) this.getInterval() != 0) return;
         if (this.step < 0) return;
 
-        PLUGIN.getCrateManager().getCrates().stream().collect(Collectors.toUnmodifiableSet()).stream().filter(crate -> crate.getBlockEffect().getModel() == this.model).forEach(crate -> {
-            CrateEffectSettings effect = crate.getBlockEffect();
-            crate.getBlockLocations().stream().collect(Collectors.toUnmodifiableSet()).forEach(loc -> {
-                this.doStep(LocationUtil.getCenter(loc.clone(), false), effect.getParticleName(), effect.getParticleData(), this.step);
+        PLUGIN.getCrateManager().getCrates().stream().filter(crate -> crate.getBlockEffectModel() == this.model).forEach(crate -> {
+            crate.getBlockLocations().stream().collect(Collectors.toUnmodifiableSet()).forEach(location -> {
+                World world = location.getWorld();
+                int chunkX = location.getBlockX() >> 4;
+                int chunkZ = location.getBlockZ() >> 4;
+                if (world == null || !world.isChunkLoaded(chunkX, chunkZ)) return;
+
+                this.doStep(LocationUtil.getCenter(location.clone(), false), crate.getBlockEffectParticle(), this.step);
             });
         });
 
@@ -55,7 +61,7 @@ public abstract class CrateEffectTask extends BukkitRunnable {
         this.runTaskTimerAsynchronously(PLUGIN, 0L, 1L);
     }
 
-    public abstract void doStep(@NotNull Location location, @NotNull String particleName, @NotNull String particleData, int step);
+    public abstract void doStep(@NotNull Location location, @NotNull SimpleParticle particle, int step);
 
     public final long getInterval() {
         return this.interval;

@@ -1,15 +1,17 @@
-package su.nightexpress.excellentcrates.crate;
+package su.nightexpress.excellentcrates.crate.impl;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.*;
+import su.nexmedia.engine.api.manager.AbstractConfigHolder;
+import su.nexmedia.engine.api.manager.ICleanable;
+import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
@@ -20,19 +22,17 @@ import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.editor.EditorCrateMain;
+import su.nightexpress.excellentcrates.crate.editor.CrateMainEditor;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectSettings;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICleanable, IEditable, IPlaceholder {
+public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICleanable, Placeholder {
 
     private String name;
     private String openingConfig;
@@ -46,38 +46,20 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     private Set<String> keyIds;
     private ItemStack   item;
 
-    private Set<Location>       blockLocations;
-    private boolean             blockPushbackEnabled;
+    private final Set<Location> blockLocations;
+    private       boolean       blockPushbackEnabled;
     private boolean             blockHologramEnabled;
     private double              blockHologramOffsetY;
     private List<String>        blockHologramText;
-    private CrateEffectSettings blockEffect;
+    private CrateEffectModel blockEffectModel;
+    private SimpleParticle blockEffectParticle;
 
     private LinkedHashMap<String, CrateReward> rewardMap;
 
     private CratePreview    preview;
-    private EditorCrateMain editor;
+    private CrateMainEditor editor;
 
-    public Crate(@NotNull ExcellentCrates plugin, @NotNull String id) {
-        this(plugin, new JYML(plugin.getDataFolder() + Config.DIR_CRATES, id.toLowerCase() + ".yml"));
-
-        this.setName("&b" + StringUtil.capitalizeFully(this.getId() + " Crate"));
-        this.setOpeningConfig(null);
-        this.setPreviewConfig(Placeholders.DEFAULT);
-
-        ItemStack item = new ItemStack(Material.ENDER_CHEST);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(this.getName());
-        }
-        this.setItem(item);
-
-        this.setBlockPushbackEnabled(true);
-        this.setBlockHologramEnabled(false);
-        this.setBlockHologramOffsetY(1.5D);
-        this.setBlockHologramText(Arrays.asList("&c&l" + this.getName().toUpperCase(), "&7Buy a key at &cwww.myserver.com"));
-        this.setBlockEffect(new CrateEffectSettings(CrateEffectModel.HELIX, Particle.FLAME.name(), ""));
-    }
+    private final PlaceholderMap placeholderMap;
 
     public Crate(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
@@ -85,7 +67,37 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         this.setKeyIds(new HashSet<>());
         this.openCostType = new HashMap<>();
         this.setRewardsMap(new LinkedHashMap<>());
-        this.setBlockLocations(new HashSet<>());
+        this.blockLocations = new HashSet<>();
+
+        this.placeholderMap = new PlaceholderMap()
+            .add(Placeholders.CRATE_ID, this.getId())
+            .add(Placeholders.CRATE_NAME, this::getName)
+            .add(Placeholders.CRATE_ANIMATION_CONFIG, () -> String.valueOf(this.getOpeningConfig()))
+            .add(Placeholders.CRATE_PREVIEW_CONFIG, () -> String.valueOf(this.getPreviewConfig()))
+            .add(Placeholders.CRATE_PERMISSION, this::getPermission)
+            .add(Placeholders.CRATE_PERMISSION_REQUIRED, () -> LangManager.getBoolean(this.isPermissionRequired()))
+            .add(Placeholders.CRATE_ATTACHED_CITIZENS, () -> Arrays.toString(this.getAttachedCitizens()))
+            .add(Placeholders.CRATE_OPENING_COOLDOWN, () -> TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
+            .add(Placeholders.CRATE_OPENING_COST_EXP, () -> NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
+            .add(Placeholders.CRATE_OPENING_COST_MONEY, () -> NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
+            .add(Placeholders.CRATE_KEY_IDS, () -> String.join(", ", this.getKeyIds()))
+            .add(Placeholders.CRATE_ITEM_NAME, () -> ItemUtil.getItemName(this.getItem()))
+            .add(Placeholders.CRATE_ITEM_LORE, () -> String.join("\n", ItemUtil.getLore(this.getItem())))
+            .add(Placeholders.CRATE_BLOCK_PUSHBACK_ENABLED, () -> LangManager.getBoolean(this.isBlockPushbackEnabled()))
+            .add(Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED, () -> LangManager.getBoolean(this.isBlockHologramEnabled()))
+            .add(Placeholders.CRATE_BLOCK_HOLOGRAM_OFFSET_Y, () -> NumberUtil.format(this.getBlockHologramOffsetY()))
+            .add(Placeholders.CRATE_BLOCK_HOLOGRAM_TEXT, () -> String.join("\n", this.getBlockHologramText()))
+            .add(Placeholders.CRATE_BLOCK_LOCATIONS, () -> String.join("\n", this.getBlockLocations().stream().map(location -> {
+                String x = NumberUtil.format(location.getX());
+                String y = NumberUtil.format(location.getY());
+                String z = NumberUtil.format(location.getZ());
+                String world = location.getWorld() == null ? "null" : location.getWorld().getName();
+                return x + ", " + y + ", " + z + " in " + world;
+            }).toList()))
+            .add(Placeholders.CRATE_BLOCK_EFFECT_MODEL, () -> this.getBlockEffectModel().name())
+            .add(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_NAME, () -> this.getBlockEffectParticle().getParticle().name())
+            .add(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_DATA, () -> String.valueOf(this.getBlockEffectParticle().getData()))
+        ;
     }
 
     @Override
@@ -104,17 +116,16 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
         this.setItem(cfg.getItem("Item"));
 
-        this.setBlockLocations(new HashSet<>(LocationUtil.deserialize(cfg.getStringList("Block.Locations"))));
+        this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
         this.setBlockHologramEnabled(cfg.getBoolean("Block.Hologram.Enabled"));
         this.setBlockHologramOffsetY(cfg.getDouble("Block.Hologram.Offset.Y", 1.5D));
         this.setBlockHologramText(cfg.getStringList("Block.Hologram.Text"));
 
         CrateEffectModel model = cfg.getEnum("Block.Effect.Model", CrateEffectModel.class, CrateEffectModel.SIMPLE);
-        String particleName = cfg.getString("Block.Effect.Particle.Name", Particle.FLAME.name());
-        String particleData = cfg.getString("Block.Effect.Particle.Data", "");
-        CrateEffectSettings crateEffectSettings = new CrateEffectSettings(model, particleName, particleData);
-        this.setBlockEffect(crateEffectSettings);
+        SimpleParticle particle = SimpleParticle.read(cfg, "Block.Effect.Particle");
+        this.setBlockEffectModel(model);
+        this.setBlockEffectParticle(particle);
 
         for (String rewId : cfg.getSection("Rewards.List")) {
             String path = "Rewards.List." + rewId + ".";
@@ -164,9 +175,8 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         cfg.set("Block.Hologram.Enabled", this.isBlockHologramEnabled());
         cfg.set("Block.Hologram.Offset.Y", this.getBlockHologramOffsetY());
         cfg.set("Block.Hologram.Text", this.getBlockHologramText());
-        cfg.set("Block.Effect.Model", this.getBlockEffect().getModel().name());
-        cfg.set("Block.Effect.Particle.Name", this.getBlockEffect().getParticleName());
-        cfg.set("Block.Effect.Particle.Data", this.getBlockEffect().getParticleData());
+        cfg.set("Block.Effect.Model", this.getBlockEffectModel().name());
+        SimpleParticle.write(this.getBlockEffectParticle(), cfg, "Block.Effect.Particle");
 
         cfg.set("Rewards.List", null);
         for (Entry<String, CrateReward> e : this.getRewardsMap().entrySet()) {
@@ -190,36 +200,8 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     @Override
     @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(Placeholders.CRATE_ID, this.getId())
-            .replace(Placeholders.CRATE_NAME, this.getName())
-            .replace(Placeholders.CRATE_ANIMATION_CONFIG, String.valueOf(this.getOpeningConfig()))
-            .replace(Placeholders.CRATE_PREVIEW_CONFIG, String.valueOf(this.getPreviewConfig()))
-            .replace(Placeholders.CRATE_PERMISSION, Perms.CRATE + this.getId())
-            .replace(Placeholders.CRATE_PERMISSION_REQUIRED, LangManager.getBoolean(this.isPermissionRequired()))
-            .replace(Placeholders.CRATE_ATTACHED_CITIZENS, Arrays.toString(this.getAttachedCitizens()))
-            .replace(Placeholders.CRATE_OPENING_COOLDOWN, TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
-            .replace(Placeholders.CRATE_OPENING_COST_EXP, NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
-            .replace(Placeholders.CRATE_OPENING_COST_MONEY, NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
-            .replace(Placeholders.CRATE_KEY_IDS, String.join(DELIMITER_DEFAULT, this.getKeyIds()))
-            .replace(Placeholders.CRATE_ITEM_NAME, ItemUtil.getItemName(this.getItem()))
-            .replace(Placeholders.CRATE_ITEM_LORE, String.join("\n", ItemUtil.getLore(this.getItem())))
-            .replace(Placeholders.CRATE_BLOCK_PUSHBACK_ENABLED, LangManager.getBoolean(this.isBlockPushbackEnabled()))
-            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED, LangManager.getBoolean(this.isBlockHologramEnabled()))
-            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_OFFSET_Y, NumberUtil.format(this.getBlockHologramOffsetY()))
-            .replace(Placeholders.CRATE_BLOCK_HOLOGRAM_TEXT, String.join("\n", this.getBlockHologramText()))
-            .replace(Placeholders.CRATE_BLOCK_LOCATIONS, String.join(DELIMITER_DEFAULT, this.getBlockLocations().stream().map(location -> {
-                String x = NumberUtil.format(location.getX());
-                String y = NumberUtil.format(location.getY());
-                String z = NumberUtil.format(location.getZ());
-                String world = location.getWorld() == null ? "null" : location.getWorld().getName();
-                return x + ", " + y + ", " + z + " in " + world;
-            }).toList()))
-            .replace(Placeholders.CRATE_BLOCK_EFFECT_MODEL, this.getBlockEffect().getModel().name())
-            .replace(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_NAME, this.getBlockEffect().getParticleName())
-            .replace(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_DATA, this.getBlockEffect().getParticleData())
-            ;
+    public PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
     }
 
     @Override
@@ -240,11 +222,10 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         }
     }
 
-    @Override
     @NotNull
-    public EditorCrateMain getEditor() {
+    public CrateMainEditor getEditor() {
         if (this.editor == null) {
-            this.editor = new EditorCrateMain(this);
+            this.editor = new CrateMainEditor(this);
         }
         return this.editor;
     }
@@ -276,7 +257,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     }
 
     public void setName(@NotNull String name) {
-        this.name = StringUtil.color(name);
+        this.name = Colorizer.apply(name);
     }
 
     @Nullable
@@ -305,8 +286,13 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         this.isPermissionRequired = isPermissionRequired;
     }
 
+    @NotNull
+    public String getPermission() {
+        return Perms.PREFIX_CRATE + this.getId();
+    }
+
     public boolean hasPermission(@NotNull Player player) {
-        return !this.isPermissionRequired() || (player.hasPermission(Perms.CRATE + this.getId()));
+        return !this.isPermissionRequired() || (player.hasPermission(this.getPermission()));
     }
 
     public int[] getAttachedCitizens() {
@@ -353,7 +339,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     public void setItem(@NotNull ItemStack item) {
         this.item = new ItemStack(item);
-        PDCUtil.setData(this.item, Keys.CRATE_ID, this.getId());
+        PDCUtil.set(this.item, Keys.CRATE_ID, this.getId());
     }
 
     public boolean isBlockPushbackEnabled() {
@@ -367,11 +353,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     @NotNull
     public Set<Location> getBlockLocations() {
         return blockLocations;
-    }
-
-    public void setBlockLocations(@NotNull Set<Location> blockLocations) {
-        blockLocations.removeIf(location -> location.getBlock().isEmpty());
-        this.blockLocations = blockLocations;
     }
 
     public void addBlockLocation(@NotNull Location location) {
@@ -404,7 +385,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     }
 
     public void setBlockHologramText(@NotNull List<String> blockHologramText) {
-        this.blockHologramText = StringUtil.color(blockHologramText);
+        this.blockHologramText = Colorizer.apply(blockHologramText);
     }
 
     @NotNull
@@ -435,12 +416,21 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     }
 
     @NotNull
-    public CrateEffectSettings getBlockEffect() {
-        return this.blockEffect;
+    public CrateEffectModel getBlockEffectModel() {
+        return blockEffectModel;
     }
 
-    public void setBlockEffect(@NotNull CrateEffectSettings blockEffect) {
-        this.blockEffect = blockEffect;
+    public void setBlockEffectModel(@NotNull CrateEffectModel blockEffectModel) {
+        this.blockEffectModel = blockEffectModel;
+    }
+
+    @NotNull
+    public SimpleParticle getBlockEffectParticle() {
+        return blockEffectParticle;
+    }
+
+    public void setBlockEffectParticle(@NotNull SimpleParticle blockEffectParticle) {
+        this.blockEffectParticle = blockEffectParticle;
     }
 
     @NotNull

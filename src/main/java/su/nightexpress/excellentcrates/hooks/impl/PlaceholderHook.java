@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.hooks.external;
+package su.nightexpress.excellentcrates.hooks.impl;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -8,8 +8,8 @@ import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.Crate;
-import su.nightexpress.excellentcrates.data.CrateUser;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 public class PlaceholderHook {
 

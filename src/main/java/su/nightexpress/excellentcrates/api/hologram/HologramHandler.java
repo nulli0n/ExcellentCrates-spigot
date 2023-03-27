@@ -4,8 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.ILoadable;
-import su.nightexpress.excellentcrates.crate.Crate;
-import su.nightexpress.excellentcrates.crate.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 
 public interface HologramHandler extends ILoadable {
 

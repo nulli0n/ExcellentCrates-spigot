@@ -4,13 +4,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     @NotNull
     public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 1) {
-            List<String> list = new ArrayList<>(PlayerUtil.getPlayerNames());
+            List<String> list = new ArrayList<>(CollectionsUtil.playerNames(player));
             list.add(0, Placeholders.WILDCARD);
             return list;
         }
