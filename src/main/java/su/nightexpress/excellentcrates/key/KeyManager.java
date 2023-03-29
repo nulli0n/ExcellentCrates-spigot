@@ -144,6 +144,11 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
         return this.getKeyByItem(item) != null;
     }
 
+    public boolean isKey(@NotNull ItemStack item, @NotNull CrateKey other) {
+        CrateKey key = this.getKeyByItem(item);
+        return key != null && key.getId().equalsIgnoreCase(other.getId());
+    }
+
     public int getKeysAmount(@NotNull Player player, @NotNull Crate crate) {
         return this.getKeys(player, crate).stream().mapToInt(key -> this.getKeysAmount(player, key)).sum();
     }

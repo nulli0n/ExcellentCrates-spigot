@@ -18,7 +18,7 @@ public class Lang extends EngineLang {
 
     public static final LangKey COMMAND_GIVE_USAGE  = new LangKey("Command.Give.Usage", "<player | *> <crateId> [amount]");
     public static final LangKey COMMAND_GIVE_DESC   = new LangKey("Command.Give.Desc", "Gives crate(s) to a player.");
-    public static final LangKey COMMAND_GIVE_DONE   = new LangKey("Command.Give.Done", "Given &6x" + Placeholders.GENERIC_AMOUNT + " &7of &6" + Placeholders.CRATE_NAME + " &7crate(s) to &6" + Placeholders.Player.DISPLAY_NAME + "&7.");
+    public static final LangKey COMMAND_GIVE_DONE   = new LangKey("Command.Give.Done", "Given &6x" + Placeholders.GENERIC_AMOUNT + " &7of &6" + Placeholders.CRATE_NAME + " &7crate(s) to &6" + Placeholders.Player.NAME + "&7.");
     public static final LangKey COMMAND_GIVE_NOTIFY = new LangKey("Command.Give.Notify", "You recieved &6x" + Placeholders.GENERIC_AMOUNT + " &7of &6" + Placeholders.CRATE_NAME + "&7!");
 
     public static final LangKey COMMAND_KEY_DESC         = new LangKey("Command.Key.Desc", "Manage or view player's crate keys.");
@@ -71,13 +71,13 @@ public class Lang extends EngineLang {
     public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = new LangKey("Crate.Open.Error.Cooldown.Temporary", "&cYou have to wait &6" + Placeholders.GENERIC_TIME + " &7before you can open &6" + Placeholders.CRATE_NAME + "&7 again!");
     public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED = new LangKey("Crate.Open.Error.Cooldown.OneTimed", "&cYou already have opened this crate, you can not open it more!");
     public static final LangKey CRATE_OPEN_ERROR_NO_KEY             = new LangKey("Crate.Open.Error.NoKey", "&cYou don't have a key for this crate!");
+    public static final LangKey CRATE_OPEN_ERROR_NO_HOLD_KEY             = new LangKey("Crate.Open.Error.NoHoldKey", "&cYou must hold a key to open this crate!");
     public static final LangKey CRATE_OPEN_ERROR_NO_REWARDS         = new LangKey("Crate.Open.Error.NoRewards", "&cThis crate does not contains any rewards for you!");
     public static final LangKey CRATE_OPEN_ERROR_COST_MONEY         = new LangKey("Crate.Open.Error.Cost.Money", "&cYou don't have enough money to open this crate!");
     public static final LangKey CRATE_OPEN_ERROR_COST_EXP           = new LangKey("Crate.Open.Error.Cost.Exp", "&cYou don't have enough exp levels to open this crate!");
     public static final LangKey CRATE_OPEN_REWARD_INFO              = new LangKey("Crate.Open.Reward.Info", "You got the &6" + Placeholders.REWARD_NAME + " &7reward from the &6" + Placeholders.CRATE_NAME + "&7!");
     public static final LangKey CRATE_OPEN_REWARD_BROADCAST         = new LangKey("Crate.Open.Reward.Broadcast", "&7Player &a" + Placeholders.Player.DISPLAY_NAME + " &7just got the &6" + Placeholders.REWARD_NAME + " &7reward from the &6" + Placeholders.CRATE_NAME + "&7!");
     public static final LangKey CRATE_KEY_ERROR_INVALID             = new LangKey("Crate.Key.Error.Invalid", "&cInvalid key!");
-    public static final LangKey CRATE_PLACEHOLDER_COOLDOWN_BLANK    = new LangKey("Crate.Placeholder.Cooldown.Blank", "Ready to open!");
 
     public static final LangKey MENU_INVALID = new LangKey("Menu.Invalid", "&cMenu does not exist!");
 

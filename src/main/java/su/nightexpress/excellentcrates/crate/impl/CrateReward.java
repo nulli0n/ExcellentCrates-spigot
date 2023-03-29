@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -262,7 +264,12 @@ public class CrateReward implements ICleanable, Placeholder {
             }
             PlayerUtil.addItem(player, give);
         });
-        this.getCommands().forEach(cmd -> PlayerUtil.dispatchCommand(player, cmd));
+        this.getCommands().forEach(command -> {
+            if (Hooks.hasPlaceholderAPI()) {
+                command = PlaceholderAPI.setPlaceholders(player, command);
+            }
+            PlayerUtil.dispatchCommand(player, command);
+        });
 
         this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_INFO)
             .replace(this.getCrate().replacePlaceholders())

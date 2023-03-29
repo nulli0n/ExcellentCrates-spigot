@@ -231,7 +231,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         if (action == CrateClickAction.CRATE_OPEN) {
             boolean isOpened = this.openCrate(player, crate, false, item, block);
             if (!isOpened && block != null && crate.isBlockPushbackEnabled()) {
-                player.setVelocity(player.getEyeLocation().getDirection().setY(Config.CRATE_PUSHBACK_Y).multiply(Config.CRATE_PUSHBACK_MULTIPLY));
+                player.setVelocity(player.getEyeLocation().getDirection().setY(Config.CRATE_PUSHBACK_Y.get()).multiply(Config.CRATE_PUSHBACK_MULTIPLY.get()));
             }
         }
     }
@@ -258,10 +258,17 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         CrateKey crateKey = this.plugin.getKeyManager().getKeys(player, crate).stream().findFirst().orElse(null);
-        if (!force) {
-            if (!crate.getKeyIds().isEmpty() && crateKey == null) {
+        if (!force && !crate.getKeyIds().isEmpty()) {
+            if (crateKey == null) {
                 plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_KEY).send(player);
                 return false;
+            }
+            if (Config.CRATE_HOLD_KEY_TO_OPEN.get()) {
+                ItemStack main = player.getInventory().getItemInMainHand();
+                if (!this.plugin.getKeyManager().isKey(main, crateKey)) {
+                    plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_HOLD_KEY).send(player);
+                    return false;
+                }
             }
         }
 
@@ -323,7 +330,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
                 CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, player);
                 plugin.getPluginManager().callEvent(rewardEvent);
 
-                if (block != null) {
+                if (Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
                     if (block.getState() instanceof Lidded lidded) {
                         lidded.open();
                         plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);

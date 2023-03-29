@@ -3,57 +3,49 @@ Size: 36
 
 Crates:
   virtual:
-    Display:
-      default:
-        Item:
-          Material: PLAYER_HEAD
-          Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0ODZmMjg1OTE2OWM4YmZiNjZhNjg3YmNmNGM2OTkzNDE3ZjU4NGI1OGJiZmRiMzM2NDY0ZDUyMDcxY2NkNyJ9fX0=
-          Name: '%crate_name%'
-          Lore:
-            - '%crate_item_lore%'
-            - '&7'
-            - '&9▸ &7You have: &9%user_keys% keys'
-            - '&9▸ &7Money Cost: &9$%crate_opening_cost_money%'
-            - '&9▸ &7Exp Cost: &9%crate_opening_cost_exp%'
-            - '&7'
-            - '&fLeft Click &7to preview'
-            - '&fRight Click &7to open'
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0ODZmMjg1OTE2OWM4YmZiNjZhNjg3YmNmNGM2OTkzNDE3ZjU4NGI1OGJiZmRiMzM2NDY0ZDUyMDcxY2NkNyJ9fX0=
+      Name: '%crate_name%'
+      Lore:
+        - '%crate_item_lore%'
+        - '&7'
+        - '&9▸ &7You have: &9%user_keys% keys'
+        - '&9▸ &7Money Cost: &9$%crate_opening_cost_money%'
+        - '&9▸ &7Exp Cost: &9%crate_opening_cost_exp%'
+        - '&7'
+        - '&fLeft Click &7to preview'
+        - '&fRight Click &7to open'
     Slots: 13
 
 Content:
   exit:
-    Display:
-      default:
-        Item:
-          Material: 'BARRIER'
-          Name: '&c&lClose'
+    Item:
+      Material: 'BARRIER'
+      Name: '&c&lClose'
     Slots: 31
     Type: CLOSE
 
   info:
-    Display:
-      default:
-        Item:
-          Material: 'BOOK'
-          Name: '&e&nWhat is it?'
-          Lore:
-            - '&6This is special crates menu,'
-            - '&6where you can open creates using'
-            - '&6virtual keys, which you can buy'
-            - '&6in our store.'
+    Item:
+      Material: 'BOOK'
+      Name: '&e&nWhat is it?'
+      Lore:
+        - '&6This is special crates menu,'
+        - '&6where you can open creates using'
+        - '&6virtual keys, which you can buy'
+        - '&6in our store.'
     Slots: 28
     Type: NONE
 
   store:
-    Display:
-      default:
-        Item:
-          Material: 'EMERALD'
-          Name: '&a&nStore'
-          Lore:
-            - '&dBuy crate keys in our store'
-            - '&dand use them in this menu!'
-            - '&7'
-            - '&bOur Store: &awww.store.mycraft.com'
+    Item:
+      Material: 'EMERALD'
+      Name: '&a&nStore'
+      Lore:
+        - '&dBuy crate keys in our store'
+        - '&dand use them in this menu!'
+        - '&7'
+        - '&bOur Store: &awww.store.mycraft.com'
     Slots: 34
     Type: NONE

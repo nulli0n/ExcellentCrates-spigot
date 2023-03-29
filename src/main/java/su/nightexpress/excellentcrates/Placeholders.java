@@ -2,6 +2,8 @@ package su.nightexpress.excellentcrates;
 
 public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
 
+    public static final String URL_WIKI = "https://github.com/nulli0n/ExcellentCrates-spigot/wiki";
+
     public static final String GENERIC_AMOUNT = "%amount%";
     public static final String GENERIC_TIME = "%time%";
 

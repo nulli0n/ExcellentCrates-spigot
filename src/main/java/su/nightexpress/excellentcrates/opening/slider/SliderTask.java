@@ -10,6 +10,7 @@ import su.nexmedia.engine.utils.random.Rnd;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.task.OpeningTask;
@@ -130,12 +131,12 @@ public class SliderTask extends OpeningTask {
     private void maybeClose() {
         if (!this.getData().isCompleted()) return;
 
-        ExcellentCratesAPI.PLUGIN.getScheduler().runTaskLater(ExcellentCratesAPI.PLUGIN, c -> {
+        ExcellentCratesAPI.PLUGIN.runTaskLater(task -> {
             Inventory opened = this.getData().getPlayer().getOpenInventory().getTopInventory();
             if (this.getData().getInventory().equals(opened)) {
                 this.getData().getPlayer().closeInventory();
             }
-        }, 20L);
+        }, Config.CRATE_OPENING_CLOSE_TIME.get());
     }
 
     private void checkRewards() {

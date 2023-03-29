@@ -7,9 +7,12 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
-import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class PlaceholderHook {
 
@@ -71,8 +74,17 @@ public class PlaceholderHook {
                     CrateUser user = plugin.getUserManager().getUserData(player);
 
                     long left = user.getCrateCooldown(crate);
-                    if (left == 0) return plugin.getMessage(Lang.CRATE_PLACEHOLDER_COOLDOWN_BLANK).getLocalized();
-                    return TimeUtil.formatTimeLeft(left);
+                    if (left == 0) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
+
+                    LocalDateTime time = TimeUtil.getLocalDateTimeOf(left);
+                    LocalDateTime now = LocalDateTime.now();
+                    Duration duration = Duration.between(now, time);
+
+                    return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
+                        .replace("hh", String.valueOf(duration.toHours()))
+                        .replace("mm", String.valueOf(duration.toMinutesPart()))
+                        .replace("ss", String.valueOf(duration.toSecondsPart()))
+                        ;
                 }
             }
 

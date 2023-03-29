@@ -24,31 +24,25 @@ Reward:
 
 Content:
   page_next:
-    Display:
-      default:
-        Item:
-          Material: 'PLAYER_HEAD'
-          Name: '&e&lNext Page'
-          Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
+    Item:
+      Material: 'PLAYER_HEAD'
+      Name: '&e&lNext Page'
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
     Slots: 35
     Type: PAGE_NEXT
 
   page_previous:
-    Display:
-      default:
-        Item:
-          Material: 'PLAYER_HEAD'
-          Name: '&e&lPrevious Page'
-          Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
+    Item:
+      Material: 'PLAYER_HEAD'
+      Name: '&e&lPrevious Page'
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
     Slots: 27
     Type: PAGE_PREVIOUS
 
   exit:
-    Display:
-      default:
-        Item:
-          Material: PLAYER_HEAD
-          Name: '&f&lExit'
-          Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTA2ZmJjNzU2MWVhZGNjZjdiYzZkNWE5NmM0NjM1MTRkNzlmZTY0ODlmZTE5OTJkZTQxNjBiYTI3MjA4ZjU1In19fQ=='
+    Item:
+      Material: PLAYER_HEAD
+      Name: '&f&lExit'
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTA2ZmJjNzU2MWVhZGNjZjdiYzZkNWE5NmM0NjM1MTRkNzlmZTY0ODlmZTE5OTJkZTQxNjBiYTI3MjA4ZjU1In19fQ=='
     Slots: 31
     Type: CLOSE

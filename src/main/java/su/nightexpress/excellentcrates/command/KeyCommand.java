@@ -129,7 +129,6 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
                 };
                 if (!isDone) {
                     this.plugin.getMessage(Lang.COMMAND_KEY_ERROR_PLAYER).replace(Placeholders.Player.NAME, name).send(sender);
-                    //this.getMessageError().send(sender);
                     return;
                 }
 

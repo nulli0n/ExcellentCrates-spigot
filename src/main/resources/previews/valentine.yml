@@ -24,59 +24,47 @@ Reward:
 
 Content:
   pane_red:
-    Display:
-      default:
-        Item:
-          Material: RED_STAINED_GLASS_PANE
+    Item:
+      Material: RED_STAINED_GLASS_PANE
     Slots: 11,12,14,15,22,19,28,25,34,38,39,40,41,42,48,49,50
     Type: NONE
 
   pane_pink:
-    Display:
-      default:
-        Item:
-          Material: PINK_STAINED_GLASS_PANE
+    Item:
+      Material: PINK_STAINED_GLASS_PANE
     Slots: 0,1,9,7,8,17,36,45,46,44,52,53
     Type: NONE
 
   pane_white:
-    Display:
-      default:
-        Item:
-          Material: WHITE_STAINED_GLASS_PANE
+    Item:
+      Material: WHITE_STAINED_GLASS_PANE
     Slots: 3,4,5,13,31
     Type: NONE
 
   pane_cyan:
-    Display:
-      default:
-        Item:
-          Material: LIGHT_BLUE_STAINED_GLASS_PANE
+    Item:
+      Material: LIGHT_BLUE_STAINED_GLASS_PANE
     Slots: 2,6,10,16,18,27,26,35,37,47,43,51
     Type: NONE
 
   page_next:
-    Display:
-      default:
-        Item:
-          Material: RED_DYE
-          Name: '&c&lNext Page'
-          Enchants:
-            unbreaking: 1
-          Item_Flags:
-          - '*'
+    Item:
+      Material: RED_DYE
+      Name: '&c&lNext Page'
+      Enchants:
+        unbreaking: 1
+      Item_Flags:
+      - '*'
     Slots: 53
     Type: PAGE_NEXT
 
   page_prev:
-    Display:
-      default:
-        Item:
-          Material: RED_DYE
-          Name: '&c&lPrevious Page'
-          Enchants:
-            unbreaking: 1
-          Item_Flags:
-          - '*'
+    Item:
+      Material: RED_DYE
+      Name: '&c&lPrevious Page'
+      Enchants:
+        unbreaking: 1
+      Item_Flags:
+      - '*'
     Slots: 45
     Type: PAGE_PREVIOUS
