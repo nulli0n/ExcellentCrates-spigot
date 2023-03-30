@@ -49,7 +49,7 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
             item.setItemMeta(crateKey.getItem().getItemMeta());
             ItemUtil.mapMeta(item, meta -> {
                 meta.setDisplayName(EditorLocales.KEY_ITEM.getLocalizedName());
-                meta.setLore(EditorLocales.KEY_ITEM.getLore());
+                meta.setLore(EditorLocales.KEY_ITEM.getLocalizedLore());
                 meta.addItemFlags(ItemFlag.values());
             });
         }));

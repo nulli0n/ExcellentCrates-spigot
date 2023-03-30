@@ -3,13 +3,3 @@ Plugin:
 
 Database:
   Table_Prefix: 'excellentcrates'
-
-Crate:
-  Click_Actions:
-    LEFT: CRATE_PREVIEW
-    RIGHT: CRATE_OPEN
-    SHIFT_LEFT: null
-    SHIFT_RIGHT: null
-  Block_Pushback:
-    Y: -0.4
-    Multiply: -1.25

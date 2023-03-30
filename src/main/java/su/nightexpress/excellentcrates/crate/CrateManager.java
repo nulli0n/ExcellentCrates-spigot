@@ -263,7 +263,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
                 plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_KEY).send(player);
                 return false;
             }
-            if (Config.CRATE_HOLD_KEY_TO_OPEN.get()) {
+            if (!crateKey.isVirtual() && Config.CRATE_HOLD_KEY_TO_OPEN.get()) {
                 ItemStack main = player.getInventory().getItemInMainHand();
                 if (!this.plugin.getKeyManager().isKey(main, crateKey)) {
                     plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_HOLD_KEY).send(player);
