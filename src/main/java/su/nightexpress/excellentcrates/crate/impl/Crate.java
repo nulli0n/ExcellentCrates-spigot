@@ -480,11 +480,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         for (CrateReward reward : this.getRewards()) {
             map.put(reward, reward.getChance());
         }
-        CrateReward crate = Rnd.get(map);
-        if (crate == null) {
-            throw new IllegalStateException("Unable to roll crate reward for: " + this.getId());
-        }
-        return crate;
+        return Rnd.getByWeight(map);
     }
 
     @Nullable
@@ -493,6 +489,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         for (CrateReward reward : this.getRewards(player)) {
             map.put(reward, reward.getChance());
         }
-        return Rnd.get(map);
+        return Rnd.getByWeight(map);
     }
 }
