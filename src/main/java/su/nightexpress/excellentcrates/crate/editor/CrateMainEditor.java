@@ -19,7 +19,6 @@ import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.OpenCostType;
@@ -30,9 +29,6 @@ import su.nightexpress.excellentcrates.editor.EditorLocales;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implements IListener {
 
@@ -78,27 +74,6 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
         this.addItem(Material.REDSTONE_TORCH, EditorLocales.CRATE_PERMISSION, 6).setClick((viewer, event) -> {
             crate.setPermissionRequired(!crate.isPermissionRequired());
             this.save(viewer);
-        });
-
-        this.addItem(Material.PLAYER_HEAD, EditorLocales.CRATE_NPCS, 8).setClick((viewer, event) -> {
-            if (!Hooks.hasPlugin(Hooks.CITIZENS)) return;
-
-            if (event.isLeftClick()) {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_CITIZENS), chat -> {
-                    int npcId = StringUtil.getInteger(Colorizer.strip(chat.getMessage()), -1);
-                    if (npcId < 0) return false;
-
-                    Set<Integer> has = IntStream.of(crate.getAttachedCitizens()).boxed().collect(Collectors.toSet());
-                    has.add(npcId);
-                    crate.setAttachedCitizens(has.stream().mapToInt(i -> i).toArray());
-                    crate.save();
-                    return true;
-                });
-            }
-            else if (event.isRightClick()) {
-                crate.setAttachedCitizens(new int[0]);
-                this.save(viewer);
-            }
         });
 
         this.addItem(Material.TRIPWIRE_HOOK, EditorLocales.CRATE_KEYS, 10).setClick((viewer, event) -> {

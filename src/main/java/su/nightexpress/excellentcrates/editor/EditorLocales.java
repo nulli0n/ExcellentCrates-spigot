@@ -76,14 +76,6 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Attach Key").action("Right-Click", "Clear List")
         .build();
 
-    public static final EditorLocale CRATE_NPCS = builder(PREFIX + "CRATE_CHANGE_CITIZENS")
-        .name("Attached NPCs")
-        .currentHeader().current("IDs", Placeholders.CRATE_ATTACHED_CITIZENS).breakLine()
-        .text("Sets a list of NPCs that", "will open/preview this crate when interacted.").breakLine()
-        .noteHeader().notes("You must have " + ORANGE + "Citizens" + GRAY + " installed!").breakLine()
-        .actionsHeader().action("Left-Click", "Attach NPC").action("Right-Click", "Clear List")
-        .build();
-
     public static final EditorLocale CRATE_OPEN_COST = builder(PREFIX + "CRATE_CHANGE_OPEN_COST")
         .name("Open Cost")
         .currentHeader()

@@ -38,7 +38,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     private String openingConfig;
     private String previewConfig;
     private boolean isPermissionRequired;
-    private int[]   attachedCitizens;
 
     private       int                       openCooldown;
     private final Map<OpenCostType, Double> openCostType;
@@ -63,7 +62,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     public Crate(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
-        this.setAttachedCitizens(new int[0]);
         this.setKeyIds(new HashSet<>());
         this.openCostType = new HashMap<>();
         this.setRewardsMap(new LinkedHashMap<>());
@@ -76,7 +74,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             .add(Placeholders.CRATE_PREVIEW_CONFIG, () -> String.valueOf(this.getPreviewConfig()))
             .add(Placeholders.CRATE_PERMISSION, this::getPermission)
             .add(Placeholders.CRATE_PERMISSION_REQUIRED, () -> LangManager.getBoolean(this.isPermissionRequired()))
-            .add(Placeholders.CRATE_ATTACHED_CITIZENS, () -> Arrays.toString(this.getAttachedCitizens()))
             .add(Placeholders.CRATE_OPENING_COOLDOWN, () -> TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
             .add(Placeholders.CRATE_OPENING_COST_EXP, () -> NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
             .add(Placeholders.CRATE_OPENING_COST_MONEY, () -> NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
@@ -106,7 +103,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         this.setOpeningConfig(cfg.getString("Animation_Config"));
         this.setPreviewConfig(cfg.getString("Preview_Config"));
         this.setPermissionRequired(cfg.getBoolean("Permission_Required"));
-        this.setAttachedCitizens(cfg.getIntArray("Attached_Citizens"));
 
         this.setOpenCooldown(cfg.getInt("Opening.Cooldown"));
         for (OpenCostType openCostType : OpenCostType.values()) {
@@ -160,7 +156,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         cfg.set("Animation_Config", this.getOpeningConfig());
         cfg.set("Preview_Config", this.getPreviewConfig());
         cfg.set("Permission_Required", this.isPermissionRequired());
-        cfg.setIntArray("Attached_Citizens", this.getAttachedCitizens());
 
         cfg.set("Opening.Cooldown", this.getOpenCooldown());
         for (OpenCostType openCostType : OpenCostType.values()) {
@@ -293,18 +288,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     public boolean hasPermission(@NotNull Player player) {
         return !this.isPermissionRequired() || (player.hasPermission(this.getPermission()));
-    }
-
-    public int[] getAttachedCitizens() {
-        return this.attachedCitizens;
-    }
-
-    public void setAttachedCitizens(int[] npcIds) {
-        this.attachedCitizens = npcIds;
-    }
-
-    public boolean isAttachedNPC(int id) {
-        return ArrayUtil.contains(this.getAttachedCitizens(), id);
     }
 
     public int getOpenCooldown() {

@@ -15,7 +15,6 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.api.particle.SimpleParticle;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.VaultHook;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -32,7 +31,6 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateReward;
-import su.nightexpress.excellentcrates.crate.listener.CitizensListener;
 import su.nightexpress.excellentcrates.crate.listener.CrateListener;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
@@ -78,9 +76,6 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         });
 
         this.addListener(new CrateListener(this));
-        if (Hooks.hasCitizens()) {
-            this.addListener(new CitizensListener(this.plugin));
-        }
     }
 
     @Override
@@ -179,11 +174,6 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
     @Nullable
     public Crate getCrateById(@NotNull String id) {
         return this.getCratesMap().get(id.toLowerCase());
-    }
-
-    @Nullable
-    public Crate getCrateByNPC(int id) {
-        return this.getCrates().stream().filter(crate -> crate.isAttachedNPC(id)).findFirst().orElse(null);
     }
 
     @Nullable

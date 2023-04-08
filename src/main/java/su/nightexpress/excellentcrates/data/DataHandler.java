@@ -12,10 +12,7 @@ import su.nightexpress.excellentcrates.data.impl.UserRewardData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateUser> {
@@ -44,6 +41,8 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
                 Map<String, Long> openCooldowns = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_COOLDOWNS.getName()), new TypeToken<Map<String, Long>>() {}.getType());
                 Map<String, Integer> openingsAmount = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_OPENINGS.getName()), new TypeToken<Map<String, Integer>>(){}.getType());
                 Map<String, Map<String, UserRewardData>> rewardWinLimits = this.gson.fromJson(resultSet.getString(COLUMN_REWARD_WIN_LIMITS.getName()), new TypeToken<Map<String, Map<String, UserRewardData>>>() {}.getType());
+
+                if (openingsAmount == null) openingsAmount = new HashMap<>();
 
                 return new CrateUser(plugin, uuid, name, dateCreated, lastOnline,
                     keys, keysOnHold, openCooldowns, openingsAmount, rewardWinLimits);
