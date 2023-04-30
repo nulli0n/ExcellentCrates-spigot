@@ -81,6 +81,9 @@ public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> im
             else if (type == su.nexmedia.engine.api.menu.click.ClickType.NUMBER_3) {
                 comparator = Comparator.comparing(r -> ItemUtil.getItemName(r.getPreview()));
             }
+            else if (type == su.nexmedia.engine.api.menu.click.ClickType.NUMBER_4) {
+                comparator = Comparator.comparingDouble((CrateReward r) -> r.getRarity().getChance()).reversed();
+            }
             else return;
             crate.setRewards(crate.getRewards().stream().sorted(comparator).toList());
             this.save(viewer);

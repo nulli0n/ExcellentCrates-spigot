@@ -172,7 +172,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
             }
         });
 
-        this.addItem(Material.CHEST, EditorLocales.CRATE_BLOCK_LOCATIONS, 20).setClick((viewer, event) -> {
+        this.addItem(Material.CHEST, EditorLocales.CRATE_BLOCK_LOCATIONS, 22).setClick((viewer, event) -> {
             if (event.isLeftClick()) {
                 this.isReadyForBlock = true;
                 this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_BLOCK_LOCATION), chat -> false);
@@ -189,7 +189,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
             this.save(viewer);
         });
 
-        this.addItem(Material.ARMOR_STAND, EditorLocales.CRATE_BLOCK_HOLOGRAM, 22).setClick((viewer, event) -> {
+        this.addItem(Material.ARMOR_STAND, EditorLocales.CRATE_BLOCK_HOLOGRAM, 31).setClick((viewer, event) -> {
             if (event.isShiftClick()) {
                 if (event.isLeftClick()) {
                     crate.setBlockHologramEnabled(!crate.isBlockHologramEnabled());

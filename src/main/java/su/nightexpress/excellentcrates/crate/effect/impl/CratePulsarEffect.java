@@ -1,17 +1,15 @@
-package su.nightexpress.excellentcrates.crate.effect.list;
+package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.particle.SimpleParticle;
-import su.nexmedia.engine.utils.EffectUtil;
 import su.nexmedia.engine.utils.LocationUtil;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 
-public class CrateEffectPulsar extends CrateEffectTask {
+public class CratePulsarEffect extends CrateEffect {
 
-    public CrateEffectPulsar() {
-        super(CrateEffectModel.PULSAR, 2L, 38);
+    public CratePulsarEffect() {
+        super(2L, 38);
     }
 
     @Override

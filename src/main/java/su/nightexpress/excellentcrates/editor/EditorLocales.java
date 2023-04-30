@@ -153,7 +153,8 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .name("Sort Rewards")
         .text("Automatically sorts rewards in", "specified order.").breakLine()
         .actionsHeader()
-        .action("[Num 1]", "By Chance").action("[Num 2]", "By Type").action("[Num 3]", "By Name")
+        .action("[Num 1]", "By Chance").action("[Num 2]", "By Type")
+        .action("[Num 3]", "By Name").action("[Num 4]", "By Rarity")
         .build();
 
     public static final EditorLocale REWARD_NAME = builder(PREFIX + "REWARD_CHANGE_NAME")
@@ -162,20 +163,27 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .text("Sets the reward display name.", "It's used in GUIs & messages.").breakLine()
         .warningHeader().warning("This is " + RED + "NOT" + GRAY + " reward item name!").breakLine()
         .actionsHeader().action("Left-Click", "Change").action("Right-Click", "Sync from Preview")
+        .action("Shift-Left", "Set for Preview")
         .build();
 
     public static final EditorLocale REWARD_PREVIEW = builder(PREFIX + "REWARD_CHANGE_PREVIEW")
         .name("Preview Item")
-        .text("Sets the reward preview item.", "It's used in crate opening animations.").breakLine()
-        .warningHeader().warning("This is " + RED + "NOT" + GRAY + " reward actual item!").breakLine()
-        .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
+        .text("This item will represent the reward", "when previewing and opening crate.").breakLine()
+        .warningHeader().warning("This item is " + RED + "NOT" + GRAY + " given to players!").breakLine()
+        .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Get Copy")
+        .build();
+
+    public static final EditorLocale REWARD_RARITY = builder(PREFIX + "Reward.Rarity")
+        .name("Rarity")
+        .currentHeader().current("Rarity", Placeholders.REWARD_RARITY_NAME).breakLine()
+        .text("Learn more about reward chances on the plugin wiki.").breakLine()
+        .actionsHeader().action("Left-Click", "Change")
         .build();
 
     public static final EditorLocale REWARD_CHANCE = builder(PREFIX + "REWARD_CHANGE_CHANCE")
         .name("Chance")
         .currentHeader().current("Chance", Placeholders.REWARD_CHANCE + "%").breakLine()
-        .text("Sets the chance (weight) for this", "reward to be rolled.").breakLine()
-        .noteHeader().notes("Learn about reward chances on the plugin wiki.").breakLine()
+        .text("Learn more about reward chances on the plugin wiki.").breakLine()
         .actionsHeader().action("Left-Click", "Change")
         .build();
 

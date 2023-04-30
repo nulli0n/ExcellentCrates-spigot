@@ -5,7 +5,11 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String URL_WIKI = "https://github.com/nulli0n/ExcellentCrates-spigot/wiki";
 
     public static final String GENERIC_AMOUNT = "%amount%";
-    public static final String GENERIC_TIME = "%time%";
+    public static final String GENERIC_TIME   = "%time%";
+
+    public static final String RARITY_ID     = "%rarity_id%";
+    public static final String RARITY_NAME   = "%rarity_name%";
+    public static final String RARITY_CHANCE = "%rarity_chance%";
 
     public static final String CRATE_ID                         = "%crate_id%";
     public static final String CRATE_NAME                       = "%crate_name%";
@@ -36,14 +40,16 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
 
     public static final String MENU_ID = "%menu_id%";
 
-    public static final String REWARD_ID                 = "%reward_id%";
-    public static final String REWARD_NAME               = "%reward_name%";
-    public static final String REWARD_CHANCE             = "%reward_chance%";
-    public static final String REWARD_BROADCAST          = "%reward_broadcast%";
-    public static final String REWARD_PREVIEW_NAME       = "%reward_preview_name%";
-    public static final String REWARD_PREVIEW_LORE       = "%reward_preview_lore%";
-    public static final String REWARD_COMMANDS           = "%reward_commands%";
-    public static final String REWARD_WIN_LIMIT_AMOUNT   = "%reward_win_limit_amount%";
+    public static final String REWARD_ID                      = "%reward_id%";
+    public static final String REWARD_NAME                    = "%reward_name%";
+    public static final String REWARD_CHANCE                  = "%reward_chance%";
+    public static final String REWARD_RARITY_NAME             = "%reward_rarity_name%";
+    public static final String REWARD_RARITY_CHANCE           = "%reward_rarity_chance%";
+    public static final String REWARD_BROADCAST               = "%reward_broadcast%";
+    public static final String REWARD_PREVIEW_NAME            = "%reward_preview_name%";
+    public static final String REWARD_PREVIEW_LORE            = "%reward_preview_lore%";
+    public static final String REWARD_COMMANDS                = "%reward_commands%";
+    public static final String REWARD_WIN_LIMIT_AMOUNT        = "%reward_win_limit_amount%";
     public static final String REWARD_WIN_LIMIT_COOLDOWN      = "%reward_win_limit_cooldown%";
     public static final String REWARD_IGNORED_FOR_PERMISSIONS = "%reward_ignored_for_permissions%";
 }

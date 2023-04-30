@@ -100,6 +100,7 @@ public class Lang extends EngineLang {
     public static final LangKey EDITOR_REWARD_ENTER_ID                 = new LangKey("Editor.Reward.Enter.Id", "&7Enter &aunique &7reward &aidentifier&7...");
     public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME       = new LangKey("Editor.Reward.Enter.DisplayName", "&7Enter reward &adisplay name&7...");
     public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = new LangKey("Editor.Reward.Enter.Chance", "&7Enter win &achance&7...");
+    public static final LangKey EDITOR_REWARD_ENTER_RARITY             = new LangKey("Editor.Reward.Enter.Rarity", "&7Enter &a[Rarity]");
     public static final LangKey EDITOR_REWARD_ENTER_COMMAND            = new LangKey("Editor.Reward.Enter.Command", "&7Enter a &acommand&7...");
     public static final LangKey EDITOR_REWARD_ENTER_PERMISSION         = new LangKey("Editor.Reward.Enter.Permissions", "&7Enter a &apermission&7...");
     public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = new LangKey("Editor.Reward.Enter.WinLimit.Amount", "&7Enter win limit &aamount&7...");

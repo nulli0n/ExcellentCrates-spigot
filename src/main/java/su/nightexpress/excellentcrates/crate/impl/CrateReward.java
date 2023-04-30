@@ -33,6 +33,7 @@ public class CrateReward implements ICleanable, Placeholder {
 
     private String          name;
     private double          chance;
+    private Rarity          rarity;
     private boolean         broadcast;
     private int             winLimitAmount;
     private long            winLimitCooldown;
@@ -52,6 +53,7 @@ public class CrateReward implements ICleanable, Placeholder {
 
             ChatColor.GREEN + StringUtil.capitalizeUnderscored(id),
             25D,
+            crate.plugin().getCrateManager().getMostCommonRarity(),
             false,
 
             -1,
@@ -70,6 +72,7 @@ public class CrateReward implements ICleanable, Placeholder {
 
         @NotNull String name,
         double chance,
+        @NotNull Rarity rarity,
         boolean broadcast,
 
         int winLimitAmount,
@@ -83,8 +86,9 @@ public class CrateReward implements ICleanable, Placeholder {
         this.crate = crate;
         this.id = id.toLowerCase();
 
-        this.setChance(chance);
         this.setName(name);
+        this.setChance(chance);
+        this.setRarity(rarity);
         this.setBroadcast(broadcast);
 
         this.setWinLimitAmount(winLimitAmount);
@@ -99,6 +103,8 @@ public class CrateReward implements ICleanable, Placeholder {
             .add(Placeholders.REWARD_ID, this::getId)
             .add(Placeholders.REWARD_NAME, this::getName)
             .add(Placeholders.REWARD_CHANCE, () -> NumberUtil.format(this.getChance()))
+            .add(Placeholders.REWARD_RARITY_NAME, () -> this.getRarity().getName())
+            .add(Placeholders.REWARD_RARITY_CHANCE, () -> NumberUtil.format(this.getRarity().getChance()))
             .add(Placeholders.REWARD_BROADCAST, () -> LangManager.getBoolean(this.isBroadcast()))
             .add(Placeholders.REWARD_PREVIEW_NAME, () -> ItemUtil.getItemName(this.getPreview()))
             .add(Placeholders.REWARD_PREVIEW_LORE, () -> String.join("\n", ItemUtil.getLore(this.getPreview())))
@@ -113,6 +119,7 @@ public class CrateReward implements ICleanable, Placeholder {
             })
             .add(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS, () -> String.join("\n", this.getIgnoredForPermissions()))
         ;
+        this.placeholderMap.getKeys().addAll(this.getRarity().getPlaceholders().getKeys());
     }
 
     @Override
@@ -167,6 +174,15 @@ public class CrateReward implements ICleanable, Placeholder {
 
     public void setChance(double chance) {
         this.chance = Math.max(0, chance);
+    }
+
+    @NotNull
+    public Rarity getRarity() {
+        return rarity;
+    }
+
+    public void setRarity(@NotNull Rarity rarity) {
+        this.rarity = rarity;
     }
 
     public boolean isBroadcast() {

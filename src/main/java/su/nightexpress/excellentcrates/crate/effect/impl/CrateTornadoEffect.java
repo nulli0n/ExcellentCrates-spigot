@@ -1,24 +1,23 @@
-package su.nightexpress.excellentcrates.crate.effect.list;
+package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.particle.SimpleParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectTask;
+import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrateEffectTornado extends CrateEffectTask {
+public class CrateTornadoEffect extends CrateEffect {
 
     private static final double Y_OFFSET           = 0.15D;
     private static final float  TORNADO_HEIGHT     = 3.15F;
     private static final float  MAX_TORNADO_RADIUS = 2.25F;
     private static final double DISTANCE           = 0.375D;
 
-    public CrateEffectTornado() {
-        super(CrateEffectModel.TORNADO, 4L, 7);
+    public CrateTornadoEffect() {
+        super(2L, 8);
     }
 
     @Override

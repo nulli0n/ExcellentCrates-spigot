@@ -30,8 +30,8 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
     private static final String PLACEHOLDER_WIN_LIMIT_DRAINED  = "%win_limit_drained%";
 
-    private static final String USER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
-    private static final String USER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
+    @Deprecated private static final String USER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
+    @Deprecated private static final String USER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
 
     private final Crate crate;
     private final int[]        rewardSlots;
@@ -112,6 +112,8 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
             long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();
 
             lore.replaceAll(str -> str
+                .replace(Placeholders.GENERIC_AMOUNT, String.valueOf(amountLeft))
+                .replace(Placeholders.GENERIC_TIME, TimeUtil.formatTimeLeft(expireIn))
                 .replace(USER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
                 .replace(USER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
             );

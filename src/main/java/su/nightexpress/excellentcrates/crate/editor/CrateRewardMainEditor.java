@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
+import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
@@ -20,6 +21,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.editor.EditorLocales;
 
 import java.util.stream.Stream;
@@ -62,6 +64,14 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
                 this.save(viewer);
                 return;
             }
+            if (event.isShiftClick() && event.isLeftClick()) {
+                ItemStack preview = reward.getPreview();
+                ItemUtil.mapMeta(preview, meta -> meta.setDisplayName(reward.getName()));
+                reward.setPreview(preview);
+                this.save(viewer);
+                return;
+            }
+
             this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_DISPLAY_NAME), chat -> {
                 reward.setName(chat.getMessage());
                 crate.save();
@@ -78,6 +88,18 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
             this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_CHANCE), chat -> {
                 reward.setChance(StringUtil.getDouble(Colorizer.strip(chat.getMessage()), 0D));
                 crate.save();
+                return true;
+            });
+        });
+
+        this.addItem(Material.FISHING_ROD, EditorLocales.REWARD_RARITY, 13).setClick((viewer, event) -> {
+            EditorManager.suggestValues(viewer.getPlayer(), plugin.getCrateManager().getRarityMap().keySet(), true);
+            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_RARITY), chat -> {
+                Rarity rarity = this.plugin.getCrateManager().getRarity(chat.getMessage());
+                if (rarity == null) return true;
+
+                reward.setRarity(rarity);
+                reward.getCrate().save();
                 return true;
             });
         });

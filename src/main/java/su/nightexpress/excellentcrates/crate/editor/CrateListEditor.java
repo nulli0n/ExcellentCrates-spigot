@@ -61,7 +61,7 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
     @Override
     @NotNull
     public List<Crate> getObjects(@NotNull Player player) {
-        return new ArrayList<>(this.object.getCrates());
+        return new ArrayList<>(this.object.getCrateMap());
     }
 
     @Override

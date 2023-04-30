@@ -1,46 +1,29 @@
 package su.nightexpress.excellentcrates.crate.effect;
 
-import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.crate.effect.list.*;
+import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.crate.effect.impl.*;
 
 public enum CrateEffectModel {
 
-    HELIX, PULSAR, BEACON, TORNADO, VORTEX, SIMPLE, NONE;
+    HELIX(new CrateHelixEffect()),
+    SPIRAL(new CrateSpiralEffect()),
+    SPHERE(new CrateSphereEffect()),
+    HEART(new CrateHeartEffect()),
+    PULSAR(new CratePulsarEffect()),
+    BEACON(new CrateBeaconEffect()),
+    TORNADO(new CrateTornadoEffect()),
+    VORTEX(new CrateVortexEffect()),
+    SIMPLE(new CrateSimpleEffect()),
+    NONE(new CrateSimpleEffect());
 
-    private CrateEffectTask effect;
+    private final CrateEffect effect;
 
-    public static void start() {
-        for (CrateEffectModel model : CrateEffectModel.values()) {
-            if (model.effect != null && !model.effect.isCancelled()) continue;
-
-            CrateEffectTask effect = model.createEffect();
-            if (effect == null) continue;
-
-            effect.start();
-        }
+    CrateEffectModel(@NotNull CrateEffect effect) {
+        this.effect = effect;
     }
 
-    public static void shutdown() {
-        for (CrateEffectModel model : CrateEffectModel.values()) {
-            if (model.effect != null) {
-                model.effect.cancel();
-                model.effect = null;
-            }
-        }
-    }
-
-    @Nullable
-    private CrateEffectTask createEffect() {
-        if (this.effect != null) return this.effect;
-
-        return switch (this) {
-            case PULSAR -> (this.effect = new CrateEffectPulsar());
-            case HELIX -> (this.effect = new CrateEffectHelix());
-            case BEACON -> (this.effect = new CrateEffectBeacon());
-            case TORNADO -> (this.effect = new CrateEffectTornado());
-            case VORTEX -> (this.effect = new CrateEffectVortex());
-            case SIMPLE -> (this.effect = new CrateEffectSimple());
-            default -> null;
-        };
+    @NotNull
+    public CrateEffect getEffect() {
+        return effect;
     }
 }

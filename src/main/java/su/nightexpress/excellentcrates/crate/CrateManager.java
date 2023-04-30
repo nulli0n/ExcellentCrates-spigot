@@ -31,31 +31,43 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.listener.CrateListener;
+import su.nightexpress.excellentcrates.crate.task.CrateEffectTask;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.menu.OpeningMenu;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CrateManager extends AbstractManager<ExcellentCrates> {
 
-    private Map<String, Crate>       crates;
-    private Map<String, OpeningMenu> openings;
+    private final Map<String, Rarity>      rarityMap;
+    private final Map<String, Crate>       crateMap;
+    private final Map<String, OpeningMenu> openings;
+
+    private CrateEffectTask effectTask;
 
     public CrateManager(@NotNull ExcellentCrates plugin) {
         super(plugin);
+        this.rarityMap = new HashMap<>();
+        this.crateMap = new HashMap<>();
+        this.openings = new HashMap<>();
     }
 
     @Override
     public void onLoad() {
-        this.crates = new ConcurrentHashMap<>();
-        this.openings = new HashMap<>();
         this.plugin.getConfigManager().extractResources(Config.DIR_CRATES);
         this.plugin.getConfigManager().extractResources(Config.DIR_PREVIEWS);
         this.plugin.getConfigManager().extractResources(Config.DIR_OPENINGS);
+
+        JYML rarityConfig = JYML.loadOrExtract(plugin, Config.FILE_RARITY);
+        for (String rarId : rarityConfig.getSection("")) {
+            Rarity rarity = Rarity.read(rarityConfig, rarId, rarId);
+            this.rarityMap.put(rarity.getId(), rarity);
+        }
+        this.plugin.info("Loaded " + this.getRarityMap().size() + " rarities!");
 
         for (JYML cfg : JYML.loadAll(this.plugin.getDataFolder() + Config.DIR_OPENINGS, true)) {
             OpeningMenu opening = new OpeningMenu(plugin, cfg);
@@ -63,17 +75,19 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             this.openings.put(id, opening);
         }
 
-        this.plugin.getServer().getScheduler().runTask(this.plugin, c -> {
+        this.plugin.runTask(task -> {
             for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_CRATES, true)) {
                 Crate crate = new Crate(plugin, cfg);
                 if (crate.load()) {
-                    this.crates.put(crate.getId(), crate);
+                    this.crateMap.put(crate.getId(), crate);
                 }
                 else this.plugin.error("Crate not loaded: " + cfg.getFile().getName());
             }
             this.plugin.info("Loaded " + this.getCratesMap().size() + " crates.");
-            CrateEffectModel.start();
         });
+
+        this.effectTask = new CrateEffectTask(this.plugin);
+        this.effectTask.start();
 
         this.addListener(new CrateListener(this));
     }
@@ -83,17 +97,37 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         PlayerOpeningData.PLAYERS.values().forEach(data -> data.stop(true));
         PlayerOpeningData.PLAYERS.clear();
 
-        CrateEffectModel.shutdown();
+        if (this.effectTask != null) {
+            this.effectTask.stop();
+            this.effectTask = null;
+            Arrays.asList(CrateEffectModel.values()).forEach(model -> model.getEffect().reset());
+        }
 
-        if (this.openings != null) {
-            this.openings.values().forEach(Menu::clear);
-            this.openings.clear();
-        }
-        if (this.crates != null) {
-            this.crates.values().forEach(Crate::clear);
-            this.crates.clear();
-            this.crates = null;
-        }
+        this.openings.values().forEach(Menu::clear);
+        this.openings.clear();
+        this.crateMap.values().forEach(Crate::clear);
+        this.crateMap.clear();
+        this.rarityMap.clear();
+    }
+
+    @NotNull
+    public Map<String, Rarity> getRarityMap() {
+        return rarityMap;
+    }
+
+    @NotNull
+    public Collection<Rarity> getRarities() {
+        return this.getRarityMap().values();
+    }
+
+    @Nullable
+    public Rarity getRarity(@NotNull String id) {
+        return this.getRarityMap().get(id.toLowerCase());
+    }
+
+    @NotNull
+    public Rarity getMostCommonRarity() {
+        return this.getRarities().stream().max(Comparator.comparingDouble(Rarity::getChance)).orElseThrow();
     }
 
     @Nullable
@@ -158,16 +192,16 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
     @NotNull
     public List<String> getCrateIds(boolean keyOnly) {
-        return this.getCrates().stream().filter(crate -> !crate.getKeyIds().isEmpty() || !keyOnly).map(Crate::getId).toList();
+        return this.getCrateMap().stream().filter(crate -> !crate.getKeyIds().isEmpty() || !keyOnly).map(Crate::getId).toList();
     }
 
     @NotNull
     public Map<String, Crate> getCratesMap() {
-        return this.crates;
+        return this.crateMap;
     }
 
     @NotNull
-    public Collection<Crate> getCrates() {
+    public Collection<Crate> getCrateMap() {
         return this.getCratesMap().values();
     }
 
@@ -189,7 +223,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
     @Nullable
     public Crate getCrateByLocation(@NotNull Location loc) {
-        return this.getCrates().stream().filter(crate -> crate.getBlockLocations().contains(loc)).findFirst().orElse(null);
+        return this.getCrateMap().stream().filter(crate -> crate.getBlockLocations().contains(loc)).findFirst().orElse(null);
     }
 
     public boolean spawnCrate(@NotNull Crate crate, @NotNull Location location) {
@@ -314,23 +348,21 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
         else {
             CrateReward reward = crate.rollReward(player);
-            if (reward != null) {
-                reward.give(player);
+            reward.give(player);
 
-                CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, player);
-                plugin.getPluginManager().callEvent(rewardEvent);
+            CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, player);
+            plugin.getPluginManager().callEvent(rewardEvent);
 
-                if (Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
-                    if (block.getState() instanceof Lidded lidded) {
-                        lidded.open();
-                        plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);
-                    }
-                    HologramHandler hologramHandler = plugin.getHologramHandler();
-                    if (hologramHandler != null) {
-                        Location location = LocationUtil.getCenter(block.getLocation().add(0, 2, 0), false);
-                        hologramHandler.createReward(player, reward, location);
-                        plugin.getServer().getScheduler().runTaskLater(plugin, c -> hologramHandler.removeReward(player), 60L);
-                    }
+            if (Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
+                if (block.getState() instanceof Lidded lidded) {
+                    lidded.open();
+                    plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);
+                }
+                HologramHandler hologramHandler = plugin.getHologramHandler();
+                if (hologramHandler != null) {
+                    Location location = LocationUtil.getCenter(block.getLocation().add(0, 2, 0), false);
+                    hologramHandler.createReward(player, reward, location);
+                    plugin.getServer().getScheduler().runTaskLater(plugin, c -> hologramHandler.removeReward(player), 60L);
                 }
             }
         }

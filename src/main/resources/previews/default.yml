@@ -1,48 +1,64 @@
 Title: '           &nCrate Preview'
-Size: 36
+Size: 45
 
 Reward:
   Hide_Drained_Rewards: false
-  Name: '&e%reward_preview_name%'
+  Name: '#accaf4&l%reward_preview_name%'
   Lore:
     Default:
-    - '#cdf34d&lChance: &f%reward_chance%%'
-    - ''
-    - '%win_limit_amount%'
-    - '%win_limit_cooldown%'
-    - '%win_limit_drained%'
-    - ''
-    - '%reward_preview_lore%'
+      - '%reward_preview_lore%'
+      - ''
+      - '#accaf4▪ #ddeceeChance: #accaf4%reward_chance%%'
+      - '#accaf4▪ #ddeceeRarity: #accaf4%reward_rarity_name% #ddecee(&f%reward_rarity_chance%%#ddecee)'
+      - ''
+      - '%win_limit_amount%'
+      - '%win_limit_cooldown%'
+      - '%win_limit_drained%'
     Win_Limit:
       Amount:
-        - '#ec7063You can win this reward &f%user_reward_win_limit_amount_left% #ec7063more times &7(of total &f%reward_win_limit_amount%&7)'
+        - '#a5ff9a[✓] #ddeceeYou can win this #a5ff9a%amount%#ddecee more times.'
       Cooldown:
-        - '#ec7063You can win this reward again in &f%user_reward_win_limit_expire_in%'
+        - '#ff9a9a[!] #ddeceeYou can win this again in #ff9a9a%time%#ddecee.'
       Drained:
-        - '#ec7063You already won this reward, you can not win more.'
-  Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+        - '#ff9a9a[!] #ddeceeSorry, you can not win this #ff9a9aanymore#ddecee.'
+  Slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34
 
 Content:
-  page_next:
+  panes_1:
+    Priority: 0
     Item:
-      Material: 'PLAYER_HEAD'
-      Name: '&e&lNext Page'
-      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19'
-    Slots: 35
-    Type: PAGE_NEXT
+      Material: BLACK_STAINED_GLASS_PANE
+    Slots: 1,2,3,5,6,7,9,18,27,17,26,35,37,38,39,40,41,42,43
 
-  page_previous:
+  panes_2:
+    Priority: 0
     Item:
-      Material: 'PLAYER_HEAD'
-      Name: '&e&lPrevious Page'
-      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0='
-    Slots: 27
-    Type: PAGE_PREVIOUS
+      Material: GRAY_STAINED_GLASS_PANE
+    Slots: 0,4,8,36,44
 
-  exit:
+  return:
+    Priority: 5
     Item:
       Material: PLAYER_HEAD
-      Name: '&f&lExit'
-      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTA2ZmJjNzU2MWVhZGNjZjdiYzZkNWE5NmM0NjM1MTRkNzlmZTY0ODlmZTE5OTJkZTQxNjBiYTI3MjA4ZjU1In19fQ=='
-    Slots: 31
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ==
+      Name: '#FF5733(✕) &lExit'
+    Slots: 40
     Type: CLOSE
+
+  page_next:
+    Slots: 26
+    Type: PAGE_NEXT
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjMyY2E2NjA1NmI3Mjg2M2U5OGY3ZjMyYmQ3ZDk0YzdhMGQ3OTZhZjY5MWM5YWMzYTkxMzYzMzEzNTIyODhmOSJ9fX0=
+      Name: '#e6e4dd(→) &fNext Page'
+    Priority: 5
+
+  page_previous:
+    Slots: 18
+    Type: PAGE_PREVIOUS
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY5NzFkZDg4MWRiYWY0ZmQ2YmNhYTkzNjE0NDkzYzYxMmY4Njk2NDFlZDU5ZDFjOTM2M2EzNjY2YTVmYTYifX19
+      Name: '#e6e4dd(←) &fPrevious Page'
+    Priority: 5

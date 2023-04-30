@@ -1,0 +1,532 @@
+Command:
+  Drop:
+    Usage: <crateId> <world> <x> <y> <z>
+    Desc: Déposez la caisse à un endroit spécifié dans le monde.
+    Done: Déposez &6%crate_name%&7 en &6%location_x%&7, &6%location_y%&7, &6%location_z%&7 dans &6%location_world%&7.
+  ForceOpen:
+    Desc: 'Forcer l''ouverture d''une caisse pour un joueur.'
+    Usage: <crateId> [player]
+    Done: Ouverture forcée de &6%crate_name%&7 pour &6%player_name%&7.
+    Notify: 'Vous avez été forcé d''ouvrir &6%crate_name%&7.'
+  Give:
+    Usage: <player | *> <crateId> [amount]
+    Desc: Donnez une caisse à un joueur.
+    Done: Don de &6%amount%x &6%crate_name% &7caisse pour &6%player_name%&7.
+    Notify: Vous avez reçu &6%amount%x &6%crate_name%&7 caisse!
+  Key:
+    Desc: Gérer ou afficher les clés de caisse du joueur.
+    Error:
+      Player: '&cImpossible de traiter l''opération pour un joueur hors ligne/invalide &e%player_name%&c!'
+    Give:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Donner une clé de caisse à un joueur.
+      Done: Don de &a%amount%x &7clé &a%key_name% &7pour &a%player_name%&7.
+      Notify: Vous avez reçu &a%amount%x &7clé &a%key_name%&7!
+    Take:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Prendre une clé de caisse à un joueur.
+      Done: '&c%amount%x &7clé &c%key_name% &7pris à &c%player_name%'
+      Notify: Vous avez perdu &c%amount%x &7clé &c%key_name%&7!
+    Set:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Définir le nombre de clés de caisse pour un joueur.
+      Done: Le nombre de clés &e%key_name% &7défini sur &e%amount%x &7pour &e%player_name%&7.
+      Notify: Your &e%key_name%&7 amount has been changed to &ex%amount%&7!
+    Show:
+      Desc: 'Afficher le nombre de vos clés ou celui d''un autre joueur.'
+      Usage: '[player]'
+      Format:
+        List:
+          - <!prefix:"false"!>
+          - '&6&m              &6&l[ &a%player_name% &e&lClé de caisse &6&l]&6&m              &6'
+          - '&7'
+          - '&6▸ &e%key_name%: &6%amount%'
+  Preview:
+    Desc: 'Ouvre l''aperçu de la caisse.'
+    Usage: <crateId> [player]
+    Done:
+      Others: Aperçu de &6%crate_name%&7 affiché pour &6%player_display_name%&7.
+  ResetLimit:
+    Desc: Réinitialiser la limite de gain de récompense pour la caisse et la récompense spécifiées.
+    Usage: <player> <crateId> [rewardId]
+    Done:
+      Crate: La limite de récompense de &6%player_name% &7a été réinitialisée pour la caisse &6%crate_name%&7.
+      Reward: La limite de &6%player_name% &7a été réinitialisée pour la récompense &6%reward_name% &7de la caisse &6%crate_name%&7.
+  ResetCooldown:
+    Desc: Réinitialiser le temps de recharge du joueur pour la caisse spécifiée.
+    Usage: <player> <crateId>
+    Done: Temps de recharge de &6%player_name% &7a été réinitialisé pour &6%crate_name%&7.
+  Menu:
+    Usage: '[menuId]'
+    Desc: Ouvrir le menu de la caisse.
+    Done:
+      Others: Le menu &6%menu_id%&7 a été ouvert pour &6%player_display_name%&7.
+Crate:
+  Error:
+    Invalid: '&cCaisse invalide!'
+  Open:
+    Error:
+      InventorySpace: '&cVeuillez nettoyer votre inventaire pour ouvrir la caisse!'
+      Cooldown:
+        Temporary: '&cVous devez attendre &6%time% &7avant de pouvoir ouvrir à nouveau la caisse &6%crate_name%&7!'
+        OneTimed: '&cVous avez déjà ouvert cette caisse, vous ne pouvez plus l''ouvrir!'
+      NoKey: '&cVous n''avez pas de clé pour cette caisse!'
+      NoHoldKey: '&cVous devez détenir une clé pour ouvrir cette caisse!'
+      NoRewards: '&cCette caisse ne contient aucune récompense pour vous!'
+      Cost:
+        Money: '&cVous n''avez pas assez d''argent pour ouvrir cette caisse!'
+        Exp: '&cVous n''avez pas assez de niveaux d''expérience pour ouvrir cette caisse!'
+    Reward:
+      Info: Vous avez obtenu la récompense &6%reward_name% &7dans la caisse &6%crate_name%&7!
+      Broadcast: '&7Je joueur &a%player_display_name% &7vient de recevoir la récompense &6%reward_name% &7dans la caisse &6%crate_name%&7!'
+  Key:
+    Error:
+      Invalid: '&cClé non valide!'
+Menu:
+  Invalid: '&cLe menu n''existe pas!'
+Editor:
+  Crate:
+    Enter:
+      Id: '&7Entrez un identifiant de caisse &aunique&7...'
+      DisplayName: '&7Entrez le &anom d''affichage &7de la caisse...'
+      Particle:
+        Name: '&7Entrez le nom de la &aparticule&7...'
+        Data: '&7Entrez la data de la &aparticle&7...'
+      KeyId: '&7Entrez un identifiant de &akey&7...'
+      Block:
+        Location: '&7Cliquez sur un &abloc &7pour attribuer une caisse...'
+        Hologram:
+          Text: '&7Saisir la ligne de &atexte&7...'
+          Offset: '&7Entrez la valeur de &adécalage&7...'
+      Cooldown: '&7Entrez le &atemps de recharge &7en secondes...'
+      Citizens: '&Entrez un ID de &aCitizens NPC&7...'
+      AnimationConfig: '&7Entrez le nom de la &aconfiguration d''animation&7...'
+      PreviewConfig: '&7Entrez le nom de la &aconfiguration d''aperçu&7...'
+      OpenCost:
+        Money: '&7Entrez le coût en &aargent&7...'
+        Exp: '&7Entrez le coût en &aniveau d''expérience&7...'
+    Error:
+      Create:
+        Exists: '&cUne caisse avec cet identifiant existe déjà!'
+    BlockPushback:
+      Name: '#ffed6a&lRefoulement du bloc'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Activé: #ffed6a%crate_block_pushback_enabled%'
+        - ''
+        - '#bdc8c9Définit si le joueur sera repoussé'
+        - '#bdc8c9du bloc de caisse lorsqu''il'
+        - '#bdc8c9essaiera de l''ouvrir sans clé.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aBasculer'
+  Reward:
+    Enter:
+      Id: '&7Entrez un &aidentifiant aunique &7de récompense...'
+      DisplayName: '&7Entrez le &anom d''affichage &7de la récompense...'
+      Chance: '&7Entrez la &achance &7de gagner...'
+      Command: '&7Entrez une &acommande&7...'
+      Permissions: '&7Entrez une &apermission&7...'
+      WinLimit:
+        Amount: '&7Entrez le &amontant &7de la limite de gain...'
+        Cooldown: '&7Entrez le &atemps de recharge &7de la limite de victoire...'
+    Error:
+      Create:
+        Exist: '&cUne récompense avec cet identifiant existe déjà!'
+  Key:
+    Error:
+      Create:
+        Exist: Une clé avec cet identifiant existe déjà!
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: '#ffed6a&lÉditeur de caisses'
+      Lore:
+        - '#bdc8c9Créez et gérez vos caisses ici!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aOuvrir'
+    EDITOR_KEYS:
+      Name: '#ffed6a&lÉditeur de clés'
+      Lore:
+        - '#bdc8c9Créez et gérez vos clés ici!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aOuvrir'
+    CRATE_OBJECT:
+      Name: '#ffed6a&l%crate_name% &7(ID: &f%crate_id%&7)'
+      Lore:
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic gauche: #bbff6aEditer'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aSupprimer #ff6a6a(Ne peut pas être annulé)'
+    CRATE_CREATE:
+      Name: '#ffed6a&lCréer une caisse'
+      Lore:
+        - '#bdc8c9Crée une nouvelle caisse.'
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aCréer'
+    CRATE_CHANGE_NAME:
+      Name: '#ffed6a&lNom d''affichage'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Nom d''affichage: #ffed6a%crate_name%'
+        - ''
+        - '#bdc8c9Définit le nom d''affichage de la caisse.'
+        - '#bdc8c9Il est utilisé dans les messages et les interfaces graphiques.'
+        - ''
+        - '#ff6a6a▪ #bdc8c9Ce #ff6a6aN''EST PAS#bdc8c9 le nom de l''item de caisse!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+    CRATE_CHANGE_PERMISSION:
+      Name: '#ffed6a&lPermission Requirement'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Requis: #ffed6a%crate_permission_required%'
+        - '#ffed6a▪ #bdc8c9Nœud: #ffed6a%crate_permission%'
+        - ''
+        - '#bdc8c9Définit si une autorisation est requise'
+        - '#bdc8c9pour ouvrir cette caisse.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aBasculer'
+    CRATE_CHANGE_COOLDOWN:
+      Name: '#ffed6a&lOuvrir le temps de recharge'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Temps de recharge: #ffed6a%crate_opening_cooldown%'
+        - ''
+        - '#bdc8c9Définit la fréquence à laquelle le joueur peut'
+        - '#bdc8c9à nouveau ouvrir cette caisse.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Une valeur négative rendra la caisse à usage unique!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aDésactiver'
+        - '#bbff6a▪ #bdc8c9[Q/Jeter] Key: #bbff6aUsage unique'
+    CRATE_CHANGE_CONFIG:
+      Name: '#ffed6a&lAperçu et animation'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Aperçu: #ffed6a%crate_preview_config%'
+        - '#ffed6a▪ #bdc8c9Ouverture: #ffed6a%crate_animation_config%'
+        - ''
+        - '#bdc8c9Définit l''apparence des interfaces graphiques'
+        - '#bdc8c9#ffed6ad''aperçu #bdc8c9et #ffed6ad''animation #bdc8c9de la caisse.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Les aperçus sont situés dans le sous-dossier #ffa76a/previews/#bdc8c9.'
+        - '#ffa76a▪ #bdc8c9Les ouvertures sont situées dans le sous-dossier #ffa76a/openings/#bdc8c9.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier l''ouverture'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aDésactiver l''ouverture'
+        - '#bbff6a▪ #bdc8c9Shift-Gauche: #bbff6aModifier l''aperçu'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aDésactiver l''aperçu'
+    CRATE_CHANGE_KEYS:
+      Name: '#ffed6a&lClés attachées'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9IDs: #ffed6a%crate_key_ids%'
+        - ''
+        - '#bdc8c9Définit une liste de clés pouvant'
+        - '#bdc8c9être utilisées pour ouvrir cette caisse.'
+        - ''
+        - '#ff6a6a&lAttention:'
+        - '#ff6a6a▪ #bdc8c9Si aucune clé n''est définie, la caisse peut être ouverte sans elles!'
+        - '#ff6a6a▪ #bdc8c9Si des clés non valides sont fournies, vous ne pourrez pas ouvrir la caisse!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAttacher une clé'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer la liste'
+    CRATE_CHANGE_CITIZENS:
+      Name: '#ffed6a&lPNJ attachées'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9IDs: #ffed6a%crate_attached_citizens%'
+        - ''
+        - '#bdc8c9Définit une liste de PNJ qui'
+        - '#bdc8c9ouvriront/prévisualiseront cette caisse lorsqu''ils interagissent.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Vous devez avoir #ffa76aCitizens#bdc8c9 d''installé!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAttacher un PNJ'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer la liste'
+    CRATE_CHANGE_OPEN_COST:
+      Name: '#ffed6a&lPrix d''ouverture'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Argent: #ffed6a%crate_opening_cost_money%'
+        - '#ffed6a▪ #bdc8c9Exp Levels: #ffed6a%crate_opening_cost_exp%'
+        - ''
+        - '#bdc8c9Définit combien d''argent/d''expérience'
+        - '#bdc8c9le joueur doit payer pour'
+        - '#bdc8c9ouvrir cette caisse.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier l''argent'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aModifier l''Exp'
+        - '#bbff6a▪ #bdc8c9[Q/Jeter] Key: #bbff6aDésactiver TOUS'
+    CRATE_CHANGE_ITEM:
+      Name: '#ffed6a&lItem de caisse'
+      Lore:
+        - '#bdc8c9Définit l''item de caisse d''inventaire.'
+        - '#bdc8c9Il est utilisé lorsque vous donnez des caisses'
+        - '#bdc8c9aux joueurs et dans les menus de caisse.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Utilisez un item avec un nom, lore, model, etc.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Glisser-déposer: #bbff6aRemplacer'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aObtenir'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: '#ffed6a&lBlocs attachés'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#bdc8c9#ffed6a%crate_block_locations%'
+        - ''
+        - '#bdc8c9Un ensemble de blocs attachés à'
+        - '#bdc8c9cette caisse pour l''ouvrir ou la'
+        - '#bdc8c9prévisualiser lors de l''interaction.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAttacher un bloc'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer la liste'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: '#ffed6a&lBlock Hologram'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Activé: #ffed6a%crate_block_hologram_enabled%'
+        - '#ffed6a▪ #bdc8c9Décalage Y: #ffed6a%crate_block_hologram_offset_y%'
+        - '#ffed6a▪ #bdc8c9Texte: #ffed6a%crate_block_hologram_text%'
+        - ''
+        - '#bdc8c9Définit si l''hologramme sera ajouté'
+        - '#bdc8c9au-dessus du bloc de caisse avec le texte spécifié.'
+        - '#bdc8c9Définit le décalage Y pour'
+        - '#bdc8c9l''emplacement de l''hologramme'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAjouter du texte'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer le texte'
+        - '#bbff6a▪ #bdc8c9Shift-Gauche: #bbff6aBasculer'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aModifier le décalage Y'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: '#ffed6a&lEffets de bloc'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Modèle: #ffed6a%crate_block_effect_model%'
+        - '#ffed6a▪ #bdc8c9Particule: #ffed6a%crate_block_effect_particle_name%'
+        - '#ffed6a▪ #bdc8c9Data: #ffed6a%crate_block_effect_particle_data%'
+        - ''
+        - '#bdc8c9Définit un effet de particules pour jouer'
+        - '#bdc8c9aautour des blocs de caisse.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aChanger de particule'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aChanger de data'
+        - '#bbff6a▪ #bdc8c9[Q/Jeter] Key: #bbff6aBasculer le modèle'
+    CRATE_CHANGE_REWARDS:
+      Name: '#ffed6a&lRécompenses de caisse'
+      Lore:
+        - '#bdc8c9Créez et gérez les récompenses ici!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aOuvrir'
+    REWARD_OBJECT:
+      Name: '#ffed6a&l%reward_name% &7(ID: &f%reward_id%&7)'
+      Lore:
+        - '#bdc8c9Chance: &f%reward_chance%%'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+        - '#bbff6a▪ #bdc8c9Shift-Gauche: #bbff6aFaire Avancer'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aFaire Reculer'
+        - '#bbff6a▪ #bdc8c9[Q/Jeter] Key: #bbff6aSupprimer #ff6a6a(Ne peut pas être annulé)'
+    REWARD_CREATE:
+      Name: '#ffed6a&lCréer une récompense'
+      Lore:
+        - '#bdc8c9Crée une nouvelle récompense pour la caisse.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aCréation manuelle'
+        - '#bbff6a▪ #bdc8c9Glisser-déposer: #bbff6aCréation rapide'
+    REWARD_SORT:
+      Name: '#ffed6a&lTrier les récompenses'
+      Lore:
+        - '#bdc8c9Trie automatiquement les récompenses'
+        - '#bdc8c9dans l''ordre spécifié.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9[Num 1]: #bbff6aPar Chance'
+        - '#bbff6a▪ #bdc8c9[Num 2]: #bbff6aPar Type'
+        - '#bbff6a▪ #bdc8c9[Num 3]: #bbff6aPar Nom'
+    REWARD_CHANGE_NAME:
+      Name: '#ffed6a&lNom d''affichage'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Nom d''affichage: #ffed6a%reward_name%'
+        - ''
+        - '#bdc8c9Définit le nom d''affichage de la récompense.'
+        - '#bdc8c9Il est utilisé dans les interfaces graphiques et les messages.'
+        - ''
+        - '#ff6a6a&lAttention:'
+        - '#ff6a6a▪ #bdc8c9Ce #ff6a6aN''EST PAS#bdc8c9 le nom de l''objet de récompense!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aSynchroniser à partir de l''aperçu'
+    REWARD_CHANGE_PREVIEW:
+      Name: '#ffed6a&lAperçu de l''item'
+      Lore:
+        - '#bdc8c9Définit l''élément d''aperçu de la récompense.'
+        - '#bdc8c9Il est utilisé dans les animations d''ouverture de caisse.'
+        - ''
+        - '#ff6a6a&lAttention:'
+        - '#ff6a6a▪ #bdc8c9Ce #ff6a6aN''EST PAS#bdc8c9 un objet réel de récompense!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Glisser-déposer: #bbff6aRemplacer'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aObtenir'
+    REWARD_CHANGE_CHANCE:
+      Name: '#ffed6a&lChance'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Chance: #ffed6a%reward_chance%%'
+        - ''
+        - '#bdc8c9Définit la chance (poids) pour que'
+        - '#bdc8c9cette récompense soit lancée.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9En savoir plus sur les chances de récompense sur le wiki du plugin.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+    REWARD_CHANGE_COMMANDS:
+      Name: '#ffed6a&lExécuter des commandes'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#bdc8c9%reward_commands%'
+        - ''
+        - '#bdc8c9Définit une liste de commandes à exécuter'
+        - '#bdc8c9lorsque le joueur reçoit cette récompense.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Utiliser le placeholder #ffa76a%player_name%#bdc8c9 pour le nom du joueur.'
+        - '#ffa76a▪ #bdc8c9Ajouter le prefix #ffa76a[CONSOLE]#bdc8c9 pour l''exécuter à partir du serveur.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAjouter une commande'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer la liste'
+    REWARD_CHANGE_ITEMS:
+      Name: '#ffed6a&lItems donnés'
+      Lore:
+        - '#bdc8c9Une liste d''items sera donnée'
+        - '#bdc8c9au joueur lorsqu''il recevra cette récompense.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Utiliser #ffa76aESC#bdc8c9 pour enregistrer et revenir ici.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aOuvrir'
+    REWARD_CHANGE_BROADCAST:
+      Name: '#ffed6a&lBroadcast du gagnant'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Activé: #ffed6a%reward_broadcast%'
+        - ''
+        - '#bdc8c9Définit si un message de diffusion doit être '
+        - '#bdc8c9envoyé à tout le monde lorsque'
+        - '#bdc8c9cette récompense est reçue.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aBasculer'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: '#ffed6a&lLimites de gains'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Montant: #ffed6a%reward_win_limit_amount%'
+        - '#ffed6a▪ #bdc8c9Temps de recharge: #ffed6a%reward_win_limit_cooldown%'
+        - ''
+        - '#bdc8c9Définit la fréquence et le nombre de fois où'
+        - '#bdc8c9le joueur peut recevoir à nouveau cette récompense.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Définissez le montant sur #ffa76a-1#bdc8c9 pour un nombre illimité.'
+        - '#ffa76a▪ #bdc8c9Réglez le temps de recharge sur #ffa76a-1#bdc8c9 pour un usage unique.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier le montant'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aModifier le temps de recharge'
+        - '#bbff6a▪ #bdc8c9Shift-Gauche: #bbff6aUsage unique'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aDésactiver tous'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#ffed6a&lRestrictions d''autorisation'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#bdc8c9%reward_ignored_for_permissions%'
+        - ''
+        - '#bdc8c9Les joueurs ayant une permission'
+        - '#bdc8c9de la liste ne pourront pas'
+        - '#bdc8c9obtenir cette récompense.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aAjouter une permission'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aEffacer la liste'
+    KEY_OBJECT:
+      Name: '#ffed6a&l%key_name%#bdc8c9 (ID: #6adbff%key_id%#bdc8c9)'
+      Lore:
+        - '#ffed6a▪ #bdc8c9Virtuelle: #ffed6a%key_virtual%'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+        - '#bbff6a▪ #bdc8c9Shift-Droit: #bbff6aSupprimer #ff6a6a(Ne peut pas être annulé)'
+    KEY_CREATE:
+      Name: '#ffed6a&lCréer une clé'
+      Lore:
+        - '#bdc8c9Crée une nouvelle clé de caisses.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aCréer'
+    KEY_CHANGE_NAME:
+      Name: '#ffed6a&lNom d''affichage'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Nom d''affichage: #ffed6a%key_name%'
+        - ''
+        - '#bdc8c9Définit le nom d''affichage de la clé.'
+        - '#bdc8c9Il est utilisé dans les interfaces graphiques et les messages.'
+        - ''
+        - '#ff6a6a&lAttention:'
+        - '#ff6a6a▪ #bdc8c9Ce #ff6a6aN''EST PAS#bdc8c9 le nom de l''item de la clé!'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aModifier'
+    KEY_CHANGE_ITEM:
+      Name: '#ffed6a&lItem de la clé'
+      Lore:
+        - '#bdc8c9Définit l''item de clé physique.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Cette option est inutile pour les clés virtuelles.'
+        - '#ffa76a▪ #bdc8c9Utiliser un item avec un nom prédéfini, lore, etc.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Glisser-déposer: #bbff6aRemplacer'
+        - '#bbff6a▪ #bdc8c9Clic-Droit: #bbff6aObtenir'
+    KEY_VIRTUAL:
+      Name: '#ffed6a&lVirtuelle'
+      Lore:
+        - '#ffed6a&lActuellement:'
+        - '#ffed6a▪ #bdc8c9Est virtuelle: #ffed6a%key_virtual%'
+        - ''
+        - '#bdc8c9Définit si cette clé est virtuelle.'
+        - ''
+        - '#ffa76a&lRemarques:'
+        - '#ffa76a▪ #bdc8c9Clés virtuelles stockées dans la base de données, pas dans les inventaires.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Clic-Gauche: #bbff6aBasculer'

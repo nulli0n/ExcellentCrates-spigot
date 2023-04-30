@@ -1,0 +1,15 @@
+common:
+  Name: 'Common'
+  Chance: 50.0
+
+uncommon:
+  Name: 'Uncommon'
+  Chance: 30.0
+
+rare:
+  Name: 'Rare'
+  Chance: 15.0
+
+legendary:
+  Name: 'Legendary'
+  Chance: 5.0

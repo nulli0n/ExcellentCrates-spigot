@@ -128,6 +128,10 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
             String rewName = cfg.getString(path + "Name", rewId);
             double rewChance = cfg.getDouble(path + "Chance");
+            String rewRarityId = cfg.getString(path + "Rarity", "");
+            Rarity rarity = plugin.getCrateManager().getRarity(rewRarityId);
+            if (rarity == null) rarity = plugin.getCrateManager().getMostCommonRarity();
+
             boolean rBroadcast = cfg.getBoolean(path + "Broadcast");
             ItemStack rewPreview = cfg.getItemEncoded(path + "Preview");
             if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
@@ -139,7 +143,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemsEncoded(path + "Items")).toList());
             Set<String> ignoredForPerms = cfg.getStringSet(path + "Ignored_For_Permissions");
 
-            CrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rBroadcast,
+            CrateReward reward = new CrateReward(this, rewId, rewName, rewChance, rarity, rBroadcast,
                 winLimitAmount, winLimitCooldown,
                 rewPreview, rewItem, rewCmds, ignoredForPerms);
             this.rewardMap.put(rewId, reward);
@@ -180,6 +184,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
             cfg.set(path + "Name", reward.getName());
             cfg.set(path + "Chance", reward.getChance());
+            cfg.set(path + "Rarity", reward.getRarity().getId());
             cfg.set(path + "Broadcast", reward.isBroadcast());
             cfg.set(path + "Win_Limits.Amount", reward.getWinLimitAmount());
             cfg.set(path + "Win_Limits.Cooldown", reward.getWinLimitCooldown());
@@ -430,14 +435,24 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         return this.getRewardsMap().values();
     }
 
-    public void setRewards(@NotNull List<CrateReward> rewards) {
-        this.setRewardsMap(rewards.stream().collect(
-            Collectors.toMap(CrateReward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
+    @NotNull
+    public List<CrateReward> getRewards(@NotNull Rarity rarity) {
+        return this.getRewards().stream().filter(reward -> reward.getRarity() == rarity).toList();
     }
 
     @NotNull
-    public Collection<CrateReward> getRewards(@NotNull Player player) {
+    public List<CrateReward> getRewards(@NotNull Player player) {
         return this.getRewards().stream().filter(reward -> reward.canWin(player)).toList();
+    }
+
+    @NotNull
+    public List<CrateReward> getRewards(@NotNull Player player, @NotNull Rarity rarity) {
+        return this.getRewards().stream().filter(reward -> reward.getRarity() == rarity && reward.canWin(player)).toList();
+    }
+
+    public void setRewards(@NotNull List<CrateReward> rewards) {
+        this.setRewardsMap(rewards.stream().collect(
+            Collectors.toMap(CrateReward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
     }
 
     @Nullable
@@ -459,19 +474,24 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
 
     @NotNull
     public CrateReward rollReward() {
-        Map<CrateReward, Double> map = new HashMap<>();
-        for (CrateReward reward : this.getRewards()) {
-            map.put(reward, reward.getChance());
-        }
-        return Rnd.getByWeight(map);
+        return this.rollReward(null);
     }
 
-    @Nullable
-    public CrateReward rollReward(@NotNull Player player) {
-        Map<CrateReward, Double> map = new HashMap<>();
-        for (CrateReward reward : this.getRewards(player)) {
-            map.put(reward, reward.getChance());
-        }
-        return Rnd.getByWeight(map);
+    @NotNull
+    public CrateReward rollReward(@Nullable Player player) {
+        Collection<CrateReward> allRewards = player == null ? this.getRewards() : this.getRewards(player);
+
+        Map<Rarity, Double> rarities = new HashMap<>();
+        allRewards.stream().map(CrateReward::getRarity).forEach(rarity -> {
+            rarities.putIfAbsent(rarity, rarity.getChance());
+        });
+
+        Rarity rarity = Rnd.getByWeight(rarities);
+
+        Map<CrateReward, Double> rewards = new HashMap<>();
+        allRewards.stream().filter(reward -> reward.getRarity() == rarity).forEach(reward -> {
+            rewards.put(reward, reward.getChance());
+        });
+        return Rnd.getByWeight(rewards);
     }
 }
