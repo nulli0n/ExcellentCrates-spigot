@@ -67,6 +67,16 @@ public class PlaceholderHook {
                     return String.valueOf(keys);
                 }
             }
+            else if (tmp.startsWith("openings_")) {
+                String id = tmp.replace("openings_", "");
+                Crate crate = plugin.getCrateManager().getCrateById(id);
+                if (crate != null) {
+                    CrateUser user = plugin.getUserManager().getUserData(player);
+
+                    int openings = user.getOpeningsAmount(crate);
+                    return String.valueOf(openings);
+                }
+            }
             else if (tmp.startsWith("cooldown_")) {
                 String id = tmp.replace("cooldown_", "");
                 Crate crate = plugin.getCrateManager().getCrateById(id);
