@@ -1,5 +1,7 @@
 Title: '           &nCrate Preview'
 Size: 45
+Inventory_Type: CHEST
+Use_Mini_Message: false
 
 Reward:
   Hide_Drained_Rewards: false

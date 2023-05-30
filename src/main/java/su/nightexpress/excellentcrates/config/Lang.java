@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.config;
 
+import org.bukkit.Sound;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nightexpress.excellentcrates.Placeholders;
@@ -7,105 +8,165 @@ import su.nightexpress.excellentcrates.Placeholders;
 
 public class Lang extends EngineLang {
 
-    public static final LangKey COMMAND_DROP_USAGE = new LangKey("Command.Drop.Usage", "<crateId> <world> <x> <y> <z>");
-    public static final LangKey COMMAND_DROP_DESC  = new LangKey("Command.Drop.Desc", "Drop crate at specified location in the world.");
-    public static final LangKey COMMAND_DROP_DONE  = new LangKey("Command.Drop.Done", "Dropped &6" + Placeholders.CRATE_NAME + "&7 at &6" + Placeholders.Location.X + "&7, &6" + Placeholders.Location.Y + "&7, &6" + Placeholders.Location.Z + "&7 in &6" + Placeholders.Location.WORLD + "&7.");
+    public static final String GRAY      = "#d4d9d8";
+    public static final String DARK_GRAY = "#6c6c62";
 
-    public static final LangKey COMMAND_FORCE_OPEN_DESC   = new LangKey("Command.ForceOpen.Desc", "Force open a crate for a player.");
-    public static final LangKey COMMAND_FORCE_OPEN_USAGE  = new LangKey("Command.ForceOpen.Usage", "<crateId> [player]");
-    public static final LangKey COMMAND_FORCE_OPEN_DONE   = new LangKey("Command.ForceOpen.Done", "Force opened &6" + Placeholders.CRATE_NAME + "&7 for &6" + Placeholders.Player.NAME + "&7.");
-    public static final LangKey COMMAND_FORCE_OPEN_NOTIFY = new LangKey("Command.ForceOpen.Notify", "You have been forced to open &6" + Placeholders.CRATE_NAME + "&7.");
+    public static final String LIME  = "#b3ff5d";
+    public static final String GREEN = "#aefd5e";
 
-    public static final LangKey COMMAND_GIVE_USAGE  = new LangKey("Command.Give.Usage", "<player | *> <crateId> [amount]");
-    public static final LangKey COMMAND_GIVE_DESC   = new LangKey("Command.Give.Desc", "Gives crate(s) to a player.");
-    public static final LangKey COMMAND_GIVE_DONE   = new LangKey("Command.Give.Done", "Given &6x" + Placeholders.GENERIC_AMOUNT + " &7of &6" + Placeholders.CRATE_NAME + " &7crate(s) to &6" + Placeholders.Player.NAME + "&7.");
-    public static final LangKey COMMAND_GIVE_NOTIFY = new LangKey("Command.Give.Notify", "You recieved &6x" + Placeholders.GENERIC_AMOUNT + " &7of &6" + Placeholders.CRATE_NAME + "&7!");
+    public static final String YELLOW       = "#fdf35e";
+    public static final String LIGHT_YELLOW = "#ffeea2";
 
-    public static final LangKey COMMAND_KEY_DESC         = new LangKey("Command.Key.Desc", "Manage or view player's crate keys.");
-    public static final LangKey COMMAND_KEY_ERROR_PLAYER = new LangKey("Command.Key.Error.Player", "&cCould not proccess operation for offline/invalid player &e" + Placeholders.Player.NAME + "&c!");
+    public static final String ORANGE = "#fdba5e";
+    public static final String RED    = "#fd5e5e";
 
-    public static final LangKey COMMAND_KEY_GIVE_USAGE  = new LangKey("Command.Key.Give.Usage", "<player | *> <keyId> <amount>");
-    public static final LangKey COMMAND_KEY_GIVE_DESC   = new LangKey("Command.Key.Give.Desc", "Give crate key(s) to a player.");
-    public static final LangKey COMMAND_KEY_GIVE_DONE   = new LangKey("Command.Key.Give.Done", "Given &ax" + Placeholders.GENERIC_AMOUNT + " &7of &a" + Placeholders.KEY_NAME + " &7key(s) to &a" + Placeholders.Player.NAME + "&7.");
-    public static final LangKey COMMAND_KEY_GIVE_NOTIFY = new LangKey("Command.Key.Give.Notify", "You recieved &ax" + Placeholders.GENERIC_AMOUNT + " &7of &a" + Placeholders.KEY_NAME + "&7!");
+    public static final LangKey COMMAND_EDITOR_DESC  = LangKey.of("Command.Editor.Desc", "Open crates & keys editor.");
 
-    public static final LangKey COMMAND_KEY_TAKE_USAGE  = new LangKey("Command.Key.Take.Usage", "<player | *> <keyId> <amount>");
-    public static final LangKey COMMAND_KEY_TAKE_DESC   = new LangKey("Command.Key.Take.Desc", "Take crate key(s) from a player.");
-    public static final LangKey COMMAND_KEY_TAKE_DONE   = new LangKey("Command.Key.Take.Done", "Taken &cx" + Placeholders.GENERIC_AMOUNT + " &c" + Placeholders.KEY_NAME + " &7key(s) from &c" + Placeholders.Player.NAME);
-    public static final LangKey COMMAND_KEY_TAKE_NOTIFY = new LangKey("Command.Key.Take.Notify", "You lost &cx" + Placeholders.GENERIC_AMOUNT + " &c" + Placeholders.KEY_NAME + "&7!");
-    //public static final LangKey Command_Key_Take_Error  = new LangKey(this, "&cCould not take keys: &ePlayer does noet exist or do not have such amount of keys.");
+    public static final LangKey COMMAND_DROP_USAGE = LangKey.of("Command.Drop.Usage", "<crateId> <world> <x> <y> <z>");
+    public static final LangKey COMMAND_DROP_DESC  = LangKey.of("Command.Drop.Desc", "Drop crate at specified location in the world.");
+    public static final LangKey COMMAND_DROP_DONE  = LangKey.of("Command.Drop.Done", GRAY + "Dropped " + YELLOW + Placeholders.CRATE_NAME + GRAY + " at " + YELLOW + Placeholders.Location.X + ", " + Placeholders.Location.Y + ", " + Placeholders.Location.Z + GRAY + " in " + YELLOW + Placeholders.Location.WORLD + GRAY + ".");
 
-    public static final LangKey COMMAND_KEY_SET_USAGE  = new LangKey("Command.Key.Set.Usage", "<player | *> <keyId> <amount>");
-    public static final LangKey COMMAND_KEY_SET_DESC   = new LangKey("Command.Key.Set.Desc", "Set crate key(s) amount for a player.");
-    public static final LangKey COMMAND_KEY_SET_DONE   = new LangKey("Command.Key.Set.Done", "Set &ex" + Placeholders.GENERIC_AMOUNT + " &7of &e" + Placeholders.KEY_NAME + " &7key(s) for &e" + Placeholders.Player.NAME + "&7.");
-    public static final LangKey COMMAND_KEY_SET_NOTIFY = new LangKey("Command.Key.Set.Notify", "Your &e" + Placeholders.KEY_NAME + "&7 amount has been changed to &ex" + Placeholders.GENERIC_AMOUNT + "&7!");
+    public static final LangKey COMMAND_OPEN_DESC   = LangKey.of("Command.Open.Desc", "Makes [player] to [force] open a crate.");
+    public static final LangKey COMMAND_OPEN_USAGE  = LangKey.of("Command.Open.Usage", "<crate> [player] [-f] [-s]");
+    public static final LangKey COMMAND_OPEN_DONE   = LangKey.of("Command.Open.Done", GRAY + "Forced " + YELLOW + Placeholders.Player.NAME + GRAY + " to open " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_OPEN_NOTIFY = LangKey.of("Command.Open.Notify", GRAY + "You have been forced to open " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
-    public static final LangKey COMMAND_KEY_SHOW_DESC        = new LangKey("Command.Key.Show.Desc", "Show amount of your or other player keys.");
-    public static final LangKey COMMAND_KEY_SHOW_USAGE       = new LangKey("Command.Key.Show.Usage", "[player]");
-    public static final LangKey COMMAND_KEY_SHOW_FORMAT_LIST = new LangKey("Command.Key.Show.Format.List", """
+    public static final LangKey COMMAND_GIVE_USAGE  = LangKey.of("Command.Give.Usage", "<player> <crate> [amount] [-s]");
+    public static final LangKey COMMAND_GIVE_DESC   = LangKey.of("Command.Give.Desc", "Gives crate to a player.");
+    public static final LangKey COMMAND_GIVE_DONE   = LangKey.of("Command.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY +  " of " + YELLOW + Placeholders.CRATE_NAME + GRAY + " crate(s) to " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_GIVE_NOTIFY = LangKey.of("Command.Give.Notify", GRAY + "You recieved " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+
+    public static final LangKey COMMAND_KEY_DESC         = LangKey.of("Command.Key.Desc", "Manage player's keys.");
+    public static final LangKey COMMAND_KEY_USAGE         = LangKey.of("Command.Key.Usage", "[help]");
+
+    public static final LangKey COMMAND_KEY_GIVE_USAGE  = LangKey.of("Command.Key.Give.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_GIVE_DESC   = LangKey.of("Command.Key.Give.Desc", "Give key to a player.");
+    public static final LangKey COMMAND_KEY_GIVE_DONE   = LangKey.of("Command.Key.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) to " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_GIVE_NOTIFY = LangKey.of("Command.Key.Give.Notify", GRAY + "You recieved " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + "!");
+
+    public static final LangKey COMMAND_KEY_GIVE_ALL_USAGE  = LangKey.of("Command.Key.GiveAll.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_GIVE_ALL_DESC   = LangKey.of("Command.Key.GiveAll.Desc", "Give key to all online players.");
+    public static final LangKey COMMAND_KEY_GIVE_ALL_DONE   = LangKey.of("Command.Key.GiveAll.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) to " + YELLOW + "All Players" + GRAY + ".");
+
+    public static final LangKey COMMAND_KEY_TAKE_USAGE  = LangKey.of("Command.Key.Take.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_TAKE_DESC   = LangKey.of("Command.Key.Take.Desc", "Take key from a player.");
+    public static final LangKey COMMAND_KEY_TAKE_DONE   = LangKey.of("Command.Key.Take.Done", GRAY + "Taken " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) from " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_TAKE_NOTIFY = LangKey.of("Command.Key.Take.Notify", GRAY + "You lost " + RED + "x" + Placeholders.GENERIC_AMOUNT + " " + Placeholders.KEY_NAME + GRAY + ".");
+
+    public static final LangKey COMMAND_KEY_SET_USAGE  = LangKey.of("Command.Key.Set.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_SET_DESC   = LangKey.of("Command.Key.Set.Desc", "Set keys amount for a player.");
+    public static final LangKey COMMAND_KEY_SET_DONE   = LangKey.of("Command.Key.Set.Done", GRAY + "Set " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) for " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_SET_NOTIFY = LangKey.of("Command.Key.Set.Notify", GRAY + "Your " + YELLOW + Placeholders.KEY_NAME + GRAY + "'s amount has been changed to " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + ".");
+
+    public static final LangKey COMMAND_KEY_SHOW_DESC        = LangKey.of("Command.Key.Show.Desc", "Show amount of your or other player keys.");
+    public static final LangKey COMMAND_KEY_SHOW_USAGE       = LangKey.of("Command.Key.Show.Usage", "[player]");
+    public static final LangKey COMMAND_KEY_SHOW_FORMAT_LIST = LangKey.of("Command.Key.Show.Format.List", """
         <!prefix:"false"!>
         &6&m              &6&l[ &a%player_name% &e&lCrate Keys &6&l]&6&m              &6
         &7
         &6▸ &e%key_name%: &6%amount%
         """);
 
-    public static final LangKey COMMAND_PREVIEW_DESC        = new LangKey("Command.Preview.Desc", "Open crate preview.");
-    public static final LangKey COMMAND_PREVIEW_USAGE       = new LangKey("Command.Preview.Usage", "<crateId> [player]");
-    public static final LangKey COMMAND_PREVIEW_DONE_OTHERS = new LangKey("Command.Preview.Done.Others", "Opened &6" + Placeholders.CRATE_NAME + "&7 preview for &6" + Placeholders.Player.DISPLAY_NAME + "&7.");
+    public static final LangKey COMMAND_PREVIEW_DESC        = LangKey.of("Command.Preview.Desc", "Open crate preview.");
+    public static final LangKey COMMAND_PREVIEW_USAGE       = LangKey.of("Command.Preview.Usage", "<crate> [player]");
+    public static final LangKey COMMAND_PREVIEW_DONE_OTHERS = LangKey.of("Command.Preview.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.CRATE_NAME + GRAY + " preview for " + YELLOW + Placeholders.Player.DISPLAY_NAME + GRAY + ".");
 
-    public static final LangKey COMMAND_RESET_LIMIT_DESC        = new LangKey("Command.ResetLimit.Desc", "Reset reward win limit for specified crate and reward.");
-    public static final LangKey COMMAND_RESET_LIMIT_USAGE       = new LangKey("Command.ResetLimit.Usage", "<player> <crateId> [rewardId]");
-    public static final LangKey COMMAND_RESET_LIMIT_DONE_CRATE  = new LangKey("Command.ResetLimit.Done.Crate", "Reset &6" + Placeholders.Player.NAME + " &7win limit for all rewards of &6" + Placeholders.CRATE_NAME + "&7.");
-    public static final LangKey COMMAND_RESET_LIMIT_DONE_REWARD = new LangKey("Command.ResetLimit.Done.Reward", "Reset &6" + Placeholders.Player.NAME + " &7win limit for &6" + Placeholders.REWARD_NAME + " &7reward of &6" + Placeholders.CRATE_NAME + "&7.");
+    public static final LangKey COMMAND_RESET_LIMIT_DESC        = LangKey.of("Command.ResetLimit.Desc", "Reset reward win limit for specified crate and reward.");
+    public static final LangKey COMMAND_RESET_LIMIT_USAGE       = LangKey.of("Command.ResetLimit.Usage", "<player> <crate> [reward]");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_CRATE  = LangKey.of("Command.ResetLimit.Done.Crate", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + " win limit for all rewards of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_REWARD = LangKey.of("Command.ResetLimit.Done.Reward", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + " win limit for " + YELLOW + Placeholders.REWARD_NAME + GRAY + " reward of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
-    public static final LangKey COMMAND_RESET_COOLDOWN_DESC  = new LangKey("Command.ResetCooldown.Desc", "Reset player cooldown for specified crate.");
-    public static final LangKey COMMAND_RESET_COOLDOWN_USAGE = new LangKey("Command.ResetCooldown.Usage", "<player> <crateId>");
-    public static final LangKey COMMAND_RESET_COOLDOWN_DONE  = new LangKey("Command.ResetCooldown.Done", "Reset &6" + Placeholders.Player.NAME + " &7cooldown for &6" + Placeholders.CRATE_NAME + "&7.");
+    public static final LangKey COMMAND_RESET_COOLDOWN_DESC  = LangKey.of("Command.ResetCooldown.Desc", "Reset player's crate open cooldown.");
+    public static final LangKey COMMAND_RESET_COOLDOWN_USAGE = LangKey.of("Command.ResetCooldown.Usage", "<player> <crate>");
+    public static final LangKey COMMAND_RESET_COOLDOWN_DONE  = LangKey.of("Command.ResetCooldown.Done", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + "'s open cooldown for " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
-    public static final LangKey COMMAND_MENU_USAGE       = new LangKey("Command.Menu.Usage", "[menuId]");
-    public static final LangKey COMMAND_MENU_DESC        = new LangKey("Command.Menu.Desc", "Open crate menu.");
-    public static final LangKey COMMAND_MENU_DONE_OTHERS = new LangKey("Command.Menu.Done.Others", "Opened &6" + Placeholders.MENU_ID + "&7 crate menu for &6" + Placeholders.Player.DISPLAY_NAME + "&7.");
+    public static final LangKey COMMAND_MENU_USAGE       = LangKey.of("Command.Menu.Usage", "[menu]");
+    public static final LangKey COMMAND_MENU_DESC        = LangKey.of("Command.Menu.Desc", "Open crate menu.");
+    public static final LangKey COMMAND_MENU_DONE_OTHERS = LangKey.of("Command.Menu.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.MENU_ID + GRAY + " crate menu for " + YELLOW + Placeholders.Player.DISPLAY_NAME + GRAY + ".");
 
-    public static final LangKey CRATE_ERROR_INVALID                 = new LangKey("Crate.Error.Invalid", "&cInvalid crate!");
-    public static final LangKey CRATE_OPEN_ERROR_INVENTORY_SPACE    = new LangKey("Crate.Open.Error.InventorySpace", "&cPlease clean up your inventory to open the crate!");
-    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = new LangKey("Crate.Open.Error.Cooldown.Temporary", "&cYou have to wait &6" + Placeholders.GENERIC_TIME + " &7before you can open &6" + Placeholders.CRATE_NAME + "&7 again!");
-    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED = new LangKey("Crate.Open.Error.Cooldown.OneTimed", "&cYou already have opened this crate, you can not open it more!");
-    public static final LangKey CRATE_OPEN_ERROR_NO_KEY             = new LangKey("Crate.Open.Error.NoKey", "&cYou don't have a key for this crate!");
-    public static final LangKey CRATE_OPEN_ERROR_NO_HOLD_KEY             = new LangKey("Crate.Open.Error.NoHoldKey", "&cYou must hold a key to open this crate!");
-    public static final LangKey CRATE_OPEN_ERROR_NO_REWARDS         = new LangKey("Crate.Open.Error.NoRewards", "&cThis crate does not contains any rewards for you!");
-    public static final LangKey CRATE_OPEN_ERROR_COST_MONEY         = new LangKey("Crate.Open.Error.Cost.Money", "&cYou don't have enough money to open this crate!");
-    public static final LangKey CRATE_OPEN_ERROR_COST_EXP           = new LangKey("Crate.Open.Error.Cost.Exp", "&cYou don't have enough exp levels to open this crate!");
-    public static final LangKey CRATE_OPEN_REWARD_INFO              = new LangKey("Crate.Open.Reward.Info", "You got the &6" + Placeholders.REWARD_NAME + " &7reward from the &6" + Placeholders.CRATE_NAME + "&7!");
-    public static final LangKey CRATE_OPEN_REWARD_BROADCAST         = new LangKey("Crate.Open.Reward.Broadcast", "&7Player &a" + Placeholders.Player.DISPLAY_NAME + " &7just got the &6" + Placeholders.REWARD_NAME + " &7reward from the &6" + Placeholders.CRATE_NAME + "&7!");
-    public static final LangKey CRATE_KEY_ERROR_INVALID             = new LangKey("Crate.Key.Error.Invalid", "&cInvalid key!");
+    public static final LangKey CRATE_ERROR_INVALID = LangKey.of("Crate.Error.Invalid", RED + "Invalid crate!");
+    public static final LangKey CRATE_ERROR_EXISTS  = LangKey.of("Crate.Error.Exists", RED + "Crate with such id is already exists!");
 
-    public static final LangKey MENU_INVALID = new LangKey("Menu.Invalid", "&cMenu does not exist!");
+    public static final LangKey CRATE_OPEN_ERROR_INVENTORY_SPACE = LangKey.of("Crate.Open.Error.InventorySpace",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "Clean up inventory slots to open the crate!");
 
-    public static final LangKey EDITOR_CRATE_ENTER_ID                    = new LangKey("Editor.Crate.Enter.Id", "&7Enter &aunique &7crate &aidentifier&7...");
-    public static final LangKey EDITOR_CRATE_ENTER_DISPLAY_NAME          = new LangKey("Editor.Crate.Enter.DisplayName", "&7Enter crate &adisplay name&7...");
-    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME         = new LangKey("Editor.Crate.Enter.Particle.Name", "&7Enter &aparticle &7name...");
-    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_DATA         = new LangKey("Editor.Crate.Enter.Particle.Data", "&7Enter &aparticle &7data...");
-    public static final LangKey EDITOR_CRATE_ENTER_KEY_ID                = new LangKey("Editor.Crate.Enter.KeyId", "&7Enter &akey &7identifier...");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_LOCATION        = new LangKey("Editor.Crate.Enter.Block.Location", "&7Click a &ablock &7to assign crate...");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT   = new LangKey("Editor.Crate.Enter.Block.Hologram.Text", "&7Enter &atext &7line...");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET = new LangKey("Editor.Crate.Enter.Block.Hologram.Offset", "&7Enter &aoffset &7value...");
-    public static final LangKey EDITOR_CRATE_ENTER_COOLDOWN              = new LangKey("Editor.Crate.Enter.Cooldown", "&7Enter &acooldown &7in seconds...");
-    public static final LangKey EDITOR_CRATE_ENTER_CITIZENS              = new LangKey("Editor.Crate.Enter.Citizens", "&7Enter &aCitizens NPC &7ID...");
-    public static final LangKey EDITOR_CRATE_ENTER_ANIMATION_CONFIG      = new LangKey("Editor.Crate.Enter.AnimationConfig", "&7Enter &aanimation config &7name...");
-    public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG        = new LangKey("Editor.Crate.Enter.PreviewConfig", "&7Enter &apreview config &7name...");
-    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_MONEY       = new LangKey("Editor.Crate.Enter.OpenCost.Money", "&7Enter &amoney &7cost...");
-    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP         = new LangKey("Editor.Crate.Enter.OpenCost.Exp", "&7Enter &aexp levels &7cost...");
-    public static final LangKey EDITOR_CRATE_ERROR_CREATE_EXISTS         = new LangKey("Editor.Crate.Error.Create.Exists", "&cCrate with such id is already exists!");
+    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = LangKey.of("Crate.Open.Error.Cooldown.Temporary",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lCrate on Cooldown!" +
+            "\n" + GRAY + "You can open in " + RED + Placeholders.GENERIC_TIME);
 
-    public static final LangKey EDITOR_REWARD_ENTER_ID                 = new LangKey("Editor.Reward.Enter.Id", "&7Enter &aunique &7reward &aidentifier&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME       = new LangKey("Editor.Reward.Enter.DisplayName", "&7Enter reward &adisplay name&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = new LangKey("Editor.Reward.Enter.Chance", "&7Enter win &achance&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_RARITY             = new LangKey("Editor.Reward.Enter.Rarity", "&7Enter &a[Rarity]");
-    public static final LangKey EDITOR_REWARD_ENTER_COMMAND            = new LangKey("Editor.Reward.Enter.Command", "&7Enter a &acommand&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_PERMISSION         = new LangKey("Editor.Reward.Enter.Permissions", "&7Enter a &apermission&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = new LangKey("Editor.Reward.Enter.WinLimit.Amount", "&7Enter win limit &aamount&7...");
-    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN = new LangKey("Editor.Reward.Enter.WinLimit.Cooldown", "&7Enter win limit &acooldown&7...");
-    public static final LangKey EDITOR_REWARD_ERROR_CREATE_EXIST       = new LangKey("Editor.Reward.Error.Create.Exist", "&cReward with such id is already exists!");
+    public static final LangKey CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED = LangKey.of("Crate.Open.Error.Cooldown.OneTimed",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "You already have opened this one-timed crate!");
 
-    public static final LangKey EDITOR_KEY_ERROR_CREATE_EXIST = new LangKey("Editor.Key.Error.Create.Exist", "Key with such id is already exists!");
+    public static final LangKey CRATE_OPEN_ERROR_NO_KEY = LangKey.of("Crate.Open.Error.NoKey",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "You don't have a key for this crate!");
+
+    public static final LangKey CRATE_OPEN_ERROR_NO_HOLD_KEY = LangKey.of("Crate.Open.Error.NoHoldKey",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "You must hold a key to open crates!");
+
+    public static final LangKey CRATE_OPEN_ERROR_NO_REWARDS = LangKey.of("Crate.Open.Error.NoRewards",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "There are no rewards for you! Try later.");
+
+    public static final LangKey CRATE_OPEN_ERROR_COST_MONEY = LangKey.of("Crate.Open.Error.Cost.Money",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "You need $" + RED + Placeholders.CRATE_OPENING_COST_MONEY + GRAY + " to open it!");
+
+    public static final LangKey CRATE_OPEN_ERROR_COST_EXP = LangKey.of("Crate.Open.Error.Cost.Exp",
+        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
+            "\n" + RED + "&lWhoops!" +
+            "\n" + GRAY + "You need " + RED + Placeholders.CRATE_OPENING_COST_EXP + " Levels " + GRAY + " to open it!");
+
+    public static final LangKey CRATE_OPEN_REWARD_INFO = LangKey.of("Crate.Open.Reward.Info",
+        "<! prefix:\"false\" !>" +
+            GRAY + "You won " + GREEN + Placeholders.REWARD_NAME + GRAY + " from the " + GREEN + Placeholders.CRATE_NAME + GRAY + "!");
+
+    public static final LangKey CRATE_OPEN_REWARD_BROADCAST         = LangKey.of("Crate.Open.Reward.Broadcast",
+        "<! prefix:\"false\" sound:\"" + Sound.BLOCK_NOTE_BLOCK_BELL.name() + "\" !>" +
+            "\n" + GRAY +
+            "\n" + GREEN + "&lWOW!" + GRAY + " Player " + GREEN + Placeholders.Player.DISPLAY_NAME + GRAY + " just won " + GREEN + Placeholders.REWARD_NAME + GRAY + " from " + GREEN + Placeholders.CRATE_NAME + GRAY + "!" +
+            "\n" + GRAY +
+            "\n" + GRAY + "Do you wanna too? Purchase keys now: <? open_url:\"http://samplesmp.com/store\" ?>" + GREEN + "[Open Store]</>" +
+            "\n" + GRAY);
+
+    public static final LangKey CRATE_KEY_ERROR_INVALID             = LangKey.of("Crate.Key.Error.Invalid", RED + "Invalid key!");
+    public static final LangKey CRATE_KEY_ERROR_EXISTS              = LangKey.of("Crate.Key.Error.Exists", RED + "Key with such id is already exists!");
+
+    public static final LangKey MENU_INVALID = LangKey.of("Menu.Invalid", RED + "Menu does not exist!");
+
+    public static final LangKey EDITOR_CRATE_ENTER_ID                    = LangKey.of("Editor.Crate.Enter.Id", GRAY + "Enter " + GREEN + "[Crate Identifier]");
+    public static final LangKey EDITOR_CRATE_ENTER_DISPLAY_NAME          = LangKey.of("Editor.Crate.Enter.DisplayName", GRAY + "Enter crate " + GREEN + "[Display Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME         = LangKey.of("Editor.Crate.Enter.Particle.Name", GRAY + "Enter " + GREEN + "[Particle Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_DATA         = LangKey.of("Editor.Crate.Enter.Particle.Data", GRAY + "Enter " + GREEN + "[Particle Options]");
+    public static final LangKey EDITOR_CRATE_ENTER_KEY_ID                = LangKey.of("Editor.Crate.Enter.KeyId", GRAY + "Enter " + GREEN + "[Key Identifier]");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_LOCATION        = LangKey.of("Editor.Crate.Enter.Block.Location", GRAY + "Click a " + GREEN + "[Block] " + GRAY + " to make it crate.");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT   = LangKey.of("Editor.Crate.Enter.Block.Hologram.Text", GRAY + "Enter " + GREEN + "[Text]");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET = LangKey.of("Editor.Crate.Enter.Block.Hologram.Offset", GRAY + "Enter " + GREEN + "[Offset Value]");
+    public static final LangKey EDITOR_CRATE_ENTER_COOLDOWN              = LangKey.of("Editor.Crate.Enter.Cooldown", GRAY + "Enter " + GREEN + "[Seconds Amount]");
+    public static final LangKey EDITOR_CRATE_ENTER_ANIMATION_CONFIG      = LangKey.of("Editor.Crate.Enter.AnimationConfig", GRAY + "Enter " + GREEN + "[Animation Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG        = LangKey.of("Editor.Crate.Enter.PreviewConfig", GRAY + "Enter " + GREEN + "[Preview Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_MONEY       = LangKey.of("Editor.Crate.Enter.OpenCost.Money", GRAY + "Enter " + GREEN + "[Money Amount]");
+    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP         = LangKey.of("Editor.Crate.Enter.OpenCost.Exp", GRAY + "Enter " + GREEN + "[Levels Amount]");
+
+    public static final LangKey EDITOR_REWARD_ENTER_ID                 = LangKey.of("Editor.Reward.Enter.Id", GRAY + "Enter " + GREEN + "[Reward Identifier]");
+    public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME       = LangKey.of("Editor.Reward.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
+    public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = LangKey.of("Editor.Reward.Enter.Chance", GRAY + "Enter " + GREEN + "[Chance]");
+    public static final LangKey EDITOR_REWARD_ENTER_RARITY             = LangKey.of("Editor.Reward.Enter.Rarity", GRAY + "Enter " + GREEN + "[Rarity]");
+    public static final LangKey EDITOR_REWARD_ENTER_COMMAND            = LangKey.of("Editor.Reward.Enter.Command", GRAY + "Enter " + GREEN + "[Command]");
+    public static final LangKey EDITOR_REWARD_ENTER_PERMISSION         = LangKey.of("Editor.Reward.Enter.Permissions", GRAY + "Enter " + GREEN + "[Permission Node]");
+    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = LangKey.of("Editor.Reward.Enter.WinLimit.Amount", GRAY + "Enter " + GREEN + "[Limit Amount]");
+    public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN = LangKey.of("Editor.Reward.Enter.WinLimit.Cooldown", GRAY + "Enter " + GREEN + "[Seconds Amount]");
+    public static final LangKey EDITOR_REWARD_ERROR_CREATE_EXIST       = LangKey.of("Editor.Reward.Error.Create.Exist", RED + "Reward with such id is already exists!");
+
+
 }

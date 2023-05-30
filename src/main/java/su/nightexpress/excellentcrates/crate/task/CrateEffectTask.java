@@ -23,7 +23,7 @@ public class CrateEffectTask extends AbstractTask<ExcellentCrates> {
 
     @Override
     public void action() {
-        Collection<Crate> crates = this.plugin.getCrateManager().getCrateMap();
+        Collection<Crate> crates = this.plugin.getCrateManager().getCrates();
 
         crates.forEach(crate -> {
             if (crate.getBlockEffectModel() == CrateEffectModel.NONE) return;

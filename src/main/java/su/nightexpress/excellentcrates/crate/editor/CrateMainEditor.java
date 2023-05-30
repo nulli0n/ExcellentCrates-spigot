@@ -52,7 +52,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
 
         this.addItem(Material.ITEM_FRAME, EditorLocales.CRATE_ITEM, 4).setClick((viewer, event) -> {
             if (event.isRightClick()) {
-                PlayerUtil.addItem(viewer.getPlayer(), crate.getItem());
+                PlayerUtil.addItem(viewer.getPlayer(), crate.getRawItem());
                 return;
             }
 

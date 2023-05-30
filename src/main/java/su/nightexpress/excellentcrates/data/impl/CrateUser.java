@@ -61,12 +61,16 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     public void setCrateCooldown(@NotNull String id, long endDate) {
-        this.getCrateCooldowns().put(id.toLowerCase(), endDate);
-        this.saveData(this.plugin);
+        if (endDate == 0L) {
+            this.getCrateCooldowns().remove(id.toLowerCase());
+        }
+        else {
+            this.getCrateCooldowns().put(id.toLowerCase(), endDate);
+        }
     }
 
     public boolean isCrateOnCooldown(@NotNull Crate crate) {
-        return this.getCrateCooldown(crate.getId()) != 0;
+        return this.isCrateOnCooldown(crate.getId());
     }
 
     public boolean isCrateOnCooldown(@NotNull String id) {
@@ -123,7 +127,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void setKeys(@NotNull String id, int amount) {
         this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
-        this.saveData(this.plugin);
+        //this.saveData(this.plugin);
     }
 
     public int getKeys(@NotNull String id) {
@@ -132,7 +136,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void addKeysOnHold(@NotNull String id, int amount) {
         this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
-        this.saveData(this.plugin);
+        //this.saveData(this.plugin);
     }
 
     public int getKeysOnHold(@NotNull String id) {
@@ -141,7 +145,6 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void cleanKeysOnHold() {
         this.getKeysOnHold().clear();
-        this.saveData(this.plugin);
     }
 
     @NotNull
@@ -167,17 +170,14 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardData rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
-        this.saveData(this.plugin);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId) {
         this.getRewardWinLimits().remove(crateId.toLowerCase());
-        this.saveData(this.plugin);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
         this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
             .remove(rewardId.toLowerCase());
-        this.saveData(this.plugin);
     }
 }

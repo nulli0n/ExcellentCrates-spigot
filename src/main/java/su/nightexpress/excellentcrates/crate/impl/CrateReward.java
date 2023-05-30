@@ -314,6 +314,7 @@ public class CrateReward implements ICleanable, Placeholder {
                 }
             }
             user.setRewardWinLimit(this, winLimit);
+            user.saveData(this.plugin());
         }
     }
 }

@@ -39,7 +39,7 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
             Player player = viewer2.getPlayer();
             this.startEdit(player, plugin.getMessage(Lang.EDITOR_CRATE_ENTER_ID), chat -> {
                 if (!this.object.create(StringUtil.lowerCaseUnderscore(chat.getMessage()))) {
-                    EditorManager.error(player, plugin.getMessage(Lang.EDITOR_CRATE_ERROR_CREATE_EXISTS).getLocalized());
+                    EditorManager.error(player, plugin.getMessage(Lang.CRATE_ERROR_EXISTS).getLocalized());
                     return false;
                 }
                 return true;
@@ -61,7 +61,7 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
     @Override
     @NotNull
     public List<Crate> getObjects(@NotNull Player player) {
-        return new ArrayList<>(this.object.getCrateMap());
+        return new ArrayList<>(this.object.getCrates());
     }
 
     @Override

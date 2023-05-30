@@ -4,6 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.api.command.CommandFlag;
+import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
@@ -12,29 +14,16 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 import java.util.List;
-import java.util.Map;
 
-public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
+public class OpenCommand extends AbstractCommand<ExcellentCrates> {
 
-    public ForceOpenCommand(@NotNull ExcellentCrates plugin) {
-        super(plugin, new String[]{"forceopen"}, Perms.COMMAND_FORCEOPEN);
-    }
+    private static final CommandFlag<Boolean> FORCE = CommandFlag.booleanFlag("f");
 
-    @Override
-    @NotNull
-    public String getUsage() {
-        return plugin.getMessage(Lang.COMMAND_FORCE_OPEN_USAGE).getLocalized();
-    }
-
-    @Override
-    @NotNull
-    public String getDescription() {
-        return plugin.getMessage(Lang.COMMAND_FORCE_OPEN_DESC).getLocalized();
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return false;
+    public OpenCommand(@NotNull ExcellentCrates plugin) {
+        super(plugin, new String[]{"open"}, Perms.COMMAND_OPEN);
+        this.setUsage(plugin.getMessage(Lang.COMMAND_OPEN_USAGE));
+        this.setDescription(plugin.getMessage(Lang.COMMAND_OPEN_DESC));
+        this.addFlag(CommandFlags.SILENT, FORCE);
     }
 
     @Override
@@ -50,40 +39,40 @@ public class ForceOpenCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-        if (args.length < 2) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
+        if (result.length() < 2) {
             this.printUsage(sender);
             return;
         }
-        if (args.length == 2 && !(sender instanceof Player)) {
+        if (result.length() == 2 && !(sender instanceof Player)) {
             this.errorSender(sender);
             return;
         }
 
-        Crate crate = plugin.getCrateManager().getCrateById(args[1]);
+        Crate crate = plugin.getCrateManager().getCrateById(result.getArg(1));
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
-        String pName = args.length >= 3 ? args[2] : sender.getName();
+        String pName = result.length() >= 3 ? result.getArg(2) : sender.getName();
         Player player = plugin.getServer().getPlayer(pName);
         if (player == null) {
             this.errorPlayer(sender);
             return;
         }
 
-        plugin.getMessage(Lang.COMMAND_FORCE_OPEN_NOTIFY)
-            .replace(Placeholders.CRATE_NAME, crate.getName()).send(player);
-
-        if (!sender.equals(player)) {
-            plugin.getMessage(Lang.COMMAND_FORCE_OPEN_DONE)
+        if (!result.hasFlag(CommandFlags.SILENT)) {
+            plugin.getMessage(Lang.COMMAND_OPEN_NOTIFY).replace(crate.replacePlaceholders()).send(player);
+        }
+        if (sender != player) {
+            plugin.getMessage(Lang.COMMAND_OPEN_DONE)
                 .replace(Placeholders.Player.replacer(player))
-                .replace(Placeholders.CRATE_NAME, crate.getName())
-                .replace(Placeholders.CRATE_ID, crate.getId())
+                .replace(crate.replacePlaceholders())
                 .send(sender);
         }
 
-        plugin.getCrateManager().openCrate(player, crate, true, null, null);
+        boolean force = sender.hasPermission(Perms.COMMAND) && result.hasFlag(FORCE);
+        plugin.getCrateManager().openCrate(player, crate, force, null, null);
     }
 }

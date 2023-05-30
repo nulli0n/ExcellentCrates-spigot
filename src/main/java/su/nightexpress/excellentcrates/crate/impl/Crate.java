@@ -22,6 +22,7 @@ import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.editor.CrateMainEditor;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 
@@ -74,7 +75,12 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             .add(Placeholders.CRATE_PREVIEW_CONFIG, () -> String.valueOf(this.getPreviewConfig()))
             .add(Placeholders.CRATE_PERMISSION, this::getPermission)
             .add(Placeholders.CRATE_PERMISSION_REQUIRED, () -> LangManager.getBoolean(this.isPermissionRequired()))
-            .add(Placeholders.CRATE_OPENING_COOLDOWN, () -> TimeUtil.formatTime(this.getOpenCooldown() * 1000L))
+            .add(Placeholders.CRATE_OPENING_COOLDOWN, () -> {
+                if (this.getOpenCooldown() == 0L) return "-";
+                if (this.getOpenCooldown() < 0L) return LangManager.getPlain(Lang.OTHER_ONE_TIMED);
+
+                return TimeUtil.formatTime(this.getOpenCooldown() * 1000L);
+            })
             .add(Placeholders.CRATE_OPENING_COST_EXP, () -> NumberUtil.format(this.getOpenCost(OpenCostType.EXP)))
             .add(Placeholders.CRATE_OPENING_COST_MONEY, () -> NumberUtil.format(this.getOpenCost(OpenCostType.MONEY)))
             .add(Placeholders.CRATE_KEY_IDS, () -> String.join(", ", this.getKeyIds()))
@@ -112,7 +118,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         this.setKeyIds(cfg.getStringSet("Key.Ids"));
         this.setItem(cfg.getItem("Item"));
 
-        this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
+        //this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
         this.setBlockPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
         this.setBlockHologramEnabled(cfg.getBoolean("Block.Hologram.Enabled"));
         this.setBlockHologramOffsetY(cfg.getDouble("Block.Hologram.Offset.Y", 1.5D));
@@ -154,6 +160,10 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         return true;
     }
 
+    public void loadLocations() {
+        this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
+    }
+
     @Override
     public void onSave() {
         cfg.set("Name", this.getName());
@@ -167,7 +177,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         }
 
         cfg.set("Key.Ids", this.getKeyIds());
-        cfg.setItem("Item", this.getItem());
+        cfg.setItem("Item", this.getRawItem());
 
         cfg.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
         cfg.set("Block.Pushback.Enabled", this.isBlockPushbackEnabled());
@@ -175,6 +185,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         cfg.set("Block.Hologram.Offset.Y", this.getBlockHologramOffsetY());
         cfg.set("Block.Hologram.Text", this.getBlockHologramText());
         cfg.set("Block.Effect.Model", this.getBlockEffectModel().name());
+        cfg.remove("Block.Effect.Particle");
         SimpleParticle.write(this.getBlockEffectParticle(), cfg, "Block.Effect.Particle");
 
         cfg.set("Rewards.List", null);
@@ -321,13 +332,19 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
     }
 
     @NotNull
-    public ItemStack getItem() {
+    public ItemStack getRawItem() {
         return new ItemStack(this.item);
+    }
+
+    @NotNull
+    public ItemStack getItem() {
+        ItemStack item = this.getRawItem();
+        PDCUtil.set(item, Keys.CRATE_ID, this.getId());
+        return item;
     }
 
     public void setItem(@NotNull ItemStack item) {
         this.item = new ItemStack(item);
-        PDCUtil.set(this.item, Keys.CRATE_ID, this.getId());
     }
 
     public boolean isBlockPushbackEnabled() {

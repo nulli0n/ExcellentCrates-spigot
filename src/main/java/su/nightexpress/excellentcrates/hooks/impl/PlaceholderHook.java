@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.TimeUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
@@ -19,13 +20,16 @@ public class PlaceholderHook {
     private static CratesExpansion expansion;
 
     public static void setup() {
-        expansion = new CratesExpansion();
-        expansion.register();
+        if (expansion == null) {
+            expansion = new CratesExpansion();
+            expansion.register();
+        }
     }
 
     public static void shutdown() {
         if (expansion != null) {
             expansion.unregister();
+            expansion = null;
         }
     }
 
@@ -55,37 +59,45 @@ public class PlaceholderHook {
         }
 
         @Override
-        public String onPlaceholderRequest(@Nullable Player player, @NotNull String tmp) {
+        public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
             if (player == null) return null;
 
             ExcellentCrates plugin = ExcellentCratesAPI.PLUGIN;
-            if (tmp.startsWith("keys_")) {
-                String id = tmp.replace("keys_", "");
+            if (params.startsWith("keys_")) {
+                String id = params.substring("keys_".length());
                 Crate crate = plugin.getCrateManager().getCrateById(id);
-                if (crate != null) {
-                    int keys = plugin.getKeyManager().getKeysAmount(player, crate);
-                    return String.valueOf(keys);
-                }
+                if (crate == null) return null;
+
+                int keys = plugin.getKeyManager().getKeysAmount(player, crate);
+                return NumberUtil.format(keys);
             }
-            else if (tmp.startsWith("cooldown_")) {
-                String id = tmp.replace("cooldown_", "");
+            if (params.startsWith("openings_")) {
+                String id = params.substring("openings_".length());
                 Crate crate = plugin.getCrateManager().getCrateById(id);
-                if (crate != null) {
-                    CrateUser user = plugin.getUserManager().getUserData(player);
+                if (crate == null) return null;
 
-                    long left = user.getCrateCooldown(crate);
-                    if (left == 0) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
+                CrateUser user = plugin.getUserManager().getUserData(player);
+                return NumberUtil.format(user.getOpeningsAmount(crate));
+            }
+            else if (params.startsWith("cooldown_")) {
+                String id = params.substring("cooldown_".length());
+                Crate crate = plugin.getCrateManager().getCrateById(id);
+                if (crate == null) return null;
 
-                    LocalDateTime time = TimeUtil.getLocalDateTimeOf(left);
-                    LocalDateTime now = LocalDateTime.now();
-                    Duration duration = Duration.between(now, time);
+                CrateUser user = plugin.getUserManager().getUserData(player);
 
-                    return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
-                        .replace("hh", String.valueOf(duration.toHours()))
-                        .replace("mm", String.valueOf(duration.toMinutesPart()))
-                        .replace("ss", String.valueOf(duration.toSecondsPart()))
-                        ;
-                }
+                long left = user.getCrateCooldown(crate);
+                if (left == 0) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
+
+                LocalDateTime time = TimeUtil.getLocalDateTimeOf(left);
+                LocalDateTime now = LocalDateTime.now();
+                Duration duration = Duration.between(now, time);
+
+                return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
+                    .replace("hh", String.valueOf(duration.toHours()))
+                    .replace("mm", String.valueOf(duration.toMinutesPart()))
+                    .replace("ss", String.valueOf(duration.toSecondsPart()))
+                    ;
             }
 
             return null;

@@ -38,7 +38,7 @@ public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> imple
         this.addCreation(EditorLocales.KEY_CREATE, 41).setClick((viewer, event) -> {
             this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_ID), chat -> {
                 if (!keyManager.create(StringUtil.lowerCaseUnderscore(chat.getMessage()))) {
-                    EditorManager.error(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_KEY_ERROR_CREATE_EXIST).getLocalized());
+                    EditorManager.error(viewer.getPlayer(), plugin.getMessage(Lang.CRATE_KEY_ERROR_EXISTS).getLocalized());
                     return false;
                 }
                 return true;

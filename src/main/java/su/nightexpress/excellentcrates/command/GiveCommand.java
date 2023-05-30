@@ -4,49 +4,31 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class GiveCommand extends AbstractCommand<ExcellentCrates> {
 
     public GiveCommand(@NotNull ExcellentCrates plugin) {
         super(plugin, new String[]{"give"}, Perms.COMMAND_GIVE);
-    }
-
-    @Override
-    @NotNull
-    public String getUsage() {
-        return plugin.getMessage(Lang.COMMAND_GIVE_USAGE).getLocalized();
-    }
-
-    @Override
-    @NotNull
-    public String getDescription() {
-        return plugin.getMessage(Lang.COMMAND_GIVE_DESC).getLocalized();
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return false;
+        this.setDescription(plugin.getMessage(Lang.COMMAND_GIVE_DESC));
+        this.setUsage(plugin.getMessage(Lang.COMMAND_GIVE_USAGE));
+        this.addFlag(CommandFlags.SILENT);
     }
 
     @Override
     @NotNull
     public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 1) {
-            List<String> list = new ArrayList<>(CollectionsUtil.playerNames(player));
-            list.add(0, Placeholders.WILDCARD);
-            return list;
+            return CollectionsUtil.playerNames(player);
         }
         if (arg == 2) {
             return plugin.getCrateManager().getCrateIds(false);
@@ -58,45 +40,40 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-        if (args.length < 3) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
+        if (result.length() < 3) {
             this.printUsage(sender);
             return;
         }
 
-        String pName = args[1];
-        String crateId = args[2];
-        int amount = args.length >= 4 ? StringUtil.getInteger(args[3], 1) : 1;
+        int amount = result.length() >= 4 ? result.getInt(3, 1) : 1;
 
-        Crate crate = plugin.getCrateManager().getCrateById(crateId);
+        Crate crate = plugin.getCrateManager().getCrateById(result.getArg(2));
         if (crate == null) {
             plugin.getMessage(Lang.CRATE_ERROR_INVALID).send(sender);
             return;
         }
 
-        if (pName.equalsIgnoreCase(Placeholders.WILDCARD)) {
-            for (Player player : plugin.getServer().getOnlinePlayers()) {
-                plugin.getCrateManager().giveCrate(player, crate, amount);
-            }
-        }
-        else {
-            Player player = plugin.getServer().getPlayer(pName);
-            if (player == null) {
-                this.errorPlayer(sender);
-                return;
-            }
-            plugin.getCrateManager().giveCrate(player, crate, amount);
-            plugin.getMessage(Lang.COMMAND_GIVE_NOTIFY)
-                .replace(Placeholders.GENERIC_AMOUNT, amount)
-                .replace(Placeholders.CRATE_NAME, crate.getName())
-                .send(player);
+        Player player = plugin.getServer().getPlayer(result.getArg(1));
+        if (player == null) {
+            this.errorPlayer(sender);
+            return;
         }
 
-        plugin.getMessage(Lang.COMMAND_GIVE_DONE)
-            .replace(Placeholders.Player.NAME, pName)
-            .replace(Placeholders.GENERIC_AMOUNT, amount)
-            .replace(Placeholders.CRATE_NAME, crate.getName())
-            .replace(Placeholders.CRATE_ID, crate.getId())
-            .send(sender);
+        plugin.getCrateManager().giveCrate(player, crate, amount);
+
+        if (!result.hasFlag(CommandFlags.SILENT)) {
+            plugin.getMessage(Lang.COMMAND_GIVE_NOTIFY)
+                .replace(Placeholders.GENERIC_AMOUNT, amount)
+                .replace(crate.replacePlaceholders())
+                .send(player);
+        }
+        if (sender != player) {
+            plugin.getMessage(Lang.COMMAND_GIVE_DONE)
+                .replace(Placeholders.Player.replacer(player))
+                .replace(Placeholders.GENERIC_AMOUNT, amount)
+                .replace(crate.replacePlaceholders())
+                .send(sender);
+        }
     }
 }
