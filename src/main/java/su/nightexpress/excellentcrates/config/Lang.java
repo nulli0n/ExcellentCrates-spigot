@@ -1,24 +1,13 @@
 package su.nightexpress.excellentcrates.config;
 
 import org.bukkit.Sound;
+import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nightexpress.excellentcrates.Placeholders;
 
 
-public class Lang extends EngineLang {
-
-    public static final String GRAY      = "#d4d9d8";
-    public static final String DARK_GRAY = "#6c6c62";
-
-    public static final String LIME  = "#b3ff5d";
-    public static final String GREEN = "#aefd5e";
-
-    public static final String YELLOW       = "#fdf35e";
-    public static final String LIGHT_YELLOW = "#ffeea2";
-
-    public static final String ORANGE = "#fdba5e";
-    public static final String RED    = "#fd5e5e";
+public class Lang extends EngineLang implements LangColors {
 
     public static final LangKey COMMAND_EDITOR_DESC  = LangKey.of("Command.Editor.Desc", "Open crates & keys editor.");
 
@@ -144,8 +133,9 @@ public class Lang extends EngineLang {
 
     public static final LangKey MENU_INVALID = LangKey.of("Menu.Invalid", RED + "Menu does not exist!");
 
+    public static final LangKey EDITOR_ENTER_DISPLAY_NAME  = LangKey.of("Editor.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
+
     public static final LangKey EDITOR_CRATE_ENTER_ID                    = LangKey.of("Editor.Crate.Enter.Id", GRAY + "Enter " + GREEN + "[Crate Identifier]");
-    public static final LangKey EDITOR_CRATE_ENTER_DISPLAY_NAME          = LangKey.of("Editor.Crate.Enter.DisplayName", GRAY + "Enter crate " + GREEN + "[Display Name]");
     public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME         = LangKey.of("Editor.Crate.Enter.Particle.Name", GRAY + "Enter " + GREEN + "[Particle Name]");
     public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_DATA         = LangKey.of("Editor.Crate.Enter.Particle.Data", GRAY + "Enter " + GREEN + "[Particle Options]");
     public static final LangKey EDITOR_CRATE_ENTER_KEY_ID                = LangKey.of("Editor.Crate.Enter.KeyId", GRAY + "Enter " + GREEN + "[Key Identifier]");
@@ -159,7 +149,6 @@ public class Lang extends EngineLang {
     public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP         = LangKey.of("Editor.Crate.Enter.OpenCost.Exp", GRAY + "Enter " + GREEN + "[Levels Amount]");
 
     public static final LangKey EDITOR_REWARD_ENTER_ID                 = LangKey.of("Editor.Reward.Enter.Id", GRAY + "Enter " + GREEN + "[Reward Identifier]");
-    public static final LangKey EDITOR_REWARD_ENTER_DISPLAY_NAME       = LangKey.of("Editor.Reward.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
     public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = LangKey.of("Editor.Reward.Enter.Chance", GRAY + "Enter " + GREEN + "[Chance]");
     public static final LangKey EDITOR_REWARD_ENTER_RARITY             = LangKey.of("Editor.Reward.Enter.Rarity", GRAY + "Enter " + GREEN + "[Rarity]");
     public static final LangKey EDITOR_REWARD_ENTER_COMMAND            = LangKey.of("Editor.Reward.Enter.Command", GRAY + "Enter " + GREEN + "[Command]");
@@ -167,6 +156,5 @@ public class Lang extends EngineLang {
     public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT   = LangKey.of("Editor.Reward.Enter.WinLimit.Amount", GRAY + "Enter " + GREEN + "[Limit Amount]");
     public static final LangKey EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN = LangKey.of("Editor.Reward.Enter.WinLimit.Cooldown", GRAY + "Enter " + GREEN + "[Seconds Amount]");
     public static final LangKey EDITOR_REWARD_ERROR_CREATE_EXIST       = LangKey.of("Editor.Reward.Error.Create.Exist", RED + "Reward with such id is already exists!");
-
 
 }

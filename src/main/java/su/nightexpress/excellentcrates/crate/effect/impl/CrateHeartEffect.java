@@ -16,29 +16,6 @@ public class CrateHeartEffect extends CrateEffect {
         super(1L, POINTS);
     }
 
-    /*public static List<Point3d> generatePoints(int numPoints) {
-        List<Point3d> points = new ArrayList<>();
-        double delta = Math.PI / numPoints;
-        double angle = 0;
-        double x, y, z;
-        for (int i = 0; i < numPoints; i++) {
-            z = 16 * Math.pow(Math.sin(angle), 3);
-            y = 13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle);
-            x = 0;
-            points.add(new Point3d(x / 25, (y / 25) - 1.8, z / 25));
-            angle += delta;
-        }
-
-        List<Point3d> mirroredPoints = new ArrayList<>(points.size());
-        for (int i = points.size() - 1; i >= 0; i--) {
-            Point3d point = points.get(i);
-            mirroredPoints.add(new Point3d(point.x, point.y, -point.z));
-        }
-
-        points.addAll(mirroredPoints);
-        return points;
-    }*/
-
     @Override
     public void doStep(@NotNull Location location, @NotNull SimpleParticle particle, int step) {
         boolean isX = this.rotate;

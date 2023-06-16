@@ -26,8 +26,8 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
         });
 
         this.addItem(Material.NAME_TAG, EditorLocales.KEY_NAME, 20).setClick((viewer, event) -> {
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_DISPLAY_NAME), chat -> {
-                crateKey.setName(chat.getMessage());
+            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, wrapper -> {
+                crateKey.setName(wrapper.getText());
                 return true;
             });
         });

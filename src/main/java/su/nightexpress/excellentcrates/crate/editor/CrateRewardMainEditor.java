@@ -12,10 +12,8 @@ import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -72,8 +70,8 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
                 return;
             }
 
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_DISPLAY_NAME), chat -> {
-                reward.setName(chat.getMessage());
+            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, wrapper -> {
+                reward.setName(wrapper.getText());
                 crate.save();
                 return true;
             });
@@ -85,8 +83,8 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
         });
 
         this.addItem(Material.COMPARATOR, EditorLocales.REWARD_CHANCE, 21).setClick((viewer, event) -> {
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_CHANCE), chat -> {
-                reward.setChance(StringUtil.getDouble(Colorizer.strip(chat.getMessage()), 0D));
+            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_CHANCE, wrapper -> {
+                reward.setChance(wrapper.asDouble());
                 crate.save();
                 return true;
             });
@@ -94,8 +92,8 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
 
         this.addItem(Material.FISHING_ROD, EditorLocales.REWARD_RARITY, 13).setClick((viewer, event) -> {
             EditorManager.suggestValues(viewer.getPlayer(), plugin.getCrateManager().getRarityMap().keySet(), true);
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_RARITY), chat -> {
-                Rarity rarity = this.plugin.getCrateManager().getRarity(chat.getMessage());
+            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_RARITY, wrapper -> {
+                Rarity rarity = this.plugin.getCrateManager().getRarity(wrapper.getTextRaw());
                 if (rarity == null) return true;
 
                 reward.setRarity(rarity);
@@ -119,15 +117,15 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
             }
 
             if (event.isLeftClick()) {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT), chat -> {
-                    reward.setWinLimitAmount(StringUtil.getInteger(chat.getMessage(), -1, true));
+                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT, wrapper -> {
+                    reward.setWinLimitAmount(wrapper.asAnyInt(-1));
                     crate.save();
                     return true;
                 });
             }
             else {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN), chat -> {
-                    reward.setWinLimitCooldown(StringUtil.getInteger(chat.getMessage(), 0, true));
+                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN, wrapper -> {
+                    reward.setWinLimitCooldown(wrapper.asAnyInt(0));
                     crate.save();
                     return true;
                 });
@@ -140,8 +138,8 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
                 this.save(viewer);
                 return;
             }
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_COMMAND), chat -> {
-                reward.getCommands().add(Colorizer.strip(chat.getMessage()));
+            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_COMMAND, wrapper -> {
+                reward.getCommands().add(wrapper.getText());
                 crate.save();
                 return true;
             });
@@ -157,8 +155,8 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
                 this.save(viewer);
                 return;
             }
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_COMMAND), chat -> {
-                reward.getIgnoredForPermissions().add(Colorizer.strip(chat.getMessage()));
+            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_COMMAND, wrapper -> {
+                reward.getIgnoredForPermissions().add(wrapper.getTextRaw());
                 crate.save();
                 return true;
             });

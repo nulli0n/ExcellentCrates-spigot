@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.editor.EditorHandler;
+import su.nexmedia.engine.api.editor.InputHandler;
 import su.nexmedia.engine.api.manager.IListener;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
@@ -43,8 +43,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
         });
 
         this.addItem(Material.NAME_TAG, EditorLocales.CRATE_NAME, 2).setClick((viewer, event) -> {
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_DISPLAY_NAME), chat -> {
-                crate.setName(chat.getMessage());
+            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, wrapper -> {
+                crate.setName(wrapper.getText());
                 crate.save();
                 return true;
             });
@@ -78,8 +78,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
 
         this.addItem(Material.TRIPWIRE_HOOK, EditorLocales.CRATE_KEYS, 10).setClick((viewer, event) -> {
             if (event.isLeftClick()) {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_KEY_ID), chat -> {
-                    crate.getKeyIds().add(Colorizer.strip(chat.getMessage()));
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_KEY_ID, wrapper -> {
+                    crate.getKeyIds().add(wrapper.getTextRaw());
                     crate.save();
                     return true;
                 });
@@ -101,8 +101,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                 List<String> previews = FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_PREVIEWS, true)
                     .stream().map(f -> f.getName().replace(".yml", "")).toList();
 
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_PREVIEW_CONFIG), chat -> {
-                    crate.setPreviewConfig(Colorizer.strip(chat.getMessage()));
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_PREVIEW_CONFIG, wrapper -> {
+                    crate.setPreviewConfig(wrapper.getTextRaw());
                     crate.createPreview();
                     crate.save();
                     return true;
@@ -115,8 +115,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                     this.save(viewer);
                     return;
                 }
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_ANIMATION_CONFIG), chat -> {
-                    crate.setOpeningConfig(Colorizer.strip(chat.getMessage()));
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_ANIMATION_CONFIG, wrapper -> {
+                    crate.setOpeningConfig(wrapper.getTextRaw());
                     crate.save();
                     return true;
                 });
@@ -139,9 +139,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                 this.save(viewer);
                 return;
             }
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_COOLDOWN), chat -> {
-                int cooldown = StringUtil.getInteger(Colorizer.strip(chat.getMessage()), 0);
-                crate.setOpenCooldown(cooldown);
+            this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_COOLDOWN, wrapper -> {
+                crate.setOpenCooldown(wrapper.asAnyInt(0));
                 crate.save();
                 return true;
             });
@@ -155,17 +154,15 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                 return;
             }
             if (event.isLeftClick()) {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_OPEN_COST_MONEY), chat -> {
-                    double costMoney = StringUtil.getDouble(Colorizer.strip(chat.getMessage()), 0);
-                    crate.setOpenCost(OpenCostType.MONEY, costMoney);
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_OPEN_COST_MONEY, wrapper -> {
+                    crate.setOpenCost(OpenCostType.MONEY, wrapper.asDouble());
                     crate.save();
                     return true;
                 });
             }
             else if (event.isRightClick()) {
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_OPEN_COST_EXP), chat -> {
-                    double costExp = StringUtil.getDouble(Colorizer.strip(chat.getMessage()), 0D);
-                    crate.setOpenCost(OpenCostType.EXP, (int) costExp);
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_OPEN_COST_EXP, wrapper -> {
+                    crate.setOpenCost(OpenCostType.EXP, wrapper.asInt());
                     crate.save();
                     return true;
                 });
@@ -175,7 +172,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
         this.addItem(Material.CHEST, EditorLocales.CRATE_BLOCK_LOCATIONS, 22).setClick((viewer, event) -> {
             if (event.isLeftClick()) {
                 this.isReadyForBlock = true;
-                this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_BLOCK_LOCATION), chat -> false);
+                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_BLOCK_LOCATION, wrapper -> false);
             }
             else {
                 crate.getBlockLocations().clear();
@@ -197,9 +194,8 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                     this.save(viewer);
                 }
                 else if (event.isRightClick()) {
-                    this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET), chat -> {
-                        double offset = StringUtil.getDouble(Colorizer.strip(chat.getMessage()), 0D);
-                        crate.setBlockHologramOffsetY(offset);
+                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET, wrapper -> {
+                        crate.setBlockHologramOffsetY(wrapper.asAnyDouble(0));
                         crate.updateHologram();
                         crate.save();
                         return true;
@@ -208,9 +204,9 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
             }
             else {
                 if (event.isLeftClick()) {
-                    this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT), chat -> {
+                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT, wrapper -> {
                         List<String> list = crate.getBlockHologramText();
-                        list.add(chat.getMessage());
+                        list.add(wrapper.getText());
                         crate.setBlockHologramText(list);
                         crate.updateHologram();
                         crate.save();
@@ -232,16 +228,16 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
             }
             else {
                 if (event.isRightClick()) {
-                    this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_PARTICLE_DATA), chat -> {
-                        String data = chat.getMessage();
+                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_PARTICLE_DATA, wrapper -> {
+                        String data = wrapper.getText();
                         crate.setBlockEffectParticle(crate.getBlockEffectParticle().parseData(data));
                         crate.save();
                         return true;
                     });
                 }
                 else if (event.isLeftClick()) {
-                    this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_PARTICLE_NAME), chat -> {
-                        Particle particle = StringUtil.getEnum(chat.getMessage(), Particle.class).orElse(Particle.REDSTONE);
+                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_PARTICLE_NAME, wrapper -> {
+                        Particle particle = StringUtil.getEnum(wrapper.getTextRaw(), Particle.class).orElse(Particle.REDSTONE);
                         crate.setBlockEffectParticle(SimpleParticle.of(particle).parseData(""));
                         crate.save();
                         return true;
@@ -304,7 +300,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
 
         Player player = e.getPlayer();
 
-        EditorHandler editor = EditorManager.getEditorHandler(player);
+        InputHandler editor = EditorManager.getInputHandler(player);
         if (editor == null) return;
 
         Block block = e.getClickedBlock();

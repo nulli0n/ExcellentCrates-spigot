@@ -19,7 +19,6 @@ import su.nightexpress.excellentcrates.editor.EditorLocales;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.key.KeyManager;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -36,8 +35,8 @@ public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> imple
         this.addPreviousPage(36);
 
         this.addCreation(EditorLocales.KEY_CREATE, 41).setClick((viewer, event) -> {
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_CRATE_ENTER_ID), chat -> {
-                if (!keyManager.create(StringUtil.lowerCaseUnderscore(chat.getMessage()))) {
+            this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_ID, wrapper -> {
+                if (!keyManager.create(StringUtil.lowerCaseUnderscore(wrapper.getTextRaw()))) {
                     EditorManager.error(viewer.getPlayer(), plugin.getMessage(Lang.CRATE_KEY_ERROR_EXISTS).getLocalized());
                     return false;
                 }
@@ -60,13 +59,7 @@ public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> imple
     @Override
     @NotNull
     public List<CrateKey> getObjects(@NotNull Player player) {
-        return new ArrayList<>(plugin.getKeyManager().getKeys());
-    }
-
-    @Override
-    @NotNull
-    public Comparator<CrateKey> getObjectSorter() {
-        return Comparator.comparing(CrateKey::getId);
+        return plugin.getKeyManager().getKeys().stream().sorted(Comparator.comparing(CrateKey::getId)).toList();
     }
 
     @Override

@@ -155,13 +155,13 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             this.rewardMap.put(rewId, reward);
         }
 
-        this.updateHologram();
         this.createPreview();
         return true;
     }
 
     public void loadLocations() {
         this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
+        this.updateHologram();
     }
 
     @Override
@@ -204,9 +204,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
             cfg.setItemsEncoded(path + "Items", reward.getItems());
             cfg.set(path + "Ignored_For_Permissions", reward.getIgnoredForPermissions());
         }
-
-        //this.createPreview();
-        //this.updateHologram();
     }
 
     @Override

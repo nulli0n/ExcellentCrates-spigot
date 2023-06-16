@@ -21,7 +21,6 @@ import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.data.impl.UserRewardData;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPaged<CrateReward> {
@@ -29,9 +28,6 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
     private static final String PLACEHOLDER_WIN_LIMIT_DRAINED  = "%win_limit_drained%";
-
-    @Deprecated private static final String USER_REWARD_WIN_LIMIT_AMOUNT_LEFT = "%user_reward_win_limit_amount_left%";
-    @Deprecated private static final String USER_REWARD_WIN_LIMIT_EXPIRE_IN   = "%user_reward_win_limit_expire_in%";
 
     private final Crate crate;
     private final int[]        rewardSlots;
@@ -85,12 +81,6 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
 
     @Override
     @NotNull
-    public Comparator<CrateReward> getObjectSorter() {
-        return ((o1, o2) -> 0);
-    }
-
-    @Override
-    @NotNull
     public ItemStack getObjectStack(@NotNull Player player, @NotNull CrateReward reward) {
         ItemStack item = reward.getPreview();
         ItemUtil.mapMeta(item, meta -> {
@@ -114,8 +104,6 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
             lore.replaceAll(str -> str
                 .replace(Placeholders.GENERIC_AMOUNT, String.valueOf(amountLeft))
                 .replace(Placeholders.GENERIC_TIME, TimeUtil.formatTimeLeft(expireIn))
-                .replace(USER_REWARD_WIN_LIMIT_AMOUNT_LEFT, String.valueOf(amountLeft))
-                .replace(USER_REWARD_WIN_LIMIT_EXPIRE_IN, TimeUtil.formatTimeLeft(expireIn))
             );
 
             meta.setDisplayName(this.rewardName);

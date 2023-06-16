@@ -57,8 +57,8 @@ public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> im
                 return;
             }
 
-            this.startEdit(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ENTER_ID), chat -> {
-                String id = StringUtil.lowerCaseUnderscore(chat.getMessage());
+            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_ID, wrapper -> {
+                String id = StringUtil.lowerCaseUnderscore(wrapper.getTextRaw());
                 if (crate.getReward(id) != null) {
                     EditorManager.error(viewer.getPlayer(), plugin.getMessage(Lang.EDITOR_REWARD_ERROR_CREATE_EXIST).getLocalized());
                     return false;
@@ -110,12 +110,6 @@ public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> im
     @NotNull
     public List<CrateReward> getObjects(@NotNull Player player) {
         return new ArrayList<>(this.object.getRewards());
-    }
-
-    @Override
-    @NotNull
-    public Comparator<CrateReward> getObjectSorter() {
-        return ((o1, o2) -> 0);
     }
 
     @Override
