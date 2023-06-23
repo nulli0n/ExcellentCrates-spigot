@@ -29,6 +29,7 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.OpenSettings;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.listener.CrateListener;
 import su.nightexpress.excellentcrates.crate.task.CrateEffectTask;
@@ -252,27 +253,49 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             return;
         }
 
-        if (action == CrateClickAction.CRATE_OPEN) {
-            boolean isOpened = this.openCrate(player, crate, false, item, block);
-            if (!isOpened && block != null && crate.isBlockPushbackEnabled()) {
-                player.setVelocity(player.getEyeLocation().getDirection().setY(Config.CRATE_PUSHBACK_Y.get()).multiply(Config.CRATE_PUSHBACK_MULTIPLY.get()));
+        if (action == CrateClickAction.CRATE_OPEN || action == CrateClickAction.CRATE_MASS_OPEN) {
+            OpenSettings settings = new OpenSettings().setCrateBlock(block).setCrateItem(item);
+            if (action == CrateClickAction.CRATE_MASS_OPEN) {
+                //settings.setBulk(true);
+                settings.setSkipAnimation(true);
+            }
+
+            boolean isOpened = this.openCrate(player, crate, settings);
+            if (!isOpened) {
+                if (block != null && crate.isBlockPushbackEnabled()) {
+                    player.setVelocity(player.getEyeLocation().getDirection().setY(Config.CRATE_PUSHBACK_Y.get()).multiply(Config.CRATE_PUSHBACK_MULTIPLY.get()));
+                }
+            }
+            else if (action == CrateClickAction.CRATE_MASS_OPEN) {
+                // Use 'for' instead of while to prevent spending keys that are possible to be as rewards in that crate.
+                // So open no more than player currently have.
+                int has = plugin.getKeyManager().getKeysAmount(player, crate);
+                for (int keys = 0; keys < has; keys++) {
+                    if (!this.openCrate(player, crate, settings)) {
+                        break;
+                    }
+                }
             }
         }
     }
 
-    public boolean openCrate(@NotNull Player player, @NotNull Crate crate, boolean force, @Nullable ItemStack item, @Nullable Block block) {
+    public boolean openCrate(@NotNull Player player, @NotNull Crate crate, @NotNull OpenSettings settings) {
         PlayerOpeningData data = PlayerOpeningData.get(player);
         if (data != null && !data.isCompleted()) {
             return false;
         }
+        // Stop mass open (mostly only this case) if crate itemstack is out.
+        if (settings.getCrateItem() != null && settings.getCrateItem().getAmount() <= 0) {
+            return false;
+        }
 
-        if (!force && !crate.hasPermission(player)) {
+        if (!settings.isForce() && !crate.hasPermission(player)) {
             plugin.getMessage(Lang.ERROR_PERMISSION_DENY).send(player);
             return false;
         }
 
         CrateUser user = plugin.getUserManager().getUserData(player);
-        if (!force && user.isCrateOnCooldown(crate)) {
+        if (!settings.isForce() && user.isCrateOnCooldown(crate)) {
             long expireDate = user.getCrateCooldown(crate);
             (expireDate < 0 ? plugin.getMessage(Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED) : plugin.getMessage(Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY))
                 .replace(Placeholders.GENERIC_TIME, TimeUtil.formatTimeLeft(expireDate))
@@ -282,7 +305,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         CrateKey crateKey = this.plugin.getKeyManager().getKeys(player, crate).stream().findFirst().orElse(null);
-        if (!force && !crate.getKeyIds().isEmpty()) {
+        if (!settings.isForce() && !crate.getKeyIds().isEmpty()) {
             if (crateKey == null) {
                 plugin.getMessage(Lang.CRATE_OPEN_ERROR_NO_KEY).replace(crate.replacePlaceholders()).send(player);
                 return false;
@@ -298,10 +321,10 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
         double openCostMoney = crate.getOpenCost(OpenCostType.MONEY);
         double openCostExp = crate.getOpenCost(OpenCostType.EXP);
-        if (force || player.hasPermission(Perms.BYPASS_CRATE_OPEN_COST_MONEY)) {
+        if (settings.isForce() || player.hasPermission(Perms.BYPASS_CRATE_OPEN_COST_MONEY)) {
             openCostMoney = 0D;
         }
-        if (force || player.hasPermission(Perms.BYPASS_CRATE_OPEN_COST_EXP)) {
+        if (settings.isForce() || player.hasPermission(Perms.BYPASS_CRATE_OPEN_COST_EXP)) {
             openCostExp = 0D;
         }
 
@@ -325,7 +348,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             return false;
         }
 
-        if (!force && player.getInventory().firstEmpty() == -1) {
+        if (!settings.isForce() && player.getInventory().firstEmpty() == -1) {
             plugin.getMessage(Lang.CRATE_OPEN_ERROR_INVENTORY_SPACE).replace(crate.replacePlaceholders()).send(player);
             return false;
         }
@@ -340,7 +363,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
 
         String animationConfig = crate.getOpeningConfig();
-        OpeningMenu opening = animationConfig == null ? null : this.getOpening(animationConfig);
+        OpeningMenu opening = animationConfig == null || settings.isSkipAnimation() ? null : this.getOpening(animationConfig);
         if (opening != null) {
             opening.open(player, crate);
         }
@@ -351,6 +374,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, player);
             plugin.getPluginManager().callEvent(rewardEvent);
 
+            Block block = settings.getCrateBlock();
             if (Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
                 if (block.getState() instanceof Lidded lidded) {
                     lidded.open();
@@ -368,6 +392,8 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         if (crateKey != null) {
             this.plugin.getKeyManager().takeKey(player, crateKey, 1);
         }
+
+        ItemStack item = settings.getCrateItem();
         if (item != null) {
             item.setAmount(item.getAmount() - 1);
         }

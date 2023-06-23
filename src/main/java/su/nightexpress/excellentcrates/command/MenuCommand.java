@@ -36,7 +36,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-        if (result.length() < 2) {
+        if (result.length() < 1) {
             this.printUsage(sender);
             return;
         }
@@ -49,7 +49,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        MenuConfig menu = plugin.getMenuManager().getMenuById(result.getArg(1));
+        MenuConfig menu = plugin.getMenuManager().getMenuById(result.getArg(1, Placeholders.DEFAULT));
         if (menu == null) {
             plugin.getMessage(Lang.MENU_INVALID).send(sender);
             return;

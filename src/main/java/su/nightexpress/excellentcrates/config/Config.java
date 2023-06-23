@@ -23,6 +23,7 @@ public class Config {
 
     public static final JOption<String> EDITOR_TITLE_CRATE = JOption.create("Editor.Title.Crate", "Crate Editor",
         "Title for the Crate Editor GUIs.").mapReader(Colorizer::apply);
+
     public static final JOption<String> EDITOR_TITLE_KEY = JOption.create("Editor.Title.Key", "Key Editor",
         "Title for the Key Editor GUIs.").mapReader(Colorizer::apply);
 
@@ -68,8 +69,11 @@ public class Config {
             }
             return map;
         },
-        () -> Map.of(ClickType.LEFT, CrateClickAction.CRATE_PREVIEW, ClickType.RIGHT, CrateClickAction.CRATE_OPEN),
-        "Defines the crate behavior on certain block/NPC clicks.",
+        () -> Map.of(
+            ClickType.LEFT, CrateClickAction.CRATE_PREVIEW, ClickType.RIGHT, CrateClickAction.CRATE_OPEN,
+            ClickType.SHIFT_RIGHT, CrateClickAction.CRATE_MASS_OPEN
+        ),
+        "Defines the crate behavior on certain clicks.",
         "Allowed click types: " + String.join(", ", CollectionsUtil.getEnumsList(ClickType.class)),
         "Allowed crate actions: " + String.join(", ", CollectionsUtil.getEnumsList(CrateClickAction.class)))
         .setWriter((cfg, path, map) -> map.forEach((click, action) -> cfg.set(path + "." + click.name(), action)));
