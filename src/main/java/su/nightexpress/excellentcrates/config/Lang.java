@@ -47,14 +47,14 @@ public class Lang extends EngineLang implements LangColors {
     public static final LangKey COMMAND_KEY_SET_DONE   = LangKey.of("Command.Key.Set.Done", GRAY + "Set " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) for " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_SET_NOTIFY = LangKey.of("Command.Key.Set.Notify", GRAY + "Your " + YELLOW + Placeholders.KEY_NAME + GRAY + "'s amount has been changed to " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + ".");
 
-    public static final LangKey COMMAND_KEY_SHOW_DESC        = LangKey.of("Command.Key.Show.Desc", "Show amount of your or other player keys.");
-    public static final LangKey COMMAND_KEY_SHOW_USAGE       = LangKey.of("Command.Key.Show.Usage", "[player]");
-    public static final LangKey COMMAND_KEY_SHOW_FORMAT_LIST = LangKey.of("Command.Key.Show.Format.List", """
-        <!prefix:"false"!>
-        &6&m              &6&l[ &a%player_name% &e&lCrate Keys &6&l]&6&m              &6
-        &7
-        &6▸ &e%key_name%: &6%amount%
-        """);
+    public static final LangKey COMMAND_KEY_INSPECT_DESC     = LangKey.of("Command.Key.Show.Desc", "Inspect [player's] virtual keys.");
+    public static final LangKey COMMAND_KEY_INSPECT_USAGE = LangKey.of("Command.Key.Show.Usage", "[player]");
+    public static final LangKey COMMAND_KEY_INSPECT_LIST  = LangKey.of("Command.Key.Show.Format.List",
+        "<! prefix:\"false\" !>" +
+        "\n" + GRAY +
+        "\n" + YELLOW + "&l" + Placeholders.Player.NAME + "'s Virtual Keys: " +
+        "\n" + YELLOW + "▪ " + GRAY + Placeholders.KEY_NAME + ": " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT +
+        "\n" + GRAY);
 
     public static final LangKey COMMAND_PREVIEW_DESC        = LangKey.of("Command.Preview.Desc", "Open crate preview.");
     public static final LangKey COMMAND_PREVIEW_USAGE       = LangKey.of("Command.Preview.Usage", "<crate> [player]");

@@ -9,7 +9,7 @@ import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.command.*;
-import su.nightexpress.excellentcrates.command.key.KeyCommand;
+import su.nightexpress.excellentcrates.command.key.KeyMainCommand;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
@@ -116,7 +116,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         mainCommand.addChildren(new DropCommand(this));
         mainCommand.addChildren(new OpenCommand(this));
         mainCommand.addChildren(new GiveCommand(this));
-        mainCommand.addChildren(new KeyCommand(this));
+        mainCommand.addChildren(new KeyMainCommand(this));
         mainCommand.addChildren(new MenuCommand(this));
         mainCommand.addChildren(new PreviewCommand(this));
         mainCommand.addChildren(new ResetCooldownCommand(this));

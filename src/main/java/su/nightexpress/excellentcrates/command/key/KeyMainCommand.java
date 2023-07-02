@@ -9,9 +9,9 @@ import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Perms;
 import su.nightexpress.excellentcrates.config.Lang;
 
-public class KeyCommand extends GeneralCommand<ExcellentCrates> {
+public class KeyMainCommand extends GeneralCommand<ExcellentCrates> {
 
-    public KeyCommand(@NotNull ExcellentCrates plugin) {
+    public KeyMainCommand(@NotNull ExcellentCrates plugin) {
         super(plugin, new String[]{"key"}, Perms.COMMAND_KEY);
         this.setDescription(plugin.getMessage(Lang.COMMAND_KEY_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_KEY_USAGE));
@@ -21,6 +21,7 @@ public class KeyCommand extends GeneralCommand<ExcellentCrates> {
         this.addChildren(new GiveAllCommand(plugin));
         this.addChildren(new TakeCommand(plugin));
         this.addChildren(new SetCommand(plugin));
+        this.addChildren(new InspectCommand(plugin));
     }
 
     @Override

@@ -1,0 +1,562 @@
+Command:
+  Editor:
+    Desc: Otwórz edytor skrzyń i kluczy.
+  Drop:
+    Usage: <crateId> <world> <x> <y> <z>
+    Desc: Upuść skrzynię w określonym miejscu na świecie.
+    Done: '#d4d9d8Upuszczono #fdf35e%crate_name%#d4d9d8 w #fdf35e%location_x%, %location_y%, %location_z%#d4d9d8 na świecie #fdf35e%location_world%#d4d9d8.'
+  Open:
+    Desc: Wymuś otwarcie skrzyni przez [player].
+    Usage: <crate> [player] [-f] [-s]
+    Done: '#d4d9d8Wymuszono #fdf35e%player_name%#d4d9d8 do otwarcia #fdf35e%crate_name%#d4d9d8.'
+    Notify: '#d4d9d8Zostałeś zmuszony do otwarcia #fdf35e%crate_name%#d4d9d8.'
+  Give:
+    Usage: <player> <crate> [amount] [-s]
+    Desc: Przekaż skrzynię graczowi.
+    Done: '#d4d9d8Przekazano #fdf35ex%amount%#d4d9d8 skrzyń #fdf35e%crate_name%#d4d9d8 dla #fdf35e%player_name%#d4d9d8.'
+    Notify: '#d4d9d8Otrzymałeś #fdf35ex%amount%#d4d9d8 skrzyń #fdf35e%crate_name%#d4d9d8.'
+  Key:
+    Desc: Zarządzaj kluczami gracza.
+    Usage: '[help]'
+    Give:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Przekaż klucz graczowi.
+      Done: '#d4d9d8Przekazano #fdf35ex%amount%#d4d9d8 kluczy #fdf35e%key_name%#d4d9d8 dla #fdf35e%player_name%#d4d9d8.'
+      Notify: '#d4d9d8Otrzymałeś #fdf35ex%amount%#d4d9d8 kluczy #fdf35e%key_name%#d4d9d8!'
+    GiveAll:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Przekaż klucz wszystkim graczom online.
+      Done: '#d4d9d8Przekazano #fdf35ex%amount%#d4d9d8 kluczy #fdf35e%key_name%#d4d9d8 dla #fdf35eWszystkich Graczy#d4d9d8.'
+    Take:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Zabierz klucz od gracza.
+      Done: '#d4d9d8Zabrano #fdf35ex%amount%#d4d9d8 kluczy #fdf35e%key_name%#d4d9d8 od #fdf35e%player_name%#d4d9d8.'
+      Notify: '#d4d9d8Straciłeś #fd5e5ex%amount% %key_name%#d4d9d8.'
+    Set:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Ustaw ilość kluczy dla gracza.
+      Done: '#d4d9d8Ustawiono #fdf35ex%amount%#d4d9d8 kluczy #fdf35e%key_name%#d4d9d8 dla #fdf35e%player_name%#d4d9d8.'
+      Notify: '#d4d9d8Twoja ilość kluczy #fdf35e%key_name%#d4d9d8 została zmieniona na #fdf35ex%amount%#d4d9d8.'
+    Show:
+      Desc: Pokaż ilość kluczy dla siebie lub innego gracza.
+      Usage: '[player]'
+      Format:
+        List:
+        - <!prefix:"false"!>
+        - '&6&m              &6&l[[ &a%player_name% &e&lCrate Keys &6&l]&6&m              &6'
+        - '&7'
+        - '&6▸ &e%key_name%: &6%amount%'
+  Preview:
+    Desc: Otwórz podgląd skrzyni.
+    Usage: <crate> [player]
+    Done:
+      Others: '#d4d9d8Otwarto podgląd #fdf35e%crate_name%#d4d9d8 dla #fdf35e%player_display_name%#d4d9d8.'
+  ResetLimit:
+    Desc: Zresetuj limit wygranych nagród dla określonej skrzyni i nagrody.
+    Usage: <player> <crate> [reward]
+    Done:
+      Crate: '#d4d9d8Zresetowano limit wygranych #fdf35e%player_name%#d4d9d8 dla wszystkich nagród #fdf35e%crate_name%#d4d9d8.'
+      Reward: '#d4d9d8Zresetowano limit wygranych #fdf35e%player_name%#d4d9d8 dla nagrody #fdf35e%reward_name%#d4d9d8 w skrzyni #fdf35e%crate_name%#d4d9d8.'
+  ResetCooldown:
+    Desc: Zresetuj czas oczekiwania na otwarcie skrzyni dla gracza.
+    Usage: <player> <crate>
+    Done: '#d4d9d8Zresetowano czas oczekiwania na otwarcie #fdf35e%player_name%#d4d9d8 dla skrzyni #fdf35e%crate_name%#d4d9d8.'
+  Menu:
+    Usage: '[menu]'
+    Desc: Otwórz menu skrzyń.
+    Done:
+      Others: '#d4d9d8Otwarto menu skrzyń #fdf35e%menu_id%#d4d9d8 dla #fdf35e%player_display_name%#d4d9d8.'
+Crate:
+  Error:
+    Invalid: '#fd5e5eNieprawidłowa skrzynia!'
+    Exists: '#fd5e5eSkrzynia o takim identyfikatorze już istnieje!'
+  Open:
+    Error:
+      InventorySpace:
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&lUps!'
+      - '#d4d9d8Zwolnij miejsce w ekwipunku, aby otworzyć skrzynię!'
+      Cooldown:
+        Temporary:
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&lCzas oczekiwania na skrzynię!'
+        - '#d4d9d8Możesz otworzyć za #fd5e5e%time%'
+        OneTimed:
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&lUps!'
+        - '#d4d9d8Już otworzyłeś tę jednorazową skrzynię!'
+      NoKey:
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&lUps!'
+      - '#d4d9d8Nie masz klucza do tej skrzyni!'
+      NoHoldKey:
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&lUps!'
+      - '#d4d9d8Musisz trzymać klucz, aby otworzyć skrzynie!'
+      NoRewards:
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&lUps!'
+      - '#d4d9d8Nie ma dla ciebie nagród! Spróbuj później.'
+      Cost:
+        Money:
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&lUps!'
+        - '#d4d9d8Potrzebujesz $#fd5e5e%crate_opening_cost_money%#d4d9d8, aby to otworzyć!'
+        Exp:
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&lUps!'
+        - '#d4d9d8Potrzebujesz #fd5e5e%crate_opening_cost_exp% Poziomów #d4d9d8, aby to otworzyć!'
+    Reward:
+      Info: '<! prefix:"false" !>#d4d9d8Wygrałeś #aefd5e%reward_name%#d4d9d8 ze skrzyni #aefd5e%crate_name%#d4d9d8!'
+      Broadcast:
+      - <! prefix:"false" sound:"BLOCK_NOTE_BLOCK_BELL" !>
+      - '#d4d9d8'
+      - '#aefd5e&lWOW!#d4d9d8 Gracz #aefd5e%player_display_name%#d4d9d8 właśnie wygrał #aefd5e%reward_name%#d4d9d8 ze skrzyni #aefd5e%crate_name%#d4d9d8!'
+      - '#d4d9d8'
+      - '#d4d9d8Chcesz też? Kup klucze teraz: <? open_url:"http://samplesmp.com/store" ?>#aefd5e[Otwórz Sklep]</>'
+      - '#d4d9d8'
+  Key:
+    Error:
+      Invalid: '#fd5e5eNieprawidłowy klucz!'
+      Exists: '#fd5e5eKlucz o takim identyfikatorze już istnieje!'
+Menu:
+  Invalid: '#fd5e5eMenu nie istnieje!'
+Editor:
+  Enter:
+    DisplayName: '#d4d9d8Wprowadź #aefd5e[Nazwa wyświetlana]'
+  Crate:
+    Enter:
+      Id: '#d4d9d8Wprowadź #aefd5e[Identyfikator skrzyni]'
+      Particle:
+        Name: '#d4d9d8Wprowadź #aefd5e[Nazwa cząsteczki]'
+        Data: '#d4d9d8Wprowadź #aefd5e[Opcje cząsteczki]'
+      KeyId: '#d4d9d8Wprowadź #aefd5e[Identyfikator klucza]'
+      Block:
+        Location: '#d4d9d8Kliknij #aefd5e[Blok] #d4d9d8, aby zamienić go na skrzynię.'
+        Hologram:
+          Text: '#d4d9d8Wprowadź #aefd5e[Tekst]'
+          Offset: '#d4d9d8Wprowadź #aefd5e[Wartość przesunięcia]'
+      Cooldown: '#d4d9d8Wprowadź #aefd5e[Liczba sekund]'
+      AnimationConfig: '#d4d9d8Wprowadź #aefd5e[Nazwa animacji]'
+      PreviewConfig: '#d4d9d8Wprowadź #aefd5e[Nazwa podglądu]'
+      OpenCost:
+        Money: '#d4d9d8Wprowadź #aefd5e[Kwota pieniężna]'
+        Exp: '#d4d9d8Wprowadź #aefd5e[Liczba poziomów]'
+    BlockPushback:
+      Name: '#ffed6a&lOdepchnięcie bloku'
+      Lore:
+      - '#bdc8c9Ustala, czy gracz zostanie odepchnięty'
+      - '#bdc8c9od bloku skrzyni, gdy'
+      - '#bdc8c9nie może jej otworzyć.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Włączone: #ffed6a%crate_block_pushback_enabled%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aPrzełącz'
+  Reward:
+    Enter:
+      Id: '#d4d9d8Wprowadź #aefd5e[Identyfikator nagrody]'
+      Chance: '#d4d9d8Wprowadź #aefd5e[Szansa]'
+      Rarity: '#d4d9d8Wprowadź #aefd5e[Rzadkość]'
+      Command: '#d4d9d8Wprowadź #aefd5e[Polecenie]'
+      Permissions: '#d4d9d8Wprowadź #aefd5e[Węzeł uprawnienia]'
+      WinLimit:
+        Amount: '#d4d9d8Wprowadź #aefd5e[Liczba limitów]'
+        Cooldown: '#d4d9d8Wprowadź #aefd5e[Liczba sekund]'
+    Error:
+      Create:
+        Exist: '#fd5e5eNagroda o takim identyfikatorze już istnieje!'
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: '#ffed6a&lSkrzynie'
+      Lore:
+      - '#bdc8c9Twórz i zarządzaj swoimi skrzyniami tutaj!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aOtwórz'
+    EDITOR_KEYS:
+      Name: '#ffed6a&lKlucze'
+      Lore:
+      - '#bdc8c9Twórz i zarządzaj swoimi kluczami tutaj!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aOtwórz'
+    CRATE_OBJECT:
+      Name: '#ffed6a&l%crate_name% &7(ID: &f%crate_id%&7)'
+      Lore:
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aEdytuj'
+      - '#bbff6a▪ #bdc8c9Shift-Prawy: #bbff6aUsuń #ff6a6a(Bez cofania)'
+    CRATE_CREATE:
+      Name: '#ffed6a&lStwóz skrzynie'
+      Lore:
+      - '#bdc8c9Tworzy nową skrzynkę.'
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aCreate'
+    CRATE_CHANGE_NAME:
+      Name: '#ffed6a&lNazwa wyświetlana'
+      Lore:
+      - '#bdc8c9Ustawia nazwę wyświetlaną skrzyni.'
+      - '#bdc8c9Używana w wiadomościach i interfejsach.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Nazwa wyświetlana: #ffed6a%crate_name%'
+      - ''
+      - '#ff6a6a▪ #bdc8c9To #ff6a6aNIE JEST#bdc8c9 nazwa przedmiotu skrzyni!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+    CRATE_CHANGE_PERMISSION:
+      Name: '#ffed6a&lWymóg uprawnienia'
+      Lore:
+      - '#bdc8c9Ustala, czy wymagane jest uprawnienie'
+      - '#bdc8c9do otwarcia tej skrzyni.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Wymagane: #ffed6a%crate_permission_required%'
+      - '#ffed6a▪ #bdc8c9Węzeł: #ffed6a%crate_permission%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aPrzełącz'
+    CRATE_CHANGE_COOLDOWN:
+      Name: '#ffed6a&lCzas oczekiwania'
+      Lore:
+      - '#bdc8c9Ustala, jak długo gracz musi czekać'
+      - '#bdc8c9aby otworzyć tę skrzynię ponownie.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Czas oczekiwania: #ffed6a%crate_opening_cooldown%'
+      - ''
+      - '#ffa76a&lUwagi:'
+      - '#ffa76a▪ #bdc8c9Ujemna wartość sprawi, że skrzynia będzie jednorazowa!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk: #bbff6aWyłącz'
+      - '#bbff6a▪ #bdc8c9Klawisz [Q/Drop]: #bbff6aJednorazowa'
+    CRATE_CHANGE_CONFIG:
+      Name: '#ffed6a&lPodgląd & Animacja'
+      Lore:
+      - '#bdc8c9Definiuje wygląd skrzyni'
+      - '#bdc8c9#ffed6apodgląd #bdc8c9i #ffed6aanimacja #bdc8c9interfejsów.'
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Podgląd: #ffed6a%crate_preview_type%'
+      - '#ffed6a▪ #bdc8c9Animacja: #ffed6a%crate_spin_type%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień podgląd'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk: #bbff6aZmień animację'
+    CRATE_CHANGE_ITEM:
+      Name: '#ffed6a&lPrzedmiot skrzynki'
+      Lore:
+      - '#bdc8c9Ustawia przedmiot skrzynki.'
+      - '#bdc8c9Używane, gdy dajesz skrzynki graczom'
+      - '#bdc8c9i w menu skrzynek.'
+      - ''
+      - '#ffa76a&lNotatki:'
+      - '#ffa76a▪ #bdc8c9Użyj przedmiotu z gotową nazwą, opisem, modelem itp.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Przeciągnij & Upuść: #bbff6aZamień'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWeź'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: '#ffed6a&lDołączone bloki'
+      Lore:
+      - '#bdc8c9Zestaw bloków dołączonych do'
+      - '#bdc8c9tej skrzynki, aby otworzyć lub podejrzeć'
+      - '#bdc8c9przy interakcji.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#bdc8c9#ffed6a%crate_block_locations%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aDołącz blok'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWyczyść listę'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: '#ffed6a&lHologram bloku'
+      Lore:
+      - '#bdc8c9Ustawia, czy hologram zostanie dodany'
+      - '#bdc8c9nad blokiem skrzynki z określonym tekstem.'
+      - '#bdc8c9Ustawia przesunięcie Y dla'
+      - '#bdc8c9położenia hologramu.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Włączone: #ffed6a%crate_block_hologram_enabled%'
+      - '#ffed6a▪ #bdc8c9Przesunięcie Y: #ffed6a%crate_block_hologram_offset_y%'
+      - '#ffed6a▪ #bdc8c9Tekst: #ffed6a'
+      - '#bdc8c9%crate_block_hologram_text%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aDodaj tekst'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWyczyść tekst'
+      - '#bbff6a▪ #bdc8c9Shift-Lewy: #bbff6aPrzełącz'
+      - '#bbff6a▪ #bdc8c9Shift-Prawy: #bbff6aZmień przesunięcie Y'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: '#ffed6a&lEfekty bloków'
+      Lore:
+      - '#bdc8c9Ustawia efekt cząsteczek do odtwarzania'
+      - '#bdc8c9wokół bloków skrzynki.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Model: #ffed6a%crate_block_effect_model%'
+      - '#ffed6a▪ #bdc8c9Cząsteczka: #ffed6a%crate_block_effect_particle_name%'
+      - '#ffed6a▪ #bdc8c9Dane: #ffed6a%crate_block_effect_particle_data%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aWybierz cząsteczkę'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWyczyść cząsteczkę'
+      - '#bbff6a▪ #bdc8c9Shift-Lewy: #bbff6aZmień model'
+      - '#bbff6a▪ #bdc8c9Shift-Prawy: #bbff6aEdytuj dane cząsteczek'
+    CRATE_CHANGE_REWARDS:
+      Name: '#ffed6a&lNagrody'
+      Lore:
+      - '#bdc8c9Twórz i zarządzaj nagrodami tutaj!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aOtwórz'
+    REWARD_OBJECT:
+      Name: '#ffed6a&l%reward_name% &7(ID: &f%reward_id%&7)'
+      Lore:
+      - '#bdc8c9Szansa: &f%reward_chance%%'
+      - '#bdc8c9Rzadkość: &f%reward_rarity_name%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aEdytuj'
+      - '#bbff6a▪ #bdc8c9Shift-Lewy: #bbff6aPrzesuń do przodu'
+      - '#bbff6a▪ #bdc8c9Shift-Prawy: #bbff6aPrzesuń do tyłu'
+      - '#bbff6a▪ #bdc8c9Klawisz [Q/Rzuć]: #bbff6aUsuń #ff6a6a(Bez cofnięcia)'
+    REWARD_CREATE:
+      Name: '#ffed6a&lUtwórz Nagrodę'
+      Lore:
+      - '#bdc8c9Tworzy nową nagrodę dla skrzynki.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aRęczne tworzenie'
+      - '#bbff6a▪ #bdc8c9Przeciągnij i Upuść: #bbff6aSzybkie tworzenie'
+    REWARD_SORT:
+      Name: '#ffed6a&lSortuj Nagrody'
+      Lore:
+      - '#bdc8c9Automatycznie sortuje nagrody w'
+      - '#bdc8c9określonym porządku.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9[Num 1]: #bbff6aWedług Szans'
+      - '#bbff6a▪ #bdc8c9[Num 2]: #bbff6aWedług Typu'
+      - '#bbff6a▪ #bdc8c9[Num 3]: #bbff6aWedług Nazwy'
+      - '#bbff6a▪ #bdc8c9[Num 4]: #bbff6aWedług Rzadkości'
+    REWARD_CHANGE_NAME:
+      Name: '#ffed6a&lNazwa Wyświetlana'
+      Lore:
+      - '#bdc8c9Ustawia nazwę wyświetlaną nagrody.'
+      - '#bdc8c9Używana w interfejsach użytkownika i wiadomościach.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Nazwa Wyświetlana: #ffed6a%reward_name%'
+      - ''
+      - '#ff6a6a&lOstrzeżenie:'
+      - '#ff6a6a▪ #bdc8c9To #ff6a6aNIE JEST#bdc8c9 nazwa przedmiotu nagrody!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk: #bbff6aSynchronizuj z Podglądem'
+      - '#bbff6a▪ #bdc8c9Shift-Lewy: #bbff6aUstaw dla Podglądu'
+    REWARD_CHANGE_PREVIEW:
+      Name: '#ffed6a&lPodgląd Przedmiotu'
+      Lore:
+      - '#bdc8c9Ten przedmiot będzie reprezentował nagrodę w interfejsie użytkownika.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Podgląd przedmiotu: #ffed6a%reward_preview%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk: #bbff6aSynchronizuj z Nazwą Wyświetlaną'
+      - '#bbff6a▪ #bdc8c9Shift-Lewy: #bbff6aUstaw dla Nazwy Wyświetlanej'
+    Reward:
+      Rarity:
+        Name: '#ffed6a&lRzadkość'
+        Lore:
+        - '#bdc8c9Ustala rzadkość nagrody.'
+        - '#bdc8c9Dowiedz się więcej na wiki wtyczki.'
+        - ''
+        - '#ffed6a&lAktualne:'
+        - '#ffed6a▪ #bdc8c9Rzadkość: #ffed6a%reward_rarity_name%'
+        - ''
+        - '#bbff6a&lAkcje:'
+        - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+    REWARD_CHANGE_CHANCE:
+      Name: '#ffed6a&lSzansa'
+      Lore:
+      - '#bdc8c9Ustala szansę wygranej nagrody (waga).'
+      - '#bdc8c9Dowiedz się więcej o szansach nagród na wiki wtyczki.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Szansa: #ffed6a%reward_chance%%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+    REWARD_CHANGE_COMMANDS:
+      Name: '#ffed6a&lWykonywane polecenia'
+      Lore:
+      - '#bdc8c9Lista poleceń do wykonania'
+      - '#bdc8c9gdy gracz otrzyma tę nagrodę.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#bdc8c9%reward_commands%'
+      - ''
+      - '#ffa76a&lUwagi:'
+      - '#ffa76a▪ #bdc8c9Użyj symbolu #ffa76a%player_name%#bdc8c9 jako nazwy gracza.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aDodaj polecenie'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk: #bbff6aWyczyść listę'
+    REWARD_CHANGE_ITEMS:
+      Name: '#ffed6a&lOtrzymywane przedmioty'
+      Lore:
+      - '#bdc8c9Lista przedmiotów otrzymywanych'
+      - '#bdc8c9gdy gracz otrzyma tę nagrodę.'
+      - ''
+      - '#ffa76a&lUwagi:'
+      - '#ffa76a▪ #bdc8c9Użyj #ffa76aESC#bdc8c9, aby zapisać i wrócić tutaj.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aOtwórz'
+    REWARD_CHANGE_BROADCAST:
+      Name: '#ffed6a&lOgłoszenie wygranej'
+      Lore:
+      - '#bdc8c9Ustala, czy wysłać ogłoszenie do wszystkich'
+      - '#bdc8c9gdy ktoś otrzyma tę nagrodę.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Włączone: #ffed6a%reward_broadcast%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aPrzełącz'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: '#ffed6a&lLimity wygranych'
+      Lore:
+      - '#bdc8c9Ustala, jak często i ile razy gracz'
+      - '#bdc8c9może ponownie zdobyć tę nagrodę.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Czas odnowienia: #ffed6a%reward_cooldown%h'
+      - '#ffed6a▪ #bdc8c9Maksymalne wygrane: #ffed6a%reward_max_wins%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk: #bbff6aZmień'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#ffed6a&lOgraniczenia uprawnień'
+      Lore:
+      - '#bdc8c9Gracze mający jakiekolwiek uprawnienia'
+      - '#bdc8c9z listy nie będą mogli'
+      - '#bdc8c9zdobyć tej nagrody.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#bdc8c9%reward_ignored_for_permissions%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aDodaj uprawnienie'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWyczyść listę'
+    KEY_OBJECT:
+      Name: '#ffed6a&l%key_name%#bdc8c9 (ID: #6adbff%key_id%#bdc8c9)'
+      Lore:
+      - '#ffed6a▪ #bdc8c9Wirtualny: #ffed6a%key_virtual%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aEdytuj'
+      - '#bbff6a▪ #bdc8c9Shift-Prawy: #bbff6aUsuń #ff6a6a(Bez cofania)'
+    KEY_CREATE:
+      Name: '#ffed6a&lStwórz klucz'
+      Lore:
+      - '#bdc8c9Tworzy nowy klucz do skrzynek.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aStwórz'
+    KEY_CHANGE_NAME:
+      Name: '#ffed6a&lWyświetlana nazwa'
+      Lore:
+      - '#bdc8c9Ustawia wyświetlaną nazwę klucza.'
+      - '#bdc8c9Jest używana w interfejsach użytkownika i wiadomościach.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Wyświetlana nazwa: #ffed6a%key_name%'
+      - ''
+      - '#ff6a6a&lOstrzeżenie:'
+      - '#ff6a6a▪ #bdc8c9To NIE jest rzeczywista nazwa przedmiotu klucza!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aZmień'
+    KEY_CHANGE_ITEM:
+      Name: '#ffed6a&lPrzedmiot klucza'
+      Lore:
+      - '#bdc8c9Ustawia fizyczny przedmiot klucza.'
+      - ''
+      - '#ffa76a&lUwagi:'
+      - '#ffa76a▪ #bdc8c9Ta opcja jest bezużyteczna dla wirtualnych kluczy.'
+      - '#ffa76a▪ #bdc8c9Użyj przedmiotu z gotową nazwą, opisem, itp.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Przeciągnij i upuść: #bbff6aZamień'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWeź'
+    KEY_VIRTUAL:
+      Name: '#ffed6a&lWirtualny'
+      Lore:
+      - '#bdc8c9Ustawia, czy klucz jest wirtualny, czy nie.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Jest wirtualny: #ffed6a%key_virtual%'
+      - ''
+      - '#ffa76a&lUwagi:'
+      - '#ffa76a▪ #bdc8c9Wirtualne klucze są używane tylko w skrzynkach.'
+      - '#ffa76a▪ #bdc8c9Fizyczne klucze są przedmiotami, które gracze mogą zdobyć i użyć.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aPrzełącz'
+    KEY_SAVE:
+      Name: '#ffed6a&lZapisz zmiany'
+      Lore:
+      - '#bdc8c9Zapisuje wszystkie wprowadzone zmiany'
+      - '#bdc8c9i zamyka edytor klucza.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aZapisz'
+    KEY_CANCEL:
+      Name: '#ff6a6a&lAnuluj'
+      Lore:
+      - '#bdc8c9Anuluje wprowadzone zmiany'
+      - '#bdc8c9i zamyka edytor klucza.'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aAnuluj'
+    CRATE_CHANGE_KEYS:
+      Name: '#ffed6a&lDołączone klucze'
+      Lore:
+      - '#bdc8c9Ustawia, które klucze'
+      - '#bdc8c9mogą być użyte do otwarcia tej skrzynki.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9ID: #ffed6a%crate_key_ids%'
+      - ''
+      - '#ff6a6a&lOstrzeżenie:'
+      - '#ff6a6a▪ #bdc8c9Jeśli nie są ustawione żadne klucze, skrzynkę można otworzyć bez nich!'
+      - '#ff6a6a▪ #bdc8c9Jeśli podano nieprawidłowe klucze, nie będzie można otworzyć skrzynki!'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aDołącz klucz'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aWyczyść listę'
+    CRATE_CHANGE_OPEN_COST:
+      Name: '#ffed6a&lKoszt otwarcia'
+      Lore:
+      - '#bdc8c9Ustawia, ile pieniędzy / doświadczenia gracz'
+      - '#bdc8c9musi zapłacić, aby'
+      - '#bdc8c9otworzyć tę skrzynkę.'
+      - ''
+      - '#ffed6a&lAktualne:'
+      - '#ffed6a▪ #bdc8c9Pieniądze: #ffed6a%crate_opening_cost_money%'
+      - '#ffed6a▪ #bdc8c9Poziomy doświadczenia: #ffed6a%crate_opening_cost_exp%'
+      - ''
+      - '#bbff6a&lAkcje:'
+      - '#bbff6a▪ #bdc8c9Lewy przycisk myszy: #bbff6aZmień pieniądze'
+      - '#bbff6a▪ #bdc8c9Prawy przycisk myszy: #bbff6aZmień doświadczenie'
+      - '#bbff6a▪ #bdc8c9[Q/Drop] Key: #bbff6aWyłącz wszystko'

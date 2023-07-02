@@ -45,10 +45,10 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
         this.hideDrainedRewards = cfg.getBoolean("Reward.Hide_Drained_Rewards");
         this.rewardSlots = cfg.getIntArray("Reward.Slots");
         this.rewardName = Colorizer.apply(cfg.getString("Reward.Name", Placeholders.REWARD_PREVIEW_NAME));
-        this.rewardLore = Colorizer.apply(cfg.getStringList("Reward.Lore.Default"));
-        this.rewardLoreLimitAmount = Colorizer.apply(cfg.getStringList("Reward.Lore.Win_Limit.Amount"));
-        this.rewardLoreLimitCoolown = Colorizer.apply(cfg.getStringList("Reward.Lore.Win_Limit.Cooldown"));
-        this.rewardLoreLimitDrained = Colorizer.apply(cfg.getStringList("Reward.Lore.Win_Limit.Drained"));
+        this.rewardLore = cfg.getStringList("Reward.Lore.Default");
+        this.rewardLoreLimitAmount = cfg.getStringList("Reward.Lore.Win_Limit.Amount");
+        this.rewardLoreLimitCoolown = cfg.getStringList("Reward.Lore.Win_Limit.Cooldown");
+        this.rewardLoreLimitDrained = cfg.getStringList("Reward.Lore.Win_Limit.Drained");
 
         this.registerHandler(MenuItemType.class)
             .addClick(MenuItemType.CLOSE, (viewer, event) -> {
@@ -111,6 +111,7 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
 
             ItemUtil.replace(meta, reward.replacePlaceholders());
             ItemUtil.replace(meta, this.crate.replacePlaceholders());
+            ItemUtil.replace(meta, Colorizer::apply);
         });
         return item;
     }
