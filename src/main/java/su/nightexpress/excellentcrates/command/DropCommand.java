@@ -75,7 +75,7 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
 
         plugin.getMessage(Lang.COMMAND_DROP_DONE)
             .replace(crate.replacePlaceholders())
-            .replace(Placeholders.LOCATION.replacer(location))
+            .replace(Placeholders.forLocation(location))
             .send(sender);
     }
 }

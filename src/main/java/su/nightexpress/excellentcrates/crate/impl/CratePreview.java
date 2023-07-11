@@ -94,9 +94,9 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
                 lore.remove(PLACEHOLDER_WIN_LIMIT_COOLDOWN);
             if (rewardData == null || !rewardData.isDrained(reward)) lore.remove(PLACEHOLDER_WIN_LIMIT_DRAINED);
 
-            lore = StringUtil.replace(lore, PLACEHOLDER_WIN_LIMIT_AMOUNT, false, this.rewardLoreLimitAmount);
-            lore = StringUtil.replace(lore, PLACEHOLDER_WIN_LIMIT_COOLDOWN, false, this.rewardLoreLimitCoolown);
-            lore = StringUtil.replace(lore, PLACEHOLDER_WIN_LIMIT_DRAINED, false, this.rewardLoreLimitDrained);
+            lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_AMOUNT, this.rewardLoreLimitAmount);
+            lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_COOLDOWN, this.rewardLoreLimitCoolown);
+            lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_DRAINED, this.rewardLoreLimitDrained);
 
             int amountLeft = rewardData == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardData.getAmount();
             long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();

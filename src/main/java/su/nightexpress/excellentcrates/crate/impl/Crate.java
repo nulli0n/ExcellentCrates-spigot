@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractConfigHolder;
-import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
@@ -33,7 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICleanable, Placeholder {
+public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Placeholder {
 
     private String name;
     private String openingConfig;
@@ -186,7 +185,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         cfg.set("Block.Hologram.Text", this.getBlockHologramText());
         cfg.set("Block.Effect.Model", this.getBlockEffectModel().name());
         cfg.remove("Block.Effect.Particle");
-        SimpleParticle.write(this.getBlockEffectParticle(), cfg, "Block.Effect.Particle");
+        this.getBlockEffectParticle().write(cfg, "Block.Effect.Particle");
 
         cfg.set("Rewards.List", null);
         for (Entry<String, CrateReward> e : this.getRewardsMap().entrySet()) {
@@ -212,7 +211,6 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements ICle
         return this.placeholderMap;
     }
 
-    @Override
     public void clear() {
         this.removeHologram();
         if (this.editor != null) {

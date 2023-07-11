@@ -58,7 +58,7 @@ public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
         user.saveData(this.plugin);
 
         plugin.getMessage(Lang.COMMAND_RESET_COOLDOWN_DONE)
-            .replace(Placeholders.Player.NAME, user.getName())
+            .replace(Placeholders.PLAYER_NAME, user.getName())
             .replace(crate.replacePlaceholders())
             .send(sender);
     }

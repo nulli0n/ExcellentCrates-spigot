@@ -6,7 +6,7 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
-import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.utils.EngineUtils;
 import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.command.*;
 import su.nightexpress.excellentcrates.command.key.KeyMainCommand;
@@ -79,7 +79,7 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
             this.hologramHandler.shutdown();
             this.hologramHandler = null;
         }
-        if (Hooks.hasPlaceholderAPI()) {
+        if (EngineUtils.hasPlaceholderAPI()) {
             PlaceholderHook.shutdown();
         }
     }
@@ -98,14 +98,14 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public void registerHooks() {
-        if (Hooks.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
+        if (EngineUtils.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
             this.hologramHandler = new HologramHandlerHD(this);
         }
-        else if (Hooks.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
+        else if (EngineUtils.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
             this.hologramHandler = new HologramHandlerDecent(this);
         }
 
-        if (Hooks.hasPlaceholderAPI()) {
+        if (EngineUtils.hasPlaceholderAPI()) {
             PlaceholderHook.setup();
         }
     }

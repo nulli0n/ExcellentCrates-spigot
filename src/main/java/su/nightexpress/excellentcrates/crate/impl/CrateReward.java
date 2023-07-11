@@ -6,10 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
@@ -26,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CrateReward implements ICleanable, Placeholder {
+public class CrateReward implements Placeholder {
 
     private final Crate crate;
     private final String id;
@@ -141,7 +139,6 @@ public class CrateReward implements ICleanable, Placeholder {
         return this.editor;
     }
 
-    @Override
     public void clear() {
         if (this.editor != null) {
             this.editor.clear();
@@ -281,7 +278,7 @@ public class CrateReward implements ICleanable, Placeholder {
             PlayerUtil.addItem(player, give);
         });
         this.getCommands().forEach(command -> {
-            if (Hooks.hasPlaceholderAPI()) {
+            if (EngineUtils.hasPlaceholderAPI()) {
                 command = PlaceholderAPI.setPlaceholders(player, command);
             }
             PlayerUtil.dispatchCommand(player, command);
@@ -294,7 +291,7 @@ public class CrateReward implements ICleanable, Placeholder {
 
         if (this.isBroadcast()) {
             this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_BROADCAST)
-                .replace(Placeholders.Player.replacer(player))
+                .replace(Placeholders.forPlayer(player))
                 .replace(this.getCrate().replacePlaceholders())
                 .replace(this.replacePlaceholders())
                 .broadcast();

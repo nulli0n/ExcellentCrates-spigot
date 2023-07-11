@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.editor.InputHandler;
-import su.nexmedia.engine.api.manager.IListener;
+import su.nexmedia.engine.api.manager.EventListener;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.api.particle.SimpleParticle;
@@ -30,7 +30,7 @@ import su.nightexpress.excellentcrates.editor.EditorLocales;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implements IListener {
+public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implements EventListener {
 
     private CrateRewardListEditor editorRewards;
     private boolean               isReadyForBlock = false;

@@ -13,16 +13,16 @@ public class Lang extends EngineLang implements LangColors {
 
     public static final LangKey COMMAND_DROP_USAGE = LangKey.of("Command.Drop.Usage", "<crateId> <world> <x> <y> <z>");
     public static final LangKey COMMAND_DROP_DESC  = LangKey.of("Command.Drop.Desc", "Drop crate at specified location in the world.");
-    public static final LangKey COMMAND_DROP_DONE  = LangKey.of("Command.Drop.Done", GRAY + "Dropped " + YELLOW + Placeholders.CRATE_NAME + GRAY + " at " + YELLOW + Placeholders.Location.X + ", " + Placeholders.Location.Y + ", " + Placeholders.Location.Z + GRAY + " in " + YELLOW + Placeholders.Location.WORLD + GRAY + ".");
+    public static final LangKey COMMAND_DROP_DONE  = LangKey.of("Command.Drop.Done", GRAY + "Dropped " + YELLOW + Placeholders.CRATE_NAME + GRAY + " at " + YELLOW + Placeholders.LOCATION_X + ", " + Placeholders.LOCATION_Y + ", " + Placeholders.LOCATION_Z + GRAY + " in " + YELLOW + Placeholders.LOCATION_WORLD + GRAY + ".");
 
     public static final LangKey COMMAND_OPEN_DESC   = LangKey.of("Command.Open.Desc", "Makes [player] to [force] open a crate.");
     public static final LangKey COMMAND_OPEN_USAGE  = LangKey.of("Command.Open.Usage", "<crate> [player] [-f] [-s]");
-    public static final LangKey COMMAND_OPEN_DONE   = LangKey.of("Command.Open.Done", GRAY + "Forced " + YELLOW + Placeholders.Player.NAME + GRAY + " to open " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_OPEN_DONE   = LangKey.of("Command.Open.Done", GRAY + "Forced " + YELLOW + Placeholders.PLAYER_NAME + GRAY + " to open " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
     public static final LangKey COMMAND_OPEN_NOTIFY = LangKey.of("Command.Open.Notify", GRAY + "You have been forced to open " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_GIVE_USAGE  = LangKey.of("Command.Give.Usage", "<player> <crate> [amount] [-s]");
     public static final LangKey COMMAND_GIVE_DESC   = LangKey.of("Command.Give.Desc", "Gives crate to a player.");
-    public static final LangKey COMMAND_GIVE_DONE   = LangKey.of("Command.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY +  " of " + YELLOW + Placeholders.CRATE_NAME + GRAY + " crate(s) to " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_GIVE_DONE   = LangKey.of("Command.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY +  " of " + YELLOW + Placeholders.CRATE_NAME + GRAY + " crate(s) to " + YELLOW + Placeholders.PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_GIVE_NOTIFY = LangKey.of("Command.Give.Notify", GRAY + "You recieved " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_KEY_DESC         = LangKey.of("Command.Key.Desc", "Manage player's keys.");
@@ -30,7 +30,7 @@ public class Lang extends EngineLang implements LangColors {
 
     public static final LangKey COMMAND_KEY_GIVE_USAGE  = LangKey.of("Command.Key.Give.Usage", "<player> <key> <amount> [-s]");
     public static final LangKey COMMAND_KEY_GIVE_DESC   = LangKey.of("Command.Key.Give.Desc", "Give key to a player.");
-    public static final LangKey COMMAND_KEY_GIVE_DONE   = LangKey.of("Command.Key.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) to " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_GIVE_DONE   = LangKey.of("Command.Key.Give.Done", GRAY + "Given " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) to " + YELLOW + Placeholders.PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_GIVE_NOTIFY = LangKey.of("Command.Key.Give.Notify", GRAY + "You recieved " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + "!");
 
     public static final LangKey COMMAND_KEY_GIVE_ALL_USAGE  = LangKey.of("Command.Key.GiveAll.Usage", "<player> <key> <amount> [-s]");
@@ -39,12 +39,12 @@ public class Lang extends EngineLang implements LangColors {
 
     public static final LangKey COMMAND_KEY_TAKE_USAGE  = LangKey.of("Command.Key.Take.Usage", "<player> <key> <amount> [-s]");
     public static final LangKey COMMAND_KEY_TAKE_DESC   = LangKey.of("Command.Key.Take.Desc", "Take key from a player.");
-    public static final LangKey COMMAND_KEY_TAKE_DONE   = LangKey.of("Command.Key.Take.Done", GRAY + "Taken " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) from " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_TAKE_DONE   = LangKey.of("Command.Key.Take.Done", GRAY + "Taken " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) from " + YELLOW + Placeholders.PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_TAKE_NOTIFY = LangKey.of("Command.Key.Take.Notify", GRAY + "You lost " + RED + "x" + Placeholders.GENERIC_AMOUNT + " " + Placeholders.KEY_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_KEY_SET_USAGE  = LangKey.of("Command.Key.Set.Usage", "<player> <key> <amount> [-s]");
     public static final LangKey COMMAND_KEY_SET_DESC   = LangKey.of("Command.Key.Set.Desc", "Set keys amount for a player.");
-    public static final LangKey COMMAND_KEY_SET_DONE   = LangKey.of("Command.Key.Set.Done", GRAY + "Set " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) for " + YELLOW + Placeholders.Player.NAME + GRAY + ".");
+    public static final LangKey COMMAND_KEY_SET_DONE   = LangKey.of("Command.Key.Set.Done", GRAY + "Set " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + " of " + YELLOW + Placeholders.KEY_NAME + GRAY + " key(s) for " + YELLOW + Placeholders.PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_SET_NOTIFY = LangKey.of("Command.Key.Set.Notify", GRAY + "Your " + YELLOW + Placeholders.KEY_NAME + GRAY + "'s amount has been changed to " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT + GRAY + ".");
 
     public static final LangKey COMMAND_KEY_INSPECT_DESC     = LangKey.of("Command.Key.Show.Desc", "Inspect [player's] virtual keys.");
@@ -52,26 +52,26 @@ public class Lang extends EngineLang implements LangColors {
     public static final LangKey COMMAND_KEY_INSPECT_LIST  = LangKey.of("Command.Key.Show.Format.List",
         "<! prefix:\"false\" !>" +
         "\n" + GRAY +
-        "\n" + YELLOW + "&l" + Placeholders.Player.NAME + "'s Virtual Keys: " +
+        "\n" + YELLOW + "&l" + Placeholders.PLAYER_NAME + "'s Virtual Keys: " +
         "\n" + YELLOW + "▪ " + GRAY + Placeholders.KEY_NAME + ": " + YELLOW + "x" + Placeholders.GENERIC_AMOUNT +
         "\n" + GRAY);
 
     public static final LangKey COMMAND_PREVIEW_DESC        = LangKey.of("Command.Preview.Desc", "Open crate preview.");
     public static final LangKey COMMAND_PREVIEW_USAGE       = LangKey.of("Command.Preview.Usage", "<crate> [player]");
-    public static final LangKey COMMAND_PREVIEW_DONE_OTHERS = LangKey.of("Command.Preview.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.CRATE_NAME + GRAY + " preview for " + YELLOW + Placeholders.Player.DISPLAY_NAME + GRAY + ".");
+    public static final LangKey COMMAND_PREVIEW_DONE_OTHERS = LangKey.of("Command.Preview.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.CRATE_NAME + GRAY + " preview for " + YELLOW + Placeholders.PLAYER_DISPLAY_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_RESET_LIMIT_DESC        = LangKey.of("Command.ResetLimit.Desc", "Reset reward win limit for specified crate and reward.");
     public static final LangKey COMMAND_RESET_LIMIT_USAGE       = LangKey.of("Command.ResetLimit.Usage", "<player> <crate> [reward]");
-    public static final LangKey COMMAND_RESET_LIMIT_DONE_CRATE  = LangKey.of("Command.ResetLimit.Done.Crate", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + " win limit for all rewards of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
-    public static final LangKey COMMAND_RESET_LIMIT_DONE_REWARD = LangKey.of("Command.ResetLimit.Done.Reward", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + " win limit for " + YELLOW + Placeholders.REWARD_NAME + GRAY + " reward of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_CRATE  = LangKey.of("Command.ResetLimit.Done.Crate", GRAY + "Reset " + YELLOW + Placeholders.PLAYER_NAME + GRAY + " win limit for all rewards of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_RESET_LIMIT_DONE_REWARD = LangKey.of("Command.ResetLimit.Done.Reward", GRAY + "Reset " + YELLOW + Placeholders.PLAYER_NAME + GRAY + " win limit for " + YELLOW + Placeholders.REWARD_NAME + GRAY + " reward of " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_RESET_COOLDOWN_DESC  = LangKey.of("Command.ResetCooldown.Desc", "Reset player's crate open cooldown.");
     public static final LangKey COMMAND_RESET_COOLDOWN_USAGE = LangKey.of("Command.ResetCooldown.Usage", "<player> <crate>");
-    public static final LangKey COMMAND_RESET_COOLDOWN_DONE  = LangKey.of("Command.ResetCooldown.Done", GRAY + "Reset " + YELLOW + Placeholders.Player.NAME + GRAY + "'s open cooldown for " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
+    public static final LangKey COMMAND_RESET_COOLDOWN_DONE  = LangKey.of("Command.ResetCooldown.Done", GRAY + "Reset " + YELLOW + Placeholders.PLAYER_NAME + GRAY + "'s open cooldown for " + YELLOW + Placeholders.CRATE_NAME + GRAY + ".");
 
     public static final LangKey COMMAND_MENU_USAGE       = LangKey.of("Command.Menu.Usage", "[menu]");
     public static final LangKey COMMAND_MENU_DESC        = LangKey.of("Command.Menu.Desc", "Open crate menu.");
-    public static final LangKey COMMAND_MENU_DONE_OTHERS = LangKey.of("Command.Menu.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.MENU_ID + GRAY + " crate menu for " + YELLOW + Placeholders.Player.DISPLAY_NAME + GRAY + ".");
+    public static final LangKey COMMAND_MENU_DONE_OTHERS = LangKey.of("Command.Menu.Done.Others", GRAY + "Opened " + YELLOW + Placeholders.MENU_ID + GRAY + " crate menu for " + YELLOW + Placeholders.PLAYER_DISPLAY_NAME + GRAY + ".");
 
     public static final LangKey CRATE_ERROR_INVALID = LangKey.of("Crate.Error.Invalid", RED + "Invalid crate!");
     public static final LangKey CRATE_ERROR_EXISTS  = LangKey.of("Crate.Error.Exists", RED + "Crate with such id is already exists!");
@@ -123,7 +123,7 @@ public class Lang extends EngineLang implements LangColors {
     public static final LangKey CRATE_OPEN_REWARD_BROADCAST         = LangKey.of("Crate.Open.Reward.Broadcast",
         "<! prefix:\"false\" sound:\"" + Sound.BLOCK_NOTE_BLOCK_BELL.name() + "\" !>" +
             "\n" + GRAY +
-            "\n" + GREEN + "&lWOW!" + GRAY + " Player " + GREEN + Placeholders.Player.DISPLAY_NAME + GRAY + " just won " + GREEN + Placeholders.REWARD_NAME + GRAY + " from " + GREEN + Placeholders.CRATE_NAME + GRAY + "!" +
+            "\n" + GREEN + "&lWOW!" + GRAY + " Player " + GREEN + Placeholders.PLAYER_DISPLAY_NAME + GRAY + " just won " + GREEN + Placeholders.REWARD_NAME + GRAY + " from " + GREEN + Placeholders.CRATE_NAME + GRAY + "!" +
             "\n" + GRAY +
             "\n" + GRAY + "Do you wanna too? Purchase keys now: <? open_url:\"http://samplesmp.com/store\" ?>" + GREEN + "[Open Store]</>" +
             "\n" + GRAY);

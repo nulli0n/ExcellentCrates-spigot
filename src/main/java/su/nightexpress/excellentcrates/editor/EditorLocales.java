@@ -91,6 +91,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .name("Crate Item")
         .text("Sets the inventory crate item.", "It's used when you give crates to players", "and in crate menus.").breakLine()
         .noteHeader().notes("Use item with premade name, lore, model, etc.").breakLine()
+        .warningHeader().warning("Use commands to give actual working crate item.").breakLine()
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
         .build();
 
@@ -194,7 +195,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .name("Run Commands")
         .text("A list of commands to run", "when player obtains this reward.").breakLine()
         .currentHeader().text(Placeholders.REWARD_COMMANDS).breakLine()
-        .noteHeader().notes("Use " + ORANGE + Placeholders.Player.NAME + GRAY + " placeholder for player name.").breakLine()
+        .noteHeader().notes("Use " + ORANGE + Placeholders.PLAYER_NAME + GRAY + " placeholder for player name.").breakLine()
         .actionsHeader().action("Left-Click", "Add Command").action("Right-Click", "Clear List")
         .build();
 
@@ -257,6 +258,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .name("Key Item")
         .text("Sets the physical key item.").breakLine()
         .noteHeader().notes("This option is useless for virtual keys.", "Use item with premade name, lore, etc.").breakLine()
+        .warningHeader().warning("Use commands to give actual working crate key.").breakLine()
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
         .build();
 

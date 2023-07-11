@@ -66,7 +66,7 @@ public class MenuCommand extends AbstractCommand<ExcellentCrates> {
 
         if (sender != player) {
             plugin.getMessage(Lang.COMMAND_MENU_DONE_OTHERS)
-                .replace(Placeholders.Player.replacer(player))
+                .replace(Placeholders.forPlayer(player))
                 .replace(Placeholders.MENU_ID, menu.getId())
                 .send(sender);
         }

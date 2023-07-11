@@ -75,7 +75,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
         user.saveData(this.plugin);
 
         message
-            .replace(Placeholders.Player.NAME, user.getName())
+            .replace(Placeholders.PLAYER_NAME, user.getName())
             .replace(crate.replacePlaceholders())
             .send(sender);
     }

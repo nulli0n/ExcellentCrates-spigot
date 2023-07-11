@@ -70,7 +70,7 @@ public class GiveCommand extends AbstractCommand<ExcellentCrates> {
         }
         if (sender != player) {
             plugin.getMessage(Lang.COMMAND_GIVE_DONE)
-                .replace(Placeholders.Player.replacer(player))
+                .replace(Placeholders.forPlayer(player))
                 .replace(Placeholders.GENERIC_AMOUNT, amount)
                 .replace(crate.replacePlaceholders())
                 .send(sender);

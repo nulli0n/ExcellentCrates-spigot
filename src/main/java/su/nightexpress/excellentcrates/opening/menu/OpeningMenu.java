@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.IListener;
+import su.nexmedia.engine.api.manager.EventListener;
 import su.nexmedia.engine.api.menu.impl.ConfigMenu;
 import su.nexmedia.engine.api.menu.item.MenuItem;
 import su.nexmedia.engine.utils.StringUtil;
@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements IListener {
+public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements EventListener {
 
     private final Map<String, SliderInfo>    sliders;
     private final Map<String, AnimationInfo> animations;

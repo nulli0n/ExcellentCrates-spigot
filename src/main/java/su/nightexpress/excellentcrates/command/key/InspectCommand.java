@@ -46,7 +46,7 @@ public class InspectCommand extends AbstractCommand<ExcellentCrates> {
             }
 
             this.plugin.getMessage(Lang.COMMAND_KEY_INSPECT_LIST)
-                .replace(Placeholders.Player.NAME, user.getName())
+                .replace(Placeholders.PLAYER_NAME, user.getName())
                 .replace(str -> str.contains(Placeholders.KEY_NAME), (line, list) -> {
                     this.plugin.getKeyManager().getKeys().forEach(key -> {
                         if (!key.isVirtual()) return;
