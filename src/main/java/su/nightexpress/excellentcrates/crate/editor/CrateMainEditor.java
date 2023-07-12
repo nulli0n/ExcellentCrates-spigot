@@ -32,14 +32,17 @@ import java.util.List;
 
 public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implements EventListener {
 
-    private CrateRewardListEditor editorRewards;
-    private boolean               isReadyForBlock = false;
+    private static final String TEXTURE_MILESTONES = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODE2MjNkNTIzOGRhYjdkZWNkMzIwMjY1Y2FlMWRjNmNhOTFiN2ZhOTVmMzQ2NzNhYWY0YjNhZDVjNmJhMTZlMSJ9fX0=";
+
+    private CrateRewardsEditor rewardsEditor;
+    private CrateMilestonesEditor milestonesEditor;
+    private boolean            isReadyForBlock = false;
 
     public CrateMainEditor(@NotNull Crate crate) {
         super(crate.plugin(), crate, Config.EDITOR_TITLE_CRATE.get(), 45);
 
         this.addReturn(40).setClick((viewer, event) -> {
-            this.plugin.runTask(task -> this.plugin.getEditor().getCratesEditor().open(viewer.getPlayer(), 1));
+            this.plugin.getEditor().getCratesEditor().openNextTick(viewer, 1);
         });
 
         this.addItem(Material.NAME_TAG, EditorLocales.CRATE_NAME, 2).setClick((viewer, event) -> {
@@ -125,7 +128,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
         });
 
         this.addItem(Material.EMERALD, EditorLocales.CRATE_REWARDS, 13).setClick((viewer, event) -> {
-            this.plugin.runTask(task -> this.getEditorRewards().open(viewer.getPlayer(), 1));
+            this.getRewardsEditor().openNextTick(viewer.getPlayer(), 1);
         });
 
         this.addItem(Material.CLOCK, EditorLocales.CRATE_OPEN_COOLDOWN, 15).setClick((viewer, event) -> {
@@ -247,6 +250,16 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
             }
         });
 
+        this.addItem(ItemUtil.createCustomHead(TEXTURE_MILESTONES), EditorLocales.CRATE_MILESTONES, 32).setClick((viewer, event) -> {
+            if (event.isRightClick()) {
+                crate.setMilestonesRepeatable(!crate.isMilestonesRepeatable());
+                this.save(viewer);
+                return;
+            }
+
+            this.getMilestonesEditor().openNextTick(viewer, 1);
+        });
+
         this.getItems().forEach(menuItem -> {
             if (menuItem.getOptions().getDisplayModifier() == null) {
                 menuItem.getOptions().setDisplayModifier(((viewer, item) -> {
@@ -267,23 +280,35 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
     public void clear() {
         super.clear();
         this.unregisterListeners();
-        if (this.editorRewards != null) {
-            this.editorRewards.clear();
-            this.editorRewards = null;
+        if (this.rewardsEditor != null) {
+            this.rewardsEditor.clear();
+            this.rewardsEditor = null;
+        }
+        if (this.milestonesEditor != null) {
+            this.milestonesEditor.clear();
+            this.milestonesEditor = null;
         }
     }
 
     @NotNull
-    public CrateRewardListEditor getEditorRewards() {
-        if (this.editorRewards == null) {
-            this.editorRewards = new CrateRewardListEditor(this.object);
+    public CrateRewardsEditor getRewardsEditor() {
+        if (this.rewardsEditor == null) {
+            this.rewardsEditor = new CrateRewardsEditor(this.object);
         }
-        return this.editorRewards;
+        return this.rewardsEditor;
+    }
+
+    @NotNull
+    public CrateMilestonesEditor getMilestonesEditor() {
+        if (this.milestonesEditor == null) {
+            this.milestonesEditor = new CrateMilestonesEditor(this.plugin, this.object);
+        }
+        return milestonesEditor;
     }
 
     private void save(@NotNull MenuViewer viewer) {
         this.object.save();
-        this.plugin.runTask(task -> this.open(viewer.getPlayer(), viewer.getPage()));
+        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override

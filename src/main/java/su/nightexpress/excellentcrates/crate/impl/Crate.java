@@ -58,6 +58,9 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
     private CratePreview    preview;
     private CrateMainEditor editor;
 
+    private boolean milestonesRepeatable;
+
+    private final Set<Milestone> milestones;
     private final PlaceholderMap placeholderMap;
 
     public Crate(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
@@ -66,6 +69,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
         this.openCostType = new HashMap<>();
         this.setRewardsMap(new LinkedHashMap<>());
         this.blockLocations = new HashSet<>();
+        this.milestones = new HashSet<>();
 
         this.placeholderMap = new PlaceholderMap()
             .add(Placeholders.CRATE_ID, this.getId())
@@ -99,6 +103,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
             .add(Placeholders.CRATE_BLOCK_EFFECT_MODEL, () -> this.getBlockEffectModel().name())
             .add(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_NAME, () -> this.getBlockEffectParticle().getParticle().name())
             .add(Placeholders.CRATE_BLOCK_EFFECT_PARTICLE_DATA, () -> String.valueOf(this.getBlockEffectParticle().getData()))
+            .add(Placeholders.CRATE_MILESTONES_REPEATABLE, () -> LangManager.getBoolean(this.isMilestonesRepeatable()))
         ;
     }
 
@@ -154,6 +159,11 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
             this.rewardMap.put(rewId, reward);
         }
 
+        this.setMilestonesRepeatable(cfg.getBoolean("Milestones.Repeatable"));
+        for (String sId : cfg.getSection("Milestones.List")) {
+            this.getMilestones().add(Milestone.read(cfg, "Milestones.List." + sId));
+        }
+
         this.createPreview();
         return true;
     }
@@ -202,6 +212,13 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
             cfg.set(path + "Commands", reward.getCommands());
             cfg.setItemsEncoded(path + "Items", reward.getItems());
             cfg.set(path + "Ignored_For_Permissions", reward.getIgnoredForPermissions());
+        }
+
+        cfg.set("Milestones.Repeatable", this.isMilestonesRepeatable());
+        cfg.set("Milestones.List", null);
+        int i = 0;
+        for (Milestone milestone : this.getMilestones()) {
+            milestone.write(cfg, "Milestones.List." + (i++));
         }
     }
 
@@ -472,6 +489,17 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
         return this.getRewardsMap().get(id.toLowerCase());
     }
 
+    @Nullable
+    public CrateReward getMilestoneReward(int openings) {
+        Milestone milestone = this.getMilestone(openings);
+        return milestone == null ? null : this.getMilestoneReward(milestone);
+    }
+
+    @Nullable
+    public CrateReward getMilestoneReward(@NotNull Milestone milestone) {
+        return this.getReward(milestone.getRewardId());
+    }
+
     public void addReward(@NotNull CrateReward crateReward) {
         this.getRewardsMap().put(crateReward.getId(), crateReward);
     }
@@ -505,5 +533,27 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
             rewards.put(reward, reward.getChance());
         });
         return Rnd.getByWeight(rewards);
+    }
+
+    @NotNull
+    public Set<Milestone> getMilestones() {
+        return milestones;
+    }
+
+    @Nullable
+    public Milestone getMilestone(int openings) {
+        return this.getMilestones().stream().filter(milestone -> milestone.getOpenings() == openings).findFirst().orElse(null);
+    }
+
+    public boolean isMilestonesRepeatable() {
+        return milestonesRepeatable;
+    }
+
+    public void setMilestonesRepeatable(boolean milestonesRepeatable) {
+        this.milestonesRepeatable = milestonesRepeatable;
+    }
+
+    public int getMaxMilestone() {
+        return this.getMilestones().stream().mapToInt(Milestone::getOpenings).max().orElse(0);
     }
 }

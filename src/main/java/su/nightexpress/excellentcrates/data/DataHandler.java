@@ -21,6 +21,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
     private static final SQLColumn COLUMN_KEYS_ON_HOLD      = SQLColumn.of("keysOnHold", ColumnType.STRING);
     private static final SQLColumn COLUMN_CRATE_COOLDOWNS   = SQLColumn.of("crateCooldowns", ColumnType.STRING);
     private static final SQLColumn COLUMN_CRATE_OPENINGS    = SQLColumn.of("crateOpenings", ColumnType.STRING);
+    private static final SQLColumn COLUMN_CRATE_MILESTONES = SQLColumn.of("crateMilestones", ColumnType.STRING);
     private static final SQLColumn COLUMN_REWARD_WIN_LIMITS = SQLColumn.of("rewardWinLimits", ColumnType.STRING);
 
     private static DataHandler                    instance;
@@ -40,12 +41,13 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
                 Map<String, Integer> keysOnHold = this.gson.fromJson(resultSet.getString(COLUMN_KEYS_ON_HOLD.getName()), new TypeToken<Map<String, Integer>>() {}.getType());
                 Map<String, Long> openCooldowns = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_COOLDOWNS.getName()), new TypeToken<Map<String, Long>>() {}.getType());
                 Map<String, Integer> openingsAmount = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_OPENINGS.getName()), new TypeToken<Map<String, Integer>>(){}.getType());
+                Map<String, Integer> milestones = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_MILESTONES.getName()), new TypeToken<Map<String, Integer>>(){}.getType());
                 Map<String, Map<String, UserRewardData>> rewardWinLimits = this.gson.fromJson(resultSet.getString(COLUMN_REWARD_WIN_LIMITS.getName()), new TypeToken<Map<String, Map<String, UserRewardData>>>() {}.getType());
 
                 if (openingsAmount == null) openingsAmount = new HashMap<>();
 
                 return new CrateUser(plugin, uuid, name, dateCreated, lastOnline,
-                    keys, keysOnHold, openCooldowns, openingsAmount, rewardWinLimits);
+                    keys, keysOnHold, openCooldowns, openingsAmount, milestones, rewardWinLimits);
             }
             catch (SQLException e) {
                 return null;
@@ -92,14 +94,18 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
             COLUMN_KEYS_ON_HOLD.toValue("{}"),
             COLUMN_CRATE_COOLDOWNS.toValue("{}"),
             COLUMN_CRATE_OPENINGS.toValue("{}"),
-            COLUMN_REWARD_WIN_LIMITS.toValue("{}"));
+            COLUMN_REWARD_WIN_LIMITS.toValue("{}"),
+            COLUMN_CRATE_MILESTONES.toValue("{}")
+            );
     }
 
     @Override
     @NotNull
     protected List<SQLColumn> getExtraColumns() {
         return Arrays.asList(
-            COLUMN_KEYS, COLUMN_KEYS_ON_HOLD, COLUMN_CRATE_COOLDOWNS, COLUMN_CRATE_OPENINGS, COLUMN_REWARD_WIN_LIMITS
+            COLUMN_KEYS, COLUMN_KEYS_ON_HOLD,
+            COLUMN_CRATE_COOLDOWNS, COLUMN_CRATE_OPENINGS, COLUMN_CRATE_MILESTONES,
+            COLUMN_REWARD_WIN_LIMITS
         );
     }
 
@@ -111,6 +117,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
             COLUMN_KEYS_ON_HOLD.toValue(this.gson.toJson(user.getKeysOnHold())),
             COLUMN_CRATE_COOLDOWNS.toValue(this.gson.toJson(user.getCrateCooldowns())),
             COLUMN_CRATE_OPENINGS.toValue(this.gson.toJson(user.getOpeningsAmountMap())),
+            COLUMN_CRATE_MILESTONES.toValue(this.gson.toJson(user.getMilestonesMap())),
             COLUMN_REWARD_WIN_LIMITS.toValue(this.gson.toJson(user.getRewardWinLimits()))
         );
     }

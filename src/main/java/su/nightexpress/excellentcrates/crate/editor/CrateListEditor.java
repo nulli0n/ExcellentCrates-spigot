@@ -29,7 +29,7 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
         super(crateManager.plugin(), crateManager, Config.EDITOR_TITLE_CRATE.get(), 45);
 
         this.addReturn(39).setClick((viewer, event) -> {
-            this.plugin.runTask(task -> this.plugin.getEditor().open(viewer.getPlayer(), 1));
+            this.plugin.getEditor().openNextTick(viewer, 1);
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
@@ -81,10 +81,10 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
         return (viewer, event) -> {
             if (event.isShiftClick() && event.isRightClick()) {
                 this.object.delete(crate);
-                this.plugin.runTask(task -> this.open(viewer.getPlayer(), viewer.getPage()));
+                this.openNextTick(viewer, viewer.getPage());
                 return;
             }
-            this.plugin.runTask(task -> crate.getEditor().open(viewer.getPlayer(), 1));
+            crate.getEditor().openNextTick(viewer, 1);
         };
     }
 }

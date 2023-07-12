@@ -31,7 +31,7 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
         Crate crate = reward.getCrate();
 
         this.addReturn(40).setClick((viewer, event) -> {
-           this.plugin.runTask(task -> crate.getEditor().getEditorRewards().open(viewer.getPlayer(), 1));
+           crate.getEditor().getRewardsEditor().openNextTick(viewer, 1);
         });
 
         this.addItem(Material.ITEM_FRAME, EditorLocales.REWARD_PREVIEW, 4).setClick((viewer, event) -> {
@@ -171,7 +171,7 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
 
     private void save(@NotNull MenuViewer viewer) {
         this.object.getCrate().save();
-        this.plugin.runTask(task -> this.open(viewer.getPlayer(), viewer.getPage()));
+        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override
@@ -213,7 +213,7 @@ public class CrateRewardMainEditor extends EditorMenu<ExcellentCrates, CrateRewa
             Inventory inventory = event.getInventory();
             this.reward.setItems(Stream.of(inventory.getContents()).toList());
             this.reward.getCrate().save();
-            this.plugin.runTask(task -> this.reward.getEditor().open(viewer.getPlayer(), 1));
+            this.reward.getEditor().openNextTick(viewer, 1);
             super.onClose(viewer, event);
         }
     }

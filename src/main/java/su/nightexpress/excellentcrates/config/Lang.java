@@ -120,6 +120,10 @@ public class Lang extends EngineLang implements LangColors {
         "<! prefix:\"false\" !>" +
             GRAY + "You won " + GREEN + Placeholders.REWARD_NAME + GRAY + " from the " + GREEN + Placeholders.CRATE_NAME + GRAY + "!");
 
+    public static final LangKey CRATE_OPEN_MILESTONE_COMPLETED = LangKey.of("Crate.Open.Milestone.Completed",
+        "<! prefix:\"false\" sound:\"" + Sound.ENTITY_PLAYER_LEVELUP.name() + "\" !>" +
+            GRAY + "You completed " + GREEN + Placeholders.MILESTONE_OPENINGS + " Openings " + GRAY + "milestone and got " + GREEN + Placeholders.REWARD_NAME + GRAY + " as reward!");
+
     public static final LangKey CRATE_OPEN_REWARD_BROADCAST         = LangKey.of("Crate.Open.Reward.Broadcast",
         "<! prefix:\"false\" sound:\"" + Sound.BLOCK_NOTE_BLOCK_BELL.name() + "\" !>" +
             "\n" + GRAY +
@@ -133,7 +137,8 @@ public class Lang extends EngineLang implements LangColors {
 
     public static final LangKey MENU_INVALID = LangKey.of("Menu.Invalid", RED + "Menu does not exist!");
 
-    public static final LangKey EDITOR_ENTER_DISPLAY_NAME  = LangKey.of("Editor.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
+    public static final LangKey EDITOR_ENTER_DISPLAY_NAME = LangKey.of("Editor.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
+    public static final LangKey EDITOR_ENTER_AMOUNT       = LangKey.of("Editor.Enter.Amount", GRAY + "Enter " + GREEN + "[Amount]");
 
     public static final LangKey EDITOR_CRATE_ENTER_ID                    = LangKey.of("Editor.Crate.Enter.Id", GRAY + "Enter " + GREEN + "[Crate Identifier]");
     public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME         = LangKey.of("Editor.Crate.Enter.Particle.Name", GRAY + "Enter " + GREEN + "[Particle Name]");
@@ -147,6 +152,8 @@ public class Lang extends EngineLang implements LangColors {
     public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG        = LangKey.of("Editor.Crate.Enter.PreviewConfig", GRAY + "Enter " + GREEN + "[Preview Name]");
     public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_MONEY       = LangKey.of("Editor.Crate.Enter.OpenCost.Money", GRAY + "Enter " + GREEN + "[Money Amount]");
     public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP         = LangKey.of("Editor.Crate.Enter.OpenCost.Exp", GRAY + "Enter " + GREEN + "[Levels Amount]");
+
+    public static final LangKey EDITOR_MILESTONE_ENTER_REWARD = LangKey.of("Editor.Milestone.Enter.Reward", GRAY + "Enter " + GREEN + "[Reward Id]");
 
     public static final LangKey EDITOR_REWARD_ENTER_ID                 = LangKey.of("Editor.Reward.Enter.Id", GRAY + "Enter " + GREEN + "[Reward Identifier]");
     public static final LangKey EDITOR_REWARD_ENTER_CHANCE             = LangKey.of("Editor.Reward.Enter.Chance", GRAY + "Enter " + GREEN + "[Chance]");

@@ -28,13 +28,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> implements AutoPaged<CrateReward> {
+public class CrateRewardsEditor extends EditorMenu<ExcellentCrates, Crate> implements AutoPaged<CrateReward> {
 
-    public CrateRewardListEditor(@NotNull Crate crate) {
+    public CrateRewardsEditor(@NotNull Crate crate) {
         super(crate.plugin(), crate, Config.EDITOR_TITLE_CRATE.get(), 45);
 
         this.addReturn(40).setClick((viewer, event) -> {
-            this.plugin.runTask(rask -> crate.getEditor().open(viewer.getPlayer(), 1));
+            crate.getEditor().openNextTick(viewer, 1);
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
@@ -92,7 +92,7 @@ public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> im
 
     private void save(@NotNull MenuViewer viewer) {
         this.object.save();
-        this.plugin.runTask(task -> this.open(viewer.getPlayer(), viewer.getPage()));
+        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class CrateRewardListEditor extends EditorMenu<ExcellentCrates, Crate> im
             }
 
             if (event.isLeftClick()) {
-                this.plugin.runTask(task -> reward.getEditor().open(player, 1));
+                reward.getEditor().openNextTick(player, 1);
             }
         };
     }

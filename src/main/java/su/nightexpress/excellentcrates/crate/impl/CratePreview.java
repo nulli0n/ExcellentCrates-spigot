@@ -55,10 +55,20 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
                 this.plugin.runTask(task -> viewer.getPlayer().closeInventory());
             })
             .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this))
-            .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this))
-        ;
+            .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this));
+
+        this.registerHandler(Type.class)
+            .addClick(Type.MILESTONES, (viewer, event) -> {
+                this.plugin.runTask(task -> {
+                    this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), crate);
+                });
+            });
 
         this.load();
+    }
+
+    private enum Type {
+        MILESTONES
     }
 
     @Override
@@ -76,7 +86,7 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
     @Override
     @NotNull
     public List<CrateReward> getObjects(@NotNull Player player) {
-        return new ArrayList<>(this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards());
+        return (this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(r -> r.getChance() > 0).toList();
     }
 
     @Override

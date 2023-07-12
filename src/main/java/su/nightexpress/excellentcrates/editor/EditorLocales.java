@@ -6,37 +6,38 @@ import su.nightexpress.excellentcrates.config.Config;
 
 public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
 
-    private static final String PREFIX = "Editor.CrateEditorType."; // Old version compatibility
+    private static final String PREFIX_OLD = "Editor.CrateEditorType."; // Old version compatibility
+    private static final String PREFIX = "Editor.Item.";
 
-    public static final EditorLocale CRATES_EDITOR = builder(PREFIX + "EDITOR_CRATES")
+    public static final EditorLocale CRATES_EDITOR = builder(PREFIX_OLD + "EDITOR_CRATES")
         .name("Crates")
         .text("Create & manage your crates here!").breakLine()
         .actionsHeader().action("Left-Click", "Open").build();
 
-    public static final EditorLocale KEYS_EDITOR = builder(PREFIX + "EDITOR_KEYS")
+    public static final EditorLocale KEYS_EDITOR = builder(PREFIX_OLD + "EDITOR_KEYS")
         .name("Keys")
         .text("Create & manage your keys here!").breakLine()
         .actionsHeader().action("Left-Click", "Open").build();
 
-    public static final EditorLocale CRATE_OBJECT = builder(PREFIX + "CRATE_OBJECT")
+    public static final EditorLocale CRATE_OBJECT = builder(PREFIX_OLD + "CRATE_OBJECT")
         .name(Placeholders.CRATE_NAME + " &7(ID: &f" + Placeholders.CRATE_ID + "&7)")
         .actionsHeader()
         .action("Left-Click","Edit")
         .action( "Shift-Right","Delete " + RED + "(No Undo)").build();
 
-    public static final EditorLocale CRATE_CREATE = builder(PREFIX + "CRATE_CREATE")
+    public static final EditorLocale CRATE_CREATE = builder(PREFIX_OLD + "CRATE_CREATE")
         .name("Create a Crate")
         .text("Creates a new crate.")
         .actionsHeader().action("Left-Click", "Create").build();
 
-    public static final EditorLocale CRATE_NAME = builder(PREFIX + "CRATE_CHANGE_NAME")
+    public static final EditorLocale CRATE_NAME = builder(PREFIX_OLD + "CRATE_CHANGE_NAME")
         .name("Display Name")
         .text("Sets the crate display name.", "It's used in messages & GUIs.").breakLine()
         .currentHeader().current("Display Name", Placeholders.CRATE_NAME).breakLine()
         .warning("This is " + RED + "NOT" + GRAY + " crate item name!").breakLine()
         .actionsHeader().action("Left-Click", "Change").build();
 
-    public static final EditorLocale CRATE_PERMISSION = builder(PREFIX + "CRATE_CHANGE_PERMISSION")
+    public static final EditorLocale CRATE_PERMISSION = builder(PREFIX_OLD + "CRATE_CHANGE_PERMISSION")
         .name("Permission Requirement")
         .text("Sets whether or not permission is required", "to open this crate.").breakLine()
         .currentHeader()
@@ -44,7 +45,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .current("Node", Placeholders.CRATE_PERMISSION).breakLine()
         .actionsHeader().action("Left-Click", "Toggle").build();
 
-    public static final EditorLocale CRATE_OPEN_COOLDOWN = builder(PREFIX + "CRATE_CHANGE_COOLDOWN")
+    public static final EditorLocale CRATE_OPEN_COOLDOWN = builder(PREFIX_OLD + "CRATE_CHANGE_COOLDOWN")
         .name("Open Cooldown")
         .text("Sets how much time player have to wait", "to open this crate again.").breakLine()
         .currentHeader().current("Cooldown", Placeholders.CRATE_OPENING_COOLDOWN).breakLine()
@@ -53,7 +54,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("Left-Click", "Change").action("Right-Click", "Disable")
         .action("[Q/Drop] Key", "One-Timed").build();
 
-    public static final EditorLocale CRATE_CONFIG = builder(PREFIX + "CRATE_CHANGE_CONFIG")
+    public static final EditorLocale CRATE_CONFIG = builder(PREFIX_OLD + "CRATE_CHANGE_CONFIG")
         .name("Preview & Animation")
         .text("Defines the look of the crate", YELLOW + "preview " + GRAY + "and " + YELLOW + "animation " + GRAY + "GUIs.")
         .currentHeader()
@@ -67,7 +68,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("Shift-Left", "Change Preview").action("Shift-Right", "Disable Preview")
         .build();
 
-    public static final EditorLocale CRATE_KEYS = builder(PREFIX + "CRATE_CHANGE_KEYS")
+    public static final EditorLocale CRATE_KEYS = builder(PREFIX_OLD + "CRATE_CHANGE_KEYS")
         .name("Attached Keys")
         .text("Sets which keys", "can be used to open this crate.").breakLine()
         .currentHeader().current("IDs", Placeholders.CRATE_KEY_IDS).breakLine()
@@ -76,7 +77,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Attach Key").action("Right-Click", "Clear List")
         .build();
 
-    public static final EditorLocale CRATE_OPEN_COST = builder(PREFIX + "CRATE_CHANGE_OPEN_COST")
+    public static final EditorLocale CRATE_OPEN_COST = builder(PREFIX_OLD + "CRATE_CHANGE_OPEN_COST")
         .name("Open Cost")
         .text("Sets how much money/exp player", "have to pay in order to", "open this crate.").breakLine()
         .currentHeader()
@@ -87,7 +88,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("[Q/Drop] Key", "Disable All")
         .build();
 
-    public static final EditorLocale CRATE_ITEM = builder(PREFIX + "CRATE_CHANGE_ITEM")
+    public static final EditorLocale CRATE_ITEM = builder(PREFIX_OLD + "CRATE_CHANGE_ITEM")
         .name("Crate Item")
         .text("Sets the inventory crate item.", "It's used when you give crates to players", "and in crate menus.").breakLine()
         .noteHeader().notes("Use item with premade name, lore, model, etc.").breakLine()
@@ -95,7 +96,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
         .build();
 
-    public static final EditorLocale CRATE_BLOCK_LOCATIONS = builder(PREFIX + "CRATE_CHANGE_BLOCK_LOCATION")
+    public static final EditorLocale CRATE_BLOCK_LOCATIONS = builder(PREFIX_OLD + "CRATE_CHANGE_BLOCK_LOCATION")
         .name("Attached Blocks")
         .text("A set of blocks attached to", "this crate to open or preview", "it when interacted.").breakLine()
         .currentHeader().text(YELLOW + Placeholders.CRATE_BLOCK_LOCATIONS).breakLine()
@@ -109,7 +110,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Toggle")
         .build();
 
-    public static final EditorLocale CRATE_BLOCK_HOLOGRAM = builder(PREFIX + "CRATE_CHANGE_BLOCK_HOLOGRAM")
+    public static final EditorLocale CRATE_BLOCK_HOLOGRAM = builder(PREFIX_OLD + "CRATE_CHANGE_BLOCK_HOLOGRAM")
         .name("Block Hologram")
         .text("Sets whether hologram will be added", "above the crate block with specified text.", "Sets the Y offset for", "hologram location").breakLine()
         .currentHeader().current("Enabled", Placeholders.CRATE_BLOCK_HOLOGRAM_ENABLED)
@@ -119,7 +120,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("Shift-Left", "Toggle").action("Shift-Right", "Change Y Offset")
         .build();
 
-    public static final EditorLocale CRATE_BLOCK_EFFECT = builder(PREFIX + "CRATE_CHANGE_BLOCK_EFFECT")
+    public static final EditorLocale CRATE_BLOCK_EFFECT = builder(PREFIX_OLD + "CRATE_CHANGE_BLOCK_EFFECT")
         .name("Block Effects")
         .text("Sets a particle effect to play", "around crate blocks.").breakLine()
         .currentHeader().current("Model", Placeholders.CRATE_BLOCK_EFFECT_MODEL)
@@ -129,13 +130,21 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("[Q/Drop] Key", "Toggle Model")
         .build();
 
-    public static final EditorLocale CRATE_REWARDS = builder(PREFIX + "CRATE_CHANGE_REWARDS")
+    public static final EditorLocale CRATE_REWARDS = builder(PREFIX_OLD + "CRATE_CHANGE_REWARDS")
         .name("Rewards")
         .text("Create & manage rewards here!").breakLine()
         .actionsHeader().action("Left-Click", "Open")
         .build();
 
-    public static final EditorLocale REWARD_OBJECT = builder(PREFIX + "REWARD_OBJECT")
+    public static final EditorLocale CRATE_MILESTONES = builder(PREFIX + "Crate.Milestones")
+        .name("Milestones")
+        .current("Repeatable", Placeholders.CRATE_MILESTONES_REPEATABLE).breakLine()
+        .text("Create & manage milestones here!").breakLine()
+        .actionsHeader().action("Left-Click", "Open")
+        .action("Right-Click", "Toggle Repeatable")
+        .build();
+
+    public static final EditorLocale REWARD_OBJECT = builder(PREFIX_OLD + "REWARD_OBJECT")
         .name(Placeholders.REWARD_NAME + " &7(ID: &f" + Placeholders.REWARD_ID + "&7)")
         .text("Chance: &f" + Placeholders.REWARD_CHANCE + "%")
         .text("Rarity: &f" + Placeholders.REWARD_RARITY_NAME).breakLine()
@@ -144,14 +153,14 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("[Q/Drop] Key", "Delete " + RED + "(No Undo)")
         .build();
 
-    public static final EditorLocale REWARD_CREATE = builder(PREFIX + "REWARD_CREATE")
+    public static final EditorLocale REWARD_CREATE = builder(PREFIX_OLD + "REWARD_CREATE")
         .name("Create Reward")
         .text("Creates a new reward for crate.").breakLine()
         .actionsHeader().action("Left-Click", "Manual Creation")
         .action("Drag & Drop", "Fast Creation")
         .build();
 
-    public static final EditorLocale REWARD_SORT = builder(PREFIX + "REWARD_SORT")
+    public static final EditorLocale REWARD_SORT = builder(PREFIX_OLD + "REWARD_SORT")
         .name("Sort Rewards")
         .text("Automatically sorts rewards in", "specified order.").breakLine()
         .actionsHeader()
@@ -159,7 +168,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("[Num 3]", "By Name").action("[Num 4]", "By Rarity")
         .build();
 
-    public static final EditorLocale REWARD_NAME = builder(PREFIX + "REWARD_CHANGE_NAME")
+    public static final EditorLocale REWARD_NAME = builder(PREFIX_OLD + "REWARD_CHANGE_NAME")
         .name("Display Name")
         .text("Sets the reward display name.", "It's used in GUIs & messages.").breakLine()
         .currentHeader().current("Display Name", Placeholders.REWARD_NAME).breakLine()
@@ -168,14 +177,14 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("Shift-Left", "Set for Preview")
         .build();
 
-    public static final EditorLocale REWARD_PREVIEW = builder(PREFIX + "REWARD_CHANGE_PREVIEW")
+    public static final EditorLocale REWARD_PREVIEW = builder(PREFIX_OLD + "REWARD_CHANGE_PREVIEW")
         .name("Preview Item")
         .text("This item will represent the reward", "when previewing and opening crate.").breakLine()
         .warningHeader().warning("This item is " + RED + "NOT" + GRAY + " given to players!").breakLine()
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Get Copy")
         .build();
 
-    public static final EditorLocale REWARD_RARITY = builder(PREFIX + "Reward.Rarity")
+    public static final EditorLocale REWARD_RARITY = builder(PREFIX_OLD + "Reward.Rarity")
         .name("Rarity")
         .text("Sets the reward rarity.")
         .text("Learn more about it on the plugin wiki.").breakLine()
@@ -183,7 +192,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Change")
         .build();
 
-    public static final EditorLocale REWARD_CHANCE = builder(PREFIX + "REWARD_CHANGE_CHANCE")
+    public static final EditorLocale REWARD_CHANCE = builder(PREFIX_OLD + "REWARD_CHANGE_CHANCE")
         .name("Chance")
         .text("Sets the reward win chance (weight).")
         .text("Learn more about reward chances on the plugin wiki.").breakLine()
@@ -191,7 +200,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Change")
         .build();
 
-    public static final EditorLocale REWARD_COMMANDS = builder(PREFIX + "REWARD_CHANGE_COMMANDS")
+    public static final EditorLocale REWARD_COMMANDS = builder(PREFIX_OLD + "REWARD_CHANGE_COMMANDS")
         .name("Run Commands")
         .text("A list of commands to run", "when player obtains this reward.").breakLine()
         .currentHeader().text(Placeholders.REWARD_COMMANDS).breakLine()
@@ -199,21 +208,21 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Add Command").action("Right-Click", "Clear List")
         .build();
 
-    public static final EditorLocale REWARD_ITEMS = builder(PREFIX + "REWARD_CHANGE_ITEMS")
+    public static final EditorLocale REWARD_ITEMS = builder(PREFIX_OLD + "REWARD_CHANGE_ITEMS")
         .name("Given Items")
         .text("A list of items given", "when player obtains this reward.").breakLine()
         .noteHeader().notes("Use " + ORANGE + "ESC" + GRAY + " to save & return here.").breakLine()
         .actionsHeader().action("Left-Click", "Open")
         .build();
 
-    public static final EditorLocale REWARD_BROADCAST = builder(PREFIX + "REWARD_CHANGE_BROADCAST")
+    public static final EditorLocale REWARD_BROADCAST = builder(PREFIX_OLD + "REWARD_CHANGE_BROADCAST")
         .name("Win Broadcast")
         .text("Sets whether or not a broadcast message will", "be sent to everyone when", "someone obtains this reward.").breakLine()
         .currentHeader().current("Enabled", Placeholders.REWARD_BROADCAST).breakLine()
         .actionsHeader().action("Left-Click", "Toggle")
         .build();
 
-    public static final EditorLocale REWARD_WIN_LIMITS = builder(PREFIX + "REWARD_CHANGE_WIN_LIMITS")
+    public static final EditorLocale REWARD_WIN_LIMITS = builder(PREFIX_OLD + "REWARD_CHANGE_WIN_LIMITS")
         .name("Win Limits")
         .text("Sets how often & how many times player", "can obtain this reward again.").breakLine()
         .currentHeader()
@@ -226,27 +235,40 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .action("Shift-Left", "One-Timed").action("Shift-Right", "Disable All")
         .build();
 
-    public static final EditorLocale REWARD_IGNORED_PERMISSIONS = builder(PREFIX + "REWARD_CHANGE_IGNORED_FOR_PERMISSIONS")
+    public static final EditorLocale REWARD_IGNORED_PERMISSIONS = builder(PREFIX_OLD + "REWARD_CHANGE_IGNORED_FOR_PERMISSIONS")
         .name("Permission Restrictions")
         .text("Players having any permission", "from the list won't be able", "to obtain this reward.").breakLine()
         .currentHeader().text(Placeholders.REWARD_IGNORED_FOR_PERMISSIONS).breakLine()
         .actionsHeader().action("Left-Click", "Add Permission").action("Right-Click", "Clear List")
         .build();
 
-    public static final EditorLocale KEY_OBJECT = builder(PREFIX + "KEY_OBJECT")
+    public static final EditorLocale MILESTONE_CREATE = builder(PREFIX + "Milestone.Create")
+        .name("New Milestone")
+        .build();
+
+    public static final EditorLocale MILESTONE_OBJECT = builder(PREFIX + "Milestone.Object")
+        .name("Milestone: " + Placeholders.MILESTONE_OPENINGS)
+        .current("Openings", Placeholders.MILESTONE_OPENINGS)
+        .current("Reward Id", Placeholders.MILESTONE_REWARD_ID).breakLine()
+        .actionsHeader().action("Left-Click", "Change Openings")
+        .action("Right-Click", "Change Reward Id")
+        .action("Shift-Right", "Delete " + RED + "(No Undo)")
+        .build();
+
+    public static final EditorLocale KEY_OBJECT = builder(PREFIX_OLD + "KEY_OBJECT")
         .name(Placeholders.KEY_NAME + GRAY + " (ID: " + BLUE + Placeholders.KEY_ID + GRAY + ")")
         .current("Virtual", Placeholders.KEY_VIRTUAL).breakLine()
         .actionsHeader().action("Left-Click", "Edit")
         .action("Shift-Right", "Delete " + RED + "(No Undo)")
         .build();
 
-    public static final EditorLocale KEY_CREATE = builder(PREFIX + "KEY_CREATE")
+    public static final EditorLocale KEY_CREATE = builder(PREFIX_OLD + "KEY_CREATE")
         .name("Create Key")
         .text("Creates a new crates key.").breakLine()
         .actionsHeader().action("Left-Click", "Create")
         .build();
 
-    public static final EditorLocale KEY_NAME = builder(PREFIX + "KEY_CHANGE_NAME")
+    public static final EditorLocale KEY_NAME = builder(PREFIX_OLD + "KEY_CHANGE_NAME")
         .name("Display Name")
         .text("Sets the key display name.", "It's used in GUIs & messages.").breakLine()
         .currentHeader().current("Display Name", Placeholders.KEY_NAME).breakLine()
@@ -254,7 +276,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Left-Click", "Change")
         .build();
 
-    public static final EditorLocale KEY_ITEM = builder(PREFIX + "KEY_CHANGE_ITEM")
+    public static final EditorLocale KEY_ITEM = builder(PREFIX_OLD + "KEY_CHANGE_ITEM")
         .name("Key Item")
         .text("Sets the physical key item.").breakLine()
         .noteHeader().notes("This option is useless for virtual keys.", "Use item with premade name, lore, etc.").breakLine()
@@ -262,7 +284,7 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
         .build();
 
-    public static final EditorLocale KEY_VIRTUAL = builder(PREFIX + "KEY_VIRTUAL")
+    public static final EditorLocale KEY_VIRTUAL = builder(PREFIX_OLD + "KEY_VIRTUAL")
         .name("Virtual")
         .text("Sets whether or not the key is virtual.").breakLine()
         .currentHeader().current("Is Virtual", Placeholders.KEY_VIRTUAL).breakLine()

@@ -18,10 +18,12 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     private final Map<String, Integer>                         keysOnHold;
     private final Map<String, Long>                            openCooldowns;
     private final Map<String, Integer>                     openingsAmount;
+    private final Map<String, Integer> milestones;
     private final Map<String, Map<String, UserRewardData>> rewardWinLimits;
 
     public CrateUser(@NotNull ExcellentCrates plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
+            new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
@@ -41,6 +43,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         @NotNull Map<String, Integer> keysOnHold,
         @NotNull Map<String, Long> openCooldowns,
         @NotNull Map<String, Integer> openingsAmount,
+        @NotNull Map<String, Integer> milestones,
         @NotNull Map<String, Map<String, UserRewardData>> rewardWinLimits
     ) {
         super(plugin, uuid, name, dateCreated, lastOnline);
@@ -48,6 +51,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
         this.keysOnHold = keysOnHold;
         this.openCooldowns = openCooldowns;
         this.openingsAmount = openingsAmount;
+        this.milestones = milestones;
         this.rewardWinLimits = rewardWinLimits;
     }
 
@@ -105,6 +109,27 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
 
     public void setOpeningsAmount(@NotNull String id, int amount) {
         this.getOpeningsAmountMap().put(id.toLowerCase(), amount);
+    }
+
+    @NotNull
+    public Map<String, Integer> getMilestonesMap() {
+        return this.milestones;
+    }
+
+    public int getMilestones(@NotNull Crate crate) {
+        return this.getMilestones(crate.getId());
+    }
+
+    public int getMilestones(@NotNull String id) {
+        return this.getMilestonesMap().getOrDefault(id.toLowerCase(), 0);
+    }
+
+    public void setMilestones(@NotNull Crate crate, int amount) {
+        this.setMilestones(crate.getId(), amount);
+    }
+
+    public void setMilestones(@NotNull String id, int amount) {
+        this.getMilestonesMap().put(id.toLowerCase(), amount);
     }
 
     @NotNull

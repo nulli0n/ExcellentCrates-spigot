@@ -11,6 +11,9 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String RARITY_NAME   = "%rarity_name%";
     public static final String RARITY_CHANCE = "%rarity_chance%";
 
+    public static final String MILESTONE_OPENINGS = "%milestone_openings%";
+    public static final String MILESTONE_REWARD_ID = "%milestone_reward_id%";
+
     public static final String CRATE_ID                         = "%crate_id%";
     public static final String CRATE_NAME                       = "%crate_name%";
     public static final String CRATE_ANIMATION_CONFIG           = "%crate_animation_config%";
@@ -32,6 +35,7 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String CRATE_BLOCK_EFFECT_MODEL         = "%crate_block_effect_model%";
     public static final String CRATE_BLOCK_EFFECT_PARTICLE_NAME = "%crate_block_effect_particle_name%";
     public static final String CRATE_BLOCK_EFFECT_PARTICLE_DATA = "%crate_block_effect_particle_data%";
+    public static final String CRATE_MILESTONES_REPEATABLE = "%crate_milestones_repeatable%";
 
     public static final String KEY_ID        = "%key_id%";
     public static final String KEY_NAME      = "%key_name%";

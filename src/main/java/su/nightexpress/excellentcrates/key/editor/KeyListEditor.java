@@ -29,7 +29,7 @@ public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> imple
         super(keyManager.plugin(), keyManager, Config.EDITOR_TITLE_KEY.get(), 45);
 
         this.addReturn(39).setClick((viewer, event) -> {
-            this.plugin.runTask(task -> this.plugin.getEditor().open(viewer.getPlayer(), 1));
+            this.plugin.getEditor().openNextTick(viewer, 1);
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
@@ -79,14 +79,13 @@ public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> imple
     @NotNull
     public ItemClick getObjectClick(@NotNull CrateKey key) {
         return (viewer, event) -> {
-            Player player = viewer.getPlayer();
             if (event.isRightClick() && event.isShiftClick()) {
                 if (this.plugin.getKeyManager().delete(key)) {
-                    this.plugin.runTask(task -> this.open(player, viewer.getPage()));
+                    this.openNextTick(viewer, viewer.getPage());
                 }
                 return;
             }
-            key.getEditor().open(player, 1);
+            key.getEditor().openNextTick(viewer, 1);
         };
     }
 }

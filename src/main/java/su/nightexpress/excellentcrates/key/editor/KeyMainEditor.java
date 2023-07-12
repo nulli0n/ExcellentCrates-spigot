@@ -22,7 +22,7 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
         super(crateKey.plugin(), crateKey, Config.EDITOR_TITLE_KEY.get(), 45);
 
         this.addReturn(40).setClick((viewer, event) -> {
-            this.plugin.runTask(task -> plugin.getEditor().getKeysEditor().open(viewer.getPlayer(), 1));
+            this.plugin.getEditor().getKeysEditor().openNextTick(viewer, 1);
         });
 
         this.addItem(Material.NAME_TAG, EditorLocales.KEY_NAME, 20).setClick((viewer, event) -> {
@@ -68,7 +68,7 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
 
     private void save(@NotNull MenuViewer viewer) {
         this.object.save();
-        this.plugin.runTask(task -> this.open(viewer.getPlayer(), viewer.getPage()));
+        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override

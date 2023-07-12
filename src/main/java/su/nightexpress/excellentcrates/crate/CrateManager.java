@@ -27,11 +27,9 @@ import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
-import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
-import su.nightexpress.excellentcrates.crate.impl.OpenSettings;
-import su.nightexpress.excellentcrates.crate.impl.Rarity;
+import su.nightexpress.excellentcrates.crate.impl.*;
 import su.nightexpress.excellentcrates.crate.listener.CrateListener;
+import su.nightexpress.excellentcrates.crate.menu.MilestonesMenu;
 import su.nightexpress.excellentcrates.crate.task.CrateEffectTask;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
@@ -46,6 +44,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
     private final Map<String, Crate>       crateMap;
     private final Map<String, OpeningMenu> openings;
 
+    private MilestonesMenu milestonesMenu;
     private CrateEffectTask effectTask;
 
     public CrateManager(@NotNull ExcellentCrates plugin) {
@@ -60,6 +59,8 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         this.plugin.getConfigManager().extractResources(Config.DIR_CRATES);
         this.plugin.getConfigManager().extractResources(Config.DIR_PREVIEWS);
         this.plugin.getConfigManager().extractResources(Config.DIR_OPENINGS);
+
+        this.milestonesMenu = new MilestonesMenu(this.plugin);
 
         JYML rarityConfig = JYML.loadOrExtract(plugin, Config.FILE_RARITY);
         for (String rarId : rarityConfig.getSection("")) {
@@ -104,11 +105,17 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             Arrays.asList(CrateEffectModel.values()).forEach(model -> model.getEffect().reset());
         }
 
+        if (this.milestonesMenu != null) this.milestonesMenu.clear();
         this.openings.values().forEach(Menu::clear);
         this.openings.clear();
         this.crateMap.values().forEach(Crate::clear);
         this.crateMap.clear();
         this.rarityMap.clear();
+    }
+
+    @NotNull
+    public MilestonesMenu getMilestonesMenu() {
+        return milestonesMenu;
     }
 
     @NotNull
@@ -378,13 +385,13 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             if (Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
                 if (block.getState() instanceof Lidded lidded) {
                     lidded.open();
-                    plugin.getServer().getScheduler().runTaskLater(plugin, lidded::close, 60L);
+                    plugin.runTaskLater(task -> lidded.close(), 60L);
                 }
                 HologramHandler hologramHandler = plugin.getHologramHandler();
                 if (hologramHandler != null) {
                     Location location = LocationUtil.getCenter(block.getLocation().add(0, 2, 0), false);
                     hologramHandler.createReward(player, reward, location);
-                    plugin.getServer().getScheduler().runTaskLater(plugin, task -> hologramHandler.removeReward(player), 60L);
+                    plugin.runTaskLater(task -> hologramHandler.removeReward(player), 60L);
                 }
             }
         }
@@ -399,7 +406,32 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         }
 
         this.setCrateCooldown(player, crate);
-        user.setOpeningsAmount(crate, user.getOpeningsAmount(crate) + 1);
+
+        int openings = user.getOpeningsAmount(crate) + 1;
+        user.setOpeningsAmount(crate, openings);
+
+        if (!crate.getMilestones().isEmpty()) {
+            int milestonesMax = crate.getMaxMilestone();
+            int milestones = user.getMilestones(crate) + 1;
+
+            if (crate.isMilestonesRepeatable() || milestones <= milestonesMax) {
+                Milestone milestone = crate.getMilestone(milestones);
+                CrateReward reward = milestone == null ? null : crate.getMilestoneReward(milestone);
+                if (reward != null) {
+                    reward.giveContent(player);
+                    plugin.getMessage(Lang.CRATE_OPEN_MILESTONE_COMPLETED)
+                        .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(milestones))
+                        .replace(reward.replacePlaceholders())
+                        .send(player);
+                }
+
+                if (milestones >= milestonesMax && crate.isMilestonesRepeatable()) {
+                    milestones = 0;
+                }
+                user.setMilestones(crate, milestones);
+            }
+        }
+
         user.saveData(this.plugin);
         return true;
     }

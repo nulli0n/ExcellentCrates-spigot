@@ -269,20 +269,25 @@ public class CrateReward implements Placeholder {
         this.items.removeIf(item -> item == null || item.getType().isAir());
     }
 
-    public void give(@NotNull Player player) {
+    public void giveContent(@NotNull Player player) {
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
             if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
                 ItemUtil.setPlaceholderAPI(player, give);
             }
+            ItemUtil.replace(give, this.replacePlaceholders());
             PlayerUtil.addItem(player, give);
         });
         this.getCommands().forEach(command -> {
             if (EngineUtils.hasPlaceholderAPI()) {
                 command = PlaceholderAPI.setPlaceholders(player, command);
             }
-            PlayerUtil.dispatchCommand(player, command);
+            PlayerUtil.dispatchCommand(player, this.replacePlaceholders().apply(command));
         });
+    }
+
+    public void give(@NotNull Player player) {
+        this.giveContent(player);
 
         this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_INFO)
             .replace(this.getCrate().replacePlaceholders())
@@ -311,7 +316,6 @@ public class CrateReward implements Placeholder {
                 }
             }
             user.setRewardWinLimit(this, winLimit);
-            user.saveData(this.plugin());
         }
     }
 }

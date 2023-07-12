@@ -19,6 +19,7 @@ public class Config {
     public static final String DIR_MENUS    = "/menu/";
     public static final String DIR_OPENINGS = "/openings/";
 
+    public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_RARITY = "rarity.yml";
 
     public static final JOption<String> EDITOR_TITLE_CRATE = JOption.create("Editor.Title.Crate", "Crate Editor",
