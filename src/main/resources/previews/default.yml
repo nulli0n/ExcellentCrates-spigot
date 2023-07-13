@@ -1,7 +1,5 @@
 Title: '           &nCrate Preview'
 Size: 45
-Inventory_Type: CHEST
-Use_Mini_Message: false
 
 Reward:
   Hide_Drained_Rewards: false
@@ -37,6 +35,15 @@ Content:
     Item:
       Material: GRAY_STAINED_GLASS_PANE
     Slots: 0,4,8,36,44
+
+  milestones:
+    Priority: 5
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODE2MjNkNTIzOGRhYjdkZWNkMzIwMjY1Y2FlMWRjNmNhOTFiN2ZhOTVmMzQ2NzNhYWY0YjNhZDVjNmJhMTZlMSJ9fX0='
+      Name: '#ffeea2&lMilestones'
+    Slots: 4
+    Type: MILESTONES
 
   return:
     Priority: 5
