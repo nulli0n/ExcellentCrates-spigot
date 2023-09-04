@@ -146,8 +146,9 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
 
     public static final EditorLocale REWARD_OBJECT = builder(PREFIX_OLD + "REWARD_OBJECT")
         .name(Placeholders.REWARD_NAME + " &7(ID: &f" + Placeholders.REWARD_ID + "&7)")
-        .text("Chance: &f" + Placeholders.REWARD_CHANCE + "%")
-        .text("Rarity: &f" + Placeholders.REWARD_RARITY_NAME).breakLine()
+        .text("Chance: " + YELLOW + Placeholders.REWARD_CHANCE + "%")
+        .text("Actual Chance: " + YELLOW + Placeholders.REWARD_REAL_CHANCE + "%")
+        .text("Rarity: " + YELLOW + Placeholders.REWARD_RARITY_NAME).breakLine()
         .actionsHeader().action("Left-Click", "Edit")
         .action("Shift-Left", "Move Forward").action("Shift-Right", "Move Backward")
         .action("[Q/Drop] Key", "Delete " + RED + "(No Undo)")
@@ -280,8 +281,8 @@ public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
         .name("Key Item")
         .text("Sets the physical key item.").breakLine()
         .noteHeader().notes("This option is useless for virtual keys.", "Use item with premade name, lore, etc.").breakLine()
-        .warningHeader().warning("Use commands to give actual working crate key.").breakLine()
-        .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Obtain")
+        .warningHeader().warning("USE PLUGIN COMMANDS TO GET WORKING KEYS").breakLine()
+        .actionsHeader().action("Drag & Drop", "Replace").action("Right-Click", "Get a Copy")
         .build();
 
     public static final EditorLocale KEY_VIRTUAL = builder(PREFIX_OLD + "KEY_VIRTUAL")

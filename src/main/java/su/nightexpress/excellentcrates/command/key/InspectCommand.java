@@ -33,7 +33,7 @@ public class InspectCommand extends AbstractCommand<ExcellentCrates> {
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-        if (result.length() >= 2 && !sender.hasPermission(Perms.COMMAND_KEY_INSPECT_OTHERS)) {
+        if (result.length() >= 3 && !sender.hasPermission(Perms.COMMAND_KEY_INSPECT_OTHERS)) {
             this.errorPermission(sender);
             return;
         }

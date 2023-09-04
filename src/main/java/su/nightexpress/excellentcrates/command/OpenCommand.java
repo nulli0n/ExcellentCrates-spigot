@@ -56,7 +56,7 @@ public class OpenCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        String pName = result.length() >= 3 ? result.getArg(2) : sender.getName();
+        String pName = result.getArg(2, sender.getName());
         Player player = plugin.getServer().getPlayer(pName);
         if (player == null) {
             this.errorPlayer(sender);

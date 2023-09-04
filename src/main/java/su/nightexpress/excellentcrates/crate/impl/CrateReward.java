@@ -101,6 +101,10 @@ public class CrateReward implements Placeholder {
             .add(Placeholders.REWARD_ID, this::getId)
             .add(Placeholders.REWARD_NAME, this::getName)
             .add(Placeholders.REWARD_CHANCE, () -> NumberUtil.format(this.getChance()))
+            .add(Placeholders.REWARD_REAL_CHANCE, () -> {
+                double sum = this.getCrate().getRewards().stream().mapToDouble(CrateReward::getChance).sum();
+                return NumberUtil.format(this.getChance() / sum);
+            })
             .add(Placeholders.REWARD_RARITY_NAME, () -> this.getRarity().getName())
             .add(Placeholders.REWARD_RARITY_CHANCE, () -> NumberUtil.format(this.getRarity().getChance()))
             .add(Placeholders.REWARD_BROADCAST, () -> LangManager.getBoolean(this.isBroadcast()))

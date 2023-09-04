@@ -420,6 +420,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
                 if (reward != null) {
                     reward.giveContent(player);
                     plugin.getMessage(Lang.CRATE_OPEN_MILESTONE_COMPLETED)
+                        .replace(crate.replacePlaceholders())
                         .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(milestones))
                         .replace(reward.replacePlaceholders())
                         .send(player);

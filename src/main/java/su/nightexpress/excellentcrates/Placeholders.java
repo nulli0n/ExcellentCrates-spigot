@@ -47,6 +47,7 @@ public class Placeholders extends su.nexmedia.engine.utils.Placeholders {
     public static final String REWARD_ID                      = "%reward_id%";
     public static final String REWARD_NAME                    = "%reward_name%";
     public static final String REWARD_CHANCE                  = "%reward_chance%";
+    public static final String REWARD_REAL_CHANCE             = "%reward_real_chance%";
     public static final String REWARD_RARITY_NAME             = "%reward_rarity_name%";
     public static final String REWARD_RARITY_CHANCE           = "%reward_rarity_chance%";
     public static final String REWARD_BROADCAST               = "%reward_broadcast%";

@@ -64,7 +64,7 @@ class GiveAllCommand extends AbstractCommand<ExcellentCrates> {
                 this.plugin.getMessage(Lang.COMMAND_KEY_GIVE_NOTIFY)
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
-                    .send(sender);
+                    .send(target);
             }
         });
         this.plugin.runTaskAsync(task -> {

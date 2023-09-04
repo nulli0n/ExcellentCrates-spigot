@@ -72,5 +72,9 @@ public class MenuView extends ConfigMenu<ExcellentCrates> {
 
             this.addItem(menuItem);
         }
+
+        this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
+            ItemUtil.setPlaceholderAPI(viewer.getPlayer(), item);
+        }));
     }
 }
