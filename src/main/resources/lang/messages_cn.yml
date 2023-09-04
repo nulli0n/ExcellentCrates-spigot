@@ -41,6 +41,11 @@ Command:
           - '&6&m              &6[ &a%player_name% &e的宝箱钥匙数量 &6]&6&m              &6'
           - '&7'
           - '&6▸ &e%key_name%: &6%amount%'
+    Usage: '[help]'
+    GiveAll:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Give key to all online players.
+      Done: '#d4d9d8Given #fdf35ex%amount%#d4d9d8 of #fdf35e%key_name%#d4d9d8 key(s) to #fdf35eAll Players#d4d9d8.'
   Preview:
     Desc: 打开宝箱预览
     Usage: <crateId> [player]
@@ -61,9 +66,17 @@ Command:
     Desc: 打开宝箱菜单
     Done:
       Others: 已为 &6%player_display_name%&7 打开了 &6%menu_id%&7 宝箱菜单
+  Editor:
+    Desc: Open crates & keys editor.
+  Open:
+    Desc: Makes [player] to [force] open a crate.
+    Usage: <crate> [player] [-f] [-s]
+    Done: '#d4d9d8强制玩家: #fdf35e%player_name%#d4d9d8 打开 #fdf35e%crate_name%#d4d9d8.'
+    Notify: '#d4d9d8你被服务器操作打开了 #fdf35e%crate_name%#d4d9d8.'
 Crate:
   Error:
     Invalid: '&c无效的宝箱!'
+    Exists: '#fd5e5e创建宝箱失败,此ID已被占用/存在!'
   Open:
     Error:
       InventorySpace: '&c请清理你的物品栏以打开宝箱!'
@@ -79,9 +92,12 @@ Crate:
     Reward:
       Info: 你从 &6%crate_name% &7中获得了 &6%reward_name% &7奖励!
       Broadcast: '&7玩家 &a%player_display_name% &7刚从 &6%crate_name% &7中获得了 &6%reward_name% &7奖励!'
+    Milestone:
+      Completed: '<! prefix:"false" sound:"ENTITY_PLAYER_LEVELUP" !>#d4d9d8你完成了 #aefd5e%milestone_openings% 里程碑点 #d4d9d8获得了里程碑奖励: #aefd5e%reward_name%'
   Key:
     Error:
       Invalid: '&c无效的钥匙!'
+      Exists: '#fd5e5e此钥匙ID已被占用/存在!'
 Menu:
   Invalid: '&c菜单不存在!'
 Editor:
@@ -526,3 +542,43 @@ Editor:
           - ''
           - '#bbff6a操作:'
           - '#bbff6a▪ #bdc8c9左键点击: #bbff6a更改'
+  Enter:
+    DisplayName: '#d4d9d8Enter #aefd5e[Display Name]'
+    Amount: '#d4d9d8里程碑点数 #aefd5e[数量]'
+  Milestone:
+    Enter:
+      Reward: '#d4d9d8额外奖励 #aefd5e[选择]'
+  Item:
+    Crate:
+      Milestones:
+        Name: '#fdf35e&l里程碑'
+        Lore:
+          - '#fdf35e▪ #d4d9d8重复获得奖励: #fdf35e%crate_milestones_repeatable%'
+          - ''
+          - '#d4d9d8创建或管理里程碑奖励!'
+          - ''
+          - '#aefd5e&l设置:'
+          - '#aefd5e▪ #d4d9d8左键点击: #aefd5e打开管理'
+          - '#aefd5e▪ #d4d9d8右键点击: #aefd5e是否可重复获得奖励'
+    Milestone:
+      Create:
+        Name: '#fdf35e&l新建里程碑节点'
+        Lore: [ ]
+      Object:
+        Name: '#fdf35e&l需里程碑点数: %milestone_openings%'
+        Lore:
+          - '#fdf35e▪ #d4d9d8程碑点数: #fdf35e%milestone_openings%'
+          - '#fdf35e▪ #d4d9d8奖励ID: #fdf35e%milestone_reward_id%'
+          - ''
+          - '#d4d9d8每开启一次获得 1 点里程碑点数!'
+          - ''
+          - '#aefd5e&l设置:'
+          - '#aefd5e▪ #d4d9d8左键点击: #aefd5e设置程碑点数'
+          - '#aefd5e▪ #d4d9d8右键点击: #aefd5e设置奖励'
+          - '#aefd5e▪ #d4d9d8Shift + 右键: #aefd5e删除 #fd5e5e(不可撤销)'
+# Here you can create your own custom placeholders to use it in language config.
+# Key = Placeholder, Value = Replacer.
+Placeholders:
+  '%red%': '#fd5e5e'
+  '%gray%': '#d4d9d8'
+  '%green%': '#aefd5e'
