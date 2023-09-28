@@ -56,7 +56,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
     }
 
     @NotNull
-    public static DataHandler getInstance(@NotNull ExcellentCrates plugin) throws SQLException {
+    public static DataHandler getInstance(@NotNull ExcellentCrates plugin) {
         if (instance == null) {
             instance = new DataHandler(plugin);
         }

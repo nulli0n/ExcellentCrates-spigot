@@ -5,8 +5,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.values.UniSound;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
@@ -109,7 +109,11 @@ public class SliderTask extends OpeningTask {
             }
         }
 
-        this.getData().getInventory().getViewers().forEach(player -> PlayerUtil.sound((Player) player, this.parent.getSoundTick()));
+        if (this.parent.getSoundTick() != null) {
+            this.getData().getInventory().getViewers().forEach(player -> {
+                UniSound.of(this.parent.getSoundTick()).play((Player) player);
+            });
+        }
 
         if (++this.rolls >= this.getParent().getRollTimes()) {
             this.cancel();

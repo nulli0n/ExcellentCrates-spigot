@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.crate.effect;
 
 public class Point3d {
 
-    public double x, y, z;
+    public final double x, y, z;
 
     public Point3d(double x, double y, double z) {
         this.x = x;

@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class CrateTornadoEffect extends CrateEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location loc2, @NotNull SimpleParticle particle, int step) {
+    public void doStep(@NotNull Location loc2, @NotNull UniParticle particle, int step) {
         Location loc = loc2.clone().add(0.0D, 0.5D, 0.0D);
         double offset = 0.25D * (MAX_TORNADO_RADIUS * (2.35D / TORNADO_HEIGHT));
         double vertical = TORNADO_HEIGHT - DISTANCE * step;

@@ -4,6 +4,8 @@ import su.nexmedia.engine.api.editor.EditorLocale;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
 
+import static su.nexmedia.engine.utils.Colors.*;
+
 public class EditorLocales extends su.nexmedia.engine.api.editor.EditorLocales {
 
     private static final String PREFIX_OLD = "Editor.CrateEditorType."; // Old version compatibility

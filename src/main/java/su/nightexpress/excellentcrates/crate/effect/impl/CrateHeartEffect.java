@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 import su.nightexpress.excellentcrates.crate.effect.Point3d;
 
@@ -17,7 +17,7 @@ public class CrateHeartEffect extends CrateEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull SimpleParticle particle, int step) {
+    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
         boolean isX = this.rotate;
         location = location.add(0, 4, 0);
 

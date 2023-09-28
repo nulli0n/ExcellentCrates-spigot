@@ -2,14 +2,14 @@ package su.nightexpress.excellentcrates.crate.effect;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.utils.LocationUtil;
+import su.nexmedia.engine.utils.values.UniParticle;
 
 public abstract class CrateEffect {
 
+    protected final long interval;
+    protected final int  duration;
     protected int  step;
-    protected long interval;
-    protected int  duration;
     protected int  count;
 
     public CrateEffect(long interval, int duration) {
@@ -30,7 +30,7 @@ public abstract class CrateEffect {
         }
     }
 
-    public void step(@NotNull Location location, @NotNull SimpleParticle particle) {
+    public void step(@NotNull Location location, @NotNull UniParticle particle) {
         /*if (this.step < 0) {
             this.step++;
         }*/
@@ -48,7 +48,7 @@ public abstract class CrateEffect {
         }
     }
 
-    public abstract void doStep(@NotNull Location location, @NotNull SimpleParticle particle, int step);
+    public abstract void doStep(@NotNull Location location, @NotNull UniParticle particle, int step);
 
     @NotNull
     public static Location getPointOnCircle(@NotNull Location loc, boolean doCopy, double n, double n2, double n3) {

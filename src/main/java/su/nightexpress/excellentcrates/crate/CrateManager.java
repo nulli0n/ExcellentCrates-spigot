@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.menu.impl.Menu;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Perms;
@@ -161,7 +161,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
 
         JYML cfg = new JYML(this.plugin.getDataFolder() + Config.DIR_CRATES, id + ".yml");
         Crate crate = new Crate(this.plugin, cfg);
-        crate.setName(Lang.LIME + ChatColor.BOLD + StringUtil.capitalizeUnderscored(crate.getId()) + " Crate");
+        crate.setName(Colors.LIME + ChatColor.BOLD + StringUtil.capitalizeUnderscored(crate.getId()) + " Crate");
         crate.setOpeningConfig(null);
         crate.setPreviewConfig(Placeholders.DEFAULT);
 
@@ -175,9 +175,9 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
         crate.setBlockPushbackEnabled(true);
         crate.setBlockHologramEnabled(false);
         crate.setBlockHologramOffsetY(1.5D);
-        crate.setBlockHologramText(Arrays.asList(Lang.LIME + ChatColor.BOLD + crate.getName().toUpperCase(), Lang.GRAY + "Purchase keys at " + Lang.LIME + "http://samplesmp.com/store"));
+        crate.setBlockHologramText(Arrays.asList(Colors.LIME + ChatColor.BOLD + crate.getName().toUpperCase(), Colors.GRAY + "Purchase keys at " + Colors.LIME + "http://samplesmp.com/store"));
         crate.setBlockEffectModel(CrateEffectModel.HELIX);
-        crate.setBlockEffectParticle(SimpleParticle.of(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(Rnd.get(256), Rnd.get(256), Rnd.get(256)), 1f)));
+        crate.setBlockEffectParticle(UniParticle.of(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(Rnd.get(256), Rnd.get(256), Rnd.get(256)), 1f)));
         crate.save();
         crate.load();
 
@@ -433,7 +433,7 @@ public class CrateManager extends AbstractManager<ExcellentCrates> {
             }
         }
 
-        user.saveData(this.plugin);
+        this.plugin.getUserManager().saveUser(user);
         return true;
     }
 

@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractConfigHolder;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Perms;
@@ -51,7 +51,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
     private double              blockHologramOffsetY;
     private List<String>        blockHologramText;
     private CrateEffectModel blockEffectModel;
-    private SimpleParticle blockEffectParticle;
+    private UniParticle blockEffectParticle;
 
     private LinkedHashMap<String, CrateReward> rewardMap;
 
@@ -129,7 +129,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
         this.setBlockHologramText(cfg.getStringList("Block.Hologram.Text"));
 
         CrateEffectModel model = cfg.getEnum("Block.Effect.Model", CrateEffectModel.class, CrateEffectModel.SIMPLE);
-        SimpleParticle particle = SimpleParticle.read(cfg, "Block.Effect.Particle");
+        UniParticle particle = UniParticle.read(cfg, "Block.Effect.Particle");
         this.setBlockEffectModel(model);
         this.setBlockEffectParticle(particle);
 
@@ -442,11 +442,11 @@ public class Crate extends AbstractConfigHolder<ExcellentCrates> implements Plac
     }
 
     @NotNull
-    public SimpleParticle getBlockEffectParticle() {
+    public UniParticle getBlockEffectParticle() {
         return blockEffectParticle;
     }
 
-    public void setBlockEffectParticle(@NotNull SimpleParticle blockEffectParticle) {
+    public void setBlockEffectParticle(@NotNull UniParticle blockEffectParticle) {
         this.blockEffectParticle = blockEffectParticle;
     }
 

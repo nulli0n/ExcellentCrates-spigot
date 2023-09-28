@@ -72,7 +72,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
             user.removeRewardWinLimit(crate.getId(), reward.getId());
             message = plugin.getMessage(Lang.COMMAND_RESET_LIMIT_DONE_REWARD).replace(reward.replacePlaceholders());
         }
-        user.saveData(this.plugin);
+        this.plugin.getUserManager().saveUser(user);
 
         message
             .replace(Placeholders.PLAYER_NAME, user.getName())

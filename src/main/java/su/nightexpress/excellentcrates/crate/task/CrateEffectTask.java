@@ -3,9 +3,9 @@ package su.nightexpress.excellentcrates.crate.task;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.api.server.AbstractTask;
 import su.nexmedia.engine.utils.LocationUtil;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
@@ -28,7 +28,7 @@ public class CrateEffectTask extends AbstractTask<ExcellentCrates> {
         crates.forEach(crate -> {
             if (crate.getBlockEffectModel() == CrateEffectModel.NONE) return;
 
-            SimpleParticle particle = crate.getBlockEffectParticle();
+            UniParticle particle = crate.getBlockEffectParticle();
             CrateEffect effect = crate.getBlockEffectModel().getEffect();
 
             new HashSet<>(crate.getBlockLocations()).forEach(location -> {

@@ -3,10 +3,10 @@ package su.nightexpress.excellentcrates.config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JOption;
-import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
+import su.nightexpress.excellentcrates.util.ClickType;
 
 import java.util.HashMap;
 import java.util.Map;

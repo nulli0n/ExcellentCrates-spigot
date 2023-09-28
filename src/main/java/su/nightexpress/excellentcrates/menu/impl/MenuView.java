@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.impl.ConfigMenu;
 import su.nexmedia.engine.api.menu.item.MenuItem;
-import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
@@ -14,6 +13,7 @@ import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.CrateClickAction;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.util.ClickType;
 
 import java.util.List;
 

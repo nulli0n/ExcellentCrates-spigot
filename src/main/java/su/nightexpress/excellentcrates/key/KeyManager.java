@@ -7,14 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
@@ -61,7 +57,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
 
         JYML cfg = new JYML(this.plugin.getDataFolder() + Config.DIR_KEYS, id + ".yml");
         CrateKey key = new CrateKey(this.plugin, cfg);
-        key.setName(Lang.LIME + StringUtil.capitalizeFully(id) + " Key");
+        key.setName(Colors.LIME + StringUtil.capitalizeFully(id) + " Key");
         key.setVirtual(false);
 
         ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
@@ -176,7 +172,7 @@ public class KeyManager extends AbstractManager<ExcellentCrates> {
             this.giveKey(player, crateKey, amount);
         });
         user.cleanKeysOnHold();
-        user.saveData(this.plugin);
+        this.plugin.getUserManager().saveUser(user);
     }
 
     public void setKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {

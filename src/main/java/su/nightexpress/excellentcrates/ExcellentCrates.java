@@ -25,8 +25,6 @@ import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.excellentcrates.menu.MenuManager;
 
-import java.sql.SQLException;
-
 public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserDataHolder<ExcellentCrates, CrateUser> {
 
     private DataHandler dataHandler;
@@ -131,14 +129,8 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public boolean setupDataHandlers() {
-        try {
-            this.dataHandler = DataHandler.getInstance(this);
-            this.dataHandler.setup();
-        }
-        catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        this.dataHandler = DataHandler.getInstance(this);
+        this.dataHandler.setup();
 
         this.userManager = new UserManager(this);
         this.userManager.setup();

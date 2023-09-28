@@ -17,9 +17,9 @@ import su.nexmedia.engine.api.editor.InputHandler;
 import su.nexmedia.engine.api.manager.EventListener;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.ExcellentCrates;
 import su.nightexpress.excellentcrates.api.OpenCostType;
 import su.nightexpress.excellentcrates.config.Config;
@@ -241,7 +241,7 @@ public class CrateMainEditor extends EditorMenu<ExcellentCrates, Crate> implemen
                 else if (event.isLeftClick()) {
                     this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_PARTICLE_NAME, wrapper -> {
                         Particle particle = StringUtil.getEnum(wrapper.getTextRaw(), Particle.class).orElse(Particle.REDSTONE);
-                        crate.setBlockEffectParticle(SimpleParticle.of(particle).parseData(""));
+                        crate.setBlockEffectParticle(UniParticle.of(particle).parseData(""));
                         crate.save();
                         return true;
                     });

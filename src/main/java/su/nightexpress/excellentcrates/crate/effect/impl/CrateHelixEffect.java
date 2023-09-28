@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.utils.values.UniParticle;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 
 public class CrateHelixEffect extends CrateEffect {
@@ -12,7 +12,7 @@ public class CrateHelixEffect extends CrateEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location loc2, @NotNull SimpleParticle particle, int step) {
+    public void doStep(@NotNull Location loc2, @NotNull UniParticle particle, int step) {
         Location location = loc2.add(0, 0.05D, 0);
 
         double n2 = 0.3141592653589793 * step;

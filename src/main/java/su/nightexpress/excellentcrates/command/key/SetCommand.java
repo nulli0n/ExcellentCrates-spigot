@@ -19,7 +19,7 @@ class SetCommand extends ManageCommand {
 
     @Override
     protected void manage(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
-        plugin.getKeyManager().setKey(user, key, amount);
-        user.saveData(plugin);
+        this.plugin.getKeyManager().setKey(user, key, amount);
+        this.plugin.getUserManager().saveUser(user);
     }
 }

@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.values.UniSound;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.task.OpeningTask;
@@ -59,7 +59,11 @@ public class AnimationTask extends OpeningTask {
             }
         }
 
-        inventory.getViewers().forEach(player -> PlayerUtil.sound((Player) player, this.parent.getSoundTick()));
+        inventory.getViewers().forEach(player -> {
+            if (this.parent.getSoundTick() == null) return;
+
+            UniSound.of(this.parent.getSoundTick()).play((Player) player);
+        });
     }
 
     @NotNull
