@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.crate.listener;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -17,16 +16,16 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.AbstractListener;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.CrateClickAction;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
+import su.nightexpress.excellentcrates.util.InteractType;
 
 import java.util.stream.Stream;
 
-public class CrateListener extends AbstractListener<ExcellentCrates> {
+public class CrateListener extends AbstractListener<ExcellentCratesPlugin> {
 
     private final CrateManager crateManager;
 
@@ -36,9 +35,9 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onCrateUse(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        ItemStack item = e.getItem();
+    public void onCrateUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
         Block block = null;
         Crate crate = null;
 
@@ -47,8 +46,8 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
         }
         if (crate == null) {
             item = null;
-            block = e.getClickedBlock();
-            if (block == null || (e.useInteractedBlock() == Event.Result.DENY && block.getType() != Material.BARRIER)) return;
+            block = event.getClickedBlock();
+            if (block == null) return;
 
             crate = this.crateManager.getCrateByBlock(block);
         }
@@ -56,43 +55,43 @@ public class CrateListener extends AbstractListener<ExcellentCrates> {
             return;
         }
 
-        e.setUseItemInHand(Event.Result.DENY);
-        e.setUseInteractedBlock(Event.Result.DENY);
+        event.setUseItemInHand(Event.Result.DENY);
+        event.setUseInteractedBlock(Event.Result.DENY);
 
-        if (e.getHand() != EquipmentSlot.HAND) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
-        Action action = e.getAction();
+        Action action = event.getAction();
         ClickType clickType = ClickType.from(action, player.isSneaking());
-        CrateClickAction clickAction = Config.getCrateClickAction(clickType);
+        InteractType clickAction = Config.getCrateClickAction(clickType);
         if (clickAction == null) return;
 
         this.crateManager.interactCrate(player, crate, clickAction, item, block);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onCratePlace(BlockPlaceEvent e) {
-        ItemStack item = e.getItemInHand();
+    public void onCratePlace(BlockPlaceEvent event) {
+        ItemStack item = event.getItemInHand();
         if (this.crateManager.isCrate(item)) {
-            e.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCrateAnvilStop(PrepareAnvilEvent e) {
-        AnvilInventory inventory = e.getInventory();
+    public void onCrateAnvilStop(PrepareAnvilEvent event) {
+        AnvilInventory inventory = event.getInventory();
         ItemStack first = inventory.getItem(0);
         ItemStack second = inventory.getItem(1);
 
         if ((first != null && this.crateManager.isCrate(first)) || (second != null && this.crateManager.isCrate(second))) {
-            e.setResult(null);
+            event.setResult(null);
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onCrateCraftStop(CraftItemEvent e) {
-        CraftingInventory inventory = e.getInventory();
+    public void onCrateCraftStop(CraftItemEvent event) {
+        CraftingInventory inventory = event.getInventory();
         if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.crateManager.isCrate(item))) {
-            e.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 }

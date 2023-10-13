@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -17,9 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-class GiveAllCommand extends AbstractCommand<ExcellentCrates> {
+class GiveAllCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public GiveAllCommand(@NotNull ExcellentCrates plugin) {
+    public GiveAllCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"giveall"}, Perms.COMMAND_KEY_GIVE);
         this.setDescription(plugin.getMessage(Lang.COMMAND_KEY_GIVE_ALL_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_KEY_GIVE_ALL_USAGE));

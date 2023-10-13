@@ -2,19 +2,19 @@ package su.nightexpress.excellentcrates.api.event;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 
 public class CrateObtainRewardEvent extends CrateEvent {
 
-    private final CrateReward reward;
+    private final Reward reward;
 
-    public CrateObtainRewardEvent(@NotNull CrateReward reward, @NotNull Player player) {
+    public CrateObtainRewardEvent(@NotNull Reward reward, @NotNull Player player) {
         super(reward.getCrate(), player);
         this.reward = reward;
     }
 
     @NotNull
-    public CrateReward getReward() {
+    public Reward getReward() {
         return reward;
     }
 }

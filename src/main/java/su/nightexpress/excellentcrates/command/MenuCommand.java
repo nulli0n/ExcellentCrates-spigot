@@ -6,17 +6,17 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.menu.impl.MenuConfig;
 
 import java.util.List;
 
-public class MenuCommand extends AbstractCommand<ExcellentCrates> {
+public class MenuCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public MenuCommand(@NotNull ExcellentCrates plugin) {
+    public MenuCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"menu"}, Perms.COMMAND_MENU);
         this.setDescription(plugin.getMessage(Lang.COMMAND_MENU_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_MENU_USAGE));

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -15,9 +15,9 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import java.util.Arrays;
 import java.util.List;
 
-public class GiveCommand extends AbstractCommand<ExcellentCrates> {
+public class GiveCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public GiveCommand(@NotNull ExcellentCrates plugin) {
+    public GiveCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"give"}, Perms.COMMAND_GIVE);
         this.setDescription(plugin.getMessage(Lang.COMMAND_GIVE_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_GIVE_USAGE));

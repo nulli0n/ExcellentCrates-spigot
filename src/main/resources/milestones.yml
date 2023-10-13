@@ -3,6 +3,7 @@ Size: 27
 Inventory_Type: CHEST
 
 Milestones:
+  Slots: 10,12,14,16
   Completed:
     Custom_Item:
       Enabled: true
@@ -34,8 +35,6 @@ Milestones:
       Material: LIME_STAINED_GLASS_PANE
     Incompleted:
       Material: WHITE_STAINED_GLASS_PANE
-
-  Slots: 10,12,14,16
 
 Content:
   Priority: 0

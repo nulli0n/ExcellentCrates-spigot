@@ -2,7 +2,6 @@ package su.nightexpress.excellentcrates.crate.menu;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,19 +16,22 @@ import su.nexmedia.engine.api.menu.impl.MenuOptions;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.api.menu.item.ItemOptions;
 import su.nexmedia.engine.api.menu.item.MenuItem;
+import su.nexmedia.engine.api.menu.link.Linked;
+import su.nexmedia.engine.api.menu.link.ViewLink;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoPaged<Milestone> {
+public class MilestonesMenu extends ConfigMenu<ExcellentCratesPlugin> implements AutoPaged<Milestone>, Linked<MilestonesMenu.MileLink> {
 
     private static final String PLACEHOLDER_OPENINGS_LEFT = "%openings_left%";
 
@@ -38,28 +40,28 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
     private final String       mileIncName;
     private final List<String> mileIncLore;
     private final int[]        mileSlots;
-    private ItemStack    mileCompItem;
-    private ItemStack mileIncItem;
+    private       ItemStack    mileCompItem;
+    private       ItemStack    mileIncItem;
 
-    private final boolean pointerEnabled;
-    private       int     pointerPerMile;
-    private int[] pointerSlots;
-    private ItemStack pointerComp;
-    private ItemStack pointerInc;
+    private final boolean   pointerEnabled;
+    private       int       pointerPerMile;
+    private       int[]     pointerSlots;
+    private       ItemStack pointerComp;
+    private       ItemStack pointerInc;
 
-    private final Map<Player, Crate> crateMap;
-    private final Map<Player, Integer> counter;
+    private final ViewLink<MileLink> viewLink;
 
-    public MilestonesMenu(@NotNull ExcellentCrates plugin) {
+    public static record MileLink(Crate crate, AtomicInteger counter) { }
+
+    public MilestonesMenu(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, JYML.loadOrExtract(plugin, Config.FILE_MILESTONES));
-        this.crateMap = new WeakHashMap<>();
-        this.counter = new WeakHashMap<>();
+        this.viewLink = new ViewLink<>();
 
         this.registerHandler(MenuItemType.class)
             .addClick(MenuItemType.CLOSE, ClickHandler.forClose(this))
             .addClick(MenuItemType.RETURN, (viewer, event) -> {
-                Crate crate = this.getCrate(viewer.getPlayer());
-                if (crate != null) crate.openPreview(viewer.getPlayer());
+                MileLink link = this.getLink(viewer.getPlayer());
+                if (link != null) plugin.getCrateManager().previewCrate(viewer.getPlayer(), link.crate);
             })
             .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this))
             .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this));
@@ -86,27 +88,32 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
         this.load();
     }
 
+    @Override
+    @NotNull
+    public ViewLink<MileLink> getLink() {
+        return this.viewLink;
+    }
+
     public void open(@NotNull Player player, @NotNull Crate crate) {
-        this.crateMap.put(player, crate);
-        this.open(player, 1);
+        MilestonesMenu.MileLink mileLink = new MilestonesMenu.MileLink(crate, new AtomicInteger(0));
+        this.open(player, mileLink, 1);
     }
 
     @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
         super.onPrepare(viewer, options);
-        Crate crate = this.getCrate(viewer.getPlayer());
-        if (crate == null) return;
 
-        options.setTitle(crate.replacePlaceholders().apply(options.getTitle()));
+        MileLink link = this.getLink(viewer.getPlayer());
+        if (link == null) return;
 
-        this.counter.put(viewer.getPlayer(), 0);
+        options.setTitle(link.crate.replacePlaceholders().apply(options.getTitle()));
 
         this.getItemsForPage(viewer).forEach(this::addItem);
     }
 
     @Nullable
-    public Crate getCrate(@NotNull Player player) {
-        return this.crateMap.get(player);
+    private MileLink getLink(@NotNull Player player) {
+        return this.getLink().get(player);
     }
 
     @Override
@@ -117,19 +124,20 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
     @Override
     @NotNull
     public List<Milestone> getObjects(@NotNull Player player) {
-        Crate crate = this.getCrate(player);
-        if (crate == null) return Collections.emptyList();
+        MileLink link = this.getLink(player);
+        if (link == null) return Collections.emptyList();
 
-        return crate.getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList();
+        return link.crate.getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList();
     }
 
     @Override
     @NotNull
     public ItemStack getObjectStack(@NotNull Player player, @NotNull Milestone milestone) {
-        Crate crate = this.getCrate(player);
-        if (crate == null) return new ItemStack(Material.AIR);
+        MileLink link = this.getLink(player);
+        if (link == null) return new ItemStack(Material.AIR);
 
-        CrateReward reward = crate.getReward(milestone.getRewardId());
+        Crate crate = link.crate;
+        Reward reward = crate.getReward(milestone.getRewardId());
         if (reward == null) return new ItemStack(Material.AIR);
 
         Set<Milestone> milestones = crate.getMilestones();
@@ -142,7 +150,7 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
         ItemStack item = reward.getPreview();
 
         if (this.pointerEnabled) {
-            int counter = this.counter.get(player);
+            int counter = link.counter.getAndIncrement();
 
             ItemStack pointerItem = new ItemStack(isCompleted ? this.pointerComp : this.pointerInc);
             int[] pointerSlots = new int[this.pointerPerMile];
@@ -153,8 +161,6 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
             menuItem.setOptions(ItemOptions.personalWeak(player));
             menuItem.setPriority(Integer.MAX_VALUE);
             this.addItem(menuItem);
-
-            this.counter.put(player, counter + 1);
         }
 
         if (isCompleted) {
@@ -189,12 +195,5 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCrates> implements AutoP
         return (viewer, event) -> {
 
         };
-    }
-
-    @Override
-    public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
-        super.onClose(viewer, event);
-        this.crateMap.remove(viewer.getPlayer());
-        this.counter.remove(viewer.getPlayer());
     }
 }

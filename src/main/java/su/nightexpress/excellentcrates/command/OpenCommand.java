@@ -7,8 +7,8 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandFlag;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -16,11 +16,11 @@ import su.nightexpress.excellentcrates.crate.impl.OpenSettings;
 
 import java.util.List;
 
-public class OpenCommand extends AbstractCommand<ExcellentCrates> {
+public class OpenCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
     private static final CommandFlag<Boolean> FORCE = CommandFlag.booleanFlag("f");
 
-    public OpenCommand(@NotNull ExcellentCrates plugin) {
+    public OpenCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"open"}, Perms.COMMAND_OPEN);
         this.setUsage(plugin.getMessage(Lang.COMMAND_OPEN_USAGE));
         this.setDescription(plugin.getMessage(Lang.COMMAND_OPEN_DESC));

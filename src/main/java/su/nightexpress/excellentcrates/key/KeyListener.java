@@ -15,11 +15,11 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.manager.AbstractListener;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 
 import java.util.stream.Stream;
 
-public class KeyListener extends AbstractListener<ExcellentCrates> {
+public class KeyListener extends AbstractListener<ExcellentCratesPlugin> {
 
     private final KeyManager keyManager;
 

@@ -51,8 +51,8 @@ public abstract class CrateEffect {
     public abstract void doStep(@NotNull Location location, @NotNull UniParticle particle, int step);
 
     @NotNull
-    public static Location getPointOnCircle(@NotNull Location loc, boolean doCopy, double n, double n2, double n3) {
-        return (doCopy ? loc.clone() : loc).add(Math.cos(n) * n2, n3, Math.sin(n) * n2);
+    public static Location getPointOnCircle(@NotNull Location loc, boolean doCopy, double x, double z, double y) {
+        return (doCopy ? loc.clone() : loc).add(Math.cos(x) * z, y, Math.sin(x) * z);
     }
 
     public final long getInterval() {

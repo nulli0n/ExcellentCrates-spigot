@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -15,9 +15,9 @@ import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 import java.util.List;
 
-public class ResetCooldownCommand extends AbstractCommand<ExcellentCrates> {
+public class ResetCooldownCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public ResetCooldownCommand(@NotNull ExcellentCrates plugin) {
+    public ResetCooldownCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"resetcooldown"}, Perms.COMMAND_RESETCOOLDOWN);
         this.setDescription(plugin.getMessage(Lang.COMMAND_RESET_COOLDOWN_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_RESET_COOLDOWN_USAGE));

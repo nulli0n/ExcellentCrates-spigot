@@ -1,19 +1,17 @@
-Name: '&a&lEmerald Crate'
+Name: '#74ea31Emerald Crate'
 Permission_Required: false
 Preview_Config: default
 Animation_Config: csgo_auto
 Opening:
   Cooldown: 0
-  Cost:
-    MONEY: 0.0
-    EXP: 0.0
+  Cost: {}
 Item:
   Material: PLAYER_HEAD
   Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmMwZTZkOWUyNDI3MzU0ODE5MThjNWZkMTQ0OThiZDc2MGJiOWY0ZmY2NDMwYWQ0Njk2YjM4ZThhODgzZGE5NyJ9fX0=
-  Name: '&a&lEmerald Crate &7(Right-Click)'
+  Name: '#74ea31Emerald Crate'
   Lore:
-    - '&fLeft Click &7to preview'
-    - '&fRight Click &7to open'
+    - '#e8f2f2Left Click #aaa8a8to preview'
+    - '#e8f2f2Right Click #aaa8a8to open'
 Key:
   Ids:
     - emerald
@@ -22,24 +20,18 @@ Block:
   Pushback:
     Enabled: true
   Hologram:
-    Enabled: false
-    Offset:
-      Y: 1.5
-    Text:
-      - '&a&lEmerald Crate'
-      - '&fLeft Click &7to preview'
-      - '&fRight Click &7to open'
+    Enabled: true
+    Template: default
   Effect:
     Model: SPIRAL
     Particle:
-      Name: FLAME
-      Data: ''
+      Name: REDSTONE
       Color: 166,166,166
-      Size: 1.0
+      Size: 1.5
 Rewards:
   List:
     money2500:
-      Name: '&a◆ $2.500 ◆'
+      Name: '#74ea31◆ $2.500 ◆'
       Chance: 5.0
       Rarity: legendary
       Broadcast: false
@@ -52,7 +44,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     money5000:
-      Name: '&a◆ $5.000 ◆'
+      Name: '#74ea31◆ $5.000 ◆'
       Chance: 3.0
       Rarity: legendary
       Broadcast: false
@@ -65,7 +57,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     money10000:
-      Name: '&a◆ $10.000 ◆'
+      Name: '#74ea31◆ $10.000 ◆'
       Chance: 1.5
       Rarity: legendary
       Broadcast: false
@@ -78,7 +70,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     exp10:
-      Name: '&e◆ 10 Exp Levels ◆'
+      Name: '#ead931◆ 10 Exp Levels ◆'
       Chance: 8.0
       Rarity: rare
       Broadcast: false
@@ -91,7 +83,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     exp20:
-      Name: '&e◆ 20 Exp Levels ◆'
+      Name: '#ead931◆ 20 Exp Levels ◆'
       Chance: 7.0
       Rarity: rare
       Broadcast: false
@@ -104,7 +96,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     exp30:
-      Name: '&e◆ 30 Exp Levels ◆'
+      Name: '#ead931◆ 30 Exp Levels ◆'
       Chance: 6.0
       Rarity: rare
       Broadcast: false
@@ -117,7 +109,7 @@ Rewards:
       Items: []
       Ignored_For_Permissions: []
     iron_block:
-      Name: '&fx5 Iron Block'
+      Name: '#e8f2f2x5 Iron Block'
       Chance: 12.0
       Rarity: uncommon
       Broadcast: false
@@ -130,7 +122,7 @@ Rewards:
         - 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
       Ignored_For_Permissions: []
     diamond_block:
-      Name: '&bx5 Diamond Block'
+      Name: '#31eacex5 Diamond Block'
       Chance: 11.0
       Rarity: uncommon
       Broadcast: false
@@ -143,7 +135,7 @@ Rewards:
         - k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
       Ignored_For_Permissions: []
     emerald_block:
-      Name: '&ax5 Emerald Block'
+      Name: '#74ea31x5 Emerald Block'
       Chance: 10.0
       Rarity: uncommon
       Broadcast: false
@@ -156,7 +148,7 @@ Rewards:
         - k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
       Ignored_For_Permissions: []
     golden_apple:
-      Name: '&ex32 Golden Apple'
+      Name: '#ead931x32 Golden Apple'
       Chance: 14.0
       Rarity: common
       Broadcast: false
@@ -169,7 +161,7 @@ Rewards:
         - 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
       Ignored_For_Permissions: []
     slime:
-      Name: '&ax32 Slime Ball'
+      Name: '#74ea31x32 Slime Ball'
       Chance: 17.0
       Rarity: common
       Broadcast: false
@@ -182,7 +174,7 @@ Rewards:
         - 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
       Ignored_For_Permissions: []
     trident:
-      Name: '&3Trident'
+      Name: '#3196eaTrident'
       Chance: 15.0
       Rarity: common
       Broadcast: false
@@ -195,7 +187,7 @@ Rewards:
         - 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
       Ignored_For_Permissions: []
     elytra:
-      Name: '&dElytra'
+      Name: '#ea31b2Elytra'
       Chance: 9.0
       Rarity: common
       Broadcast: false
@@ -208,7 +200,7 @@ Rewards:
         - a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
       Ignored_For_Permissions: []
     netherite_ingot:
-      Name: '&8x5 Netherite Ingot'
+      Name: '#aaa8a8x5 Netherite Ingot'
       Chance: 16.0
       Rarity: common
       Broadcast: false
@@ -221,7 +213,7 @@ Rewards:
         - 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
       Ignored_For_Permissions: []
     ender_pearl:
-      Name: '&bx16 Ender Pearl'
+      Name: '#31eacex16 Ender Pearl'
       Chance: 20.0
       Rarity: common
       Broadcast: false
@@ -234,7 +226,7 @@ Rewards:
         - a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
       Ignored_For_Permissions: []
     sugar:
-      Name: '&fx32 Sugar'
+      Name: '#e8f2f2x32 Sugar'
       Chance: 25.0
       Rarity: common
       Broadcast: false
@@ -247,7 +239,7 @@ Rewards:
         - 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
       Ignored_For_Permissions: []
     shulker_shell:
-      Name: '&dx8 Shulker Shell'
+      Name: '#ea31b2x8 Shulker Shell'
       Chance: 13.0
       Rarity: common
       Broadcast: false

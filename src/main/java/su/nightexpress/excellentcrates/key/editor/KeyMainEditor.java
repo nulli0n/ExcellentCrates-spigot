@@ -10,13 +10,13 @@ import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.editor.EditorLocales;
 import su.nightexpress.excellentcrates.key.CrateKey;
 
-public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
+public class KeyMainEditor extends EditorMenu<ExcellentCratesPlugin, CrateKey> {
 
     public KeyMainEditor(@NotNull CrateKey crateKey) {
         super(crateKey.plugin(), crateKey, Config.EDITOR_TITLE_KEY.get(), 45);
@@ -33,13 +33,16 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
         });
 
         this.addItem(Material.TRIPWIRE_HOOK, EditorLocales.KEY_ITEM, 22).setClick((viewer, event) -> {
-            if (event.isRightClick()) {
-                PlayerUtil.addItem(viewer.getPlayer(), crateKey.getRawItem());
+            ItemStack cursor = event.getCursor();
+            if (cursor == null || cursor.getType().isAir()) {
+                if (event.isLeftClick()) {
+                    PlayerUtil.addItem(viewer.getPlayer(), crateKey.getItem());
+                }
+                else if (event.isRightClick()) {
+                    PlayerUtil.addItem(viewer.getPlayer(), crateKey.getRawItem());
+                }
                 return;
             }
-
-            ItemStack cursor = event.getCursor();
-            if (cursor == null || cursor.getType().isAir()) return;
 
             crateKey.setItem(cursor);
             event.getView().setCursor(null);
@@ -52,18 +55,17 @@ public class KeyMainEditor extends EditorMenu<ExcellentCrates, CrateKey> {
                 meta.setLore(EditorLocales.KEY_ITEM.getLocalizedLore());
                 meta.addItemFlags(ItemFlag.values());
             });
-        }));
+        })).setVisibilityPolicy(viewer -> !crateKey.isVirtual());
 
         this.addItem(Material.ENDER_PEARL, EditorLocales.KEY_VIRTUAL, 24).setClick((viewer, event) -> {
             crateKey.setVirtual(!crateKey.isVirtual());
             this.save(viewer);
         });
 
-        this.getItems().forEach(menuItem -> {
-            if (menuItem.getOptions().getDisplayModifier() == null) {
-                menuItem.getOptions().setDisplayModifier(((viewer, item) -> ItemUtil.replace(item, crateKey.replacePlaceholders())));
-            }
-        });
+        this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
+                ItemUtil.replace(item, crateKey.replacePlaceholders());
+            })
+        );
     }
 
     private void save(@NotNull MenuViewer viewer) {

@@ -9,18 +9,18 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DropCommand extends AbstractCommand<ExcellentCrates> {
+public class DropCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public DropCommand(@NotNull ExcellentCrates plugin) {
+    public DropCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"drop"}, Perms.COMMAND_DROP);
         this.setDescription(plugin.getMessage(Lang.COMMAND_DROP_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_DROP_USAGE));
@@ -32,24 +32,34 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
         if (arg == 1) {
             return plugin.getCrateManager().getCrateIds(false);
         }
-        if (arg == 2) {
-            return CollectionsUtil.worldNames();
-        }
-        if (arg == 3) {
-            return Arrays.asList("<x>", NumberUtil.format(player.getLocation().getX()));
-        }
-        if (arg == 4) {
-            return Arrays.asList("<y>", NumberUtil.format(player.getLocation().getY()));
+        if (arg >= 2 && arg <= 4) {
+            Location location = player.getLocation();
+
+            if (arg == 2) {
+                return Arrays.asList(
+                    String.valueOf(location.getBlockX()),
+                    location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ()
+                );
+            }
+            else if (arg == 3) {
+                return Arrays.asList(
+                    String.valueOf(location.getBlockY()),
+                    location.getBlockY() + " " + location.getBlockZ()
+                );
+            }
+            else {
+                return Arrays.asList(String.valueOf(location.getBlockZ()));
+            }
         }
         if (arg == 5) {
-            return Arrays.asList("<z>", NumberUtil.format(player.getLocation().getZ()));
+            return CollectionsUtil.worldNames();
         }
         return super.getTab(player, arg, args);
     }
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-        if (result.length() != 6) {
+        if (result.length() < 5) {
             this.printUsage(sender);
             return;
         }
@@ -60,15 +70,25 @@ public class DropCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        World world = plugin.getServer().getWorld(result.getArg(2));
-        if (world == null) {
-            plugin.getMessage(Lang.ERROR_WORLD_INVALID).send(sender);
-            return;
-        }
+        double x = result.getDouble(2, 0);
+        double y = result.getDouble(3, 0);
+        double z = result.getDouble(4, 0);
 
-        double x = result.getDouble(3, 0);
-        double y = result.getDouble(4, 0);
-        double z = result.getDouble(5, 0);
+        World world;
+        if (result.length() < 6) {
+            if (!(sender instanceof Player player)) {
+                this.printUsage(sender);
+                return;
+            }
+            else world = player.getWorld();
+        }
+        else {
+            world = plugin.getServer().getWorld(result.getArg(5));
+            if (world == null) {
+                this.plugin.getMessage(Lang.ERROR_WORLD_INVALID).send(sender);
+                return;
+            }
+        }
         Location location = new Location(world, x, y, z);
 
         if (!plugin.getCrateManager().spawnCrate(crate, location)) return;

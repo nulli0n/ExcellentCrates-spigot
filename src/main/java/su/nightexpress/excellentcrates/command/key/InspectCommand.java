@@ -7,16 +7,16 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 
 import java.util.List;
 
-public class InspectCommand extends AbstractCommand<ExcellentCrates> {
+public class InspectCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public InspectCommand(@NotNull ExcellentCrates plugin) {
+    public InspectCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"inspect"}, Perms.COMMAND_KEY_INSPECT);
         this.setDescription(plugin.getMessage(Lang.COMMAND_KEY_INSPECT_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_KEY_INSPECT_USAGE));

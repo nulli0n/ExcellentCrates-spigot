@@ -7,19 +7,19 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.Perms;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 
 import java.util.List;
 
-public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
+public class ResetLimitCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
-    public ResetLimitCommand(@NotNull ExcellentCrates plugin) {
+    public ResetLimitCommand(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, new String[]{"resetlimit"}, Perms.COMMAND_RESETLIMIT);
         this.setDescription(plugin.getMessage(Lang.COMMAND_RESET_LIMIT_DESC));
         this.setUsage(plugin.getMessage(Lang.COMMAND_RESET_LIMIT_USAGE));
@@ -37,7 +37,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
         if (arg == 3) {
             Crate crate = plugin.getCrateManager().getCrateById(args[2]);
             if (crate != null) {
-                return crate.getRewards().stream().map(CrateReward::getId).toList();
+                return crate.getRewards().stream().map(Reward::getId).toList();
             }
         }
         return super.getTab(player, arg, args);
@@ -62,7 +62,7 @@ public class ResetLimitCommand extends AbstractCommand<ExcellentCrates> {
             return;
         }
 
-        CrateReward reward = result.length() >= 4 ? crate.getReward(result.getArg(3)) : null;
+        Reward reward = result.length() >= 4 ? crate.getReward(result.getArg(3)) : null;
         LangMessage message;
         if (reward == null) {
             user.removeRewardWinLimit(crate.getId());

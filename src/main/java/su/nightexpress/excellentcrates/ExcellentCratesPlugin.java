@@ -3,11 +3,15 @@ package su.nightexpress.excellentcrates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.Version;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.utils.EngineUtils;
-import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
+import su.nexmedia.engine.utils.StringUtil;
+import su.nightexpress.excellentcrates.config.Perms;
+import su.nightexpress.excellentcrates.currency.CurrencyManager;
+import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.command.*;
 import su.nightexpress.excellentcrates.command.key.KeyMainCommand;
 import su.nightexpress.excellentcrates.config.Config;
@@ -19,32 +23,40 @@ import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.editor.EditorLocales;
 import su.nightexpress.excellentcrates.editor.EditorMainMenu;
 import su.nightexpress.excellentcrates.hooks.HookId;
-import su.nightexpress.excellentcrates.hooks.hologram.HologramHandlerDecent;
-import su.nightexpress.excellentcrates.hooks.hologram.HologramHandlerHD;
+import su.nightexpress.excellentcrates.hologram.impl.HologramDecentHandler;
+import su.nightexpress.excellentcrates.hologram.impl.HologramDisplaysHandler;
+import su.nightexpress.excellentcrates.hologram.impl.HologramInternalHandler;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.excellentcrates.menu.MenuManager;
+import su.nightexpress.excellentcrates.hologram.HologramType;
 
-public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserDataHolder<ExcellentCrates, CrateUser> {
+public class ExcellentCratesPlugin extends NexPlugin<ExcellentCratesPlugin> implements UserDataHolder<ExcellentCratesPlugin, CrateUser> {
 
     private DataHandler dataHandler;
     private UserManager userManager;
 
-    private EditorMainMenu editor;
+    private CurrencyManager currencyManager;
     private KeyManager     keyManager;
     private CrateManager   crateManager;
     private MenuManager    menuManager;
 
+    private EditorMainMenu editor;
     private HologramHandler hologramHandler;
 
     @Override
     @NotNull
-    protected ExcellentCrates getSelf() {
+    protected ExcellentCratesPlugin getSelf() {
         return this;
     }
 
     @Override
     public void enable() {
+        this.setupHologramHandler();
+
+        this.currencyManager = new CurrencyManager(this);
+        this.currencyManager.setup();
+
         this.keyManager = new KeyManager(this);
         this.keyManager.setup();
 
@@ -53,6 +65,32 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
         this.menuManager = new MenuManager(this);
         this.menuManager.setup();
+    }
+
+    private void setupHologramHandler() {
+        HologramType type = Config.CRATE_HOLOGRAM_HANDLER.get();
+        if (type == HologramType.INTERNAL) {
+            if (EngineUtils.hasPlugin(HookId.PROTOCOL_LIB) && Version.isAtLeast(Version.V1_19_R3)) {
+                this.hologramHandler = new HologramInternalHandler(this);
+            }
+        }
+        else if (type == HologramType.HOLOGRAPHIC_DISPLAYS) {
+            if (EngineUtils.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
+                this.hologramHandler = new HologramDisplaysHandler(this);
+            }
+        }
+        else if (type == HologramType.DECENT_HOLOGRAMS) {
+            if (EngineUtils.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
+                this.hologramHandler = new HologramDecentHandler(this);
+            }
+        }
+
+        if (this.hologramHandler != null) {
+            this.info("Using " + StringUtil.capitalizeUnderscored(type.name().toLowerCase()) + " hologram handler.");
+        }
+        else {
+            this.warn("No hologram handler is available. Do your server met all the requirements?");
+        }
     }
 
     @Override
@@ -77,6 +115,9 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
             this.hologramHandler.shutdown();
             this.hologramHandler = null;
         }
+        if (this.currencyManager != null) {
+            this.currencyManager.shutdown();
+        }
         if (EngineUtils.hasPlaceholderAPI()) {
             PlaceholderHook.shutdown();
         }
@@ -96,22 +137,16 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
     @Override
     public void registerHooks() {
-        if (EngineUtils.hasPlugin(HookId.HOLOGRAPHIC_DISPLAYS)) {
-            this.hologramHandler = new HologramHandlerHD(this);
-        }
-        else if (EngineUtils.hasPlugin(HookId.DECENT_HOLOGRAMS)) {
-            this.hologramHandler = new HologramHandlerDecent(this);
-        }
-
         if (EngineUtils.hasPlaceholderAPI()) {
             PlaceholderHook.setup();
         }
     }
 
     @Override
-    public void registerCommands(@NotNull GeneralCommand<ExcellentCrates> mainCommand) {
+    public void registerCommands(@NotNull GeneralCommand<ExcellentCratesPlugin> mainCommand) {
         mainCommand.addChildren(new EditorCommand(this));
         mainCommand.addChildren(new DropCommand(this));
+        mainCommand.addChildren(new DropKeyCommand(this));
         mainCommand.addChildren(new OpenCommand(this));
         mainCommand.addChildren(new GiveCommand(this));
         mainCommand.addChildren(new KeyMainCommand(this));
@@ -134,7 +169,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
 
         this.userManager = new UserManager(this);
         this.userManager.setup();
-
         return true;
     }
 
@@ -148,6 +182,11 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
     @Override
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    @NotNull
+    public CurrencyManager getCurrencyManager() {
+        return currencyManager;
     }
 
     @NotNull
@@ -170,7 +209,6 @@ public class ExcellentCrates extends NexPlugin<ExcellentCrates> implements UserD
         return hologramHandler;
     }
 
-    //@Override
     @NotNull
     public EditorMainMenu getEditor() {
         if (this.editor == null) {

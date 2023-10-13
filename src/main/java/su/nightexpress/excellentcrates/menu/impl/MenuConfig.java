@@ -6,15 +6,15 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractConfigHolder;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 
-public class MenuConfig extends AbstractConfigHolder<ExcellentCrates> implements Placeholder {
+public class MenuConfig extends AbstractConfigHolder<ExcellentCratesPlugin> implements Placeholder {
 
     private final MenuView menuView;
     private final PlaceholderMap placeholderMap;
 
-    public MenuConfig(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
+    public MenuConfig(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
         this.menuView = new MenuView(this);
 

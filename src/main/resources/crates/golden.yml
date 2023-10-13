@@ -1,12 +1,17 @@
-Name: '&e&lGolden Crate'
+Name: '#ead931Golden Crate'
 Preview_Config: default
+Animation_Config: roulette
 Permission_Required: false
-Attached_Citizens: ''
+Item:
+  Material: PLAYER_HEAD
+  Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWU1YmI4YjMxZjQ2YWE5YWYxYmFhODhiNzRmMGZmMzgzNTE4Y2QyM2ZhYWM1MmEzYWNiOTZjZmU5MWUyMmViYyJ9fX0=
+  Name: '#ead931Golden Crate'
+  Lore:
+    - '#e8f2f2Left Click #aaa8a8to preview'
+    - '#e8f2f2Right Click #aaa8a8to open'
 Opening:
   Cooldown: 0
-  Cost:
-    MONEY: 0.0
-    EXP: 0.0
+  Cost: {}
 Key:
   Ids:
     - golden
@@ -15,24 +20,13 @@ Block:
   Pushback:
     Enabled: true
   Hologram:
-    Enabled: false
-    Offset:
-      Y: 1.85
-    Text:
-      - '&e&lGolden Crate'
-      - '&fLeft Click &7to preview'
-      - '&fRight Click &7to open'
-      - '&7'
-      - '&7Buy keys at &e&nwww.myserver.com&e&n'
+    Enabled: true
+    Template: default
   Effect:
     Model: HELIX
     Particle:
       Name: FLAME
-      Data: ''
 Rewards:
-  Guaranteed:
-    Opening_Count: 3
-    Max_Chance: 7.0
   List:
     iron_axe:
       Name: Iron Axe
@@ -346,11 +340,3 @@ Rewards:
       Items:
         - k00010004qb400cmqqbeclhn4ob6egt6spbkd1in4qbkclfn6trfe9i0k003ehgme0o00p262rb1ctig0000004g0325dphmgobeehmmarjkec5000000k4000j9cg01orb9dpim6sj1cpq3koj1dpilurr6btgn4t38e9nn0rr4ec1000rcepm0020010004qb400amqqbeclhn4ob6egt6cqbiclfm2srgclhn80g00dm7cr001000g002d5i004rdd5n6aoric5j78ejjd1gn4s3eclpn60g00dm7cr001000g002d5i003rdd5n6aoric5j78ejjdlkn8p82001motjc0040020009km800kdlkmspb3e9gmct1qeln64sj5c5lmirj708006r3mdg00g0000400agrfeln78080
       Ignored_For_Permissions: []
-Animation_Config: roulette
-Item:
-  Material: PLAYER_HEAD
-  Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWU1YmI4YjMxZjQ2YWE5YWYxYmFhODhiNzRmMGZmMzgzNTE4Y2QyM2ZhYWM1MmEzYWNiOTZjZmU5MWUyMmViYyJ9fX0=
-  Name: '&e&lGolden Crate &7(Right-Click)'
-  Lore:
-    - '&fLeft Click &7to preview'
-    - '&fRight Click &7to open'

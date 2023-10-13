@@ -12,7 +12,7 @@ import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.editor.EditorLocales;
@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class KeyListEditor extends EditorMenu<ExcellentCrates, KeyManager> implements AutoPaged<CrateKey> {
+public class KeyListEditor extends EditorMenu<ExcellentCratesPlugin, KeyManager> implements AutoPaged<CrateKey> {
 
     public KeyListEditor(@NotNull KeyManager keyManager) {
         super(keyManager.plugin(), keyManager, Config.EDITOR_TITLE_KEY.get(), 45);

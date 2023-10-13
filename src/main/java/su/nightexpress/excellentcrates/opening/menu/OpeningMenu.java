@@ -16,7 +16,7 @@ import su.nexmedia.engine.api.manager.EventListener;
 import su.nexmedia.engine.api.menu.impl.ConfigMenu;
 import su.nexmedia.engine.api.menu.item.MenuItem;
 import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
@@ -31,12 +31,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements EventListener {
+public class OpeningMenu extends ConfigMenu<ExcellentCratesPlugin> implements EventListener {
 
     private final Map<String, SliderInfo>    sliders;
     private final Map<String, AnimationInfo> animations;
 
-    public OpeningMenu(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
+    public OpeningMenu(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
         this.sliders = new LinkedHashMap<>();
         this.animations = new LinkedHashMap<>();
@@ -155,8 +155,8 @@ public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements EventLis
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onInvClose14(InventoryCloseEvent e) {
-        Player player = (Player) e.getPlayer();
+    public void onInvClose14(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
         PlayerOpeningData data = PlayerOpeningData.get(player);
         if (data == null) return;
 
@@ -168,12 +168,12 @@ public class OpeningMenu extends ConfigMenu<ExcellentCrates> implements EventLis
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInvClick14(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
+    public void onInvClick14(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
         PlayerOpeningData data = PlayerOpeningData.get(player);
         if (data == null) return;
 
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

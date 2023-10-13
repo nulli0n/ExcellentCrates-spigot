@@ -11,9 +11,13 @@ public class Lang extends EngineLang {
 
     public static final LangKey COMMAND_EDITOR_DESC = LangKey.of("Command.Editor.Desc", "Open crates & keys editor.");
 
-    public static final LangKey COMMAND_DROP_USAGE = LangKey.of("Command.Drop.Usage", "<crateId> <world> <x> <y> <z>");
+    public static final LangKey COMMAND_DROP_USAGE = LangKey.of("Command.Drop.Usage", "<crate> <x> <y> <z> [world]");
     public static final LangKey COMMAND_DROP_DESC  = LangKey.of("Command.Drop.Desc", "Drop crate at specified location in the world.");
     public static final LangKey COMMAND_DROP_DONE  = LangKey.of("Command.Drop.Done", GRAY + "Dropped " + YELLOW + CRATE_NAME + GRAY + " at " + YELLOW + LOCATION_X + ", " + LOCATION_Y + ", " + LOCATION_Z + GRAY + " in " + YELLOW + LOCATION_WORLD + GRAY + ".");
+
+    public static final LangKey COMMAND_DROP_KEY_USAGE = LangKey.of("Command.DropKey.Usage", "<key> <x> <y> <z> [world]");
+    public static final LangKey COMMAND_DROP_KEY_DESC  = LangKey.of("Command.DropKey.Desc", "Drop key at specified location.");
+    public static final LangKey COMMAND_DROP_KEY_DONE  = LangKey.of("Command.DropKey.Done", GRAY + "Dropped " + YELLOW + KEY_NAME + GRAY + " at " + YELLOW + LOCATION_X + ", " + LOCATION_Y + ", " + LOCATION_Z + GRAY + " in " + YELLOW + LOCATION_WORLD + GRAY + ".");
 
     public static final LangKey COMMAND_OPEN_DESC   = LangKey.of("Command.Open.Desc", "Makes [player] to [force] open a crate.");
     public static final LangKey COMMAND_OPEN_USAGE  = LangKey.of("Command.Open.Usage", "<crate> [player] [-f] [-s]");
@@ -106,15 +110,10 @@ public class Lang extends EngineLang {
             "\n" + RED + BOLD + "Whoops!" +
             "\n" + GRAY + "There are no rewards for you! Try later.");
 
-    public static final LangKey CRATE_OPEN_ERROR_COST_MONEY = LangKey.of("Crate.Open.Error.Cost.Money",
+    public static final LangKey CRATE_OPEN_ERROR_CANT_AFFORD = LangKey.of("Crate.Open.Error.CantAfford",
         "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
             "\n" + RED + BOLD + "Whoops!" +
-            "\n" + GRAY + "You need $" + RED + CRATE_OPENING_COST_MONEY + GRAY + " to open it!");
-
-    public static final LangKey CRATE_OPEN_ERROR_COST_EXP = LangKey.of("Crate.Open.Error.Cost.Exp",
-        "<! type:\"titles:20:80:20\" sound:\"" + Sound.ENTITY_VILLAGER_NO.name() + "\" !>" +
-            "\n" + RED + BOLD + "Whoops!" +
-            "\n" + GRAY + "You need " + RED + CRATE_OPENING_COST_EXP + " Levels " + GRAY + " to open it!");
+            "\n" + GRAY + "You need " + RED + GENERIC_AMOUNT + GRAY + " to open it!");
 
     public static final LangKey CRATE_OPEN_REWARD_INFO = LangKey.of("Crate.Open.Reward.Info",
         "<! prefix:\"false\" !>" +
@@ -140,18 +139,17 @@ public class Lang extends EngineLang {
     public static final LangKey EDITOR_ENTER_DISPLAY_NAME = LangKey.of("Editor.Enter.DisplayName", GRAY + "Enter " + GREEN + "[Display Name]");
     public static final LangKey EDITOR_ENTER_AMOUNT       = LangKey.of("Editor.Enter.Amount", GRAY + "Enter " + GREEN + "[Amount]");
 
-    public static final LangKey EDITOR_CRATE_ENTER_ID                    = LangKey.of("Editor.Crate.Enter.Id", GRAY + "Enter " + GREEN + "[Crate Identifier]");
-    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME         = LangKey.of("Editor.Crate.Enter.Particle.Name", GRAY + "Enter " + GREEN + "[Particle Name]");
-    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_DATA         = LangKey.of("Editor.Crate.Enter.Particle.Data", GRAY + "Enter " + GREEN + "[Particle Options]");
-    public static final LangKey EDITOR_CRATE_ENTER_KEY_ID                = LangKey.of("Editor.Crate.Enter.KeyId", GRAY + "Enter " + GREEN + "[Key Identifier]");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_LOCATION        = LangKey.of("Editor.Crate.Enter.Block.Location", GRAY + "Click a " + GREEN + "[Block] " + GRAY + " to make it crate.");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_TEXT   = LangKey.of("Editor.Crate.Enter.Block.Hologram.Text", GRAY + "Enter " + GREEN + "[Text]");
-    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_HOLOGRAM_OFFSET = LangKey.of("Editor.Crate.Enter.Block.Hologram.Offset", GRAY + "Enter " + GREEN + "[Offset Value]");
-    public static final LangKey EDITOR_CRATE_ENTER_COOLDOWN              = LangKey.of("Editor.Crate.Enter.Cooldown", GRAY + "Enter " + GREEN + "[Seconds Amount]");
-    public static final LangKey EDITOR_CRATE_ENTER_ANIMATION_CONFIG      = LangKey.of("Editor.Crate.Enter.AnimationConfig", GRAY + "Enter " + GREEN + "[Animation Name]");
-    public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG        = LangKey.of("Editor.Crate.Enter.PreviewConfig", GRAY + "Enter " + GREEN + "[Preview Name]");
-    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_MONEY       = LangKey.of("Editor.Crate.Enter.OpenCost.Money", GRAY + "Enter " + GREEN + "[Money Amount]");
-    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST_EXP         = LangKey.of("Editor.Crate.Enter.OpenCost.Exp", GRAY + "Enter " + GREEN + "[Levels Amount]");
+    public static final LangKey EDITOR_CRATE_ENTER_ID                = LangKey.of("Editor.Crate.Enter.Id", GRAY + "Enter " + GREEN + "[Crate Identifier]");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_NAME     = LangKey.of("Editor.Crate.Enter.Particle.Name", GRAY + "Enter " + GREEN + "[Particle Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_MATERIAL = LangKey.of("Editor.Crate.Enter.Particle.MaterialData", GRAY + "Enter " + GREEN + "[Item_Material]" + GRAY + " - " + GREEN + "[Diamond_Block]");
+    public static final LangKey EDITOR_CRATE_ENTER_PARTICLE_REDSTONE = LangKey.of("Editor.Crate.Enter.Particle.RedstoneData", GRAY + "Enter " + GREEN + "[Color] [Size]" + GRAY + " - " + GREEN + "[255,0,0] [1.5]");
+    public static final LangKey EDITOR_CRATE_ENTER_KEY_ID            = LangKey.of("Editor.Crate.Enter.KeyId", GRAY + "Enter " + GREEN + "[Key Identifier]");
+    public static final LangKey EDITOR_CRATE_ENTER_BLOCK_LOCATION    = LangKey.of("Editor.Crate.Enter.BlockLocation", GRAY + "Click a " + GREEN + "[Block] " + GRAY + " to assign crate.");
+    public static final LangKey EDITOR_CRATE_ENTER_HOLOGRAM_TEMPLATE = LangKey.of("Editor.Crate.Enter.HologramTemplate", GRAY + "Enter " + GREEN + "[Hologram Template]");
+    public static final LangKey EDITOR_CRATE_ENTER_COOLDOWN          = LangKey.of("Editor.Crate.Enter.Cooldown", GRAY + "Enter " + GREEN + "[Seconds Amount]");
+    public static final LangKey EDITOR_CRATE_ENTER_ANIMATION_CONFIG  = LangKey.of("Editor.Crate.Enter.AnimationConfig", GRAY + "Enter " + GREEN + "[Animation Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_PREVIEW_CONFIG    = LangKey.of("Editor.Crate.Enter.PreviewConfig", GRAY + "Enter " + GREEN + "[Preview Name]");
+    public static final LangKey EDITOR_CRATE_ENTER_OPEN_COST         = LangKey.of("Editor.Crate.Enter.Open_Cost", GRAY + "Enter " + GREEN + "[Currency] [Amount]");
 
     public static final LangKey EDITOR_MILESTONE_ENTER_REWARD = LangKey.of("Editor.Milestone.Enter.Reward", GRAY + "Enter " + GREEN + "[Reward Id]");
 

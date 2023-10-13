@@ -1,10 +1,10 @@
-package su.nightexpress.excellentcrates.api.hologram;
+package su.nightexpress.excellentcrates.hologram;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 
 public interface HologramHandler {
 
@@ -21,7 +21,7 @@ public interface HologramHandler {
         this.create(crate);
     }
 
-    void createReward(@NotNull Player player, @NotNull CrateReward reward, @NotNull Location location);
+    void createReward(@NotNull Player player, @NotNull Reward reward, @NotNull Location location);
 
     void removeReward(@NotNull Player player);
 }

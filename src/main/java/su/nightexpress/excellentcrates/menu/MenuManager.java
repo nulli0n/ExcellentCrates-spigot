@@ -4,17 +4,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.menu.impl.MenuConfig;
 
 import java.util.*;
 
-public class MenuManager extends AbstractManager<ExcellentCrates> {
+public class MenuManager extends AbstractManager<ExcellentCratesPlugin> {
 
     private final Map<String, MenuConfig> menuMap;
 
-    public MenuManager(@NotNull ExcellentCrates plugin) {
+    public MenuManager(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin);
         this.menuMap = new HashMap<>();
     }

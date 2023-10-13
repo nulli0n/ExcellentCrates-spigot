@@ -8,16 +8,16 @@ import su.nexmedia.engine.api.menu.item.MenuItem;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.NumberUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.CrateClickAction;
+import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
 
 import java.util.List;
 
-public class MenuView extends ConfigMenu<ExcellentCrates> {
+public class MenuView extends ConfigMenu<ExcellentCratesPlugin> {
 
     private static final String PLACEHOLDER_KEYS = "%keys%";
 
@@ -58,7 +58,7 @@ public class MenuView extends ConfigMenu<ExcellentCrates> {
             menuItem.setSlots(slot);
             menuItem.setClick((viewer, event) -> {
                 ClickType clickType = ClickType.from(event);
-                CrateClickAction clickAction = Config.getCrateClickAction(clickType);
+                InteractType clickAction = Config.getCrateClickAction(clickType);
                 if (clickAction == null) return;
 
                 this.plugin.runTask(task -> {

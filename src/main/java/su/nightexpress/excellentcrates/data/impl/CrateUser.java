@@ -3,25 +3,25 @@ package su.nightexpress.excellentcrates.data.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.data.AbstractUser;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class CrateUser extends AbstractUser<ExcellentCrates> {
+public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
 
-    private final Map<String, Integer>                         keys;
-    private final Map<String, Integer>                         keysOnHold;
-    private final Map<String, Long>                            openCooldowns;
+    private final Map<String, Integer>                     keys;
+    private final Map<String, Integer>                     keysOnHold;
+    private final Map<String, Long>                        openCooldowns;
     private final Map<String, Integer>                     openingsAmount;
-    private final Map<String, Integer> milestones;
+    private final Map<String, Integer>                     milestones;
     private final Map<String, Map<String, UserRewardData>> rewardWinLimits;
 
-    public CrateUser(@NotNull ExcellentCrates plugin, @NotNull UUID uuid, @NotNull String name) {
+    public CrateUser(@NotNull ExcellentCratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
             new HashMap<>(),
             new HashMap<>(),
@@ -33,7 +33,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     public CrateUser(
-        @NotNull ExcellentCrates plugin,
+        @NotNull ExcellentCratesPlugin plugin,
         @NotNull UUID uuid,
         @NotNull String name,
         long dateCreated,
@@ -178,7 +178,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
     }
 
     @Nullable
-    public UserRewardData getRewardWinLimit(@NotNull CrateReward reward) {
+    public UserRewardData getRewardWinLimit(@NotNull Reward reward) {
         return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
     }
 
@@ -188,7 +188,7 @@ public class CrateUser extends AbstractUser<ExcellentCrates> {
             .get(rewardId.toLowerCase());
     }
 
-    public void setRewardWinLimit(@NotNull CrateReward reward, @NotNull UserRewardData rewardLimit) {
+    public void setRewardWinLimit(@NotNull Reward reward, @NotNull UserRewardData rewardLimit) {
         this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
     }
 

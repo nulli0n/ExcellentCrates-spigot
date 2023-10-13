@@ -1,6 +1,7 @@
-package su.nightexpress.excellentcrates.crate.impl;
+package su.nightexpress.excellentcrates.crate.menu;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
@@ -11,25 +12,29 @@ import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.impl.ConfigMenu;
 import su.nexmedia.engine.api.menu.impl.MenuOptions;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
+import su.nexmedia.engine.api.menu.link.Linked;
+import su.nexmedia.engine.api.menu.link.ViewLink;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.TimeUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.data.impl.UserRewardData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPaged<CrateReward> {
+public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements AutoPaged<Reward>, Linked<Crate> {
 
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
     private static final String PLACEHOLDER_WIN_LIMIT_DRAINED  = "%win_limit_drained%";
 
-    private final Crate crate;
     private final int[]        rewardSlots;
     private final String       rewardName;
     private final List<String> rewardLore;
@@ -38,9 +43,11 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
     private final List<String> rewardLoreLimitDrained;
     private final boolean      hideDrainedRewards;
 
-    public CratePreview(@NotNull Crate crate, @NotNull JYML cfg) {
-        super(crate.plugin(), cfg);
-        this.crate = crate;
+    private final ViewLink<Crate> viewLink;
+
+    public PreviewMenu(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
+        super(plugin, cfg);
+        this.viewLink = new ViewLink<>();
 
         this.hideDrainedRewards = cfg.getBoolean("Reward.Hide_Drained_Rewards");
         this.rewardSlots = cfg.getIntArray("Reward.Slots");
@@ -60,6 +67,7 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
         this.registerHandler(Type.class)
             .addClick(Type.MILESTONES, (viewer, event) -> {
                 this.plugin.runTask(task -> {
+                    Crate crate = this.getLink().get(viewer);
                     this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), crate);
                 });
             });
@@ -72,10 +80,25 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
     }
 
     @Override
+    @NotNull
+    public ViewLink<Crate> getLink() {
+        return this.viewLink;
+    }
+
+    @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
         super.onPrepare(viewer, options);
-        options.setTitle(this.crate.replacePlaceholders().apply(options.getTitle()));
+
+        Crate crate = this.getLink().get(viewer);
+
+        options.setTitle(crate.replacePlaceholders().apply(options.getTitle()));
         this.getItemsForPage(viewer).forEach(this::addItem);
+    }
+
+    @Override
+    public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
+        super.onClose(viewer, event);
+        this.getLink().clear(viewer);
     }
 
     @Override
@@ -85,13 +108,17 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
 
     @Override
     @NotNull
-    public List<CrateReward> getObjects(@NotNull Player player) {
-        return (this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(r -> r.getChance() > 0).toList();
+    public List<Reward> getObjects(@NotNull Player player) {
+        Crate crate = this.getLink().get(player);
+
+        return (this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(r -> r.getWeight() > 0).toList();
     }
 
     @Override
     @NotNull
-    public ItemStack getObjectStack(@NotNull Player player, @NotNull CrateReward reward) {
+    public ItemStack getObjectStack(@NotNull Player player, @NotNull Reward reward) {
+        Crate crate = this.getLink().get(player);
+
         ItemStack item = reward.getPreview();
         ItemUtil.mapMeta(item, meta -> {
             CrateUser user = plugin.getUserManager().getUserData(player);
@@ -120,7 +147,7 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
             meta.setLore(lore);
 
             ItemUtil.replace(meta, reward.replacePlaceholders());
-            ItemUtil.replace(meta, this.crate.replacePlaceholders());
+            ItemUtil.replace(meta, crate.replacePlaceholders());
             ItemUtil.replace(meta, Colorizer::apply);
         });
         return item;
@@ -128,7 +155,7 @@ public class CratePreview extends ConfigMenu<ExcellentCrates> implements AutoPag
 
     @Override
     @NotNull
-    public ItemClick getObjectClick(@NotNull CrateReward reward) {
+    public ItemClick getObjectClick(@NotNull Reward reward) {
         return (viewer, event) -> {
 
         };

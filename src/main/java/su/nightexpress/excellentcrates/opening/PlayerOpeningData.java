@@ -59,6 +59,8 @@ public final class PlayerOpeningData {
     }
 
     public boolean canSkip() {
+        if (this.getPlayer().isDead()) return true;
+
         return this.getSliderTasks().values().stream().allMatch(SliderTask::canSkip) && this.getAnimationTasks().values().stream().allMatch(AnimationTask::canSkip);
     }
 

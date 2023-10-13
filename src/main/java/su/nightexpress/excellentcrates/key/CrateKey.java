@@ -11,12 +11,12 @@ import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PDCUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.key.editor.KeyMainEditor;
 
-public class CrateKey extends AbstractConfigHolder<ExcellentCrates> implements Placeholder {
+public class CrateKey extends AbstractConfigHolder<ExcellentCratesPlugin> implements Placeholder {
 
     private String    name;
     private boolean   isVirtual;
@@ -26,15 +26,9 @@ public class CrateKey extends AbstractConfigHolder<ExcellentCrates> implements P
 
     private final PlaceholderMap placeholderMap;
 
-    public CrateKey(@NotNull ExcellentCrates plugin, @NotNull JYML cfg) {
+    public CrateKey(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
-
-        this.placeholderMap = new PlaceholderMap()
-            .add(Placeholders.KEY_ID, this::getId)
-            .add(Placeholders.KEY_NAME, this::getName)
-            .add(Placeholders.KEY_VIRTUAL, () -> LangManager.getBoolean(this.isVirtual()))
-            .add(Placeholders.KEY_ITEM_NAME, () -> ItemUtil.getItemName(this.getItem()))
-        ;
+        this.placeholderMap = Placeholders.forKey(this);
     }
 
     @Override

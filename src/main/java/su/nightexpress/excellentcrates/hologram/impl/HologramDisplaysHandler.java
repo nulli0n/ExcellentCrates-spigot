@@ -1,24 +1,26 @@
-package su.nightexpress.excellentcrates.hooks.hologram;
+package su.nightexpress.excellentcrates.hologram.impl;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.ExcellentCrates;
-import su.nightexpress.excellentcrates.api.hologram.HologramHandler;
+import su.nexmedia.engine.utils.LocationUtil;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.hologram.HologramHandler;
 
 import java.util.*;
 
-public class HologramHandlerHD implements HologramHandler {
+public class HologramDisplaysHandler implements HologramHandler {
 
-    private final ExcellentCrates            plugin;
-    private       Map<String, Set<Hologram>> holoCrates;
-    private Map<Player, Hologram>      holoRewards;
+    private final ExcellentCratesPlugin      plugin;
+    private final Map<String, Set<Hologram>> holoCrates;
+    private final Map<Player, Hologram>      holoRewards;
 
-    public HologramHandlerHD(@NotNull ExcellentCrates plugin) {
+    public HologramDisplaysHandler(@NotNull ExcellentCratesPlugin plugin) {
         this.plugin = plugin;
         this.holoCrates = new HashMap<>();
         this.holoRewards = new WeakHashMap<>();
@@ -31,29 +33,28 @@ public class HologramHandlerHD implements HologramHandler {
 
     @Override
     public void shutdown() {
-        if (this.holoCrates != null) {
-            this.holoCrates.values().forEach(set -> set.forEach(Hologram::delete));
-            this.holoCrates.clear();
-            this.holoCrates = null;
-        }
-        if (this.holoRewards != null) {
-            this.holoRewards.values().forEach(Hologram::delete);
-            this.holoRewards.clear();
-            this.holoRewards = null;
-        }
+        this.holoCrates.values().forEach(set -> set.forEach(Hologram::delete));
+        this.holoCrates.clear();
+        this.holoRewards.values().forEach(Hologram::delete);
+        this.holoRewards.clear();
     }
 
     @Override
     public void create(@NotNull Crate crate) {
         String id = crate.getId();
 
-        crate.getBlockLocations().forEach(loc -> {
-            Hologram hologram = HologramsAPI.createHologram(this.plugin, crate.getBlockHologramLocation(loc));
-            for (String line : crate.getBlockHologramText()) {
+        crate.getBlockLocations().forEach(location -> {
+            Hologram hologram = HologramsAPI.createHologram(this.plugin, this.fineLocation(location));
+            for (String line : crate.getHologramText()) {
                 hologram.appendTextLine(line);
             }
             this.holoCrates.computeIfAbsent(id, set -> new HashSet<>()).add(hologram);
         });
+    }
+
+    @NotNull
+    private Location fineLocation(@NotNull Location location) {
+        return LocationUtil.getCenter(location.clone()).add(0D, Config.CRATE_HOLOGRAM_Y_OFFSET.get(), 0D);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class HologramHandlerHD implements HologramHandler {
     }
 
     @Override
-    public void createReward(@NotNull Player player, @NotNull CrateReward reward, @NotNull Location location) {
+    public void createReward(@NotNull Player player, @NotNull Reward reward, @NotNull Location location) {
         this.removeReward(player);
 
         Crate crate = reward.getCrate();

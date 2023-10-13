@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.NumberUtil;
 import su.nexmedia.engine.utils.TimeUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -62,7 +62,7 @@ public class PlaceholderHook {
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
             if (player == null) return null;
 
-            ExcellentCrates plugin = ExcellentCratesAPI.PLUGIN;
+            ExcellentCratesPlugin plugin = ExcellentCratesAPI.PLUGIN;
             if (params.startsWith("keys_")) {
                 String id = params.substring("keys_".length());
                 Crate crate = plugin.getCrateManager().getCrateById(id);

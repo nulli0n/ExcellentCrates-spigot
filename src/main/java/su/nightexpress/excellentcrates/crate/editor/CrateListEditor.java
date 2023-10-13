@@ -9,10 +9,11 @@ import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.impl.EditorMenu;
 import su.nexmedia.engine.api.menu.impl.MenuOptions;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
@@ -23,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> implements AutoPaged<Crate> {
+public class CrateListEditor extends EditorMenu<ExcellentCratesPlugin, CrateManager> implements AutoPaged<Crate> {
 
     public CrateListEditor(@NotNull CrateManager crateManager) {
         super(crateManager.plugin(), crateManager, Config.EDITOR_TITLE_CRATE.get(), 45);
@@ -70,7 +71,7 @@ public class CrateListEditor extends EditorMenu<ExcellentCrates, CrateManager> i
             meta.setDisplayName(EditorLocales.CRATE_OBJECT.getLocalizedName());
             meta.setLore(EditorLocales.CRATE_OBJECT.getLocalizedLore());
             meta.addItemFlags(ItemFlag.values());
-            ItemUtil.replace(meta, crate.replacePlaceholders());
+            ItemUtil.replace(meta, PlaceholderMap.fusion(crate.getPlaceholders(), crate.getInspector().getPlaceholders()).replacer());
         });
         return item;
     }

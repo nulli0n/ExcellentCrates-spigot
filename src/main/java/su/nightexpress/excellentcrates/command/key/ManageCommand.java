@@ -9,7 +9,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -19,12 +19,12 @@ import su.nightexpress.excellentcrates.key.CrateKey;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class ManageCommand extends AbstractCommand<ExcellentCrates> {
+abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
     protected LangMessage messageNotify;
     protected LangMessage messageDone;
 
-    public ManageCommand(@NotNull ExcellentCrates plugin, @NotNull String[] aliases, @Nullable Permission permission) {
+    public ManageCommand(@NotNull ExcellentCratesPlugin plugin, @NotNull String[] aliases, @Nullable Permission permission) {
         super(plugin, aliases, permission);
         this.addFlag(CommandFlags.SILENT);
     }

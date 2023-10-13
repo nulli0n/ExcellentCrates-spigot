@@ -6,7 +6,7 @@ import su.nexmedia.engine.api.data.AbstractUserDataHandler;
 import su.nexmedia.engine.api.data.sql.SQLColumn;
 import su.nexmedia.engine.api.data.sql.SQLValue;
 import su.nexmedia.engine.api.data.sql.column.ColumnType;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.data.impl.UserRewardData;
 
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 
-public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateUser> {
+public class DataHandler extends AbstractUserDataHandler<ExcellentCratesPlugin, CrateUser> {
 
     private static final SQLColumn COLUMN_KEYS              = SQLColumn.of("keys", ColumnType.STRING);
     private static final SQLColumn COLUMN_KEYS_ON_HOLD      = SQLColumn.of("keysOnHold", ColumnType.STRING);
@@ -27,7 +27,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
     private static DataHandler                    instance;
     private final  Function<ResultSet, CrateUser> userFunction;
 
-    protected DataHandler(@NotNull ExcellentCrates plugin) {
+    protected DataHandler(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, plugin);
 
         this.userFunction = (resultSet) -> {
@@ -46,6 +46,9 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
 
                 if (openingsAmount == null) openingsAmount = new HashMap<>();
 
+                openCooldowns.keySet().removeIf(crateId -> plugin.getCrateManager().getCrateById(crateId) == null);
+                rewardWinLimits.keySet().removeIf(crateId -> plugin.getCrateManager().getCrateById(crateId) == null);
+
                 return new CrateUser(plugin, uuid, name, dateCreated, lastOnline,
                     keys, keysOnHold, openCooldowns, openingsAmount, milestones, rewardWinLimits);
             }
@@ -56,7 +59,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCrates, CrateU
     }
 
     @NotNull
-    public static DataHandler getInstance(@NotNull ExcellentCrates plugin) {
+    public static DataHandler getInstance(@NotNull ExcellentCratesPlugin plugin) {
         if (instance == null) {
             instance = new DataHandler(plugin);
         }

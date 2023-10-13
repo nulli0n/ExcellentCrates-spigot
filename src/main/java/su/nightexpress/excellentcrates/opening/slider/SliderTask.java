@@ -11,7 +11,7 @@ import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 import su.nightexpress.excellentcrates.Keys;
 import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.config.Config;
-import su.nightexpress.excellentcrates.crate.impl.CrateReward;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.opening.PlayerOpeningData;
 import su.nightexpress.excellentcrates.opening.task.OpeningTask;
 
@@ -51,7 +51,7 @@ public class SliderTask extends OpeningTask {
 
         if (Rnd.chance(this.getParent().getStartChance())) {
             for (int count = 0; count < this.getParent().getWinSlots().length; count++) {
-                CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
+                Reward reward = this.data.getCrate().rollReward(this.data.getPlayer());
                 reward.give(this.data.getPlayer());
 
                 CrateObtainRewardEvent rewardEvent = new CrateObtainRewardEvent(reward, this.getData().getPlayer());
@@ -82,7 +82,7 @@ public class SliderTask extends OpeningTask {
         int[] slots = this.getParent().getSlots();
 
         if (this.getParent().getSlotsMode() == SliderInfo.Mode.INHERITANCE) {
-            CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
+            Reward reward = this.data.getCrate().rollReward(this.data.getPlayer());
 
             ItemStack preview = reward.getPreview();
             PDCUtil.set(preview, Keys.REWARD_ID, reward.getId());
@@ -100,7 +100,7 @@ public class SliderTask extends OpeningTask {
         }
         else {
             for (int slot : slots) {
-                CrateReward reward = this.data.getCrate().rollReward(this.data.getPlayer());
+                Reward reward = this.data.getCrate().rollReward(this.data.getPlayer());
 
                 ItemStack preview = reward.getPreview();
                 PDCUtil.set(preview, Keys.REWARD_ID, reward.getId());
@@ -147,7 +147,7 @@ public class SliderTask extends OpeningTask {
             String rewardId = PDCUtil.getString(item, Keys.REWARD_ID).orElse(null);
             if (rewardId == null) continue;
 
-            CrateReward reward = this.data.getCrate().getReward(rewardId);
+            Reward reward = this.data.getCrate().getReward(rewardId);
             if (reward == null) continue;
 
             reward.give(this.data.getPlayer());

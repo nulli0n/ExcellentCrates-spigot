@@ -10,7 +10,7 @@ import su.nightexpress.excellentcrates.menu.MenuManager;
 
 public class ExcellentCratesAPI {
 
-    public static final ExcellentCrates PLUGIN = ExcellentCrates.getPlugin(ExcellentCrates.class);
+    public static final ExcellentCratesPlugin PLUGIN = ExcellentCratesPlugin.getPlugin(ExcellentCratesPlugin.class);
 
     @NotNull
     public static CrateUser getUserData(@NotNull Player player) {

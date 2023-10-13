@@ -1,12 +1,14 @@
 Name: '#3F68EA&lVirtual Crate'
 Preview_Config: default
+Animation_Config: mystery_auto_1
 Permission_Required: false
-Attached_Citizens: ''
+Item:
+  Material: PLAYER_HEAD
+  Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0ODZmMjg1OTE2OWM4YmZiNjZhNjg3YmNmNGM2OTkzNDE3ZjU4NGI1OGJiZmRiMzM2NDY0ZDUyMDcxY2NkNyJ9fX0=
+  Name: '#3F68EA&lVirtual Crate'
 Opening:
   Cooldown: 86400
-  Cost:
-    MONEY: 0.0
-    EXP: 0.0
+  Cost: {}
 Key:
   Ids:
     - virtual
@@ -16,17 +18,10 @@ Block:
     Enabled: true
   Hologram:
     Enabled: false
-    Offset:
-      Y: 1.5
-    Text:
-      - '&bVIRTUAL CRATE'
-      - '&7Buy a key at &cwww.myserver.com&c'
   Effect:
     Model: HELIX
     Particle:
       Name: FLAME
-      Data: ''
-Animation_Config: mystery_auto_1
 Rewards:
   List:
     egg_bee:
@@ -250,7 +245,3 @@ Rewards:
       Items:
         - 1800020009km800pdlkmspb3e9gmct1qedk6apbgbtpn0obndpfmapr70400agrfeln78400
       Ignored_For_Permissions: []
-Item:
-  Material: PLAYER_HEAD
-  Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0ODZmMjg1OTE2OWM4YmZiNjZhNjg3YmNmNGM2OTkzNDE3ZjU4NGI1OGJiZmRiMzM2NDY0ZDUyMDcxY2NkNyJ9fX0=
-  Name: '#3F68EA&lVirtual Crate'

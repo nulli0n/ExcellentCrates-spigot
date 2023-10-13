@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.server.AbstractTask;
 import su.nexmedia.engine.utils.LocationUtil;
 import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.ExcellentCrates;
+import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class CrateEffectTask extends AbstractTask<ExcellentCrates> {
+public class CrateEffectTask extends AbstractTask<ExcellentCratesPlugin> {
 
-    public CrateEffectTask(@NotNull ExcellentCrates plugin) {
+    public CrateEffectTask(@NotNull ExcellentCratesPlugin plugin) {
         super(plugin, 1L, true);
     }
 
@@ -26,10 +26,10 @@ public class CrateEffectTask extends AbstractTask<ExcellentCrates> {
         Collection<Crate> crates = this.plugin.getCrateManager().getCrates();
 
         crates.forEach(crate -> {
-            if (crate.getBlockEffectModel() == CrateEffectModel.NONE) return;
+            if (crate.getEffectModel() == CrateEffectModel.NONE) return;
 
-            UniParticle particle = crate.getBlockEffectParticle();
-            CrateEffect effect = crate.getBlockEffectModel().getEffect();
+            UniParticle particle = crate.getEffectParticle();
+            CrateEffect effect = crate.getEffectModel().getEffect();
 
             new HashSet<>(crate.getBlockLocations()).forEach(location -> {
                 World world = location.getWorld();
