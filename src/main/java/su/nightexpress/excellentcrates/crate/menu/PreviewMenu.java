@@ -14,22 +14,19 @@ import su.nexmedia.engine.api.menu.impl.MenuOptions;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.api.menu.link.Linked;
 import su.nexmedia.engine.api.menu.link.ViewLink;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
-import su.nexmedia.engine.utils.TimeUtil;
+import su.nexmedia.engine.utils.*;
 import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.data.impl.UserRewardData;
+import su.nightexpress.excellentcrates.util.InteractType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements AutoPaged<Reward>, Linked<Crate> {
+public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements AutoPaged<Reward>, Linked<CrateSource> {
 
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
@@ -43,7 +40,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     private final List<String> rewardLoreLimitDrained;
     private final boolean      hideDrainedRewards;
 
-    private final ViewLink<Crate> viewLink;
+    private final ViewLink<CrateSource> viewLink;
 
     public PreviewMenu(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
         super(plugin, cfg);
@@ -65,23 +62,43 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
             .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this));
 
         this.registerHandler(Type.class)
+            .addClick(Type.OPEN, (viewer, event) -> {
+                this.plugin.runTask(task -> {
+                    CrateSource source = this.getLink().get(viewer);
+                    Player player = viewer.getPlayer();
+
+                    player.closeInventory();
+                    this.plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
+                });
+            })
             .addClick(Type.MILESTONES, (viewer, event) -> {
                 this.plugin.runTask(task -> {
-                    Crate crate = this.getLink().get(viewer);
+                    Crate crate = this.getLink().get(viewer).getCrate();
                     this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), crate);
                 });
             });
 
         this.load();
+
+        this.getItems().forEach(menuItem -> {
+            menuItem.getOptions().addDisplayModifier((viewer, item) -> ItemUtil.setPlaceholderAPI(viewer.getPlayer(), item));
+
+            if (menuItem.getType() == Type.OPEN) {
+                menuItem.getOptions().setVisibilityPolicy(viewer -> {
+                    CrateSource source = this.getLink().get(viewer);
+                    return source.getItem() != null || source.getBlock() != null;
+                });
+            }
+        });
     }
 
     private enum Type {
-        MILESTONES
+        MILESTONES, OPEN
     }
 
     @Override
     @NotNull
-    public ViewLink<Crate> getLink() {
+    public ViewLink<CrateSource> getLink() {
         return this.viewLink;
     }
 
@@ -89,9 +106,9 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
         super.onPrepare(viewer, options);
 
-        Crate crate = this.getLink().get(viewer);
+        CrateSource source = this.getLink().get(viewer);
 
-        options.setTitle(crate.replacePlaceholders().apply(options.getTitle()));
+        options.setTitle(source.getCrate().replacePlaceholders().apply(options.getTitle()));
         this.getItemsForPage(viewer).forEach(this::addItem);
     }
 
@@ -109,7 +126,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     @Override
     @NotNull
     public List<Reward> getObjects(@NotNull Player player) {
-        Crate crate = this.getLink().get(player);
+        Crate crate = this.getLink().get(player).getCrate();
 
         return (this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(r -> r.getWeight() > 0).toList();
     }
@@ -117,7 +134,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     @Override
     @NotNull
     public ItemStack getObjectStack(@NotNull Player player, @NotNull Reward reward) {
-        Crate crate = this.getLink().get(player);
+        Crate crate = this.getLink().get(player).getCrate();
 
         ItemStack item = reward.getPreview();
         ItemUtil.mapMeta(item, meta -> {
@@ -131,12 +148,23 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
                 lore.remove(PLACEHOLDER_WIN_LIMIT_COOLDOWN);
             if (rewardData == null || !rewardData.isDrained(reward)) lore.remove(PLACEHOLDER_WIN_LIMIT_DRAINED);
 
+            int amountLeft = rewardData == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardData.getAmount();
+            long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();
+
+            /*ItemReplacer.create(meta).setDisplayName(this.rewardName).setLore(lore).setStripLore(true)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_AMOUNT, this.rewardLoreLimitAmount)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_COOLDOWN, this.rewardLoreLimitCoolown)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_DRAINED, this.rewardLoreLimitDrained)
+                .replace(Placeholders.GENERIC_AMOUNT, () -> String.valueOf(amountLeft))
+                .replace(Placeholders.GENERIC_TIME, () -> TimeUtil.formatTimeLeft(expireIn))
+                .replace(reward.getPlaceholders())
+                .replace(crate.getPlaceholders())
+                .replace(Colorizer::apply)
+                .writeMeta();*/
+
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_AMOUNT, this.rewardLoreLimitAmount);
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_COOLDOWN, this.rewardLoreLimitCoolown);
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_DRAINED, this.rewardLoreLimitDrained);
-
-            int amountLeft = rewardData == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardData.getAmount();
-            long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();
 
             lore.replaceAll(str -> str
                 .replace(Placeholders.GENERIC_AMOUNT, String.valueOf(amountLeft))
