@@ -31,6 +31,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT   = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN = "%win_limit_cooldown%";
     private static final String PLACEHOLDER_WIN_LIMIT_DRAINED  = "%win_limit_drained%";
+    private static final String PLACEHOLDER_WIN_LIMIT_NO_PERMISSION = "%win_limit_no_permission%";
 
     private final int[]        rewardSlots;
     private final String       rewardName;
@@ -38,6 +39,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
     private final List<String> rewardLoreLimitAmount;
     private final List<String> rewardLoreLimitCoolown;
     private final List<String> rewardLoreLimitDrained;
+    private final List<String> rewardLoreLimitNoPermission;
     private final boolean      hideDrainedRewards;
 
     private final ViewLink<CrateSource> viewLink;
@@ -53,6 +55,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
         this.rewardLoreLimitAmount = cfg.getStringList("Reward.Lore.Win_Limit.Amount");
         this.rewardLoreLimitCoolown = cfg.getStringList("Reward.Lore.Win_Limit.Cooldown");
         this.rewardLoreLimitDrained = cfg.getStringList("Reward.Lore.Win_Limit.Drained");
+        this.rewardLoreLimitNoPermission = cfg.getStringList("Reward.Lore.Win_Limit.No_Permission");
 
         this.registerHandler(MenuItemType.class)
             .addClick(MenuItemType.CLOSE, (viewer, event) -> {
@@ -142,11 +145,13 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
             UserRewardData rewardData = user.getRewardWinLimit(reward);
 
             List<String> lore = new ArrayList<>(this.rewardLore);
-            if (rewardData == null || rewardData.isDrained(reward) || !reward.isWinLimitedAmount())
+            boolean hasIgnoredPermission = reward.getIgnoredForPermissions().stream().anyMatch(player::hasPermission);
+            if (rewardData == null || hasIgnoredPermission || rewardData.isDrained(reward) || !reward.isWinLimitedAmount())
                 lore.remove(PLACEHOLDER_WIN_LIMIT_AMOUNT);
-            if (rewardData == null || rewardData.isDrained(reward) || rewardData.isExpired())
+            if (rewardData == null || hasIgnoredPermission || rewardData.isDrained(reward) || rewardData.isExpired())
                 lore.remove(PLACEHOLDER_WIN_LIMIT_COOLDOWN);
-            if (rewardData == null || !rewardData.isDrained(reward)) lore.remove(PLACEHOLDER_WIN_LIMIT_DRAINED);
+            if (rewardData == null || hasIgnoredPermission || !rewardData.isDrained(reward)) lore.remove(PLACEHOLDER_WIN_LIMIT_DRAINED);
+            if (!hasIgnoredPermission) lore.remove(PLACEHOLDER_WIN_LIMIT_NO_PERMISSION);
 
             int amountLeft = rewardData == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardData.getAmount();
             long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();
@@ -165,6 +170,7 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_AMOUNT, this.rewardLoreLimitAmount);
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_COOLDOWN, this.rewardLoreLimitCoolown);
             lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_DRAINED, this.rewardLoreLimitDrained);
+            lore = StringUtil.replaceInList(lore, PLACEHOLDER_WIN_LIMIT_NO_PERMISSION, this.rewardLoreLimitNoPermission);
 
             lore.replaceAll(str -> str
                 .replace(Placeholders.GENERIC_AMOUNT, String.valueOf(amountLeft))
