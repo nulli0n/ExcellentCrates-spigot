@@ -165,6 +165,7 @@ public class OpeningMenu extends ConfigMenu<ExcellentCratesPlugin> implements Ev
             data.stop(false);
         }
         PlayerOpeningData.clean(player);
+        this.plugin.getUserManager().saveUser(plugin.getUserManager().getUserData(player));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

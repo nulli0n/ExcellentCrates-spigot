@@ -32,7 +32,7 @@ public class Lang extends EngineLang {
     public static final LangKey COMMAND_KEY_DESC  = LangKey.of("Command.Key.Desc", "Manage player's keys.");
     public static final LangKey COMMAND_KEY_USAGE = LangKey.of("Command.Key.Usage", "[help]");
 
-    public static final LangKey COMMAND_KEY_GIVE_USAGE  = LangKey.of("Command.Key.Give.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_GIVE_USAGE  = LangKey.of("Command.Key.Give.Usage", "<player> <key> <amount> [-s] [-nosave]");
     public static final LangKey COMMAND_KEY_GIVE_DESC   = LangKey.of("Command.Key.Give.Desc", "Give key to a player.");
     public static final LangKey COMMAND_KEY_GIVE_DONE   = LangKey.of("Command.Key.Give.Done", GRAY + "Given " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + " of " + YELLOW + KEY_NAME + GRAY + " key(s) to " + YELLOW + PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_GIVE_NOTIFY = LangKey.of("Command.Key.Give.Notify", GRAY + "You recieved " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + " of " + YELLOW + KEY_NAME + GRAY + "!");
@@ -41,12 +41,12 @@ public class Lang extends EngineLang {
     public static final LangKey COMMAND_KEY_GIVE_ALL_DESC  = LangKey.of("Command.Key.GiveAll.Desc", "Give key to all online players.");
     public static final LangKey COMMAND_KEY_GIVE_ALL_DONE  = LangKey.of("Command.Key.GiveAll.Done", GRAY + "Given " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + " of " + YELLOW + KEY_NAME + GRAY + " key(s) to " + YELLOW + "All Players" + GRAY + ".");
 
-    public static final LangKey COMMAND_KEY_TAKE_USAGE  = LangKey.of("Command.Key.Take.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_TAKE_USAGE  = LangKey.of("Command.Key.Take.Usage", "<player> <key> <amount> [-s] [-nosave]");
     public static final LangKey COMMAND_KEY_TAKE_DESC   = LangKey.of("Command.Key.Take.Desc", "Take key from a player.");
     public static final LangKey COMMAND_KEY_TAKE_DONE   = LangKey.of("Command.Key.Take.Done", GRAY + "Taken " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + " of " + YELLOW + KEY_NAME + GRAY + " key(s) from " + YELLOW + PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_TAKE_NOTIFY = LangKey.of("Command.Key.Take.Notify", GRAY + "You lost " + RED + "x" + GENERIC_AMOUNT + " " + KEY_NAME + GRAY + ".");
 
-    public static final LangKey COMMAND_KEY_SET_USAGE  = LangKey.of("Command.Key.Set.Usage", "<player> <key> <amount> [-s]");
+    public static final LangKey COMMAND_KEY_SET_USAGE  = LangKey.of("Command.Key.Set.Usage", "<player> <key> <amount> [-s] [-nosave]");
     public static final LangKey COMMAND_KEY_SET_DESC   = LangKey.of("Command.Key.Set.Desc", "Set keys amount for a player.");
     public static final LangKey COMMAND_KEY_SET_DONE   = LangKey.of("Command.Key.Set.Done", GRAY + "Set " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + " of " + YELLOW + KEY_NAME + GRAY + " key(s) for " + YELLOW + PLAYER_NAME + GRAY + ".");
     public static final LangKey COMMAND_KEY_SET_NOTIFY = LangKey.of("Command.Key.Set.Notify", GRAY + "Your " + YELLOW + KEY_NAME + GRAY + "'s amount has been changed to " + YELLOW + "x" + GENERIC_AMOUNT + GRAY + ".");

@@ -21,6 +21,8 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
     private final Map<String, Integer>                     milestones;
     private final Map<String, Map<String, UserRewardData>> rewardWinLimits;
 
+    private boolean ignoreSync;
+
     public CrateUser(@NotNull ExcellentCratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
             new HashMap<>(),
@@ -53,6 +55,14 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
         this.openingsAmount = openingsAmount;
         this.milestones = milestones;
         this.rewardWinLimits = rewardWinLimits;
+    }
+
+    public boolean isIgnoreSync() {
+        return ignoreSync;
+    }
+
+    public void setIgnoreSync(boolean ignoreSync) {
+        this.ignoreSync = ignoreSync;
     }
 
     @NotNull

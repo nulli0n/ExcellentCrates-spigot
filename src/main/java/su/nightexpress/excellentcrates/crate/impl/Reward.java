@@ -148,6 +148,7 @@ public class Reward implements Placeholder {
 
     public void giveContent(@NotNull Player player) {
         UnaryOperator<String> papi = str -> EngineUtils.hasPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, str) : str;
+        UnaryOperator<String> inter = PlaceholderMap.fusion(this.getCrate().getPlaceholders(), this.getPlaceholders()).replacer();
 
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
@@ -155,12 +156,12 @@ public class Reward implements Placeholder {
             if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
                 ItemUtil.mapMeta(give, meta -> {
                     if (meta.hasDisplayName()) {
-                        meta.setDisplayName(papi.apply(this.replacePlaceholders().apply(meta.getDisplayName())));
+                        meta.setDisplayName(papi.apply(inter.apply(meta.getDisplayName())));
                     }
 
                     List<String> loreHas = meta.getLore();
                     if (loreHas != null) {
-                        loreHas.replaceAll(this.replacePlaceholders());
+                        loreHas.replaceAll(inter);
                         loreHas.replaceAll(papi);
                         meta.setLore(loreHas);
                     }
@@ -171,7 +172,7 @@ public class Reward implements Placeholder {
         });
 
         this.getCommands().forEach(command -> {
-            PlayerUtil.dispatchCommand(player, this.replacePlaceholders().apply(command));
+            PlayerUtil.dispatchCommand(player, inter.apply(command));
         });
     }
 

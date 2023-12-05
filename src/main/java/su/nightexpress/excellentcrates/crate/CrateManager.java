@@ -30,6 +30,7 @@ import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
 import su.nightexpress.excellentcrates.crate.impl.*;
 import su.nightexpress.excellentcrates.crate.listener.CrateListener;
+import su.nightexpress.excellentcrates.crate.menu.CrateSource;
 import su.nightexpress.excellentcrates.crate.menu.MilestonesMenu;
 import su.nightexpress.excellentcrates.crate.menu.PreviewMenu;
 import su.nightexpress.excellentcrates.crate.task.CrateEffectTask;
@@ -302,11 +303,12 @@ public class CrateManager extends AbstractManager<ExcellentCratesPlugin> {
         PlayerUtil.addItem(player, crateItem);
     }
 
-    public void previewCrate(@NotNull Player player, @NotNull Crate crate) {
+    public void previewCrate(@NotNull Player player, @NotNull CrateSource source) {
+        Crate crate = source.getCrate();
         PreviewMenu menu = this.getPreview(crate);
         if (menu == null) return;
 
-        menu.open(player, crate, 1);
+        menu.open(player, source, 1);
     }
 
     public void interactCrate(@NotNull Player player, @NotNull Crate crate, @NotNull InteractType action,
@@ -315,7 +317,7 @@ public class CrateManager extends AbstractManager<ExcellentCratesPlugin> {
         player.closeInventory();
 
         if (action == InteractType.CRATE_PREVIEW) {
-            this.previewCrate(player, crate);
+            this.previewCrate(player, new CrateSource(crate, item, block));
             return;
         }
 
@@ -325,6 +327,9 @@ public class CrateManager extends AbstractManager<ExcellentCratesPlugin> {
                 //settings.setBulk(true);
                 settings.setSkipAnimation(true);
             }
+
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            user.setIgnoreSync(true);
 
             boolean isOpened = this.openCrate(player, crate, settings);
             if (!isOpened) {
@@ -343,8 +348,12 @@ public class CrateManager extends AbstractManager<ExcellentCratesPlugin> {
                         }
                     }
                 }
-                this.plugin.runTaskAsync(task -> crate.saveLastOpenData());
-                this.plugin.getUserManager().saveUser(plugin.getUserManager().getUserData(player));
+
+                this.plugin.runTaskAsync(task -> {
+                    crate.saveLastOpenData();
+                    this.plugin.getData().saveUser(user);
+                    user.setIgnoreSync(false);
+                });
             }
         }
     }

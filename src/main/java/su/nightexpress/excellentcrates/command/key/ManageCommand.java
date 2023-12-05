@@ -26,7 +26,7 @@ abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
     public ManageCommand(@NotNull ExcellentCratesPlugin plugin, @NotNull String[] aliases, @Nullable Permission permission) {
         super(plugin, aliases, permission);
-        this.addFlag(CommandFlags.SILENT);
+        this.addFlag(CommandFlags.SILENT, CommandFlags.NO_SAVE);
     }
 
     public void setMessageNotify(@NotNull LangMessage messageNotify) {
@@ -77,6 +77,9 @@ abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
         }
 
         this.manage(user, key, amount);
+        if (!result.hasFlag(CommandFlags.NO_SAVE)) {
+            this.plugin.getUserManager().saveUser(user);
+        }
 
         Player target = user.getPlayer();
         if (target != null && !result.hasFlag(CommandFlags.SILENT)) {

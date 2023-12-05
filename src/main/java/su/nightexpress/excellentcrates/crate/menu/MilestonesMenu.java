@@ -61,7 +61,7 @@ public class MilestonesMenu extends ConfigMenu<ExcellentCratesPlugin> implements
             .addClick(MenuItemType.CLOSE, ClickHandler.forClose(this))
             .addClick(MenuItemType.RETURN, (viewer, event) -> {
                 MileLink link = this.getLink(viewer.getPlayer());
-                if (link != null) plugin.getCrateManager().previewCrate(viewer.getPlayer(), link.crate);
+                if (link != null) plugin.getCrateManager().previewCrate(viewer.getPlayer(), new CrateSource(link.crate));
             })
             .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this))
             .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this));

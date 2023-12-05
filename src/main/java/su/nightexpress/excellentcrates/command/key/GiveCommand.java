@@ -20,6 +20,5 @@ class GiveCommand extends ManageCommand {
     @Override
     protected void manage(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
         this.plugin.getKeyManager().giveKey(user, key, amount);
-        this.plugin.getUserManager().saveUser(user);
     }
 }

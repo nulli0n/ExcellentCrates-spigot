@@ -75,6 +75,8 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCratesPlugin, 
     @Override
     public void onSynchronize() {
         for (CrateUser user : this.plugin.getUserManager().getUsersLoaded()) {
+            if (user.isIgnoreSync()) continue;
+
             CrateUser fresh = this.getUser(user.getId());
             if (fresh == null) continue;
 
@@ -121,7 +123,7 @@ public class DataHandler extends AbstractUserDataHandler<ExcellentCratesPlugin, 
             COLUMN_CRATE_COOLDOWNS.toValue(this.gson.toJson(user.getCrateCooldowns())),
             COLUMN_CRATE_OPENINGS.toValue(this.gson.toJson(user.getOpeningsAmountMap())),
             COLUMN_CRATE_MILESTONES.toValue(this.gson.toJson(user.getMilestonesMap())),
-            COLUMN_REWARD_WIN_LIMITS.toValue(this.gson.toJson(user.getRewardWinLimits()))
+            COLUMN_REWARD_WIN_LIMITS.toValue(this.gson.toJson(new HashMap<>(user.getRewardWinLimits())))
         );
     }
 

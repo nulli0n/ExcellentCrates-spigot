@@ -7,10 +7,11 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.menu.CrateSource;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class PreviewCommand extends AbstractCommand<ExcellentCratesPlugin> {
             return;
         }
 
-        plugin.getCrateManager().previewCrate(player, crate);
+        plugin.getCrateManager().previewCrate(player, new CrateSource(crate));
 
         if (sender != player) {
             plugin.getMessage(Lang.COMMAND_PREVIEW_DONE_OTHERS)
