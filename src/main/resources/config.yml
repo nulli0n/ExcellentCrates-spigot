@@ -1,0 +1,5 @@
+Plugin:
+  Command_Aliases: 'excellentcrates,ecrates,crates,crate,case,cases'
+
+Database:
+  Table_Prefix: 'excellentcrates'

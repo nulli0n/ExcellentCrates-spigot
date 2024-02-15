@@ -1,0 +1,46 @@
+Title: '           &nVirtual Crates'
+Size: 45
+Inventory_Type: CHEST
+Use_Mini_Message: false
+
+Crate:
+    Name: '#9af7ff&l%crate_name%'
+    Lore:
+      - '%crate_item_lore%'
+      - ''
+      - '#9af7ff&lInfo:'
+      - '#9af7ff▪ #ddeceeYour Keys: #9af7ffx%keys%'
+      - '#9af7ff▪ #ddeceeCooldown: #9af7ff%crate_opening_cooldown%'
+      - ''
+      - '#a5ff9a&lActions:'
+      - '#a5ff9a▪ #ddeceeLeft Click: #a5ff9aPreview'
+      - '#a5ff9a▪ #ddeceeRight Click: #a5ff9aOpen'
+      - ''
+      - '#f39aff&lPurchase Keys:'
+      - '#f39aff▪ #ddeceeStore: #f39affhttp://samplesmp.com/store'
+    Slots:
+      emerald: 20
+      golden: 22
+      diamond: 24
+
+Content:
+  panes_1:
+    Priority: 0
+    Item:
+      Material: BLACK_STAINED_GLASS_PANE
+    Slots: 1,2,3,5,6,7,9,18,27,17,26,35,37,38,39,40,41,42,43
+
+  panes_2:
+    Priority: 0
+    Item:
+      Material: CYAN_STAINED_GLASS_PANE
+    Slots: 0,4,8,36,44
+
+  exit:
+    Priority: 5
+    Item:
+      Material: PLAYER_HEAD
+      Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ==
+      Name: '#FF5733(✕) &lExit'
+    Slots: 40
+    Type: CLOSE

@@ -1,0 +1,253 @@
+Name: '#74ea31Emerald Crate'
+Permission_Required: false
+Preview_Config: default
+Animation_Config: csgo_auto
+Opening:
+  Cooldown: 0
+  Cost: {}
+Item:
+  Material: PLAYER_HEAD
+  Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmMwZTZkOWUyNDI3MzU0ODE5MThjNWZkMTQ0OThiZDc2MGJiOWY0ZmY2NDMwYWQ0Njk2YjM4ZThhODgzZGE5NyJ9fX0=
+  Name: '#74ea31Emerald Crate'
+  Lore:
+    - '#e8f2f2Left Click #aaa8a8to preview'
+    - '#e8f2f2Right Click #aaa8a8to open'
+Key:
+  Ids:
+    - emerald
+Block:
+  Locations: []
+  Pushback:
+    Enabled: true
+  Hologram:
+    Enabled: true
+    Template: default
+  Effect:
+    Model: SPIRAL
+    Particle:
+      Name: REDSTONE
+      Color: 166,166,166
+      Size: 1.5
+Rewards:
+  List:
+    money2500:
+      Name: '#74ea31◆ $2.500 ◆'
+      Chance: 5.0
+      Rarity: legendary
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 5000080016ip0025mmirj5cdp62pjk79imqpbic5m682g00dq62poa003m8qbje1m62u880024sobdck09eup2cls78sj148t5mup2c9nmop1279j62r3jckm24qbkc5m6iop279j62r3jckm24tbechin4r39dpim88hqcpgmosr55gh76t3id5lmat38e9nnapr848t6cobcediio8jfc9j7asr3c5q6ap1279j62r3jckm24orfdhnn48hq49jn4pb5doh2o8jkcls788hq4bh9f1h04gp2sd9g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
+      Commands:
+        - '[CONSOLE] eco give %player_name% 2500'
+      Items: []
+      Ignored_For_Permissions: []
+    money5000:
+      Name: '#74ea31◆ $5.000 ◆'
+      Chance: 3.0
+      Rarity: legendary
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 5000080016ip0025mmirj5cdp62pjk79imqpbic5m682g00dq62poa003m8qbje1m62u880024sobdck09eup2cls78sj148t5mup2c9nmop1279j62r3jckm24qbkc5m6iop279j62r3jckm24tbechin4r39dpim88hqcpgmosr55gh76t3id5lmat38e9nnapr848t6cobcediio8jfc9j7asr3c5q6ap1279j62r3jckm24orfdhnn48hq49jn4pb5doh2o8jkcls788hq4bh9f1h04gqisc1g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
+      Commands:
+        - '[CONSOLE] eco give %player_name% 5000'
+      Items: []
+      Ignored_For_Permissions: []
+    money10000:
+      Name: '#74ea31◆ $10.000 ◆'
+      Chance: 1.5
+      Rarity: legendary
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 1800020009km800hdlkmspb3e9gmct1qclmmasj1dhi0k003ehgme2g00ti6isrgdhgni2000h762rb502c7m8j5f1q74o9279dnm8j2dtm688hqcpgmosr55gh6it31dhkm68hqcpgmosr55gh7arj4clp6oqbecli24ej6c5m76p9c49pn8sj9ddin8q3idtqmeq1279j62r3jckm24rr2cpqn6or1ehim88hqcpgmosr55gh66rrcdtp24eh2ctp6apbe48m24t35f1q24eh2saboc81464o2sc1g60ge55s649ulqb12ehingt1278h24v800c00ii39chikcr31ctpg0000fs4g0325dphmgobeehmmarjkec500000044000j9cg012rb9dpim6sj1cpq3kpjfe9q7arj508006r3mdg0020000400agrfeln78080
+      Commands:
+        - '[CONSOLE] eco give %player_name% 10000'
+      Items: []
+      Ignored_For_Permissions: []
+    exp10:
+      Name: '#ead931◆ 10 Exp Levels ◆'
+      Chance: 8.0
+      Rarity: rare
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog32c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
+      Commands:
+        - '[CONSOLE] exp give %player_name% 10l'
+      Items: []
+      Ignored_For_Permissions: []
+    exp20:
+      Name: '#ead931◆ 20 Exp Levels ◆'
+      Chance: 7.0
+      Rarity: rare
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog34c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
+      Commands:
+        - '[CONSOLE] exp give %player_name% 20l'
+      Items: []
+      Ignored_For_Permissions: []
+    exp30:
+      Name: '#ead931◆ 30 Exp Levels ◆'
+      Chance: 6.0
+      Rarity: rare
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400dmqqbeclhn4ob6egt6au3gclp6ipbecdiluojfehq6op8a001n8ob71800ep39edo6oobp10008jj1dlig17rr49ingt3ic4h3kmrr49h6ur3448t6cobcediio8j9ehgmoqb348t6cobcediio8jldpi6asjcd5n6ap1279j62r3jckm24srke9kmmpbkd1p6utb7d0h3kpj1dhpmab12dth6ctbjcdgn8pb448t6cobcediio8j3dtm6ush278h7ipbcdhnne8hc49q6au3k48t25okngog36c108ls7082cclr6ar3j43h9f1h2fleio8jkcls788hq48h7q0000400agrfeln78080
+      Commands:
+        - '[CONSOLE] exp give %player_name% 30l'
+      Items: []
+      Ignored_For_Permissions: []
+    iron_block:
+      Name: '#e8f2f2x5 Iron Block'
+      Chance: 12.0
+      Rarity: uncommon
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
+      Commands: []
+      Items:
+        - 1800020009km800kdlkmspb3e9gmct1qd5p6urivc9m6uorb0400agrfeln78180
+      Ignored_For_Permissions: []
+    diamond_block:
+      Name: '#31eacex5 Diamond Block'
+      Chance: 11.0
+      Rarity: uncommon
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
+      Commands: []
+      Items:
+        - k00010004qb400bmqqbeclhn4ob6egt68qb1dlnmsp2vc9m6uorb0400agrfeln78180
+      Ignored_For_Permissions: []
+    emerald_block:
+      Name: '#74ea31x5 Emerald Block'
+      Chance: 10.0
+      Rarity: uncommon
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
+      Commands: []
+      Items:
+        - k00010004qb400bmqqbeclhn4ob6egt6arb5e9gmop2vc9m6uorb0400agrfeln78180
+      Ignored_For_Permissions: []
+    golden_apple:
+      Name: '#ead931x32 Golden Apple'
+      Chance: 14.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
+      Commands: []
+      Items:
+        - 2g0004000j9cg01crb9dpim6sj1cpq3kprfdhi6arivc5o70r350400agrfeln78800
+      Ignored_For_Permissions: []
+    slime:
+      Name: '#74ea31x32 Slime Ball'
+      Chance: 17.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
+      Commands: []
+      Items:
+        - 1800020009km800kdlkmspb3e9gmct1qedm6irb5bth62r3c0400agrfeln78800
+      Ignored_For_Permissions: []
+    trident:
+      Name: '#3196eaTrident'
+      Chance: 15.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+      Commands: []
+      Items:
+        - 2g0004000j9cg012rb9dpim6sj1cpq3kt3id5i6arjk18006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+      Ignored_For_Permissions: []
+    elytra:
+      Name: '#ea31b2Elytra'
+      Chance: 9.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+      Commands: []
+      Items:
+        - a0000g002d5i0043dd5n6aoric5j78ej5dhsn8sj118006t31cs1g01i4c5mm2pr5000000000400agrfeln78080
+      Ignored_For_Permissions: []
+    netherite_ingot:
+      Name: '#aaa8a8x5 Netherite Ingot'
+      Chance: 16.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
+      Commands: []
+      Items:
+        - 1800020009km800pdlkmspb3e9gmct1qdpin8q35e9kn8pavd5n6errk0400agrfeln78180
+      Ignored_For_Permissions: []
+    ender_pearl:
+      Name: '#31eacex16 Ender Pearl'
+      Chance: 20.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
+      Commands: []
+      Items:
+        - a0000g002d5i005bdd5n6aoric5j78ej5dpi6asive1im2sjc0400agrfeln78400
+      Ignored_For_Permissions: []
+    sugar:
+      Name: '#e8f2f2x32 Sugar'
+      Chance: 25.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
+      Commands: []
+      Items:
+        - 1800020009km800fdlkmspb3e9gmct1qedqmeobi0400agrfeln78800
+      Ignored_For_Permissions: []
+    shulker_shell:
+      Name: '#ea31b2x8 Shulker Shell'
+      Chance: 13.0
+      Rarity: common
+      Broadcast: false
+      Win_Limits:
+        Amount: -1
+        Cooldown: 0
+      Preview: k00010004qb400bmqqbeclhn4ob6egt76q3ldhlmasivedk6ar3c0400agrfeln78200
+      Commands: []
+      Items:
+        - k00010004qb400bmqqbeclhn4ob6egt76q3ldhlmasivedk6ar3c0400agrfeln78200
+      Ignored_For_Permissions: []

@@ -1,0 +1,57 @@
+Title: 'Opening Crate'
+Size: 27
+
+Content: {}
+
+Rewards:
+  main:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 1
+    Roll_Times: 75
+    Roll_Tick_Interval: 1
+    Roll_Slowdown_Every: 10
+    Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+    Slots: '13'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: '13'
+
+Animations:
+  panes:
+    Start_Action: AUTO
+    Start_Delay: 0
+    Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23,24,25,26
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 3
+    Items:
+      white:
+        Material: WHITE_STAINED_GLASS_PANE
+      gray:
+        Material: GRAY_STAINED_GLASS_PANE
+      black:
+        Material: BLACK_STAINED_GLASS_PANE
+      brown:
+        Material: BROWN_STAINED_GLASS_PANE
+      red:
+        Material: RED_STAINED_GLASS_PANE
+      orange:
+        Material: ORANGE_STAINED_GLASS_PANE
+      yellow:
+        Material: YELLOW_STAINED_GLASS_PANE
+      lime:
+        Material: LIME_STAINED_GLASS_PANE
+      green:
+        Material: GREEN_STAINED_GLASS_PANE
+      cyan:
+        Material: CYAN_STAINED_GLASS_PANE
+      light_blue:
+        Material: LIGHT_BLUE_STAINED_GLASS_PANE
+      blue:
+        Material: BLUE_STAINED_GLASS_PANE
+      purple:
+        Material: PURPLE_STAINED_GLASS_PANE
+      magenta:
+        Material: MAGENTA_STAINED_GLASS_PANE
+      pink:
+        Material: PINK_STAINED_GLASS_PANE

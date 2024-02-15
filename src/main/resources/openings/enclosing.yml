@@ -1,0 +1,185 @@
+Title: 'Opening Crate'
+Size: 45
+
+Content: {}
+
+Rewards:
+  main:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 1
+    Roll_Times: 18
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+    Slots: '22'
+    Slots_Mode: INHERITANCE
+    Win_Slots: '22'
+
+  dummy_r1:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 2
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '0,9,18,27,36,8,17,26,35,44'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r2:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 4
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '1,10,19,28,37,7,16,25,34,43'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r3:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 7
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '2,11,20,29,38,6,15,24,33,42'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r4:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 9
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '3,5,39,41'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r5:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 12
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '4,40'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r6:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 13
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '12,21,30,14,23,32'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+  dummy_r7:
+    Start_Action: AUTO
+    Start_Chance: 100.0
+    Start_Delay: 0
+    Roll_Times: 17
+    Roll_Tick_Interval: 2
+    Roll_Slowdown_Every: 0
+    Roll_Slowdown_Ticks: 0
+    Slots: '13,31'
+    Slots_Mode: INDEPENDENT
+    Win_Slots: ''
+
+Animations:
+  panes_1:
+    Start_Action: AUTO
+    Start_Delay: 5
+    Slots: 0,9,18,27,36,8,17,26,35,44
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: BLACK_STAINED_GLASS_PANE
+  panes_2:
+    Start_Action: AUTO
+    Start_Delay: 10
+    Slots: 1,10,19,28,37,7,16,25,34,43
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: BLACK_STAINED_GLASS_PANE
+  panes_3:
+    Start_Action: AUTO
+    Start_Delay: 15
+    Slots: 2,11,20,29,38,6,15,24,33,42
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: GRAY_STAINED_GLASS_PANE
+  panes_4:
+    Start_Action: AUTO
+    Start_Delay: 20
+    Slots: 3,5,39,41
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: GRAY_STAINED_GLASS_PANE
+  panes_5:
+    Start_Action: AUTO
+    Start_Delay: 25
+    Slots: 4,40
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: GRAY_STAINED_GLASS_PANE
+  panes_6:
+    Start_Action: AUTO
+    Start_Delay: 30
+    Slots: 12,21,30,14,23,32
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: WHITE_STAINED_GLASS_PANE
+  panes_7:
+    Start_Action: AUTO
+    Start_Delay: 35
+    Slots: 13,31
+    Mode: SINGLE # TOGETHER SINGLE
+    Tick_Interval: 0
+    Tick_Sound: 'BLOCK_PISTON_EXTEND'
+    Items:
+      i_like_tea:
+        Material: WHITE_STAINED_GLASS_PANE
+
+
+
+
+
+
+
+
+
+
+

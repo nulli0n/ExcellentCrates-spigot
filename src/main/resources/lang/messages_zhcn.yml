@@ -1,0 +1,609 @@
+
+# ExcellentCrates v4.4.1
+# Updated on 2023/9/15
+
+# 在这里可设置配置文件中所需使用的自定义变量.
+# 左侧为变量名称, 右侧则为替换的值.
+Placeholders:
+  '%red%': '#fd5e5e'
+  '%green%': '#aefd5e'
+  '%gray%': '#d4d9d8'
+Command:
+  Editor:
+    Desc: 打开宝箱 & 钥匙编辑器.
+  Drop:
+    Usage: <宝箱ID> <世界名称> <x> <y> <z>
+    Desc: 在指定世界的指定位置生成一个宝箱.
+    Done: 宝箱 &6%crate_name%#d4d9d8 已放置在世界 &6%location_world% 的 &6%location_x%#d4d9d8, &6%location_y%#d4d9d8, &6%location_z%#d4d9d8 位置.
+  ForceOpen:
+    Desc: 强制为玩家打开一个宝箱.
+    Usage: <宝箱ID> [玩家名]
+    Done: 强制打开 &6%crate_name%#d4d9d8 for &6%player_name%#d4d9d8.
+    Notify: 你已被迫打开 &6%crate_name%#d4d9d8.
+  Give:
+    Usage: <玩家ID | *(全体玩家)> <宝箱ID> [数量]
+    Desc: 将特定的宝箱给予指定或全体玩家.
+    Done: 成功给予 &6&6%crate_name% #d4d9d8%amount% 宝箱给 &a%player_name%#d4d9d8.
+    Notify: 你收到了 &6%amount% #d4d9d8个 &6%crate_name%#d4d9d8!
+  Key:
+    Desc: 管理或查看玩家现有的宝箱钥匙.
+    Error:
+      Player: '#fd5e5e无法操作无效或非在线玩家 &e%player_name%#fd5e5e!'
+    Give:
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 给予玩家特定宝箱的钥匙
+      Done: 成功给予 &a%amount% #d4d9d8个 &a%key_name% #d4d9d8钥匙至玩家 &a%player_name%#d4d9d8.
+      Notify: 你收到了 &a%amount% #d4d9d8个 &a%key_name%#d4d9d8!
+    GiveAll:
+      Usage: <玩家ID> <钥匙ID> <数量> [-s(是否静默)]
+      Desc: 将钥匙给予在线的所有玩家.
+      Done: '#d4d9d8成功将 #fdf35ex%amount%#d4d9d8 个 #fdf35e%key_name%#d4d9d8 宝箱样钥匙给予了 #fdf35e在线的所有玩家#d4d9d8.'
+    Take:
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 从玩家处拿走宝箱钥匙.
+      Done: 成功从玩家 #fd5e5e%player_name% #d4d9d8处拿走了 #fd5e5e%amount%  个 #fd5e5e%key_name% #d4d9d8钥匙.
+      Notify: 你失去了 #fd5e5e%amount% 个 #fd5e5e%key_name%#d4d9d8 钥匙!
+    Set:
+      Usage: <玩家ID | *(全体玩家)> <钥匙ID> <数量>
+      Desc: 设置玩家的宝箱钥匙数量.
+      Done: 成功将玩家 &e%player_name%#d4d9d8 的宝箱钥匙 &e%key_name% #d4d9d8数量设置为 &e%amount%.
+      Notify: 你的 &e%key_name%#d4d9d8 钥匙数量已被设置为 &e%amount%#d4d9d8 个!
+    Show:
+      Desc: 显示你自己或指定玩家的钥匙数量.
+      Usage: '[玩家名]'
+      Format:
+        List:
+        - <!prefix:"false"!>
+        - '&6&m              &6&l[ &a%player_name% &e&l的宝箱钥匙 &6&l]&6&m              &6'
+        - '#d4d9d8'
+        - '&6▸ &e%key_name%: &6%amount%'
+  Preview:
+    Desc: 预览宝箱的内容.
+    Usage: <宝箱ID> [玩家名]
+    Done:
+      Others: 成功为玩家 &6%player_display_name% #d4d9d8打开了 &6%crate_name%#d4d9d8 的预览界面.
+  ResetLimit:
+    Desc: 重置宝箱奖励相关数据.
+    Usage: <玩家ID> <宝箱ID> [奖品ID]
+    Done:
+      Crate: 成功将玩家 &6%player_name% #d4d9d8的宝箱 &6%crate_name%#d4d9d8 奖品获取概率重置.
+      Reward: 成功将玩家 &6%player_name% #d4d9d8的宝箱 &6%crate_name%#d4d9d8 的奖品几率 &6%reward_name% #d4d9d8重置.
+  ResetCooldown:
+    Desc: 重置玩家对指定宝箱的冷却时间.
+    Usage: <玩家ID> <宝箱ID>
+    Done: 成功重置了 &6%player_name% #d4d9d8对宝箱的 &6%crate_name%#d4d9d8的冷却时间.
+  Menu:
+    Usage: '[菜单ID]'
+    Desc: 打开宝箱界面.
+    Done:
+      Others: 成功为玩家 &6%player_display_name%#d4d9d8 打开了宝箱界面  &6%menu_id%#d4d9d8 .
+Crate:
+  Error:
+    Invalid: '#fd5e5e无效宝箱!'
+    Exists: '#fd5e5e已存在相同 ID 的宝箱!'
+  Open:
+    Error:
+      InventorySpace: # 旧版翻译 Legacy Translation: '#fd5e5e您的背包空间不足,请先清理背包!'
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&l啊哦!'
+      - '#d4d9d8请先清理背包再来打开吧!'
+      Cooldown:
+        Temporary: # 旧版翻译 Legacy Translation: '#fd5e5e你必须等待 &6%time% #d4d9d8才能再次打开宝箱 &6%crate_name%'
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&l宝箱仍在冷却!'
+        - '#d4d9d8距下次可打开的时间还剩 #fd5e5e%time%'
+        OneTimed: # 旧版翻译 Legacy Translation: '#fd5e5e你已经打开过了这个奖箱,不能再次打开!'
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&l啊哦!'
+        - '#d4d9d8你已经打开过了这个一次性宝箱!'
+      NoKey: # 旧版翻译 Legacy Translation: '#fd5e5e缺少钥匙!'
+      - '#fd5e5e&l啊哦!'
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#d4d9d8你没有打开这个宝箱的钥匙!'
+      NoHoldKey:
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&l啊哦!'
+      - '#d4d9d8你必须手持一把钥匙才可开启该宝箱!'
+      NoRewards: # 旧版翻译 Legacy Translation: '#fd5e5e宝箱无奖励!'
+      - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+      - '#fd5e5e&l啊哦!'
+      - '#d4d9d8这个宝箱似乎没有为你设置奖励! 请稍后再试.'
+      Cost:
+        Money: # 旧版翻译 Legacy Translation: '#fd5e5e你没有足够的钱!'
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&l啊哦!'
+        - '#d4d9d8你需要 $#fd5e5e%crate_opening_cost_money%#d4d9d8 来打开这个宝箱!'
+        Exp: # 旧版翻译 Legacy Translation: '#fd5e5e你没有足够的经验!'
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&l啊哦!'
+        - '#d4d9d8你需要 #fd5e5e%crate_opening_cost_exp% 经验等级#d4d9d8 来打开这个宝箱!'
+    Reward:
+      Info: '<! prefix:"false" !>#d4d9d8你从宝箱 #aefd5e%crate_name%#d4d9d8 中获得了奖励 #aefd5e%reward_name%#d4d9d8!' # 新增翻译 Newly Translated
+      Broadcast: # 旧版翻译 Legacy Translation: '#d4d9d8玩家 &6&l%player_name% #d4d9d8打开了 &b%crate_name% #d4d9d8获得了以下奖励: #aefd5e%reward_name%'
+      - <! prefix:"false" sound:"BLOCK_NOTE_BLOCK_BELL" !>
+      - '#d4d9d8'
+      - '#aefd5e&l哇哦!#d4d9d8 玩家 #aefd5e%player_display_name%#d4d9d8 刚刚从宝箱 #aefd5e%crate_name%#d4d9d8 中获得了 #aefd5e%reward_name%#d4d9d8!'
+      - '#d4d9d8'
+      - '#d4d9d8你也想要一个宝箱吗? 前往此处购买宝箱钥匙: <? open_url:"http://samplesmp.com/store" ?>#aefd5e[商店链接]</>'
+      - '#d4d9d8'
+    Milestone:
+      Completed: '<! prefix:"false" sound:"ENTITY_PLAYER_LEVELUP" !>#d4d9d8你完成了 #aefd5e%milestone_openings% 次开箱 #d4d9d8挑战, 并获得了额外奖励 #aefd5e%reward_name%#d4d9d8!' # 新增翻译 Newly Translated
+  Key:
+    Error:
+      Invalid: '#fd5e5e无效钥匙!'
+      Exists: '#fd5e5e已存在相同的宝箱钥匙!'
+  Placeholder:
+    Cooldown:
+      Blank: 冷却时间已到!你可以开启宝箱了!
+Menu:
+  Invalid: '#fd5e5e无效菜单!'
+Editor:
+  Enter: # 新增翻译 Newly Translated
+    DisplayName: '#d4d9d8输入 #aefd5e[显示名称]'
+    Amount: '#d4d9d8输入 #aefd5e[数量]'
+  Crate:
+    Enter:
+      Id: '#d4d9d8输入ID...'
+      DisplayName: '#d4d9d8请输入新的名字...'
+      Particle:
+        Name: '#d4d9d8输入 #aefd5e[粒子效果名称]'
+        Data: '#d4d9d8输入 #aefd5e[粒子效果设置]'
+      KeyId: '#d4d9d8输入 #aefd5e[钥匙ID]'
+      Block:
+        Location: '#d4d9d8鼠标左键来选中面前的 #aefd5e[方块] #d4d9d8作为宝箱.'
+        Hologram:
+          Text: '#d4d9d8输入 #aefd5e[文本内容]'
+          Offset: '#d4d9d8输入 #aefd5e[偏移量]'
+      Cooldown: '#d4d9d8输入 #aefd5e[冷却时间(单位为秒)]'
+      Citizens: '#d4d9d8输入 #aefd5e[NPC ID]'
+      AnimationConfig: '#d4d9d8输入 #aefd5e[模板的名字]'
+      PreviewConfig: '#d4d9d8输入 #aefd5e[预览界面的ID]'
+      OpenCost:
+        Money: '#d4d9d8输入 #aefd5e[金币数量]'
+        Exp: '#d4d9d8输入 #aefd5e[经验等级]'
+    BlockPushback:
+      Name: '#fdf35e&l推开玩家'
+      Lore:
+      - '#d4d9d8决定当玩家不能开启宝箱时'
+      - '#d4d9d8是否将他们从宝箱附近推开.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8是否启用: #fdf35e%crate_block_pushback_enabled%'
+      - ''
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e切换'
+  Milestone:
+    Enter:
+      Reward: '#d4d9d8输入 #aefd5e[奖励物品 ID]'
+    Error:
+      Create:
+        Exists: '#fd5e5e宝箱名字重复!'
+  Reward:
+    Enter:
+      Id: '#d4d9d8输入 #aefd5e[奖励物品的ID]'
+    # DisplayName: '#d4d9d8输入 #aefd5e[奖励显示名称]'
+      Chance: '#d4d9d8输入 #aefd5e[奖励获得概率]'
+      Rarity: '#d4d9d8输入 #aefd5e[稀有程度]' # 新增翻译 Newly Translated
+      Command: '#d4d9d8输入 #aefd5e[奖励指令]'
+      Permissions: '#d4d9d8输入 #aefd5e[权限节点]' # 新增翻译 Newly Translated
+      WinLimit:
+        Amount: '#d4d9d8输入 #aefd5e[限制数量]'
+        Cooldown: '#d4d9d8输入 #aefd5e[冷却时间]'
+    Error:
+      Create:
+        Exist: '#fd5e5e奖励名称重复!'
+#  Key:
+#    Error:
+#      Create:
+#        Exist: 钥匙名字重复!
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: '#fdf35e&l宝箱编辑器'
+      Lore:
+      - '#d4d9d8在此处创建和编辑你的宝箱!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e进入界面'
+    EDITOR_KEYS:
+      Name: '#fdf35e&l钥匙编辑器'
+      Lore:
+      - '#d4d9d8在此处创建和编辑你的钥匙!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e进入界面'
+    CRATE_OBJECT:
+      Name: '&e%crate_name% #d4d9d8(ID: #aefd5e%crate_id%#d4d9d8)'
+      Lore:
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e编辑'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键 #aefd5e删除 #d4d9d8(不可撤销)'
+    CRATE_CREATE:
+      Name: '#aefd5e创建一个宝箱'
+      Lore:
+      - '#d4d9d8创建一个新的宝箱.'
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e创建'
+    CRATE_CHANGE_NAME:
+      Name: '#fdf35e&l显示名称'
+      Lore:
+      - '#d4d9d8设置宝箱的显示名称. 该名称将会用在'
+      - '#d4d9d8消息提醒, 菜单界面, 以及悬浮字上.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8显示名称: #fdf35e%crate_name%'
+      - ''
+      - '#fd5e5e▪ #d4d9d8这 #fd5e5e不是#d4d9d8 宝箱的物品名称!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改'
+    CRATE_CHANGE_PERMISSION:
+      Name: '#fdf35e&l权限限制'
+      Lore:
+      - '#d4d9d8设置打开宝箱所需的权限.'
+      - ' '
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8是否需要: #fdf35e%crate_permission_required%'
+      - '#fdf35e▪ #d4d9d8节点名称: #fdf35e%crate_permission%'
+      - ''
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e编辑'
+    CRATE_CHANGE_COOLDOWN:
+      Name: '#fdf35e&l开启冷却'
+      Lore:
+      - '#d4d9d8设置宝箱开启的冷却时间.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8&a%crate_opening_cooldown%'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdf35e▪ #d4d9d8设置为负值时表示仅能开启一次.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e禁用'
+      - '#aefd5e▪ #d4d9d8键盘[Q/丢弃]键: #aefd5e设置为一次性'
+    CRATE_CHANGE_CONFIG:
+      Name: '#fdf35e&l预览 & 动画'
+      Lore:
+      - '#d4d9d8设置宝箱的#fdf35e预览#d4d9d8界面和#fdf35e开启#d4d9d8界面.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8&a预览: #aefd5e%crate_preview_config%'
+      - '#fdf35e▪ #d4d9d8&a开箱: #aefd5e%crate_animation_config%'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdf35e▪ #d4d9d8可在本插件的 previews 文件夹中设置宝箱的预览界面排版.'
+      - '#fdf35e▪ #d4d9d8可在本插件的 previews 文件夹中设置宝箱的抽奖界面排版.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改抽奖界面'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e禁用抽奖界面'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e修改抽奖预览界面'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e禁用抽奖预览界面'
+    CRATE_CHANGE_KEYS:
+      Name: '#fdf35e&l设置钥匙'
+      Lore:
+      - '#d4d9d8设置可以用于开启此宝箱的钥匙.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8&a%crate_key_ids%'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdf35e▪ #d4d9d8若不设置所需钥匙则宝箱可随意开启.'
+      - '#fdf35e▪ #d4d9d8请确保设置正确宝箱的钥匙 ID, 否则宝箱将无法开启!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e添加钥匙'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e清除列表'
+#    CRATE_CHANGE_CITIZENS:
+#      Name: Citizens NPC 绑定
+#      Lore:
+#      - '#fdf35e&l当前:'
+#      - '&a绑定 NPC ID:'
+#      - '&a%crate_attached_citizens%'
+#      - ' '
+#      - '#d4d9d8设置绑定 NPC ID, 左键 NPC 时会打开宝箱的预览界面.'
+#      - ' '
+#      - '#fd5e5e&l警告:'
+#      - '&x#fd5e5e#d4d9d8&0&0&3&9在使用此功能前必须先安装 Citizens!'
+#      - ' '
+#      - '#aefd5e&l操作:'
+#      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e添加绑定 NPC'
+#      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e清除绑定列表'
+    CRATE_CHANGE_OPEN_COST:
+      Name: '#fdf35e&l打开消耗金币/等级'
+      Lore:
+      - '#d4d9d8设置玩家打开宝箱所需要的金币和经验.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8所需金币: #aefd5e$%crate_opening_cost_money%'
+      - '#fdf35e▪ #d4d9d8所需等级: #aefd5e%crate_opening_cost_exp%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改金钱条件'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e修改经验条件'
+      - '#aefd5e▪ #d4d9d8键盘[Q/丢弃]键: #aefd5e取消设置'
+    CRATE_CHANGE_ITEM:
+      Name: '#fdf35e&l宝箱物品'
+      Lore:
+      - '#d4d9d8设置宝箱的物品样式'
+      - '#d4d9d8将会显示在玩家或抽奖界面中.'
+      - ''
+      - '#fdba5e&l提示:'
+      - '#aefd5e▪ #d4d9d8请预先设置好物品的描述和名称后再放入.'
+      - ' '
+      - '#fdba5e&l警告:'
+      - '#aefd5e▪ #d4d9d8请使用命令给予可使用的宝箱物品.'
+      - ''
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8拖拽物品: #aefd5e替换'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e获取物品'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: '#fdf35e&l方块位置'
+      Lore:
+      - '#d4d9d8设置宝箱将会出现的位置. 左键宝箱可查看预览.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '&a%crate_block_locations%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e设置位置'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e清除设置'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: '#fdf35e&l宝箱悬浮字'
+      Lore:
+      - '#d4d9d8设置宝箱上的悬浮字内容及其 Y 轴偏移量.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8是否启用: #aefd5e%crate_block_hologram_enabled%'
+      - '#fdf35e▪ #d4d9d8Y 偏移量: #aefd5e%crate_block_hologram_offset_y%'
+      - '#fdf35e▪ #d4d9d8文本:'
+      - '#d4d9d8%crate_block_hologram_text%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e添加一行文本'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e清除文本'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e切换悬浮字'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标右键: #aefd5e修改 Y 偏移量'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: '#fdf35e&l方块效果'
+      Lore:
+      - '#d4d9d8设置围绕宝箱的粒子效果样式.'
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8模型: #aefd5e%crate_block_effect_model%'
+      - '#fdf35e▪ #d4d9d8粒子效果: #aefd5e%crate_block_effect_particle_name%'
+      - '#fdf35e▪ #d4d9d8数据值: #aefd5e%crate_block_effect_particle_data%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8键盘[Q/丢弃]键 #aefd5e切换模型'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改粒子效果'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e修改数据值'
+    CRATE_CHANGE_REWARDS:
+      Name: '#fdf35e&l宝箱奖品'
+      Lore:
+      - '#d4d9d8在这里你可以创建和管理宝箱的奖品.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e进入界面'
+    REWARD_OBJECT:
+      Name: '&e%reward_name% #d4d9d8(ID: #aefd5e%reward_id%#d4d9d8)'
+      Lore:
+      - '#d4d9d8奖品几率: #aefd5e%reward_chance%%'
+      - '#d4d9d8实际几率: #aefd5e%reward_real_chance%%'
+      - '#d4d9d8奖品稀有度: #aefd5e%reward_rarity_name%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e编辑'
+      - '#aefd5e▪ #d4d9d8键盘 Q 键 #aefd5e删除 #d4d9d8(不可撤销)'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键 #aefd5e向前移动'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键 #aefd5e向后移动'
+    REWARD_CREATE:
+      Name: '#fdf35e&l添加奖品'
+      Lore:
+      - '#d4d9d8为宝箱设置一个新的奖品.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e创建'
+      - '#aefd5e▪ #d4d9d8拖拽物品 #aefd5e快速创建'
+    REWARD_SORT:
+      Name: '#fdf35e&l奖品整理'
+      Lore:
+
+      - '#d4d9d8将奖品按照特定数据的值排序.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e以几率排序'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e以类型排序'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键 #aefd5e以名称排序'
+    REWARD_CHANGE_NAME:
+      Name: '#fdf35e&l预览奖品显示名称'
+      Lore:
+      - '#d4d9d8设置奖励的名称, 此项多用在消息文本中.'
+      - ' '
+      - '#fd5e5e&l警告:'
+      - '#fd5e5e▪ #d4d9d8这 #fd5e5e不是#d4d9d8 奖品名称!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e使用预览物品的名称'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e为预览物品设置显示名称'
+    REWARD_CHANGE_PREVIEW:
+      Name: '#fdf35e&l预览奖品图标'
+      Lore:
+      - '#d4d9d8设置该奖品的物品预览图标.'
+      - '#d4d9d8该项将会在抽奖的预览界面中用到.'
+      - ''
+      - '#fd5e5e&l警告:'
+      - '#fd5e5e▪ #d4d9d8这个物品 #fd5e5e不会#d4d9d8 给予玩家!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8拖拽物品 #aefd5e替换'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e获取物品'
+    Reward:
+      Rarity:
+        Name: '#fdf35e&l物品品质'
+        Lore:
+        - '#d4d9d8设置物品稀有度.'
+        - '#d4d9d8可在插件维基中详细了解.'
+        - ''
+        - '#fdf35e&l当前:'
+        - '#fdf35e▪ #d4d9d8稀有度: #fdf35e%reward_rarity_name%'
+        - ''
+        - '#aefd5e&l操作:'
+        - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改品质'
+    REWARD_CHANGE_CHANCE:
+      Name: '#fdf35e&l中奖概率'
+      Lore:
+      - '#d4d9d8设置奖品抽中的几率(权重).'
+      - '#d4d9d8更多信息可在插件维基中了解.'
+      - ' '
+      - '#fdf35e&l当前:'
+      - '#fdf35e▪ #d4d9d8%reward_chance%%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改'
+    REWARD_CHANGE_COMMANDS:
+      Name: '#fdf35e&l奖励命令'
+      Lore:
+      - '#d4d9d8当抽到该奖品时将会执行的命令列表.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#d4d9d8%reward_commands%'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdba5e▪ #d4d9d8可使用 #fdba5e%player_name%#d4d9d8 代替玩家名称.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e添加命令'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e清除命令'
+    REWARD_CHANGE_ITEMS:
+      Name: '#fdf35e&l奖励物品'
+      Lore:
+      - '#d4d9d8将会添加至玩家背包中的物品列表.'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdba5e▪ #d4d9d8关闭此界面即可保存并返回至上一级界面.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e进入界面'
+    REWARD_CHANGE_BROADCAST:
+      Name: '#fdf35e&l发送公告'
+      Lore:
+      - '#d4d9d8设置玩家抽到此物品时是否发送公告.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdba5e▪ #d4d9d8是否启用: #aefd5e%reward_broadcast%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e切换状态'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: '#fdf35e&l获取限制'
+      Lore:
+      - '#d4d9d8设置玩家可抽到该物品的总数量和间隔.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#fdba5e▪ #d4d9d8数量: #aefd5e%reward_win_limit_amount%'
+      - '#fdba5e▪ #d4d9d8冷却: #aefd5e%reward_win_limit_cooldown%'
+      - ' '
+      - '#fdba5e&l提示:'
+      - '#fdba5e▪ #d4d9d8将数量设置为 -1 可设置奖励数量不限.'
+      - '#fdba5e▪ #d4d9d8将冷却设置为 -1 可将奖品设置为一次性.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改数量'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e修改冷却'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e设置为一次性'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标右键: #aefd5e全部禁用'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#fdf35e&l权限限制'
+      Lore:
+      - '#d4d9d8拥有该列表中任何一条权限的玩家'
+      - '#d4d9d8都不可以获得该奖励.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#d4d9d8%reward_ignored_for_permissions%'
+      - ''
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e添加权限'
+      - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e清除列表'
+    KEY_OBJECT:
+      Name: '&e%key_name% #d4d9d8(ID: #aefd5e%key_id%#d4d9d8)'
+      Lore:
+      - '#aefd5e▪ #d4d9d8是否虚拟: #aefd5e%key_virtual%'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e编辑'
+      - '#aefd5e▪ #d4d9d8Shift+鼠标右键 #aefd5e删除 #d4d9d8(不可撤销)'
+    KEY_CREATE:
+      Name: '#fdf35e&l创建钥匙'
+      Lore:
+      - '#d4d9d8创建一个新的宝箱钥匙.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e创建'
+    KEY_CHANGE_NAME:
+      Name: '#fdf35e&l宝箱钥匙展示名称'
+      Lore:
+      - '#d4d9d8设置钥匙物品名称, 此项多用于消息文本.'
+      - ''
+      - '#fdf35e&l当前:'
+      - '#aefd5e▪ #d4d9d8显示名称: #fdf35e%key_name%'
+      - ' '
+      - '#fd5e5e&l警告:'
+      - '#aefd5e▪ #d4d9d8此项#fd5e5e不#d4d9d8影响钥匙物品本身名称!'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改'
+    KEY_CHANGE_ITEM:
+      Name: '#fdf35e&l宝箱钥匙展示样式'
+      Lore:
+      - '#d4d9d8设置钥匙展示样式, 当物品给予玩家时会使用该样式.'
+      - ''
+      - '#fdba5e&l提示:'
+      - '#aefd5e▪ #d4d9d8请在放入前自行编辑好物品的描述与名称.'
+      - '#aefd5e▪ #d4d9d8该设置对虚拟钥匙无效.'
+      - ''
+      - '#fdf35e&l警告:'
+      - '#aefd5e▪ #d4d9d8请使用插件命令给予有效钥匙'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8拖拽物品 #aefd5e替换'
+      - '#aefd5e▪ #d4d9d8鼠标右键 #aefd5e获取物品'
+    KEY_CHANGE_VIRTUAL:
+      Name: '#fdf35e&l虚拟钥匙'
+      Lore:
+      - '#fdf35e&l当前:'
+      - '&a是否虚拟: #aefd5e%key_virtual%'
+      - ' '
+
+      - '#d4d9d8设置钥匙是否为虚拟钥匙'
+      - '#d4d9d8若设置开启, 该钥匙将不能被物品形式给予玩家, 而是存储在数据库中.'
+      - ' '
+      - '#aefd5e&l操作:'
+      - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e编辑'
+  Item:
+    Crate:
+      Milestones:
+        Name: '#fdf35e&l累抽奖励'
+        Lore:
+        - '#fdf35e▪ #d4d9d8是否可重复: #fdf35e%crate_milestones_repeatable%'
+        - ''
+        - '#d4d9d8在这里创建 & 管理累抽奖励!'
+        - ''
+        - '#aefd5e&l操作:'
+        - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e打开界面'
+        - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e切换可重复设置'
+    Milestone:
+      Create:
+        Name: '#fdf35e&l设置新的累抽奖励'
+        Lore: []
+      Object:
+        Name: '#fdf35e&l所需开启次数: %milestone_openings% 次'
+        Lore:
+        - '#fdf35e▪ #d4d9d8所需开启次数: #fdf35e%milestone_openings% 次'
+        - '#fdf35e▪ #d4d9d8奖励物品 ID: #fdf35e%milestone_reward_id%'
+        - ''
+        - '#aefd5e&l操作:'
+        - '#aefd5e▪ #d4d9d8鼠标左键: #aefd5e修改所需开启次数'
+        - '#aefd5e▪ #d4d9d8鼠标右键: #aefd5e修改奖励物品 ID'
+        - '#aefd5e▪ #d4d9d8Shift+鼠标左键: #aefd5e删除内容 #fd5e5e(不可撤销)'

@@ -1,0 +1,11 @@
+Name: '#ead931Golden Crate Key'
+Virtual: false
+Item:
+  Material: TRIPWIRE_HOOK
+  Amount: 1
+  Durability: 0
+  Name: '#ead931Golden Crate Key'
+  Lore:
+    - '#aaa8a8Use this key to open #ead931Golden Crate'
+  Item_Flags: [ ]
+  Unbreakable: false

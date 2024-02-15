@@ -1,0 +1,65 @@
+Title: Opening Crate
+Size: 45
+
+Content:
+  button:
+    Slots: 12,13,14,21,22,23,30,31,32
+    Start_Reward: main
+    Start_Animation: fill_black,win_arrow1,win_arrow2
+    Item:
+      Material: LIME_STAINED_GLASS_PANE
+      Name: '&a&lSpin!'
+  
+  blackpane:
+    Slots: 0,1,2,3,4,5,6,7,8,9,10,11,15,16,17,18,19,20,24,25,26,27,28,29,33,34,35,36,37,38,39,40,41,42,43,44
+    Item:
+      Material: BLACK_STAINED_GLASS_PANE
+
+Rewards:
+  main:
+    Start_Action: CLICK
+    Start_Chance: 100.0
+    Start_Delay: 2
+    Roll_Times: 75
+    Roll_Tick_Interval: 1
+    Roll_Slowdown_Every: 10
+    Roll_Slowdown_Ticks: 1
+    Tick_Sound: 'BLOCK_NOTE_BLOCK_BELL'
+    Slots: 39,40,41,33,24,15,5,4,3,11,20,29
+    Slots_Mode: INHERITANCE
+    Win_Slots: '20'
+
+Animations:
+  fill_black:
+    Start_Action: CLICK
+    Start_Delay: 1
+    Slots: 12,13,14,22,23,30,31,32
+    Mode: TOGETHER
+    Tick_Interval: 0
+    Items:
+      black:
+        Material: BLACK_STAINED_GLASS_PANE
+  
+  win_arrow1:
+    Start_Action: CLICK
+    Start_Delay: 1
+    Slots: 19
+    Mode: TOGETHER
+    Tick_Interval: 0
+    Items:
+      black:
+        Material: PLAYER_HEAD
+        Name: '#e72e1b&lYOUR PRIZE →'
+        Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTZhZjIxN2FlZGRmMGY0MDA2NDk2OWViYjIwNDJmN2FlYWZiYzdkMGYxNzVhMjc2MjQxMzNhM2JlZmQxMDI4MSJ9fX0=
+  
+  win_arrow2:
+    Start_Action: CLICK
+    Start_Delay: 1
+    Slots: 21
+    Mode: TOGETHER
+    Tick_Interval: 0
+    Items:
+      black:
+        Material: PLAYER_HEAD
+        Name: '#e72e1b&l← YOUR PRIZE'
+        Head_Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM1YThhYThhNGMwMzYwMGEyYjVhNGViNmJlYjUxZDU5MDI2MGIwOTVlZTFjZGFhOTc2YjA5YmRmZTU2NjFjNiJ9fX0=
