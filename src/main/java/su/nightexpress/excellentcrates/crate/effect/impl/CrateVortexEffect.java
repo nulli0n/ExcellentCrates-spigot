@@ -2,10 +2,10 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-public class CrateVortexEffect extends CrateEffect {
+public class CrateVortexEffect extends AbstractEffect {
 
     private static final int    STRANDS   = 2;
     private static final int    PARTICLES = 170 / 5;

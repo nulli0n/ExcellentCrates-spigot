@@ -2,10 +2,25 @@ package su.nightexpress.excellentcrates.currency.handler;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.integration.VaultHook;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.CurrencyHandler;
+import su.nightexpress.nightcore.integration.VaultHook;
 
 public class VaultEconomyHandler implements CurrencyHandler {
+
+    public static final String ID = "money";
+
+    @Override
+    @NotNull
+    public String getDefaultName() {
+        return "Money";
+    }
+
+    @Override
+    @NotNull
+    public String getDefaultFormat() {
+        return "$" + Placeholders.GENERIC_AMOUNT;
+    }
 
     @Override
     public double getBalance(@NotNull Player player) {

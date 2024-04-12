@@ -1,46 +1,57 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.placeholder.Placeholder;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.NumberUtil;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 
 public class Milestone implements Placeholder {
+
+    private final Crate crate;
+    private final PlaceholderMap placeholderMap;
 
     private String rewardId;
     private int    priority;
     private int    openings;
 
-    private final PlaceholderMap placeholderMap;
+    public Milestone(@NotNull Crate crate, @NotNull String rewardId, int priority, int openings) {
+        this.crate = crate;
+        this.placeholderMap = Placeholders.forMilestone(this);
 
-    public Milestone(@NotNull String rewardId, int priority, int openings) {
         this.setRewardId(rewardId);
         this.setPriority(priority);
         this.setOpenings(openings);
-
-        this.placeholderMap = new PlaceholderMap()
-            .add(Placeholders.MILESTONE_OPENINGS, () -> NumberUtil.format(this.getOpenings()))
-            .add(Placeholders.MILESTONE_REWARD_ID, this::getRewardId);
     }
 
     @NotNull
-    public static Milestone read(@NotNull JYML cfg, @NotNull String path) {
-        String rewardId = cfg.getString(path + ".Reward_Id", "null");
-        int openings = cfg.getInt(path + ".Openings");
-        return new Milestone(rewardId, 0, openings);
+    public static Milestone read(@NotNull Crate crate, @NotNull FileConfig config, @NotNull String path) {
+        String rewardId = config.getString(path + ".Reward_Id", "null");
+        int openings = config.getInt(path + ".Openings");
+
+        return new Milestone(crate, rewardId, 0, openings);
     }
 
-    public void write(@NotNull JYML cfg, @NotNull String path) {
-        cfg.set(path + ".Reward_Id", this.getRewardId());
-        cfg.set(path + ".Openings", this.getOpenings());
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path + ".Reward_Id", this.getRewardId());
+        config.set(path + ".Openings", this.getOpenings());
     }
 
     @Override
     @NotNull
     public PlaceholderMap getPlaceholders() {
         return this.placeholderMap;
+    }
+
+    @Nullable
+    public Reward getReward() {
+        return this.crate.getReward(this.getRewardId());
+    }
+
+    @NotNull
+    public Crate getCrate() {
+        return crate;
     }
 
     @NotNull

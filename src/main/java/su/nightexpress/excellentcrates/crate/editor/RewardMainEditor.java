@@ -1,47 +1,46 @@
 package su.nightexpress.excellentcrates.crate.editor;
 
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.menu.impl.EditorMenu;
-import su.nexmedia.engine.api.menu.impl.Menu;
-import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.Reward;
-import su.nightexpress.excellentcrates.crate.impl.Rarity;
-import su.nightexpress.excellentcrates.editor.EditorLocales;
+import su.nightexpress.excellentcrates.crate.impl.*;
+import su.nightexpress.excellentcrates.config.EditorLang;
+import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuViewer;
+import su.nightexpress.nightcore.menu.click.ClickResult;
+import su.nightexpress.nightcore.menu.impl.AbstractMenu;
+import su.nightexpress.nightcore.menu.impl.EditorMenu;
+import su.nightexpress.nightcore.util.ItemReplacer;
+import su.nightexpress.nightcore.util.ItemUtil;
+import su.nightexpress.nightcore.util.Players;
 
 import java.util.stream.Stream;
 
-public class RewardMainEditor extends EditorMenu<ExcellentCratesPlugin, Reward> {
+public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implements CrateEditor {
 
-    private static final String TEXTURE_COMMAND = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQwZjQwNjFiZmI3NjdhN2Y5MjJhNmNhNzE3NmY3YTliMjA3MDliZDA1MTI2OTZiZWIxNWVhNmZhOThjYTU1YyJ9fX0=";
-    private static final String TEXTURE_ITEMS = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UyZWI0NzUxZTNjNTBkNTBmZjE2MzUyNTc2NjYzZDhmZWRmZTNlMDRiMmYwYjhhMmFhODAzYjQxOTM2M2NhMSJ9fX0=";
+    private static final String TEXTURE_COMMAND = "d174349f79311d104d7917d32bf7a0dcee423421ca9e8a131f2d402a3c538572";
+    private static final String TEXTURE_ITEMS   = "7a3c8c6d3aaa96363d4bef2578f1024781ea14e9d85a9dcfc0935847a6fb5c8d";
+    private static final String TEXTURE_PERMS   = "264d3ca1206e921c66a2cef74b854170541e4ee9abe8fa678cfaf964964a16a2";
+    private static final String TEXTURE_WEIGHT  = "e0a443e0eca7f5d30622dd937f1e5ea2cdf15d10c27a199c68a7ce09c39f6b69";
 
-    public RewardMainEditor(@NotNull Reward reward) {
-        super(reward.plugin(), reward, Config.EDITOR_TITLE_CRATE.get(), 45);
-        Crate crate = reward.getCrate();
+    public RewardMainEditor(@NotNull CratesPlugin plugin) {
+        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 54);
 
-        this.addReturn(40).setClick((viewer, event) -> {
-           crate.getEditor().getRewardsEditor().openNextTick(viewer, 1);
+        this.addReturn(49, (viewer, event, reward) -> {
+           this.runNextTick(() -> plugin.getCrateManager().openRewardsEditor(viewer.getPlayer(), reward.getCrate()));
         });
 
-        this.addItem(Material.ITEM_FRAME, EditorLocales.REWARD_PREVIEW, 4).setClick((viewer, event) -> {
+        this.addItem(Material.ITEM_FRAME, EditorLang.REWARD_PREVIEW, 4, (viewer, event, reward) -> {
             if (event.isRightClick()) {
-                PlayerUtil.addItem(viewer.getPlayer(), reward.getPreview());
+                Players.addItem(viewer.getPlayer(), reward.getPreview());
                 return;
             }
 
@@ -49,153 +48,188 @@ public class RewardMainEditor extends EditorMenu<ExcellentCratesPlugin, Reward> 
             if (cursor != null && !cursor.getType().isAir()) {
                 reward.setPreview(cursor);
                 event.getView().setCursor(null);
-                this.save(viewer);
+                this.saveRewards(viewer, reward, true);
             }
         }).getOptions().setDisplayModifier(((viewer, item) -> {
+            Reward reward = this.getObject(viewer);
             item.setType(reward.getPreview().getType());
             item.setItemMeta(reward.getPreview().getItemMeta());
-            ItemUtil.mapMeta(item, meta -> {
-                meta.setDisplayName(EditorLocales.REWARD_PREVIEW.getLocalizedName());
-                meta.setLore(EditorLocales.REWARD_PREVIEW.getLocalizedLore());
+            ItemUtil.editMeta(item, meta -> {
+                meta.setDisplayName(EditorLang.REWARD_PREVIEW.getLocalizedName());
+                meta.setLore(EditorLang.REWARD_PREVIEW.getLocalizedLore());
                 meta.addItemFlags(ItemFlag.values());
             });
         }));
 
-        this.addItem(Material.NAME_TAG, EditorLocales.REWARD_NAME, 19).setClick((viewer, event) -> {
+        this.addItem(Material.NAME_TAG, EditorLang.REWARD_DISPLAY_NAME, 19, (viewer, event, reward) -> {
             if (event.isShiftClick()) {
                 if (event.isLeftClick()) {
                     reward.setName(ItemUtil.getItemName(reward.getPreview()));
                 }
                 else if (event.isRightClick()) {
                     ItemStack preview = reward.getPreview();
-                    ItemUtil.mapMeta(preview, meta -> meta.setDisplayName(reward.getName()));
+                    ItemUtil.editMeta(preview, meta -> meta.setDisplayName(reward.getName()));
                     reward.setPreview(preview);
                 }
-                this.save(viewer);
+                this.saveRewards(viewer, reward, true);
                 return;
             }
 
-            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, wrapper -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, (dialog, wrapper) -> {
                 reward.setName(wrapper.getText());
-                crate.saveRewards();
+                this.saveRewards(viewer, reward, false);
                 return true;
             });
         });
 
-        this.addItem(Material.ENDER_PEARL, EditorLocales.REWARD_BROADCAST, 20).setClick((viewer, event) -> {
+        this.addItem(Material.ENDER_PEARL, EditorLang.REWARD_BROADCAST, 28, (viewer, event, reward) -> {
             reward.setBroadcast(!reward.isBroadcast());
-            this.save(viewer);
+            this.saveRewards(viewer, reward, true);
         }).getOptions().addDisplayModifier((viewer, item) -> {
-            if (reward.isBroadcast()) item.setType(Material.ENDER_EYE);
+            if (this.getObject(viewer).isBroadcast()) item.setType(Material.ENDER_EYE);
         });
 
-        this.addItem(Material.GOLDEN_CARROT, EditorLocales.REWARD_WEIGHT, 21).setClick((viewer, event) -> {
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_WEIGHT), EditorLang.REWARD_WEIGHT, 21, (viewer, event, reward) -> {
             if (event.isLeftClick()) {
-                EditorManager.suggestValues(viewer.getPlayer(), plugin.getCrateManager().getRarityMap().keySet(), true);
-                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_RARITY, wrapper -> {
+                this.handleInput(viewer, Lang.EDITOR_ENTER_RARITY, (dialog, wrapper) -> {
                     Rarity rarity = this.plugin.getCrateManager().getRarity(wrapper.getTextRaw());
                     if (rarity == null) return true;
 
                     reward.setRarity(rarity);
-                    crate.saveRewards();
+                    this.saveRewards(viewer, reward, false);
                     return true;
-                });
+                }).setSuggestions(plugin.getCrateManager().getRarityMap().keySet(), true);
             }
             if (event.isRightClick()) {
-                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_CHANCE, wrapper -> {
+                this.handleInput(viewer, Lang.EDITOR_ENTER_CHANCE, (dialog, wrapper) -> {
                     reward.setWeight(wrapper.asDouble());
-                    crate.saveRewards();
+                    this.saveRewards(viewer, reward, false);
                     return true;
                 });
             }
         });
 
-        this.addItem(Material.NETHER_STAR, EditorLocales.REWARD_WIN_LIMITS, 22).setClick((viewer, event) -> {
-            if (event.isShiftClick()) {
-                if (event.isLeftClick()) {
-                    reward.setWinLimitAmount(1);
-                    reward.setWinLimitCooldown(-1);
-                }
-                else {
-                    reward.setWinLimitAmount(-1);
-                    reward.setWinLimitCooldown(0);
-                }
-                this.save(viewer);
-                return;
-            }
+        this.addItem(Material.WATER_BUCKET, EditorLang.REWARD_PLAYER_WIN_LIMIT, 25, this.getWinLimitClick(LimitType.PLAYER))
+            .getOptions().addDisplayModifier((viewer, itemStack) -> {
+                if (!this.getObject(viewer).getWinLimit(LimitType.PLAYER).isEnabled()) itemStack.setType(Material.BUCKET);
+            });
 
-            if (event.isLeftClick()) {
-                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_AMOUNT, wrapper -> {
-                    reward.setWinLimitAmount(wrapper.asAnyInt(-1));
-                    crate.saveRewards();
-                    return true;
-                });
-            }
-            else {
-                this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_WIN_LIMIT_COOLDOWN, wrapper -> {
-                    reward.setWinLimitCooldown(wrapper.asAnyInt(0));
-                    crate.saveRewards();
-                    return true;
-                });
-            }
-        });
+        this.addItem(Material.LAVA_BUCKET, EditorLang.REWARD_GLOBAL_WIN_LIMIT, 34, this.getWinLimitClick(LimitType.GLOBAL))
+            .getOptions().addDisplayModifier((viewer, itemStack) -> {
+                if (!this.getObject(viewer).getWinLimit(LimitType.GLOBAL).isEnabled()) itemStack.setType(Material.BUCKET);
+            });
 
-        this.addItem(ItemUtil.createCustomHead(TEXTURE_COMMAND), EditorLocales.REWARD_COMMANDS, 23).setClick((viewer, event) -> {
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_COMMAND), EditorLang.REWARD_COMMANDS, 32, (viewer, event, reward) -> {
             if (event.isRightClick()) {
                 reward.getCommands().clear();
-                this.save(viewer);
+                this.saveRewards(viewer, reward, true);
                 return;
             }
-            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_COMMAND, wrapper -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_COMMAND, (dialog, wrapper) -> {
                 reward.getCommands().add(wrapper.getText());
-                crate.saveRewards();
+                this.saveRewards(viewer, reward, false);
                 return true;
             });
         });
 
-        this.addItem(ItemUtil.createCustomHead(TEXTURE_ITEMS), EditorLocales.REWARD_ITEMS, 24).setClick((viewer, event) -> {
-            new ContentEditor(reward).open(viewer.getPlayer(), 1);
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_ITEMS), EditorLang.REWARD_ITEMS, 23, (viewer, event, reward) -> {
+            new ContentEditor(plugin, reward).open(viewer.getPlayer());
         });
 
-        this.addItem(Material.DAYLIGHT_DETECTOR, EditorLocales.REWARD_IGNORED_PERMISSIONS, 25).setClick((viewer, event) -> {
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_PERMS), EditorLang.REWARD_IGNORED_PERMISSIONS, 30, (viewer, event, reward) -> {
             if (event.isRightClick()) {
                 reward.getIgnoredForPermissions().clear();
-                this.save(viewer);
+                this.saveRewards(viewer, reward, true);
                 return;
             }
-            this.handleInput(viewer, Lang.EDITOR_REWARD_ENTER_COMMAND, wrapper -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_PERMISSION, (dialog, wrapper) -> {
                 reward.getIgnoredForPermissions().add(wrapper.getTextRaw());
-                crate.saveRewards();
+                this.saveRewards(viewer, reward, false);
                 return true;
             });
         });
 
-        PlaceholderMap placeholderMap = Placeholders.forRewardAll(reward);
         this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
-                ItemUtil.replace(item, placeholderMap.replacer());
+                ItemReplacer.replace(item, Placeholders.forRewardAll(this.getObject(viewer)).replacer());
             })
         );
     }
 
-    private void save(@NotNull MenuViewer viewer) {
-        this.object.getCrate().saveRewards();
-        this.openNextTick(viewer, viewer.getPage());
+    @NotNull
+    private EditorHandler<Reward> getWinLimitClick(@NotNull LimitType limitType) {
+        return (viewer, event, reward) -> {
+            RewardWinLimit winLimit = reward.getWinLimit(limitType);
+
+            if (event.getClick() == ClickType.SWAP_OFFHAND && limitType == LimitType.GLOBAL) {
+                reward.resetGlobalWinData();
+                return;
+            }
+
+            if (event.getClick() == ClickType.DROP) {
+                winLimit.setEnabled(!winLimit.isEnabled());
+                if (winLimit.isEnabled() && limitType == LimitType.GLOBAL) {
+                    reward.loadGlobalWinData();
+                }
+                this.saveRewards(viewer, reward, true);
+                return;
+            }
+
+            if (event.isShiftClick()) {
+                if (event.isLeftClick()) {
+                    this.handleInput(viewer, Lang.EDITOR_ENTER_AMOUNT, (dialog, wrapper) -> {
+                        winLimit.setCooldownStep(wrapper.asInt(1));
+                        this.saveRewards(viewer, reward, false);
+                        return true;
+                    });
+                }
+                else if (event.isRightClick()) {
+                    winLimit.setMidnightCooldown();
+                    this.saveRewards(viewer, reward, true);
+                }
+                return;
+            }
+
+            if (event.isLeftClick()) {
+                this.handleInput(viewer, Lang.EDITOR_ENTER_AMOUNT, (dialog, wrapper) -> {
+                    winLimit.setAmount(wrapper.asAnyInt(-1));
+                    this.saveRewards(viewer, reward, false);
+                    return true;
+                });
+            }
+            else if (event.isRightClick()) {
+                this.handleInput(viewer, Lang.EDITOR_ENTER_SECONDS, (dialog, wrapper) -> {
+                    winLimit.setCooldown(wrapper.asAnyInt(0));
+                    this.saveRewards(viewer, reward, false);
+                    return true;
+                });
+            }
+        };
     }
 
     @Override
-    public void onClick(@NotNull MenuViewer viewer, @Nullable ItemStack item, @NotNull SlotType slotType, int slot, @NotNull InventoryClickEvent event) {
-        super.onClick(viewer, item, slotType, slot, event);
-        if (slotType == SlotType.PLAYER || slotType == SlotType.PLAYER_EMPTY) {
+    protected void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
+
+    }
+
+    @Override
+    protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
+
+    }
+
+    @Override
+    public void onClick(@NotNull MenuViewer viewer, @NotNull ClickResult result, @NotNull InventoryClickEvent event) {
+        super.onClick(viewer, result, event);
+        if (result.isInventory()) {
             event.setCancelled(false);
         }
     }
 
-    private static class ContentEditor extends Menu<ExcellentCratesPlugin> {
+    private static class ContentEditor extends AbstractMenu<CratesPlugin> {
 
         private final Reward reward;
 
-        public ContentEditor(@NotNull Reward reward) {
-            super(reward.getCrate().plugin(), reward.getName(), 27);
+        public ContentEditor(@NotNull CratesPlugin plugin, @NotNull Reward reward) {
+            super(plugin, reward.getName(), 27);
             this.reward = reward;
         }
 
@@ -205,14 +239,18 @@ public class RewardMainEditor extends EditorMenu<ExcellentCratesPlugin, Reward> 
         }
 
         @Override
-        public void onClick(@NotNull MenuViewer viewer, @Nullable ItemStack item, @NotNull SlotType slotType, int slot, @NotNull InventoryClickEvent event) {
-            super.onClick(viewer, item, slotType, slot, event);
+        public void onClick(@NotNull MenuViewer viewer, @NotNull ClickResult result, @NotNull InventoryClickEvent event) {
+            super.onClick(viewer, result, event);
             event.setCancelled(false);
         }
 
         @Override
+        protected void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
+
+        }
+
+        @Override
         public void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
-            super.onReady(viewer, inventory);
             inventory.setContents(this.reward.getItems().stream().map(ItemStack::new).toList().toArray(new ItemStack[0]));
         }
 
@@ -221,7 +259,7 @@ public class RewardMainEditor extends EditorMenu<ExcellentCratesPlugin, Reward> 
             Inventory inventory = event.getInventory();
             this.reward.setItems(Stream.of(inventory.getContents()).toList());
             this.reward.getCrate().saveRewards();
-            this.reward.getEditor().openNextTick(viewer, 1);
+            this.runNextTick(() -> this.plugin.getCrateManager().openRewardEditor(viewer.getPlayer(), this.reward));
             super.onClose(viewer, event);
         }
     }

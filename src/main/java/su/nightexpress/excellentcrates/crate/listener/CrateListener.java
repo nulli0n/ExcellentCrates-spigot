@@ -15,26 +15,51 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.manager.AbstractListener;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
+import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.InteractType;
+import su.nightexpress.nightcore.dialog.Dialog;
+import su.nightexpress.nightcore.manager.AbstractListener;
 
 import java.util.stream.Stream;
 
-public class CrateListener extends AbstractListener<ExcellentCratesPlugin> {
+public class CrateListener extends AbstractListener<CratesPlugin> {
 
     private final CrateManager crateManager;
 
-    public CrateListener(@NotNull CrateManager crateManager) {
-        super(crateManager.plugin());
+    public CrateListener(@NotNull CratesPlugin plugin, @NotNull CrateManager crateManager) {
+        super(plugin);
         this.crateManager = crateManager;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCrateBlockAssign(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        Dialog editor = Dialog.get(player);
+        if (editor == null) return;
+
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+
+        event.setUseInteractedBlock(Event.Result.DENY);
+        event.setUseItemInHand(Event.Result.DENY);
+
+        if (plugin.getCrateManager().getCrateByBlock(block) != null) return;
+
+        Crate crate = CrateUtils.getAssignBlockCrate(player);
+        if (crate == null) return;
+
+        crate.getBlockLocations().add(block.getLocation());
+        crate.updateHologram();
+        crate.saveSettings();
+        Dialog.stop(player);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCrateUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();

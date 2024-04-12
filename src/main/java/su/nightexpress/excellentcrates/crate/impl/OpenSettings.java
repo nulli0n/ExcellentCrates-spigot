@@ -1,24 +1,17 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
-import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class OpenSettings {
 
     private boolean force;
     private boolean skipAnimation;
-    private ItemStack crateItem;
-    private Block crateBlock;
+    private boolean saveData;
 
     public OpenSettings() {
-
-    }
-
-    @NotNull
-    public static OpenSettings create(@Nullable Block block, @Nullable ItemStack item) {
-        return new OpenSettings().setCrateBlock(block).setCrateItem(item);
+        this.setForce(false);
+        this.setSkipAnimation(false);
+        this.setSaveData(true);
     }
 
     public boolean isForce() {
@@ -41,25 +34,13 @@ public class OpenSettings {
         return this;
     }
 
-    @Nullable
-    public ItemStack getCrateItem() {
-        return crateItem;
+    public boolean isSaveData() {
+        return saveData;
     }
 
     @NotNull
-    public OpenSettings setCrateItem(@Nullable ItemStack crateItem) {
-        this.crateItem = crateItem;
-        return this;
-    }
-
-    @Nullable
-    public Block getCrateBlock() {
-        return crateBlock;
-    }
-
-    @NotNull
-    public OpenSettings setCrateBlock(@Nullable Block crateBlock) {
-        this.crateBlock = crateBlock;
+    public OpenSettings setSaveData(boolean saveData) {
+        this.saveData = saveData;
         return this;
     }
 }

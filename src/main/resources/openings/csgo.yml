@@ -1,0 +1,103 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 27
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: NORMAL
+  WinSlots: 13
+  ScriptRunner:
+    OnOpen:
+    - '[run_reward] id:"default" name:"default" delay:"0" slots:"17,16,15,14,13,12,11,10,9" mode:"sequental" chance:"100.0"'
+    - '[run_animation] id:"rainbow" name:"rainbow" delay:"0" slots:"0,1,2,3,5,6,7,8,18,19,20,21,23,24,25,26" mode:"independent" chance:"100.0"'
+    OnStart: []
+  Selection:
+    Amount: 1
+    SelectedIcon:
+      Material: ENDER_CHEST
+    AutoRun: false
+
+Content:
+  arrow_up:
+    Slots: 22
+    Item:
+      Material: PLAYER_HEAD
+      Name: <cyan><b>↑ Your Reward ↑</b></cyan>
+      SkinURL: 77334cddfab45d75ad28e1a47bf8cf5017d2f0982f6737da22d4972952510661
+  
+  arrow_down:
+    Slots: 4
+    Item:
+      Material: PLAYER_HEAD
+      Name: <cyan><b>↓ Your Reward ↓</b></cyan>
+      SkinURL: e7742034f59db890c8004156b727c77ca695c4399d8e0da5ce9227cf836bb8e2
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 51
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 5
+      Amount: 1
+    Spin_Sound:
+      Name: BLOCK_NOTE_BLOCK_BELL
+      Volume: 0.9
+      Pitch: 1.0
+
+Animations:
+  rainbow:
+    Spin_Times: 71
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 10
+      Amount: 1
+    Items:
+      s1:
+        Chance: 50.0
+        Material: WHITE_STAINED_GLASS_PANE
+      s2:
+        Chance: 50.0
+        Material: LIGHT_GRAY_STAINED_GLASS_PANE
+      s3:
+        Chance: 50.0
+        Material: GRAY_STAINED_GLASS_PANE
+      s4:
+        Chance: 50.0
+        Material: BLACK_STAINED_GLASS_PANE
+      s5:
+        Chance: 50.0
+        Material: BROWN_STAINED_GLASS_PANE
+      s6:
+        Chance: 50.0
+        Material: RED_STAINED_GLASS_PANE
+      s7:
+        Chance: 50.0
+        Material: ORANGE_STAINED_GLASS_PANE
+      s8:
+        Chance: 50.0
+        Material: YELLOW_STAINED_GLASS_PANE
+      s9:
+        Chance: 50.0
+        Material: LIME_STAINED_GLASS_PANE
+      s10:
+        Chance: 50.0
+        Material: GREEN_STAINED_GLASS_PANE
+      s11:
+        Chance: 50.0
+        Material: CYAN_STAINED_GLASS_PANE
+      s12:
+        Chance: 50.0
+        Material: LIGHT_BLUE_STAINED_GLASS_PANE
+      s13:
+        Chance: 50.0
+        Material: BLUE_STAINED_GLASS_PANE
+      s14:
+        Chance: 50.0
+        Material: PURPLE_STAINED_GLASS_PANE
+      s15:
+        Chance: 50.0
+        Material: MAGENTA_STAINED_GLASS_PANE
+      s16:
+        Chance: 50.0
+        Material: PINK_STAINED_GLASS_PANE

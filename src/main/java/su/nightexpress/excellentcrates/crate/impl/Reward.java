@@ -5,67 +5,71 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.placeholder.Placeholder;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.*;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
+import org.jetbrains.annotations.Nullable;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.api.opening.Weighted;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.editor.RewardMainEditor;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
-import su.nightexpress.excellentcrates.data.impl.UserRewardData;
-import su.nightexpress.excellentcrates.util.CrateLogger;
+import su.nightexpress.excellentcrates.data.impl.RewardWinData;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.ItemUtil;
+import su.nightexpress.nightcore.util.Players;
+import su.nightexpress.nightcore.util.Plugins;
+import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
+import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
-public class Reward implements Placeholder {
+public class Reward implements Weighted, Placeholder {
 
-    private final Crate crate;
-    private final String id;
-    private final RewardInspector inspector;
+    private final CratesPlugin   plugin;
+    private final Crate          crate;
+    private final String         id;
+    private final PlaceholderMap placeholderMap;
+    private final PlaceholderMap placeholderFullMap;
 
-    private String name;
-    private double weight;
-    private Rarity rarity;
+    private String          name;
+    private double          weight;
+    private Rarity          rarity;
     private boolean         broadcast;
-    private int             winLimitAmount;
-    private long            winLimitCooldown;
+    private RewardWinLimit  playerWinLimit;
+    private RewardWinLimit  globalWinLimit;
     private ItemStack       preview;
     private List<ItemStack> items;
-    private List<String> commands;
-    private Set<String>  ignoredForPermissions;
+    private List<String>    commands;
+    private Set<String>     ignoredForPermissions;
 
-    private RewardMainEditor editor;
+    private RewardWinData globalWinData;
 
-    private final PlaceholderMap placeholderMap;
+    @NotNull
+    public static Reward createEmpty(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull String id) {
+        String name = StringUtil.capitalizeUnderscored(id);
+        double weight = 25D;
+        Rarity rarity = plugin.getCrateManager().getDefaultRarity();
+        boolean broadcast = false;
+        RewardWinLimit playerWinLimit = new RewardWinLimit(false, -1, 0, 1);
+        RewardWinLimit globalWinLimit = new RewardWinLimit(false, -1, 0, 1);
+        ItemStack preview = ItemUtil.getSkinHead(Placeholders.SKIN_NEW_REWARD);
+        List<ItemStack> items = new ArrayList<>();
+        List<String> commands = new ArrayList<>();
+        Set<String> ignoredPermissions = new HashSet<>();
 
-    public Reward(@NotNull Crate crate, @NotNull String id) {
-        this(
-            crate,
-            id,
-
-            Colors2.WHITE + StringUtil.capitalizeUnderscored(id),
-            25D,
-            crate.plugin().getCrateManager().getMostCommonRarity(),
-            false,
-
-            -1,
-            0L,
-
-            new ItemStack(Material.EMERALD),
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new HashSet<>()
-        );
+        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, playerWinLimit, globalWinLimit, preview, items, commands, ignoredPermissions);
     }
 
     public Reward(
+        @NotNull CratesPlugin plugin,
         @NotNull Crate crate,
         @NotNull String id,
 
@@ -74,14 +78,15 @@ public class Reward implements Placeholder {
         @NotNull Rarity rarity,
         boolean broadcast,
 
-        int winLimitAmount,
-        long winLimitCooldown,
+        @NotNull RewardWinLimit playerWinLimit,
+        @NotNull RewardWinLimit globalWinLimit,
 
         @NotNull ItemStack preview,
         @NotNull List<ItemStack> items,
         @NotNull List<String> commands,
         @NotNull Set<String> ignoredForPermissions
     ) {
+        this.plugin = plugin;
         this.crate = crate;
         this.id = id.toLowerCase();
 
@@ -90,21 +95,61 @@ public class Reward implements Placeholder {
         this.setRarity(rarity);
         this.setBroadcast(broadcast);
 
-        this.setWinLimitAmount(winLimitAmount);
-        this.setWinLimitCooldown(winLimitCooldown);
+        this.setPlayerWinLimit(playerWinLimit);
+        this.setGlobalWinLimit(globalWinLimit);
 
         this.setItems(items);
         this.setCommands(commands);
         this.setPreview(preview);
         this.setIgnoredForPermissions(ignoredForPermissions);
 
-        this.inspector = new RewardInspector(this);
         this.placeholderMap = Placeholders.forReward(this);
+        this.placeholderFullMap = Placeholders.forRewardAll(this);
     }
 
     @NotNull
-    public ExcellentCratesPlugin plugin() {
-        return this.getCrate().plugin();
+    public static Reward read(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull FileConfig config, @NotNull String path, @NotNull String id) {
+        String name = config.getString(path + ".Name", id);
+        double weight = config.getDouble(path + ".Weight", config.getDouble(path + ".Chance"));
+        String rarityId = config.getString(path + ".Rarity", "");
+        Rarity rarity = plugin.getCrateManager().getRarity(rarityId);
+        if (rarity == null) rarity = plugin.getCrateManager().getDefaultRarity();
+
+        boolean broadcast = config.getBoolean(path + ".Broadcast");
+        ItemStack preview = config.getItemEncoded(path + ".Preview");
+        if (preview == null) preview = new ItemStack(Material.BARRIER);
+
+        if (config.contains(path + ".Win_Limits")) {
+            int winLimitAmount = config.getInt(path + ".Win_Limits.Amount", -1);
+            long winLimitCooldown = config.getLong(path + ".Win_Limits.Cooldown", 0L);
+
+            RewardWinLimit winLimit = new RewardWinLimit(winLimitAmount > 0, winLimitAmount, winLimitCooldown, 1);
+            winLimit.write(config, path + ".Win_Limit.Player");
+
+            config.remove(path + ".Win_Limits");
+        }
+
+        RewardWinLimit playerLimit = RewardWinLimit.read(config, path + ".Win_Limit.Player");
+        RewardWinLimit globalLimit = RewardWinLimit.read(config, path + ".Win_Limit.Global");
+
+        List<String> commands = config.getStringList(path + ".Commands");
+        List<ItemStack> items = new ArrayList<>(Stream.of(config.getItemsEncoded(path + ".Items")).toList());
+        Set<String> ignoredPermissions = config.getStringSet(path + ".Ignored_For_Permissions");
+
+        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, playerLimit, globalLimit, preview, items, commands, ignoredPermissions);
+    }
+
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path + ".Name", this.getName());
+        config.set(path + ".Weight", this.getWeight());
+        config.set(path + ".Rarity", this.getRarity().getId());
+        config.set(path + ".Broadcast", this.isBroadcast());
+        this.getPlayerWinLimit().write(config, path + ".Win_Limit.Player");
+        this.getGlobalWinLimit().write(config, path + ".Win_Limit.Global");
+        config.setItemEncoded(path + ".Preview", this.getPreview());
+        config.set(path + ".Commands", this.getCommands());
+        config.setItemsEncoded(path + ".Items", this.getItems());
+        config.set(path + ".Ignored_For_Permissions", this.getIgnoredForPermissions());
     }
 
     @Override
@@ -114,108 +159,214 @@ public class Reward implements Placeholder {
     }
 
     @NotNull
-    public RewardInspector getInspector() {
-        return inspector;
+    public PlaceholderMap getAllPlaceholders() {
+        return placeholderFullMap;
     }
 
-    @NotNull
-    public RewardMainEditor getEditor() {
-        if (this.editor == null) {
-            this.editor = new RewardMainEditor(this);
+    public void loadGlobalWinData() {
+        RewardWinLimit winLimit = this.getGlobalWinLimit();
+        if (!winLimit.isEnabled()) return;
+
+        RewardWinData winData = this.plugin.getData().getRewardWinData(this);
+        if (winData == null/* || winData.isExpired()*/) {
+            winData = RewardWinData.create();
+            //this.plugin.getData().deleteRewardWinData(this);
+            this.plugin.getData().addRewardWinData(this, winData);
         }
-        return this.editor;
+        this.globalWinData = winData;
     }
 
-    public void clear() {
-        if (this.editor != null) {
-            this.editor.clear();
-            this.editor = null;
+    public void saveGlobalWinData() {
+        RewardWinLimit winLimit = this.getGlobalWinLimit();
+        if (!winLimit.isEnabled() || this.globalWinData == null) return;
+
+        this.plugin.getData().saveRewardWinData(this, this.globalWinData);
+    }
+
+    public void resetGlobalWinData() {
+        this.plugin.getData().deleteRewardWinData(this);
+
+        this.loadGlobalWinData();
+    }
+
+    public boolean hasContent() {
+        return !this.getItems().isEmpty() || !this.getCommands().isEmpty();
+    }
+
+    public int getWinsAmountLeft(@NotNull Player player) {
+        RewardWinLimit globalLimit = this.getGlobalWinLimit();
+        RewardWinLimit playerLimit = this.getPlayerWinLimit();
+
+        int globalLeft = globalLimit.getAmount();
+        int playerLeft = playerLimit.getAmount();
+
+        if (globalLimit.isEnabled() && !globalLimit.isUnlimitedAmount()) {
+            if (this.globalWinData != null) {
+                if (this.globalWinData.isOut(globalLimit)) return 0;
+
+                globalLeft = Math.max(0, globalLimit.getAmount() - this.globalWinData.getAmount());
+            }
         }
+        else globalLeft = -1;
+
+        if (playerLimit.isEnabled() && !playerLimit.isUnlimitedAmount()) {
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            RewardWinData winData = user.getWinData(this);
+            if (winData != null) {
+                if (winData.isOut(playerLimit)) return 0;
+
+                playerLeft = Math.max(0, playerLimit.getAmount() - winData.getAmount());
+            }
+        }
+        else playerLeft = -1;
+
+        if (globalLeft < 0 || playerLeft < 0) {
+            return Math.max(playerLeft, globalLeft);
+        }
+
+        return Math.min(playerLeft, globalLeft);
+    }
+
+    public long getWinCooldown(@NotNull Player player) {
+        RewardWinLimit globalLimit = this.getGlobalWinLimit();
+        RewardWinLimit playerLimit = this.getPlayerWinLimit();
+
+        long globalLeft = 0L;
+        long playerLeft = 0L;
+
+        if (globalLimit.isEnabled()) {
+            if (this.globalWinData != null && this.globalWinData.isOnCooldown()) {
+                globalLeft = this.globalWinData.getExpireDate();
+            }
+        }
+
+        if (playerLimit.isEnabled()) {
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            RewardWinData winData = user.getWinData(this);
+            if (winData != null && winData.isOnCooldown()) {
+                playerLeft = winData.getExpireDate();
+            }
+        }
+
+        return Math.max(playerLeft, globalLeft);
+    }
+
+    public boolean isRollable() {
+        return this.getWeight() > 0D;
+    }
+
+    public boolean hasBadPermissions(@NotNull Player player) {
+        return this.getIgnoredForPermissions().stream().anyMatch(player::hasPermission);
     }
 
     public boolean canWin(@NotNull Player player) {
-        if (this.getIgnoredForPermissions().stream().anyMatch(player::hasPermission)) {
-            return false;
+        if (this.hasBadPermissions(player)) return false;
+
+        RewardWinLimit globalLimit = this.getGlobalWinLimit();
+        if (globalLimit.isEnabled()) {
+            if (this.globalWinData != null && (this.globalWinData.isOut(globalLimit) || this.globalWinData.isOnCooldown())) {
+                return false;
+            }
         }
-        if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
-            CrateUser user = plugin().getUserManager().getUserData(player);
-            UserRewardData winLimit = user.getRewardWinLimit(this);
-            if (winLimit == null) return true;
-            return winLimit.isExpired() && !winLimit.isDrained(this);
+
+        RewardWinLimit playerLimit = this.getPlayerWinLimit();
+        if (playerLimit.isEnabled()) {
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            RewardWinData winData = user.getWinData(this);
+
+            return winData == null || (!winData.isOut(playerLimit) && !winData.isOnCooldown());
         }
         return true;
     }
 
     public void giveContent(@NotNull Player player) {
-        UnaryOperator<String> papi = str -> EngineUtils.hasPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, str) : str;
+        UnaryOperator<String> papi = str -> Plugins.hasPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, str) : str;
         UnaryOperator<String> inter = PlaceholderMap.fusion(this.getCrate().getPlaceholders(), this.getPlaceholders()).replacer();
+        UnaryOperator<String> forPlayer = Placeholders.forPlayer(player);
+        Function<String, String> combo = inter.andThen(forPlayer);
+
+        if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
+            combo = combo.andThen(papi);
+        }
+
+        Function<String, String> replacer = combo;
 
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
 
-            if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
-                ItemUtil.mapMeta(give, meta -> {
-                    if (meta.hasDisplayName()) {
-                        meta.setDisplayName(papi.apply(inter.apply(meta.getDisplayName())));
-                    }
+            ItemUtil.editMeta(give, meta -> {
+                if (meta.hasDisplayName()) {
+                    meta.setDisplayName(replacer.apply(meta.getDisplayName()));
+                }
 
-                    List<String> loreHas = meta.getLore();
-                    if (loreHas != null) {
-                        loreHas.replaceAll(inter);
-                        loreHas.replaceAll(papi);
-                        meta.setLore(loreHas);
-                    }
-                });
-            }
+                List<String> loreHas = meta.getLore();
+                if (loreHas != null) {
+                    loreHas.replaceAll(replacer::apply);
+                    meta.setLore(loreHas);
+                }
+            });
 
-            PlayerUtil.addItem(player, give);
+            Players.addItem(player, give);
         });
 
         this.getCommands().forEach(command -> {
-            PlayerUtil.dispatchCommand(player, inter.apply(command));
+            Players.dispatchCommand(player, inter.apply(command));
         });
     }
 
     public void give(@NotNull Player player) {
         this.giveContent(player);
 
-        this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_INFO)
+        Lang.CRATE_OPEN_REWARD_INFO.getMessage()
             .replace(this.getCrate().replacePlaceholders())
             .replace(this.replacePlaceholders())
             .send(player);
 
         if (this.isBroadcast()) {
-            this.plugin().getMessage(Lang.CRATE_OPEN_REWARD_BROADCAST)
+            Lang.CRATE_OPEN_REWARD_BROADCAST.getMessage()
                 .replace(Placeholders.forPlayer(player))
                 .replace(this.getCrate().replacePlaceholders())
                 .replace(this.replacePlaceholders())
                 .broadcast();
         }
 
-        if (this.isWinLimitedAmount() || this.isWinLimitedCooldown()) {
-            CrateUser user = plugin().getUserManager().getUserData(player);
-            UserRewardData winLimit = user.getRewardWinLimit(this);
-            if (winLimit == null) winLimit = new UserRewardData(0, 0);
+        RewardWinLimit globalLimit = this.getGlobalWinLimit();
+        if (globalLimit.isEnabled() && this.globalWinData != null) {
+            if (!globalLimit.isUnlimitedAmount()) {
+                this.globalWinData.setAmount(globalWinData.getAmount() + 1);
+            }
+            if (globalLimit.hasCooldown() && globalLimit.isCooldownStep(globalWinData.getAmount())) {
+                this.globalWinData.setExpireDate(globalLimit.generateCooldownTimestamp());
+            }
+        }
 
-            if (!player.hasPermission(Perms.BYPASS_REWARD_LIMIT_AMOUNT)) {
-                if (this.isWinLimitedAmount()) winLimit.setAmount(winLimit.getAmount() + 1);
+        RewardWinLimit playerLimit = this.getPlayerWinLimit();
+        if (playerLimit.isEnabled()) {
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            RewardWinData rewardData = user.getRewardDataOrCreate(this);
+
+            if (!playerLimit.isUnlimitedAmount() && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_AMOUNT)) {
+                rewardData.setAmount(rewardData.getAmount() + 1);
             }
-            if (!player.hasPermission(Perms.BYPASS_REWARD_LIMIT_COOLDOWN)) {
-                if (this.isWinLimitedCooldown()) {
-                    winLimit.setExpireDate(this.getWinLimitCooldown() < 0 ? -1L : System.currentTimeMillis() + this.getWinLimitCooldown() * 1000L);
-                }
+            if (playerLimit.hasCooldown() && playerLimit.isCooldownStep(rewardData.getAmount()) && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_COOLDOWN)) {
+                rewardData.setExpireDate(playerLimit.generateCooldownTimestamp());
             }
-            user.setRewardWinLimit(this, winLimit);
         }
 
         this.getCrate().setLastReward(this.getName());
 
-        CrateLogger.logReward(player, this);
+        this.plugin.getCrateLogger().logReward(player, this);
     }
 
-    public double getRealChance() {
-        double sum = this.getCrate().getRewards().stream().mapToDouble(Reward::getWeight).sum();
-        return (this.getWeight() / sum) * 100D;
+    @Override
+    public double getRollChance() {
+        Rarity rarity = this.getRarity();
+
+        double sum = this.getCrate().getRewards(rarity).stream().mapToDouble(Reward::getWeight).sum();
+        double rarityChance = rarity.getRollChance();
+        double chance = (this.getWeight() / sum) * (rarityChance / 100D);
+
+        return chance * 100D;
     }
 
     @NotNull
@@ -233,19 +384,21 @@ public class Reward implements Placeholder {
         return this.name;
     }
 
+    @NotNull
+    public String getNameTranslated() {
+        return NightMessage.asLegacy(this.getName());
+    }
+
     public void setName(@NotNull String name) {
-        this.name = Colorizer.apply(name);
+        this.name = (name);
     }
 
-    @Deprecated
-    public double getChance() {
-        return this.getWeight();
-    }
-
+    @Override
     public double getWeight() {
         return this.weight;
     }
 
+    @Override
     public void setWeight(double weight) {
         this.weight = Math.max(0, weight);
     }
@@ -267,32 +420,40 @@ public class Reward implements Placeholder {
         this.broadcast = broadcast;
     }
 
-    public boolean isWinLimitedAmount() {
-        return this.getWinLimitAmount() >= 0;
+    public boolean isOneTimed() {
+        return this.getPlayerWinLimit().isOneTimed() || this.getGlobalWinLimit().isOneTimed();
     }
 
-    public boolean isWinLimitedCooldown() {
-        return this.getWinLimitCooldown() != 0;
+    @NotNull
+    public RewardWinLimit getWinLimit(@NotNull LimitType limitType) {
+        return limitType == LimitType.PLAYER ? this.playerWinLimit : this.globalWinLimit;
     }
 
-    public boolean isWinLimitedOnce() {
-        return this.getWinLimitAmount() == 1 || this.getWinLimitCooldown() < 0;
+    @NotNull
+    public RewardWinLimit getPlayerWinLimit() {
+        return playerWinLimit;
     }
 
-    public int getWinLimitAmount() {
-        return winLimitAmount;
+    public void setPlayerWinLimit(@NotNull RewardWinLimit playerWinLimit) {
+        this.playerWinLimit = playerWinLimit;
     }
 
-    public void setWinLimitAmount(int winLimitAmount) {
-        this.winLimitAmount = winLimitAmount;
+    @NotNull
+    public RewardWinLimit getGlobalWinLimit() {
+        return globalWinLimit;
     }
 
-    public long getWinLimitCooldown() {
-        return winLimitCooldown;
+    public void setGlobalWinLimit(@NotNull RewardWinLimit globalWinLimit) {
+        this.globalWinLimit = globalWinLimit;
     }
 
-    public void setWinLimitCooldown(long winLimitCooldown) {
-        this.winLimitCooldown = winLimitCooldown;
+    @Nullable
+    public RewardWinData getGlobalWinData() {
+        return globalWinData;
+    }
+
+    public void setGlobalWinData(@Nullable RewardWinData globalWinData) {
+        this.globalWinData = globalWinData;
     }
 
     @NotNull

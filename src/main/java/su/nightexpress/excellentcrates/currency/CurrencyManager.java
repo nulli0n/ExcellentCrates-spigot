@@ -2,17 +2,19 @@ package su.nightexpress.excellentcrates.currency;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.integration.VaultHook;
-import su.nexmedia.engine.utils.EngineUtils;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.api.currency.CurrencyHandler;
+import su.nightexpress.excellentcrates.currency.handler.PlayerLevelsHandler;
 import su.nightexpress.excellentcrates.currency.handler.VaultEconomyHandler;
-import su.nightexpress.excellentcrates.currency.handler.XPCurrencyHandler;
+import su.nightexpress.excellentcrates.currency.handler.PlayerXPHandler;
 import su.nightexpress.excellentcrates.currency.impl.CoinsEngineCurrency;
 import su.nightexpress.excellentcrates.currency.impl.ConfigCurrency;
 import su.nightexpress.excellentcrates.hooks.HookId;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.integration.VaultHook;
+import su.nightexpress.nightcore.manager.SimpleManager;
+import su.nightexpress.nightcore.util.Plugins;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,27 +22,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class CurrencyManager extends AbstractManager<ExcellentCratesPlugin> {
-
-    public static final String XP    = "xp";
-    public static final String MONEY = "money";
-    public static final String COINS = "coins";
+public class CurrencyManager extends SimpleManager<CratesPlugin> {
 
     private final Map<String, Currency> currencyMap;
 
-    public CurrencyManager(@NotNull ExcellentCratesPlugin plugin) {
+    public CurrencyManager(@NotNull CratesPlugin plugin) {
         super(plugin);
         this.currencyMap = new HashMap<>();
     }
 
     @Override
     protected void onLoad() {
-        this.registerCurrency(XP, XPCurrencyHandler::new);
+        this.loadCurrency(PlayerXPHandler.ID, PlayerXPHandler::new);
+        this.loadCurrency(PlayerLevelsHandler.ID, PlayerLevelsHandler::new);
 
-        if (EngineUtils.hasVault() && VaultHook.hasEconomy()) {
-            this.registerCurrency(MONEY, VaultEconomyHandler::new);
+        if (Plugins.hasVault() && VaultHook.hasEconomy()) {
+            this.loadCurrency(VaultEconomyHandler.ID, VaultEconomyHandler::new);
         }
-        if (EngineUtils.hasPlugin(HookId.COINS_ENGINE)) {
+        if (Plugins.isInstalled(HookId.COINS_ENGINE)) {
             CoinsEngineCurrency.getCurrencies().forEach(this::registerCurrency);
         }
     }
@@ -50,19 +49,18 @@ public class CurrencyManager extends AbstractManager<ExcellentCratesPlugin> {
         this.currencyMap.clear();
     }
 
-    @Nullable
-    public Currency registerCurrency(@NotNull String id, @NotNull Supplier<CurrencyHandler> supplier) {
-        ConfigCurrency currency = new ConfigCurrency(this.plugin, id, supplier.get());
-        if (!currency.load()) return null;
+    public void loadCurrency(@NotNull String id, @NotNull Supplier<CurrencyHandler> supplier) {
+        FileConfig config = this.plugin.getConfig();
 
-        return this.registerCurrency(currency);
+        ConfigCurrency currency = ConfigCurrency.read(config, "Currency." + id, id, supplier.get());
+        if (!currency.isEnabled()) return;
+
+        this.registerCurrency(currency);
     }
 
-    @NotNull
-    public Currency registerCurrency(@NotNull Currency currency) {
+    public void registerCurrency(@NotNull Currency currency) {
         this.currencyMap.put(currency.getId(), currency);
         this.plugin.info("Registered currency: " + currency.getId());
-        return currency;
     }
 
     public boolean hasCurrency() {

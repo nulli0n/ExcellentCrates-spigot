@@ -1,49 +1,44 @@
 package su.nightexpress.excellentcrates.currency.impl;
 
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.api.currency.CurrencyHandler;
+import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 
 public class ConfigCurrency implements Currency {
 
-    private String    name;
-    private String    format;
-
-    private final ExcellentCratesPlugin plugin;
-    private final String                id;
+    private final boolean         enabled;
+    private final String          id;
+    private final String          name;
+    private final String          format;
     private final CurrencyHandler handler;
-    private final PlaceholderMap placeholderMap;
+    private final PlaceholderMap  placeholderMap;
 
-    public ConfigCurrency(@NotNull ExcellentCratesPlugin plugin, @NotNull String id, @NotNull CurrencyHandler handler) {
-        this.plugin = plugin;
+    public ConfigCurrency(boolean enabled, @NotNull String id, @NotNull String name, @NotNull String format, @NotNull CurrencyHandler handler) {
+        this.enabled = enabled;
         this.id = StringUtil.lowerCaseUnderscore(id);
+        this.name = name;
+        this.format = format;
         this.handler = handler;
-
-        this.placeholderMap = new PlaceholderMap()
-            .add(Placeholders.CURRENCY_ID, this::getId)
-            .add(Placeholders.CURRENCY_NAME, this::getName);
+        this.placeholderMap = Placeholders.forCurrency(this);
     }
 
-    public boolean load() {
-        JYML cfg = this.plugin.getConfig();
-        String path = "Currency." + this.getId();
+    @NotNull
+    public static ConfigCurrency read(@NotNull FileConfig config, @NotNull String path, @NotNull String id, @NotNull CurrencyHandler handler) {
+        boolean enabled = ConfigValue.create(path + ".Enabled", true).read(config);
+        String name = ConfigValue.create(path + ".Name", handler.getDefaultName()).read(config);
+        String format = ConfigValue.create(path + ".Format", handler.getDefaultFormat()).read(config);
 
-        cfg.addMissing(path + ".Enabled", true);
-        cfg.addMissing(path + ".Name", StringUtil.capitalizeUnderscored(this.getId()));
-        cfg.addMissing(path + ".Format", Placeholders.GENERIC_AMOUNT + " " + Placeholders.CURRENCY_NAME);
-        cfg.saveChanges();
+        return new ConfigCurrency(enabled, id, name, format, handler);
+    }
 
-        if (!cfg.getBoolean(path + ".Enabled")) return false;
-
-        this.name = Colorizer.apply(cfg.getString(path + ".Name", StringUtil.capitalizeUnderscored(this.getId())));
-        this.format = Colorizer.apply(cfg.getString(path + ".Format", Placeholders.GENERIC_AMOUNT + " " + Placeholders.CURRENCY_NAME));
-        return true;
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path + ".Name", this.getName());
+        config.set(path + ".Format", this.getFormat());
     }
 
     @Override
@@ -56,6 +51,10 @@ public class ConfigCurrency implements Currency {
     @Override
     public CurrencyHandler getHandler() {
         return handler;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @NotNull

@@ -1,228 +1,228 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.AbstractConfigHolder;
-import su.nexmedia.engine.api.placeholder.Placeholder;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.LocationUtil;
-import su.nexmedia.engine.utils.PDCUtil;
-import su.nexmedia.engine.utils.random.Rnd;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Perms;
-import su.nightexpress.excellentcrates.crate.editor.CrateMainEditor;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffectModel;
+import su.nightexpress.excellentcrates.crate.effect.EffectModel;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
+import su.nightexpress.excellentcrates.hologram.HologramType;
+import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.manager.AbstractFileData;
+import su.nightexpress.nightcore.util.LocationUtil;
+import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
+import su.nightexpress.nightcore.util.random.Rnd;
+import su.nightexpress.nightcore.util.text.NightMessage;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
+import java.io.File;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implements Placeholder {
+public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder {
 
-    private final Map<Currency, Double>         openCostMap;
+    private final Set<CrateKey>                 keys;
     private final Set<Location>                 blockLocations;
     private final Set<Milestone>                milestones;
-    private final CrateInspector                inspector;
-    private final CrateMainEditor               editor;
+    private final Map<Currency, Double>         openCostMap;
     private final LinkedHashMap<String, Reward> rewardMap;
     private final PlaceholderMap                placeholderMap;
+    private final PlaceholderMap                placeholderFullMap;
 
-    private String           name;
-    private String           openingConfig;
-    private String           previewConfig;
-    private boolean          isPermissionRequired;
-    private int              openCooldown;
-    private Set<String>      keyIds;
-    private ItemStack        item;
-    private boolean          milestonesRepeatable;
-    private boolean          pushbackEnabled;
-    private boolean          hologramEnabled;
-    private String           hologramTemplate;
-    private CrateEffectModel effectModel;
-    private UniParticle      effectParticle;
-    private String lastOpener;
-    private String lastReward;
+    private String      name;
+    private String      openingConfig;
+    private String      previewConfig;
+    private boolean     isPermissionRequired;
+    private int         openCooldown;
+    private boolean     keyRequired;
+    private ItemStack   item;
+    private boolean     milestonesRepeatable;
+    private boolean     pushbackEnabled;
+    private boolean     hologramEnabled;
+    private String      hologramTemplate;
+    private double      hologramYOffset;
+    private EffectModel effectModel;
+    private UniParticle effectParticle;
+    private String      lastOpener;
+    private String      lastReward;
 
-    public Crate(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
-        super(plugin, cfg);
-        this.setKeyIds(new HashSet<>());
+    public Crate(@NotNull CratesPlugin plugin, @NotNull File file) {
+        super(plugin, file);
+        this.keys = new HashSet<>();
         this.openCostMap = new HashMap<>();
         this.rewardMap = new LinkedHashMap<>();
         this.blockLocations = new HashSet<>();
         this.milestones = new HashSet<>();
         this.placeholderMap = Placeholders.forCrate(this);
-        this.inspector = new CrateInspector(this);
-        this.editor = new CrateMainEditor(this);
+        this.placeholderFullMap = Placeholders.forCrateAll(this);
     }
 
     @Override
-    public boolean load() {
+    protected boolean onLoad(@NotNull FileConfig config) {
         // Setting migration - start
-        if (cfg.contains("Block.Hologram.Text")) {
-            List<String> holoText = cfg.getStringList("Block.Hologram.Text");
+        if (config.contains("Block.Hologram.Text")) {
+            List<String> holoText = config.getStringList("Block.Hologram.Text");
             var map = Config.CRATE_HOLOGRAM_TEMPLATES.get();
             map.putIfAbsent(this.getId(), holoText);
             Config.CRATE_HOLOGRAM_TEMPLATES.set(map);
             Config.CRATE_HOLOGRAM_TEMPLATES.write(this.plugin.getConfig());
 
             plugin.getConfig().saveChanges();
-            cfg.remove("Block.Hologram.Text");
-            cfg.remove("Block.Hologram.Offset");
-            cfg.set("Block.Hologram.Template", this.getId());
+            config.remove("Block.Hologram.Text");
+            config.remove("Block.Hologram.Offset");
+            config.set("Block.Hologram.Template", this.getId());
         }
         // Setting migration - end
 
-        this.setName(cfg.getString("Name", this.getId()));
-        this.setOpeningConfig(cfg.getString("Animation_Config"));
-        this.setPreviewConfig(cfg.getString("Preview_Config"));
-        this.setPermissionRequired(cfg.getBoolean("Permission_Required"));
+        this.setName(config.getString("Name", this.getId()));
+        this.setOpeningConfig(config.getString("Animation_Config"));
+        this.setPreviewConfig(config.getString("Preview_Config"));
+        this.setPermissionRequired(config.getBoolean("Permission_Required"));
 
-        this.setOpenCooldown(cfg.getInt("Opening.Cooldown"));
+        this.setOpenCooldown(config.getInt("Opening.Cooldown"));
 
-        for (String curId : cfg.getSection("Opening.Cost")) {
+        for (String curId : config.getSection("Opening.Cost")) {
             Currency currency = this.plugin.getCurrencyManager().getCurrency(curId);
             if (currency == null) continue;
 
-            double amount = cfg.getDouble("Opening.Cost." + curId);
+            double amount = config.getDouble("Opening.Cost." + curId);
+            if (amount <= 0D) continue;
+
             this.setOpenCost(currency, amount);
         }
 
-        this.setKeyIds(cfg.getStringSet("Key.Ids"));
-        this.setItem(cfg.getItem("Item"));
+        this.setKeyRequired(ConfigValue.create("Key.Required",
+            true,
+            "Sets whether or not keys are required to open this crate."
+        ).read(config));
 
-        this.setPushbackEnabled(cfg.getBoolean("Block.Pushback.Enabled"));
-        this.setHologramEnabled(cfg.getBoolean("Block.Hologram.Enabled"));
-        this.setHologramTemplate(cfg.getString("Block.Hologram.Template", Placeholders.DEFAULT));
+        config.getStringList("Key.Ids").forEach(keyId -> {
+            CrateKey key = this.plugin.getKeyManager().getKeyById(keyId);
+            if (key == null) {
+                this.plugin.warn("Invalid key '" + keyId + "' in '" + this.getId() + "' crate key requirements. Ignoring...");
+                return;
+            }
+            this.addKey(key);
+        });
 
-        CrateEffectModel model = cfg.getEnum("Block.Effect.Model", CrateEffectModel.class, CrateEffectModel.SIMPLE);
-        UniParticle particle = UniParticle.read(cfg, "Block.Effect.Particle");
+        this.setItem(config.getItem("Item"));
+
+        this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
+        this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
+        this.setHologramTemplate(config.getString("Block.Hologram.Template", Placeholders.DEFAULT));
+        this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", Config.CRATE_HOLOGRAM_HANDLER.get() == HologramType.INTERNAL ? 0 : 0.5));
+
+        EffectModel model = config.getEnum("Block.Effect.Model", EffectModel.class, EffectModel.SIMPLE);
+        UniParticle particle = UniParticle.read(config, "Block.Effect.Particle");
         this.setEffectModel(model);
         this.setEffectParticle(particle);
 
-        this.setLastOpener(cfg.getString("Last_Opener"));
-        this.setLastReward(cfg.getString("Last_Reward"));
+        this.setLastOpener(config.getString("Last_Opener"));
+        this.setLastReward(config.getString("Last_Reward"));
 
-        for (String rewId : cfg.getSection("Rewards.List")) {
-            String path = "Rewards.List." + rewId + ".";
-
-            String rewName = cfg.getString(path + "Name", rewId);
-            double rewChance = cfg.getDouble(path + "Chance");
-            String rewRarityId = cfg.getString(path + "Rarity", "");
-            Rarity rarity = plugin.getCrateManager().getRarity(rewRarityId);
-            if (rarity == null) rarity = plugin.getCrateManager().getMostCommonRarity();
-
-            boolean rBroadcast = cfg.getBoolean(path + "Broadcast");
-            ItemStack rewPreview = cfg.getItemEncoded(path + "Preview");
-            if (rewPreview == null) rewPreview = new ItemStack(Material.BARRIER);
-
-            int winLimitAmount = cfg.getInt(path + "Win_Limits.Amount", -1);
-            long winLimitCooldown = cfg.getLong(path + "Win_Limits.Cooldown", 0L);
-
-            List<String> rewCmds = cfg.getStringList(path + "Commands");
-            List<ItemStack> rewItem = new ArrayList<>(Stream.of(cfg.getItemsEncoded(path + "Items")).toList());
-            Set<String> ignoredForPerms = cfg.getStringSet(path + "Ignored_For_Permissions");
-
-            Reward reward = new Reward(this, rewId, rewName, rewChance, rarity, rBroadcast,
-                winLimitAmount, winLimitCooldown,
-                rewPreview, rewItem, rewCmds, ignoredForPerms);
-            this.rewardMap.put(rewId, reward);
+        for (String sId : config.getSection("Rewards.List")) {
+            Reward reward = Reward.read(this.plugin, this, config, "Rewards.List." + sId, sId);
+            this.rewardMap.put(sId, reward);
         }
 
-        this.setMilestonesRepeatable(cfg.getBoolean("Milestones.Repeatable"));
-        for (String sId : cfg.getSection("Milestones.List")) {
-            this.getMilestones().add(Milestone.read(cfg, "Milestones.List." + sId));
+        this.setMilestonesRepeatable(config.getBoolean("Milestones.Repeatable"));
+        for (String sId : config.getSection("Milestones.List")) {
+            this.getMilestones().add(Milestone.read(this, config, "Milestones.List." + sId));
         }
 
-        this.cfg.saveChanges();
         return true;
     }
 
-    public void loadLocations() {
-        this.getBlockLocations().addAll(LocationUtil.deserialize(cfg.getStringList("Block.Locations")));
-        this.getBlockLocations().removeIf(location -> location.getBlock().isEmpty());
-        this.updateHologram();
+    @Override
+    protected void onSave(@NotNull FileConfig config) {
+        this.writeSettings(config);
+        this.writeLastOpenData(config);
+        this.writeRewards(config);
+        this.writeMilestones(config);
     }
 
-    @Override
-    public void onSave() {
-        cfg.set("Name", this.getName());
-        cfg.set("Animation_Config", this.getOpeningConfig());
-        cfg.set("Preview_Config", this.getPreviewConfig());
-        cfg.set("Permission_Required", this.isPermissionRequired());
+    private void writeSettings(@NotNull FileConfig config) {
+        config.set("Name", this.getName());
+        config.set("Animation_Config", this.getOpeningConfig());
+        config.set("Preview_Config", this.getPreviewConfig());
+        config.set("Permission_Required", this.isPermissionRequired());
 
-        cfg.set("Opening.Cooldown", this.getOpenCooldown());
+        config.set("Opening.Cooldown", this.getOpenCooldown());
+        config.remove("Opening.Cost");
         this.openCostMap.forEach((currency, amount) -> {
-            cfg.set("Opening.Cost." + currency.getId(), amount);
+            config.set("Opening.Cost." + currency.getId(), amount);
         });
 
-        cfg.set("Key.Ids", this.getKeyIds());
-        cfg.setItem("Item", this.getRawItem());
+        config.set("Key.Required", this.isKeyRequired());
+        config.set("Key.Ids", this.getKeyNames());
+        config.setItem("Item", this.getRawItem());
 
-        cfg.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
-        cfg.set("Block.Pushback.Enabled", this.isPushbackEnabled());
-        cfg.set("Block.Hologram.Enabled", this.isHologramEnabled());
-        cfg.set("Block.Hologram.Template", this.getHologramTemplate());
-        cfg.set("Block.Effect.Model", this.getEffectModel().name());
-        cfg.remove("Block.Effect.Particle");
-        this.getEffectParticle().write(cfg, "Block.Effect.Particle");
-        this.writeLastOpenData();
-        this.writeRewards();
+        config.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
+        config.set("Block.Pushback.Enabled", this.isPushbackEnabled());
+        config.set("Block.Hologram.Enabled", this.isHologramEnabled());
+        config.set("Block.Hologram.Template", this.getHologramTemplate());
+        config.set("Block.Hologram.Y_Offset", this.getHologramYOffset());
+        config.set("Block.Effect.Model", this.getEffectModel().name());
+        config.remove("Block.Effect.Particle");
+        this.getEffectParticle().write(config, "Block.Effect.Particle");
+    }
 
-        cfg.set("Milestones.Repeatable", this.isMilestonesRepeatable());
-        cfg.remove("Milestones.List");
+    private void writeLastOpenData(@NotNull FileConfig config) {
+        config.set("Last_Opener", this.getLastOpener());
+        config.set("Last_Reward", this.getLastReward());
+    }
+
+    private void writeRewards(@NotNull FileConfig config) {
+        config.remove("Rewards.List");
+        this.rewardMap.forEach((id, reward) -> {
+            reward.write(config, "Rewards.List." + id);
+        });
+    }
+
+    private void writeMilestones(@NotNull FileConfig config) {
+        config.set("Milestones.Repeatable", this.isMilestonesRepeatable());
+        config.remove("Milestones.List");
         int i = 0;
         for (Milestone milestone : this.getMilestones()) {
-            milestone.write(cfg, "Milestones.List." + (i++));
+            milestone.write(config, "Milestones.List." + (i++));
         }
     }
 
-    private void writeLastOpenData() {
-        cfg.set("Last_Opener", this.getLastOpener());
-        cfg.set("Last_Reward", this.getLastReward());
-    }
-
-    private void writeRewards() {
-        cfg.remove("Rewards.List");
-        for (Entry<String, Reward> e : this.getRewardsMap().entrySet()) {
-            Reward reward = e.getValue();
-            String path = "Rewards.List." + e.getKey() + ".";
-
-            cfg.set(path + "Name", reward.getName());
-            cfg.set(path + "Chance", reward.getWeight());
-            cfg.set(path + "Rarity", reward.getRarity().getId());
-            cfg.set(path + "Broadcast", reward.isBroadcast());
-            cfg.set(path + "Win_Limits.Amount", reward.getWinLimitAmount());
-            cfg.set(path + "Win_Limits.Cooldown", reward.getWinLimitCooldown());
-            cfg.setItemEncoded(path + "Preview", reward.getPreview());
-            cfg.set(path + "Commands", reward.getCommands());
-            cfg.setItemsEncoded(path + "Items", reward.getItems());
-            cfg.set(path + "Ignored_For_Permissions", reward.getIgnoredForPermissions());
-        }
+    public void saveSettings() {
+        this.saveSection(this::writeSettings);
     }
 
     public void saveRewards() {
-        this.writeRewards();
-        this.getConfig().saveChanges();
+        this.saveSection(this::writeRewards);
+    }
+
+    public void saveMilestones() {
+        this.saveSection(this::writeMilestones);
     }
 
     public void saveLastOpenData() {
-        this.writeLastOpenData();
-        this.getConfig().saveChanges();
+        this.saveSection(this::writeLastOpenData);
+    }
+
+    private void saveSection(@NotNull Consumer<FileConfig> consumer) {
+        FileConfig config = this.getConfig();
+
+        consumer.accept(config);
+        config.saveChanges();
     }
 
     @Override
@@ -231,21 +231,32 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
         return this.placeholderMap;
     }
 
+    @NotNull
+    public PlaceholderMap getAllPlaceholders() {
+        return placeholderFullMap;
+    }
+
+    public void loadLocations() {
+        this.getBlockLocations().addAll(LocationUtil.deserialize(this.getConfig().getStringList("Block.Locations")));
+        this.getBlockLocations().removeIf(location -> location.getBlock().isEmpty());
+        this.updateHologram();
+    }
+
+    public void loadRewardWinDatas() {
+        this.getRewards().forEach(Reward::loadGlobalWinData);
+    }
+
+    public void saveRewardWinDatas() {
+        this.getRewards().forEach(Reward::saveGlobalWinData);
+    }
+
+    public void deleteRewardWinDatas() {
+        this.plugin.getData().deleteRewardWinData(this);
+    }
+
     public void clear() {
         this.removeHologram();
-        if (this.editor != null) this.editor.clear();
-        this.rewardMap.values().forEach(Reward::clear);
         this.rewardMap.clear();
-    }
-
-    @NotNull
-    public CrateInspector getInspector() {
-        return this.inspector;
-    }
-
-    @NotNull
-    public CrateMainEditor getEditor() {
-        return this.editor;
     }
 
     public void createHologram() {
@@ -269,8 +280,54 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
         this.createHologram();
     }
 
-    public boolean isKeyRequired() {
-        return !this.getKeyIds().isEmpty();
+    public boolean hasRewards() {
+        return !this.getRewards().isEmpty();
+    }
+
+    public boolean isGoodKey(@NotNull CrateKey key) {
+        return this.getKeys().contains(key);
+    }
+
+    public boolean isAllPhysicalKeys() {
+        return this.getKeys().stream().noneMatch(CrateKey::isVirtual);
+    }
+
+    public boolean isAllVirtualKeys() {
+        return this.getKeys().stream().allMatch(CrateKey::isVirtual);
+    }
+
+    public boolean hasValidPreview() {
+        String name = this.getPreviewConfig();
+        if (name == null) return true;
+
+        return this.plugin.getCrateManager().getPreview(name) != null;
+    }
+
+    public boolean hasValidOpening() {
+        String name = this.getOpeningConfig();
+        if (name == null) return true;
+
+        return this.plugin.getOpeningManager().getInventoryOpening(name) != null;
+    }
+
+    public boolean hasValidHologram() {
+        String id = this.getHologramTemplate();
+
+        return Config.CRATE_HOLOGRAM_TEMPLATES.get().containsKey(id);
+    }
+
+    public boolean hasOpenCost() {
+        return !this.openCostMap.isEmpty();
+    }
+
+    public boolean hasPermission(@NotNull Player player) {
+        if (!this.isPermissionRequired()) return true;
+
+        return player.hasPermission(this.getPermission());
+    }
+
+    public boolean hasCostBypassPermisssion(@NotNull Player player) {
+        return player.hasPermission(Perms.BYPASS_CRATE_OPEN_COST) || player.hasPermission(this.getCostBypassPermission());
     }
 
     @NotNull
@@ -279,34 +336,67 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
     }
 
     @NotNull
+    public String getCostBypassPermission() {
+        return Perms.PREFIX_BYPASS_OPEN_COST + this.getId();
+    }
+
+    @NotNull
     public List<String> getHologramText() {
         List<String> text = new ArrayList<>(Config.CRATE_HOLOGRAM_TEMPLATES.get().getOrDefault(this.getHologramTemplate(), Collections.emptyList()));
         text.replaceAll(this.replacePlaceholders());
-        return text;
+        return NightMessage.asLegacy(text);
     }
 
-    public boolean hasPermission(@NotNull Player player) {
-        return !this.isPermissionRequired() || (player.hasPermission(this.getPermission()));
+    public boolean hasRewards(@NotNull Player player) {
+        return this.hasRewards(player, null);
+    }
+
+    public boolean hasRewards(@NotNull Rarity rarity) {
+        return this.hasRewards(null, rarity);
+    }
+
+    public boolean hasRewards(@Nullable Player player, @Nullable Rarity rarity) {
+        return !this.getRewards(player, rarity).isEmpty();
     }
 
     @NotNull
     public Reward rollReward() {
-        return this.rollReward(null);
+        return this.rollReward(null, null);
     }
 
     @NotNull
-    public Reward rollReward(@Nullable Player player) {
-        Collection<Reward> allRewards = player == null ? this.getRewards() : this.getRewards(player);
+    public Reward rollReward(@NotNull Rarity rarity) {
+        return this.rollReward(null, rarity);
+    }
 
-        Map<Rarity, Double> rarities = new HashMap<>();
-        allRewards.stream().map(Reward::getRarity).forEach(rarity -> {
-            rarities.putIfAbsent(rarity, rarity.getChance());
-        });
+    @NotNull
+    public Reward rollReward(@NotNull Player player) {
+        return this.rollReward(player, null);
+    }
 
-        Rarity rarity = Rnd.getByWeight(rarities);
+    @NotNull
+    public Reward rollReward(@Nullable Player player, @Nullable Rarity rarity) {
+        List<Reward> rewards = this.getRewards(player, rarity);
 
+        // If no rarity is specified, we have to select a random one and filter rewards by selected rarity.
+        // Otherwise reward list is already obtained with specified rarity.
+        if (rarity == null) {
+            Map<Rarity, Double> rarities = new HashMap<>();
+            rewards.stream().map(Reward::getRarity).forEach(rarity1 -> {
+                rarities.putIfAbsent(rarity1, rarity1.getWeight());
+            });
+
+            Rarity rarityRoll = Rnd.getByWeight(rarities);
+            rewards.removeIf(reward -> reward.getRarity() != rarityRoll);
+        }
+
+        return this.rollReward(rewards);
+    }
+
+    @NotNull
+    private Reward rollReward(@NotNull Collection<Reward> allRewards) {
         Map<Reward, Double> rewards = new HashMap<>();
-        allRewards.stream().filter(reward -> reward.getRarity() == rarity).forEach(reward -> {
+        allRewards.forEach(reward -> {
             rewards.put(reward, reward.getWeight());
         });
         return Rnd.getByWeight(rewards);
@@ -317,8 +407,13 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
         return this.name;
     }
 
+    @NotNull
+    public String getNameTranslated() {
+        return NightMessage.asLegacy(this.getName());
+    }
+
     public void setName(@NotNull String name) {
-        this.name = Colorizer.apply(name);
+        this.name = name;
     }
 
     @Nullable
@@ -361,20 +456,41 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
     }
 
     public double getOpenCost(@NotNull Currency currency) {
-        return this.getOpenCostMap().getOrDefault(currency, 0D);
+        return this.openCostMap.getOrDefault(currency, 0D);
     }
 
     public void setOpenCost(@NotNull Currency currency, double amount) {
-        this.getOpenCostMap().put(currency, amount);
+        this.openCostMap.put(currency, amount);
+    }
+
+    public boolean isKeyRequired() {
+        return keyRequired;
+    }
+
+    public void setKeyRequired(boolean keyRequired) {
+        this.keyRequired = keyRequired;
+    }
+
+    /**
+     * @return A copy of the original set with CrateKey objects.
+     */
+    @NotNull
+    public Set<CrateKey> getKeys() {
+        return new HashSet<>(this.keys);
+    }
+
+    public boolean addKey(@NotNull CrateKey key) {
+        return this.keys.add(key);
+    }
+
+    public void setKeys(@NotNull Set<CrateKey> keys) {
+        this.keys.clear();
+        this.keys.addAll(keys);
     }
 
     @NotNull
-    public Set<String> getKeyIds() {
-        return keyIds;
-    }
-
-    public void setKeyIds(@NotNull Set<String> keyIds) {
-        this.keyIds = new HashSet<>(keyIds.stream().filter(Predicate.not(String::isEmpty)).map(String::toLowerCase).toList());
+    public Set<String> getKeyNames() {
+        return this.keys.stream().map(CrateKey::getId).collect(Collectors.toSet());
     }
 
     @NotNull
@@ -385,7 +501,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
     @NotNull
     public ItemStack getItem() {
         ItemStack item = this.getRawItem();
-        PDCUtil.set(item, Keys.CRATE_ID, this.getId());
+        PDCUtil.set(item, Keys.crateId, this.getId());
         return item;
     }
 
@@ -431,12 +547,20 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
         this.hologramTemplate = hologramTemplate.toLowerCase();
     }
 
+    public double getHologramYOffset() {
+        return hologramYOffset;
+    }
+
+    public void setHologramYOffset(double hologramYOffset) {
+        this.hologramYOffset = hologramYOffset;
+    }
+
     @NotNull
-    public CrateEffectModel getEffectModel() {
+    public EffectModel getEffectModel() {
         return effectModel;
     }
 
-    public void setEffectModel(@NotNull CrateEffectModel effectModel) {
+    public void setEffectModel(@NotNull EffectModel effectModel) {
         this.effectModel = effectModel;
     }
 
@@ -469,7 +593,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
 
     @NotNull
     public LinkedHashMap<String, Reward> getRewardsMap() {
-        return this.rewardMap;
+        return new LinkedHashMap<>(this.rewardMap);
     }
 
     @NotNull
@@ -479,43 +603,44 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
 
     @NotNull
     public List<Reward> getRewards(@NotNull Rarity rarity) {
-        return this.getRewards().stream().filter(reward -> reward.getRarity() == rarity).toList();
+        return this.getRewards(null, rarity);
     }
 
     @NotNull
     public List<Reward> getRewards(@NotNull Player player) {
-        return this.getRewards().stream().filter(reward -> reward.canWin(player)).toList();
+        return this.getRewards(player, null);
     }
 
     @NotNull
-    public List<Reward> getRewards(@NotNull Player player, @NotNull Rarity rarity) {
-        return this.getRewards().stream().filter(reward -> reward.getRarity() == rarity && reward.canWin(player)).toList();
+    public List<Reward> getRewards(@Nullable Player player, @Nullable Rarity rarity) {
+        Predicate<Reward> predicate = reward -> {
+            if (rarity != null && reward.getRarity() != rarity) return false;
+
+            return player == null || reward.canWin(player);
+        };
+
+        return new ArrayList<>(this.getRewards().stream().filter(predicate).toList());
     }
 
     public void setRewards(@NotNull List<Reward> rewards) {
-        this.getRewardsMap().clear();
-        this.getRewardsMap().putAll(rewards.stream().collect(
+        this.rewardMap.clear();
+        this.rewardMap.putAll(rewards.stream().collect(
             Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
     }
 
     @Nullable
     public Reward getReward(@NotNull String id) {
-        return this.getRewardsMap().get(id.toLowerCase());
+        return this.rewardMap.get(id.toLowerCase());
     }
 
     @Nullable
     public Reward getMilestoneReward(int openings) {
         Milestone milestone = this.getMilestone(openings);
-        return milestone == null ? null : this.getMilestoneReward(milestone);
-    }
-
-    @Nullable
-    public Reward getMilestoneReward(@NotNull Milestone milestone) {
-        return this.getReward(milestone.getRewardId());
+        return milestone == null ? null : milestone.getReward();
     }
 
     public void addReward(@NotNull Reward reward) {
-        this.getRewardsMap().put(reward.getId(), reward);
+        this.rewardMap.put(reward.getId(), reward);
     }
 
     public void removeReward(@NotNull Reward reward) {
@@ -523,7 +648,7 @@ public class Crate extends AbstractConfigHolder<ExcellentCratesPlugin> implement
     }
 
     public void removeReward(@NotNull String id) {
-        this.getRewardsMap().remove(id);
+        this.rewardMap.remove(id);
     }
 
     @NotNull

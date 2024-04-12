@@ -7,48 +7,80 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.utils.*;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
+import su.nightexpress.excellentcrates.key.editor.KeyListEditor;
+import su.nightexpress.excellentcrates.key.editor.KeyMainEditor;
+import su.nightexpress.nightcore.manager.AbstractManager;
+import su.nightexpress.nightcore.util.*;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
+public class KeyManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, CrateKey> keysMap;
 
-    public KeyManager(@NotNull ExcellentCratesPlugin plugin) {
+    private KeyListEditor keysEditor;
+    private KeyMainEditor keySettingsEditor;
+
+    public KeyManager(@NotNull CratesPlugin plugin) {
         super(plugin);
         this.keysMap = new HashMap<>();
     }
 
     @Override
     public void onLoad() {
-        this.plugin.getConfigManager().extractResources(Config.DIR_KEYS);
+        this.loadKeys();
 
-        for (JYML cfg : JYML.loadAll(plugin.getDataFolder() + Config.DIR_KEYS, true)) {
-            CrateKey key = new CrateKey(this.plugin, cfg);
-            if (key.load()) {
-                this.keysMap.put(key.getId(), key);
-            }
-            else this.plugin.error("Key not loaded: '" + cfg.getFile().getName() + "'.");
+        this.keysEditor = new KeyListEditor(this.plugin);
+        this.keySettingsEditor = new KeyMainEditor(this.plugin);
+
+        this.addListener(new KeyListener(this.plugin, this));
+    }
+
+    private void loadKeys() {
+        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_KEYS, true)) {
+            this.loadKey(new CrateKey(this.plugin, file));
         }
-        this.plugin.info("Loaded " + this.getKeysMap().size() + " crate keys.");
+        this.plugin.info("Loaded " + this.keysMap.size() + " crate keys.");
+    }
 
-        this.addListener(new KeyListener(this));
+    private void loadKey(@NotNull CrateKey crateKey) {
+        if (crateKey.load()) {
+            this.keysMap.put(crateKey.getId(), crateKey);
+        }
+        else this.plugin.error("Key not loaded: '" + crateKey.getFile().getName() + "'.");
     }
 
     @Override
     public void onShutdown() {
-        this.getKeys().forEach(CrateKey::clear);
-        this.getKeysMap().clear();
+        if (this.keysEditor != null) this.keysEditor.clear();
+        if (this.keySettingsEditor != null) this.keySettingsEditor.clear();
+
+        this.keysMap.clear();
+    }
+
+    @NotNull
+    public KeyListEditor getKeysEditor() {
+        return keysEditor;
+    }
+
+    @NotNull
+    public KeyMainEditor getKeySettingsEditor() {
+        return keySettingsEditor;
+    }
+
+    public void openKeysEditor(@NotNull Player player) {
+        this.getKeysEditor().open(player);
+    }
+
+    public void openKeyEditor(@NotNull Player player, @NotNull CrateKey key) {
+        this.getKeySettingsEditor().open(player, key);
     }
 
     public boolean create(@NotNull String id) {
@@ -57,28 +89,28 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
             return false;
         }
 
-        JYML cfg = new JYML(this.plugin.getDataFolder() + Config.DIR_KEYS, id + ".yml");
-        CrateKey key = new CrateKey(this.plugin, cfg);
-        key.setName(Colors.LIME + StringUtil.capitalizeFully(id) + " Key");
+        File file = new File(plugin.getDataFolder() + Config.DIR_KEYS, id + ".yml");
+        FileUtil.create(file);
+
+        CrateKey key = new CrateKey(this.plugin, file);
+        key.setName(StringUtil.capitalizeFully(id) + " Key");
         key.setVirtual(false);
 
         ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
-        ItemUtil.mapMeta(item, meta -> {
+        ItemUtil.editMeta(item, meta -> {
             meta.setDisplayName(key.getName());
         });
 
         key.setItem(item);
         key.save();
-        key.load();
 
-        this.getKeysMap().put(key.getId(), key);
+        this.loadKey(key);
         return true;
     }
 
     public boolean delete(@NotNull CrateKey crateKey) {
         if (crateKey.getFile().delete()) {
-            crateKey.clear();
-            this.getKeysMap().remove(crateKey.getId());
+            this.keysMap.remove(crateKey.getId());
             return true;
         }
         return false;
@@ -94,7 +126,7 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
 
     @NotNull
     public Map<String, CrateKey> getKeysMap() {
-        return this.keysMap;
+        return Collections.unmodifiableMap(this.keysMap);
     }
 
     @NotNull
@@ -104,33 +136,30 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
 
     @NotNull
     public List<String> getKeyIds() {
-        return new ArrayList<>(this.getKeysMap().keySet());
+        return new ArrayList<>(this.keysMap.keySet());
     }
 
     @Nullable
     public CrateKey getKeyById(@NotNull String id) {
-        return this.getKeysMap().get(id.toLowerCase());
+        return this.keysMap.get(id.toLowerCase());
     }
 
     @Nullable
     public CrateKey getKeyByItem(@NotNull ItemStack item) {
-        String id = PDCUtil.getString(item, Keys.CRATE_KEY_ID).orElse(null);
+        String id = PDCUtil.getString(item, Keys.keyId).orElse(null);
         return id == null ? null : this.getKeyById(id);
     }
 
     @NotNull
-    public Set<CrateKey> getKeys(@NotNull Crate crate) {
-        return crate.getKeyIds().stream().map(this::getKeyById).filter(Objects::nonNull).collect(Collectors.toSet());
-    }
-
-    @NotNull
     public Set<CrateKey> getKeys(@NotNull Player player, @NotNull Crate crate) {
-        return this.getKeys(crate).stream().filter(key -> this.hasKey(player, key)).collect(Collectors.toSet());
+        Set<CrateKey> keys = crate.getKeys();
+        keys.removeIf(key -> !this.hasKey(player, crate));
+        return keys;
     }
 
     @Nullable
     public ItemStack getFirstKeyStack(@NotNull Player player, @NotNull CrateKey key) {
-        Predicate<ItemStack> predicate = this.getStackPredicate(key);
+        Predicate<ItemStack> predicate = this.getItemStackPredicate(key);
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && !item.getType().isAir() && predicate.test(item)) {
                 return item;
@@ -143,18 +172,17 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
         return this.getKeyByItem(item) != null;
     }
 
-    public boolean isKey(@NotNull ItemStack item, @NotNull CrateKey other) {
-        CrateKey key = this.getKeyByItem(item);
-        return key != null && key.getId().equalsIgnoreCase(other.getId());
+    public boolean isKey(@NotNull ItemStack item, @NotNull CrateKey key) {
+        return this.getItemStackPredicate(key).test(item);
     }
 
     public boolean isKey(@NotNull ItemStack item, @NotNull Crate crate) {
         CrateKey key = this.getKeyByItem(item);
-        return key != null && crate.getKeyIds().contains(key.getId());
+        return key != null && crate.isGoodKey(key);
     }
 
     public int getKeysAmount(@NotNull Player player, @NotNull Crate crate) {
-        return this.getKeys(crate).stream().mapToInt(key -> this.getKeysAmount(player, key)).sum();
+        return crate.getKeys().stream().mapToInt(key -> this.getKeysAmount(player, key)).sum();
     }
 
     public int getKeysAmount(@NotNull Player player, @NotNull CrateKey key) {
@@ -162,11 +190,11 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
             CrateUser user = plugin.getUserManager().getUserData(player);
             return user.getKeys(key.getId());
         }
-        return PlayerUtil.countItem(player, this.getStackPredicate(key));
+        return Players.countItem(player, this.getItemStackPredicate(key));
     }
 
     public boolean hasKey(@NotNull Player player, @NotNull Crate crate) {
-        return this.getKeys(crate).stream().anyMatch(key -> this.hasKey(player, key));
+        return crate.getKeys().stream().anyMatch(key -> this.hasKey(player, key));
     }
 
     public boolean hasKey(@NotNull Player player, @NotNull CrateKey key) {
@@ -184,7 +212,7 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
             this.giveKey(player, crateKey, amount);
         });
         user.cleanKeysOnHold();
-        this.plugin.getUserManager().saveUser(user);
+        this.plugin.getUserManager().saveAsync(user);
     }
 
     public void setKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
@@ -206,12 +234,12 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
         }
         else {
             ItemStack keyItem = key.getItem();
-            int has = PlayerUtil.countItem(player, keyItem);
+            int has = Players.countItem(player, keyItem);
             if (has > amount) {
-                PlayerUtil.takeItem(player, keyItem, has - amount);
+                Players.takeItem(player, keyItem, has - amount);
             }
             else if (has < amount) {
-                PlayerUtil.addItem(player, keyItem, amount - has);
+                Players.addItem(player, keyItem, amount - has);
             }
         }
         //return true;
@@ -240,8 +268,17 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
         else {
             ItemStack keyItem = key.getItem();
             keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
-            PlayerUtil.addItem(player, keyItem);
+            Players.addItem(player, keyItem);
         }
+    }
+
+    @Nullable
+    public CrateKey takeKey(@NotNull Player player, @NotNull Crate crate) {
+        CrateKey key = this.getKeys(player, crate).stream().findFirst().orElse(null);
+        if (key == null) return null;
+
+        this.takeKey(player, key, 1);
+        return key;
     }
 
     public void takeKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
@@ -262,16 +299,16 @@ public class KeyManager extends AbstractManager<ExcellentCratesPlugin> {
             user.takeKeys(key.getId(), amount);
         }
         else {
-            Predicate<ItemStack> predicate = this.getStackPredicate(key);
-            int has = PlayerUtil.countItem(player, predicate);
+            Predicate<ItemStack> predicate = this.getItemStackPredicate(key);
+            int has = Players.countItem(player, predicate);
             if (has < amount) amount = has;
 
-            PlayerUtil.takeItem(player, predicate, amount);
+            Players.takeItem(player, predicate, amount);
         }
     }
 
     @NotNull
-    private Predicate<ItemStack> getStackPredicate(@NotNull CrateKey key) {
+    private Predicate<ItemStack> getItemStackPredicate(@NotNull CrateKey key) {
         return stack -> this.getKeyByItem(stack) == key;
     }
 }

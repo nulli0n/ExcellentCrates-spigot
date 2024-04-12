@@ -5,26 +5,26 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.api.command.CommandResult;
-import su.nexmedia.engine.api.lang.LangMessage;
-import su.nexmedia.engine.utils.CollectionsUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.nightcore.command.CommandResult;
+import su.nightexpress.nightcore.command.impl.AbstractCommand;
+import su.nightexpress.nightcore.language.message.LangMessage;
+import su.nightexpress.nightcore.util.Players;
 
 import java.util.Arrays;
 import java.util.List;
 
-abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
+abstract class ManageCommand extends AbstractCommand<CratesPlugin> {
 
     protected LangMessage messageNotify;
     protected LangMessage messageDone;
 
-    public ManageCommand(@NotNull ExcellentCratesPlugin plugin, @NotNull String[] aliases, @Nullable Permission permission) {
+    public ManageCommand(@NotNull CratesPlugin plugin, @NotNull String[] aliases, @Nullable Permission permission) {
         super(plugin, aliases, permission);
         this.addFlag(CommandFlags.SILENT, CommandFlags.NO_SAVE);
     }
@@ -43,7 +43,7 @@ abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
     @NotNull
     public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         if (arg == 2) {
-            return CollectionsUtil.playerNames(player);
+            return Players.playerNames(player);
         }
         if (arg == 3) {
             return plugin.getKeyManager().getKeyIds();
@@ -57,13 +57,13 @@ abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
         if (result.length() < 5) {
-            this.printUsage(sender);
+            this.errorUsage(sender);
             return;
         }
 
         CrateKey key = plugin.getKeyManager().getKeyById(result.getArg(3));
         if (key == null) {
-            plugin.getMessage(Lang.CRATE_KEY_ERROR_INVALID).send(sender);
+            Lang.ERROR_INVALID_KEY.getMessage().send(sender);
             return;
         }
 
@@ -78,7 +78,7 @@ abstract class ManageCommand extends AbstractCommand<ExcellentCratesPlugin> {
 
         this.manage(user, key, amount);
         if (!result.hasFlag(CommandFlags.NO_SAVE)) {
-            this.plugin.getUserManager().saveUser(user);
+            this.plugin.getUserManager().saveAsync(user);
         }
 
         Player target = user.getPlayer();

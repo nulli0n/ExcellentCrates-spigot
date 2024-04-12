@@ -2,11 +2,11 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
-import su.nightexpress.excellentcrates.crate.effect.Point3d;
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.excellentcrates.crate.effect.Point3D;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-public class CrateHeartEffect extends CrateEffect {
+public class CrateHeartEffect extends AbstractEffect {
 
     private static final int POINTS = 20;
 
@@ -29,8 +29,8 @@ public class CrateHeartEffect extends CrateEffect {
 
         double realX = isX ? z : x;
         double realZ = isX ? x : z;
-        Point3d point = new Point3d(realX / 25, (y / 25) - 1.8, realZ / 25);
-        Point3d mirrored = new Point3d(isX ? -point.x : point.x, point.y, isX ? point.z : -point.z);
+        Point3D point = new Point3D(realX / 25, (y / 25) - 1.8, realZ / 25);
+        Point3D mirrored = new Point3D(isX ? -point.x : point.x, point.y, isX ? point.z : -point.z);
         particle.play(location.clone().add(point.x, point.y, point.z), 0f, 0f, 1);
         particle.play(location.clone().add(mirrored.x, mirrored.y, mirrored.z), 0f, 0f, 1);
 
