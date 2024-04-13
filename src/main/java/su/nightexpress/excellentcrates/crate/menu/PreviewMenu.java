@@ -1,86 +1,80 @@
 package su.nightexpress.excellentcrates.crate.menu;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.menu.AutoPaged;
-import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.api.menu.click.ClickHandler;
-import su.nexmedia.engine.api.menu.click.ItemClick;
-import su.nexmedia.engine.api.menu.impl.ConfigMenu;
-import su.nexmedia.engine.api.menu.impl.MenuOptions;
-import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.api.menu.link.Linked;
-import su.nexmedia.engine.api.menu.link.ViewLink;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.ItemReplacer;
-import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.TimeUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
-import su.nightexpress.excellentcrates.data.impl.UserRewardData;
+import su.nightexpress.excellentcrates.data.impl.RewardWinData;
 import su.nightexpress.excellentcrates.util.InteractType;
+import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuViewer;
+import su.nightexpress.nightcore.menu.api.AutoFill;
+import su.nightexpress.nightcore.menu.api.AutoFilled;
+import su.nightexpress.nightcore.menu.impl.ConfigMenu;
+import su.nightexpress.nightcore.menu.item.ItemHandler;
+import su.nightexpress.nightcore.menu.item.MenuItem;
+import su.nightexpress.nightcore.menu.link.Linked;
+import su.nightexpress.nightcore.menu.link.ViewLink;
+import su.nightexpress.nightcore.util.ItemReplacer;
+import su.nightexpress.nightcore.util.Lists;
+import su.nightexpress.nightcore.util.NumberUtil;
+import su.nightexpress.nightcore.util.TimeUtil;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements AutoPaged<Reward>, Linked<CrateSource> {
+import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.nightcore.util.text.tag.Tags.*;
+
+public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<Reward>, Linked<CrateSource> {
 
     private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT        = "%win_limit_amount%";
     private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN      = "%win_limit_cooldown%";
-    private static final String PLACEHOLDER_WIN_LIMIT_DRAINED       = "%win_limit_drained%";
+    private static final String PLACEHOLDER_WIN_LIMIT_OUT           = "%win_limit_drained%";
     private static final String PLACEHOLDER_WIN_LIMIT_NO_PERMISSION = "%win_limit_no_permission%";
 
-    private final int[]        rewardSlots;
-    private final String       rewardName;
-    private final List<String> rewardLore;
-    private final List<String> rewardLoreLimitAmount;
-    private final List<String> rewardLoreLimitCoolown;
-    private final List<String> rewardLoreLimitDrained;
-    private final List<String> rewardLoreLimitNoPermission;
-    private final boolean      hideDrainedRewards;
+    private int[]        rewardSlots;
+    private String       rewardName;
+    private List<String> rewardLore;
+    private List<String> rewardLimitAmountLore;
+    private List<String> rewardLimitCoolownLore;
+    private List<String> rewardLimitOutLore;
+    private List<String> rewardLimitBadPermissionLore;
+    private boolean      hideExceededRewards;
+
+    protected final ItemHandler openHandler;
+    protected final ItemHandler milesHandler;
 
     private final ViewLink<CrateSource> viewLink;
 
-    public PreviewMenu(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
-        super(plugin, cfg);
+    public PreviewMenu(@NotNull CratesPlugin plugin, @NotNull FileConfig config) {
+        super(plugin, config);
         this.viewLink = new ViewLink<>();
 
-        this.hideDrainedRewards = cfg.getBoolean("Reward.Hide_Drained_Rewards");
-        this.rewardSlots = cfg.getIntArray("Reward.Slots");
-        this.rewardName = Colorizer.apply(cfg.getString("Reward.Name", Placeholders.REWARD_PREVIEW_NAME));
-        this.rewardLore = cfg.getStringList("Reward.Lore.Default");
-        this.rewardLoreLimitAmount = cfg.getStringList("Reward.Lore.Win_Limit.Amount");
-        this.rewardLoreLimitCoolown = cfg.getStringList("Reward.Lore.Win_Limit.Cooldown");
-        this.rewardLoreLimitDrained = cfg.getStringList("Reward.Lore.Win_Limit.Drained");
-        this.rewardLoreLimitNoPermission = cfg.getStringList("Reward.Lore.Win_Limit.No_Permission");
+        this.addHandler(this.openHandler = new ItemHandler("open", (viewer, event) -> {
+            CrateSource source = this.getLink(viewer);
+            if (!source.hasItem() || !source.hasBlock()) return;
 
-        this.registerHandler(MenuItemType.class)
-            .addClick(MenuItemType.CLOSE, ClickHandler.forClose(this))
-            .addClick(MenuItemType.PAGE_NEXT, ClickHandler.forNextPage(this))
-            .addClick(MenuItemType.PAGE_PREVIOUS, ClickHandler.forPreviousPage(this));
+            Player player = viewer.getPlayer();
 
-        this.registerHandler(Type.class)
-            .addClick(Type.OPEN, (viewer, event) -> {
-                this.plugin.runTask(task -> {
-                    CrateSource source = this.getLink().get(viewer);
-                    Player player = viewer.getPlayer();
-
-                    player.closeInventory();
-                    this.plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
-                });
-            })
-            .addClick(Type.MILESTONES, (viewer, event) -> {
-                this.plugin.runTask(task -> {
-                    Crate crate = this.getLink().get(viewer).getCrate();
-                    this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), crate);
-                });
+            this.runNextTick(() -> {
+                this.plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
             });
+        }));
+
+        this.addHandler(this.milesHandler = new ItemHandler("milestones", (viewer, event) -> {
+            this.runNextTick(() -> {
+                this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), this.getLink(viewer));
+            });
+        }));
 
         this.load();
 
@@ -89,17 +83,69 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
                 ItemReplacer.create(item).readMeta().replacePlaceholderAPI(viewer.getPlayer()).writeMeta();
             });
 
-            if (menuItem.getType() == Type.OPEN) {
+            if (menuItem.getHandler() == this.openHandler) {
                 menuItem.getOptions().setVisibilityPolicy(viewer -> {
-                    CrateSource source = this.getLink().get(viewer);
+                    CrateSource source = this.getLink(viewer);
                     return source.getItem() != null || source.getBlock() != null;
                 });
             }
         });
     }
 
-    private enum Type {
-        MILESTONES, OPEN
+    @Override
+    @NotNull
+    protected MenuOptions createDefaultOptions() {
+        return new MenuOptions(BLACK.enclose(CRATE_NAME), 45, InventoryType.CHEST);
+    }
+
+    @Override
+    @NotNull
+    protected List<MenuItem> createDefaultItems() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    protected void loadAdditional() {
+        this.hideExceededRewards = ConfigValue.create("Reward.Hide_Drained_Rewards",
+            true,
+            "Sets whether or not to hide rewards that player can not win anymore."
+        ).read(cfg);
+
+        this.rewardSlots = ConfigValue.create("Reward.Slots",
+            new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34},
+            "Sets slots to display crate rewards."
+        ).read(cfg);
+
+        this.rewardName = ConfigValue.create("Reward.Name", LIGHT_YELLOW.enclose(BOLD.enclose(REWARD_PREVIEW_NAME))).read(cfg);
+
+        this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
+            REWARD_PREVIEW_LORE,
+            "",
+            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Chance: ") + REWARD_ROLL_CHANCE + "%"),
+            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Rarity: ") + REWARD_RARITY_NAME + " " + LIGHT_GRAY.enclose("(" + WHITE.enclose(REWARD_RARITY_CHANCE + "%") + ")")),
+            "",
+            PLACEHOLDER_WIN_LIMIT_AMOUNT,
+            PLACEHOLDER_WIN_LIMIT_COOLDOWN,
+            PLACEHOLDER_WIN_LIMIT_OUT,
+            PLACEHOLDER_WIN_LIMIT_NO_PERMISSION
+        )).read(cfg);
+
+        this.rewardLimitAmountLore = ConfigValue.create("Reward.Lore.Win_Limit.Amount", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_GREEN.enclose("✔") + " You can win this " + LIGHT_GREEN.enclose(GENERIC_AMOUNT) + " more times.")
+        )).read(cfg);
+
+        this.rewardLimitCoolownLore = ConfigValue.create("Reward.Lore.Win_Limit.Cooldown", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_ORANGE.enclose("[❗]") + " You can win this again in " + LIGHT_ORANGE.enclose(GENERIC_TIME) + ".")
+        )).read(cfg);
+
+        this.rewardLimitOutLore = ConfigValue.create("Reward.Lore.Win_Limit.Drained", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this " + LIGHT_RED.enclose("anymore") + ".")
+        )).read(cfg);
+
+        this.rewardLimitBadPermissionLore = ConfigValue.create("Reward.Lore.Win_Limit.No_Permission", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this.")
+        )).read(cfg);
+
     }
 
     @Override
@@ -108,80 +154,75 @@ public class PreviewMenu extends ConfigMenu<ExcellentCratesPlugin> implements Au
         return this.viewLink;
     }
 
+    public int[] getRewardSlots() {
+        return rewardSlots;
+    }
+
     @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
-        super.onPrepare(viewer, options);
-
-        CrateSource source = this.getLink().get(viewer);
+        CrateSource source = this.getLink(viewer);
 
         options.setTitle(source.getCrate().replacePlaceholders().apply(options.getTitle()));
-        this.getItemsForPage(viewer).forEach(this::addItem);
+        this.autoFill(viewer);
     }
 
     @Override
-    public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
-        super.onClose(viewer, event);
-        this.getLink().clear(viewer);
+    protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
+
     }
 
     @Override
-    public int[] getObjectSlots() {
-        return this.rewardSlots;
-    }
+    public void onAutoFill(@NotNull MenuViewer viewer, @NotNull AutoFill<Reward> autoFill) {
+        Player player = viewer.getPlayer();
+        Crate crate = this.getLink(player).getCrate();
 
-    @Override
-    @NotNull
-    public List<Reward> getObjects(@NotNull Player player) {
-        Crate crate = this.getLink().get(player).getCrate();
+        autoFill.setSlots(this.getRewardSlots());
+        autoFill.setItems((this.hideExceededRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(Reward::isRollable).toList());
+        autoFill.setItemCreator(reward -> {
+            CrateUser user = plugin.getUserManager().getUserData(player);
+            ItemStack item = reward.getPreview();
 
-        return (this.hideDrainedRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(r -> r.getWeight() > 0).toList();
-    }
+            List<String> limitAmountLore = new ArrayList<>();
+            List<String> limitCooldownLore = new ArrayList<>();
+            List<String> limitOutLore = new ArrayList<>();
+            List<String> limitPermissionLore = new ArrayList<>();
+            if (!reward.hasBadPermissions(player)) {
+                RewardWinData playerWinData = user.getWinData(reward);
+                RewardWinData globalWinData = reward.getGlobalWinData();
 
-    @Override
-    @NotNull
-    public ItemStack getObjectStack(@NotNull Player player, @NotNull Reward reward) {
-        CrateUser user = plugin.getUserManager().getUserData(player);
-        Crate crate = this.getLink().get(player).getCrate();
-        ItemStack item = reward.getPreview();
+                boolean playerLimitOut = playerWinData != null && playerWinData.isOut(reward.getPlayerWinLimit());
+                boolean globalLimitOut = globalWinData != null && globalWinData.isOut(reward.getGlobalWinLimit());
+                if (playerLimitOut || globalLimitOut) {
+                    limitOutLore.addAll(this.rewardLimitOutLore);
+                }
+                else {
+                    int amountLeft = reward.getWinsAmountLeft(player);
+                    long expireIn = reward.getWinCooldown(player);
 
-        UserRewardData rewardData = user.getRewardWinLimit(reward);
+                    if (amountLeft > 0) {
+                        limitAmountLore.addAll(this.rewardLimitAmountLore);
+                        limitAmountLore.replaceAll(str -> str.replace(GENERIC_AMOUNT, NumberUtil.format(amountLeft)));
+                    }
+                    if (expireIn != 0L) {
+                        limitCooldownLore.addAll(this.rewardLimitCoolownLore);
+                        limitCooldownLore.replaceAll(str -> str.replace(GENERIC_TIME, TimeUtil.formatDuration(expireIn)));
+                    }
+                }
+            }
+            else {
+                limitPermissionLore.addAll(this.rewardLimitBadPermissionLore);
+            }
 
-        //List<String> lore = new ArrayList<>(this.rewardLore);
-        boolean hasIgnoredPermission = reward.getIgnoredForPermissions().stream().anyMatch(player::hasPermission);
-        boolean hasAmountLimit = rewardData != null && !hasIgnoredPermission && !rewardData.isDrained(reward) && !reward.isWinLimitedAmount();
-        boolean hasCooldown = rewardData != null && !hasIgnoredPermission && !rewardData.isDrained(reward) && !rewardData.isExpired();
-        boolean isDrained = rewardData != null && !hasIgnoredPermission && rewardData.isDrained(reward);
-        //if (rewardData == null || hasIgnoredPermission || rewardData.isDrained(reward) || !reward.isWinLimitedAmount())
-        //    lore.remove(PLACEHOLDER_WIN_LIMIT_AMOUNT);
-
-        //if (rewardData == null || hasIgnoredPermission || rewardData.isDrained(reward) || rewardData.isExpired())
-        //    lore.remove(PLACEHOLDER_WIN_LIMIT_COOLDOWN);
-
-        //if (rewardData == null || hasIgnoredPermission || !rewardData.isDrained(reward)) lore.remove(PLACEHOLDER_WIN_LIMIT_DRAINED);
-        //if (!hasIgnoredPermission) lore.remove(PLACEHOLDER_WIN_LIMIT_NO_PERMISSION);
-
-        int amountLeft = rewardData == null ? reward.getWinLimitAmount() : reward.getWinLimitAmount() - rewardData.getAmount();
-        long expireIn = rewardData == null ? 0L : rewardData.getExpireDate();
-
-        ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).hideFlags().trimmed()
-            .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_AMOUNT, hasAmountLimit ? this.rewardLoreLimitAmount : Collections.emptyList())
-            .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_COOLDOWN, hasCooldown ? this.rewardLoreLimitCoolown : Collections.emptyList())
-            .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_DRAINED, isDrained ? this.rewardLoreLimitDrained : Collections.emptyList())
-            .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_NO_PERMISSION, hasIgnoredPermission ? this.rewardLoreLimitNoPermission : Collections.emptyList())
-            .replace(Placeholders.GENERIC_AMOUNT, () -> NumberUtil.format(amountLeft))
-            .replace(Placeholders.GENERIC_TIME, () -> TimeUtil.formatTimeLeft(expireIn))
-            .replace(reward.getPlaceholders())
-            .replace(crate.getPlaceholders())
-            .replace(Colorizer::apply)
-            .writeMeta();
-        return item;
-    }
-
-    @Override
-    @NotNull
-    public ItemClick getObjectClick(@NotNull Reward reward) {
-        return (viewer, event) -> {
-
-        };
+            ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).hideFlags().trimmed()
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_AMOUNT, limitAmountLore)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_COOLDOWN, limitCooldownLore)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_OUT, limitOutLore)
+                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_NO_PERMISSION, limitPermissionLore)
+                .replace(reward.getPlaceholders())
+                .replace(crate.getPlaceholders())
+                .replacePlaceholderAPI(player)
+                .writeMeta();
+            return item;
+        });
     }
 }

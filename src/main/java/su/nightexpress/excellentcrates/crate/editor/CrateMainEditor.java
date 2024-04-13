@@ -3,76 +3,74 @@ package su.nightexpress.excellentcrates.crate.editor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.menu.impl.EditorMenu;
-import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.FileUtil;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.currency.Currency;
-import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.editor.EditorLocales;
+import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuViewer;
+import su.nightexpress.nightcore.menu.click.ClickResult;
+import su.nightexpress.nightcore.menu.impl.EditorMenu;
+import su.nightexpress.nightcore.util.ItemReplacer;
+import su.nightexpress.nightcore.util.ItemUtil;
+import su.nightexpress.nightcore.util.NumberUtil;
+import su.nightexpress.nightcore.util.Players;
 
-import java.util.List;
+import java.util.HashSet;
 
-public class CrateMainEditor extends EditorMenu<ExcellentCratesPlugin, Crate> {
+public class CrateMainEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor {
 
-    private static final String TEXTURE_REWARDS = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjYzMDI5Y2M4MTY3ODk3ZTY1MzVhM2M1NzM0YmJhYmFmZjE4OGQwOTA1ZjlkOTM1M2FmYWM2MmEwNmRhZGY4NiJ9fX0=";
-    private static final String TEXTURE_PLACEMENT = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTgxZTEyNGEyNzY1YzRiMzIwZDc1NGYwNGUxODA3YWQ3YjNjMjZmZjk1Mzc2ZDBiNDI2M2M0ZTFhZTg0ZTc1OCJ9fX0=";
-    private static final String TEXTURE_MILESTONES = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODE2MjNkNTIzOGRhYjdkZWNkMzIwMjY1Y2FlMWRjNmNhOTFiN2ZhOTVmMzQ2NzNhYWY0YjNhZDVjNmJhMTZlMSJ9fX0=";
+    private static final String TEXTURE_KEYS       = "311790e8005c7f972c469b7b875eab218e0713afe5f2edfd468659910ed622e3";
+    private static final String TEXTURE_REWARDS    = "663029cc8167897e6535a3c5734bbabaff188d0905f9d9353afac62a06dadf86";
+    private static final String TEXTURE_PLACEMENT  = "181e124a2765c4b320d754f04e1807ad7b3c26ff95376d0b4263c4e1ae84e758";
+    private static final String TEXTURE_MILESTONES = "d194a22345d9cdde75168299ad61873bc105e3ae73cd6c9ac02a285291ad0f1b";
 
-    private CratePlacementEditor  placementEditor;
-    private RewardListEditor      rewardsEditor;
-    private CrateMilestonesEditor milestonesEditor;
+    public CrateMainEditor(@NotNull CratesPlugin plugin) {
+        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 54);
 
-    public CrateMainEditor(@NotNull Crate crate) {
-        super(crate.plugin(), crate, Config.EDITOR_TITLE_CRATE.get(), 54);
-
-        this.addReturn(49).setClick((viewer, event) -> {
-            this.plugin.getEditor().getCratesEditor().openNextTick(viewer, 1);
+        this.addReturn(49, (viewer, event, crate) -> {
+            this.runNextTick(() -> this.plugin.getCrateManager().openCratesEditor(viewer.getPlayer()));
         });
 
-        this.addItem(Material.NAME_TAG, EditorLocales.CRATE_NAME, 2).setClick((viewer, event) -> {
-            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, wrapper -> {
+        this.addItem(Material.NAME_TAG, EditorLang.CRATE_DISPLAY_NAME, 2, (viewer, event, crate) -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, (dialog, wrapper) -> {
                 crate.setName(wrapper.getText());
-                crate.save();
+                this.saveSettings(viewer, crate, false);
                 return true;
             });
         });
 
-        this.addItem(Material.ITEM_FRAME, EditorLocales.CRATE_ITEM, 4).setClick((viewer, event) -> {
+        this.addItem(Material.ITEM_FRAME, EditorLang.CRATE_ITEM, 4, (viewer, event, crate) -> {
             ItemStack cursor = event.getCursor();
             if (cursor == null || cursor.getType().isAir()) {
                 if (event.isLeftClick()) {
-                    PlayerUtil.addItem(viewer.getPlayer(), crate.getItem());
+                    Players.addItem(viewer.getPlayer(), crate.getItem());
                 }
                 if (event.isRightClick()) {
-                    PlayerUtil.addItem(viewer.getPlayer(), crate.getRawItem());
+                    Players.addItem(viewer.getPlayer(), crate.getRawItem());
                 }
                 return;
             }
 
             crate.setItem(cursor);
             event.getView().setCursor(null);
-            this.save(viewer);
+            this.saveSettings(viewer, crate, true);
         }).getOptions().setDisplayModifier(((viewer, item) -> {
+            Crate crate = this.getObject(viewer);
             item.setType(crate.getItem().getType());
             item.setItemMeta(crate.getItem().getItemMeta());
-            ItemUtil.mapMeta(item, meta -> {
-                meta.setDisplayName(EditorLocales.CRATE_ITEM.getLocalizedName());
-                meta.setLore(EditorLocales.CRATE_ITEM.getLocalizedLore());
+            ItemUtil.editMeta(item, meta -> {
+                meta.setDisplayName(EditorLang.CRATE_ITEM.getLocalizedName());
+                meta.setLore(EditorLang.CRATE_ITEM.getLocalizedLore());
             });
         }));
 
-        this.addItem(Material.GLOW_ITEM_FRAME, EditorLocales.CRATE_TEMPLATE, 6).setClick((viewer, event) -> {
+        this.addItem(Material.GLOW_ITEM_FRAME, EditorLang.CRATE_PREVIEW_AND_OPENING, 6, (viewer, event, crate) -> {
             if (event.isShiftClick()) {
                 if (event.isLeftClick()) {
                     crate.setPreviewConfig(null);
@@ -81,157 +79,130 @@ public class CrateMainEditor extends EditorMenu<ExcellentCratesPlugin, Crate> {
                     crate.setOpeningConfig(null);
                 }
 
-                this.save(viewer);
+                this.saveSettings(viewer, crate, true);
             }
             else {
                 if (event.isLeftClick()) {
-                    List<String> previews = FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_PREVIEWS, true)
-                        .stream().map(f -> f.getName().replace(".yml", "")).toList();
-
-                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_PREVIEW_CONFIG, wrapper -> {
+                    this.handleInput(viewer, Lang.EDITOR_ENTER_PREVIEW_CONFIG, (dialog, wrapper) -> {
                         crate.setPreviewConfig(wrapper.getTextRaw());
-                        crate.save();
+                        this.saveSettings(viewer, crate, false);
                         return true;
-                    });
-                    EditorManager.suggestValues(viewer.getPlayer(), previews, true);
+                    }).setSuggestions(plugin.getCrateManager().getPreviewNames(), true);
                 }
                 else if (event.isRightClick()) {
-                    this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_ANIMATION_CONFIG, wrapper -> {
+                    this.handleInput(viewer, Lang.EDITOR_ENTER_ANIMATION_CONFIG, (dialog, wrapper) -> {
                         crate.setOpeningConfig(wrapper.getTextRaw());
-                        crate.save();
+                        this.saveSettings(viewer, crate, false);
                         return true;
-                    });
-                    EditorManager.suggestValues(viewer.getPlayer(), plugin.getCrateManager().getOpeningsMap().keySet(), true);
+                    }).setSuggestions(plugin.getOpeningManager().getMenuMap().keySet(), true);
                 }
             }
         });
 
-        this.addItem(Material.BLAZE_ROD, EditorLocales.CRATE_KEYS, 19).setClick((viewer, event) -> {
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_KEYS), EditorLang.CRATE_KEY_REQUIREMENT, 19, (viewer, event, crate) -> {
             if (event.isLeftClick()) {
-                this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_KEY_ID, wrapper -> {
-                    crate.getKeyIds().add(wrapper.getTextRaw());
-                    crate.save();
+                this.handleInput(viewer, Lang.EDITOR_ENTER_KEY_ID, (dialog, wrapper) -> {
+                    CrateKey key = this.plugin.getKeyManager().getKeyById(wrapper.getTextRaw());
+                    if (key != null) {
+                        crate.addKey(key);
+                        this.saveSettings(viewer, crate, false);
+                    }
                     return true;
-                });
-                EditorManager.suggestValues(viewer.getPlayer(), plugin.getKeyManager().getKeyIds(), true);
+                }).setSuggestions(plugin.getKeyManager().getKeyIds(), true);
             }
             else if (event.isRightClick()) {
-                crate.getKeyIds().clear();
-                this.save(viewer);
+                crate.setKeys(new HashSet<>());
+                this.saveSettings(viewer, crate, true);
+            }
+            else if (event.getClick() == ClickType.DROP) {
+                crate.setKeyRequired(!crate.isKeyRequired());
+                this.saveSettings(viewer, crate, true);
             }
         });
 
-        this.addItem(Material.REDSTONE, EditorLocales.CRATE_PERMISSION, 21).setClick((viewer, event) -> {
+        this.addItem(Material.REDSTONE, EditorLang.CRATE_PERMISSION_REQUIREMENT, 21, (viewer, event, crate) -> {
             crate.setPermissionRequired(!crate.isPermissionRequired());
-            this.save(viewer);
+            this.saveSettings(viewer, crate, true);
         }).getOptions().addDisplayModifier((viewer, item) -> {
-            if (!crate.isPermissionRequired()) item.setType(Material.GUNPOWDER);
+            if (!this.getObject(viewer).isPermissionRequired()) item.setType(Material.GUNPOWDER);
         });
 
-        this.addItem(Material.CLOCK, EditorLocales.CRATE_OPEN_COOLDOWN, 23).setClick((viewer, event) -> {
+        this.addItem(Material.CLOCK, EditorLang.CRATE_OPEN_COOLDOWN, 23, (viewer, event, crate) -> {
             if (event.getClick() == ClickType.DROP) {
                 crate.setOpenCooldown(-1);
-                this.save(viewer);
+                this.saveSettings(viewer, crate, true);
                 return;
             }
             if (event.isRightClick()) {
                 crate.setOpenCooldown(0);
-                this.save(viewer);
+                this.saveSettings(viewer, crate, true);
                 return;
             }
-            this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_COOLDOWN, wrapper -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_SECONDS, (dialog, wrapper) -> {
                 crate.setOpenCooldown(wrapper.asAnyInt(0));
-                crate.save();
+                this.saveSettings(viewer, crate, false);
                 return true;
             });
         });
 
-        this.addItem(Material.GOLD_INGOT, EditorLocales.CRATE_OPEN_COST, 25).setClick((viewer, event) -> {
+        this.addItem(Material.GOLD_INGOT, EditorLang.CRATE_OPEN_COST, 25, (viewer, event, crate) -> {
             if (event.getClick() == ClickType.DROP) {
                 crate.getOpenCostMap().clear();
-                this.save(viewer);
+                this.saveSettings(viewer, crate, true);
                 return;
             }
 
-            this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_OPEN_COST, wrapper -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_OPEN_COST, (dialog, wrapper) -> {
                 String[] split = wrapper.getTextRaw().split(" ");
 
                 Currency currency = plugin.getCurrencyManager().getCurrency(split[0]);
                 if (currency == null) return true;
 
-                double amount = split.length >= 2 ? StringUtil.getDouble(split[1], 0D) : 0D;
+                double amount = split.length >= 2 ? NumberUtil.getDouble(split[1], 0D) : 0D;
 
                 crate.setOpenCost(currency, amount);
-                crate.save();
+                this.saveSettings(viewer, crate, false);
                 return true;
-            });
-            EditorManager.suggestValues(viewer.getPlayer(), plugin.getCurrencyManager().getCurrencyIds(), false);
+            }).setSuggestions(plugin.getCurrencyManager().getCurrencyIds(), false);
         });
 
-        this.addItem(ItemUtil.createCustomHead(TEXTURE_PLACEMENT), EditorLocales.CRATE_PLACEMENT_INFO, 38).setClick((viewer, event) -> {
-            this.getPlacementEditor().openNextTick(viewer, 1);
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_PLACEMENT), EditorLang.CRATE_PLACEMENT_INFO, 38, (viewer, event, crate) -> {
+            this.runNextTick(() -> this.plugin.getCrateManager().openPlacementEditor(viewer.getPlayer(), crate));
         });
 
-        this.addItem(ItemUtil.createCustomHead(TEXTURE_REWARDS), EditorLocales.CRATE_REWARDS, 40).setClick((viewer, event) -> {
-            this.getRewardsEditor().openNextTick(viewer.getPlayer(), 1);
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_REWARDS), EditorLang.CRATE_REWARDS, 40, (viewer, event, crate) -> {
+            this.runNextTick(() -> this.plugin.getCrateManager().openRewardsEditor(viewer.getPlayer(), crate));
         });
 
-        this.addItem(ItemUtil.createCustomHead(TEXTURE_MILESTONES), EditorLocales.CRATE_MILESTONES, 42).setClick((viewer, event) -> {
+        this.addItem(ItemUtil.getSkinHead(TEXTURE_MILESTONES), EditorLang.CRATE_MILESTONES, 42, (viewer, event, crate) -> {
             if (event.isRightClick()) {
                 crate.setMilestonesRepeatable(!crate.isMilestonesRepeatable());
-                this.save(viewer);
+                this.saveMilestones(viewer, crate, true);
                 return;
             }
 
-            this.getMilestonesEditor().openNextTick(viewer, 1);
+            this.runNextTick(() -> this.plugin.getCrateManager().openMilestonesEditor(viewer.getPlayer(), crate));
         });
 
-        this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier(((viewer, item) -> {
-                ItemUtil.replace(item, Placeholders.forCrateAll(crate).replacer());
-            }))
-        );
+        this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
+            ItemReplacer.replace(item, this.getObject(viewer).getAllPlaceholders().replacer());
+        }));
     }
 
     @Override
-    public void clear() {
-        super.clear();
-        if (this.rewardsEditor != null) this.rewardsEditor.clear();
-        if (this.milestonesEditor != null) this.milestonesEditor.clear();
-    }
+    protected void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
 
-    @NotNull
-    public CratePlacementEditor getPlacementEditor() {
-        if (this.placementEditor == null) {
-            this.placementEditor = new CratePlacementEditor(this.plugin, this.object);
-        }
-        return this.placementEditor;
-    }
-
-    @NotNull
-    public RewardListEditor getRewardsEditor() {
-        if (this.rewardsEditor == null) {
-            this.rewardsEditor = new RewardListEditor(this.object);
-        }
-        return this.rewardsEditor;
-    }
-
-    @NotNull
-    public CrateMilestonesEditor getMilestonesEditor() {
-        if (this.milestonesEditor == null) {
-            this.milestonesEditor = new CrateMilestonesEditor(this.plugin, this.object);
-        }
-        return milestonesEditor;
-    }
-
-    private void save(@NotNull MenuViewer viewer) {
-        this.object.save();
-        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override
-    public void onClick(@NotNull MenuViewer viewer, @Nullable ItemStack item, @NotNull SlotType slotType, int slot, @NotNull InventoryClickEvent event) {
-        super.onClick(viewer, item, slotType, slot, event);
-        if (slotType == SlotType.PLAYER || slotType == SlotType.PLAYER_EMPTY) {
+    protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
+
+    }
+
+    @Override
+    public void onClick(@NotNull MenuViewer viewer, @NotNull ClickResult result, @NotNull InventoryClickEvent event) {
+        super.onClick(viewer, result, event);
+        if (result.isInventory()) {
             event.setCancelled(false);
         }
     }

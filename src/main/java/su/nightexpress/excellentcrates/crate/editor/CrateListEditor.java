@@ -1,44 +1,38 @@
 package su.nightexpress.excellentcrates.crate.editor;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.menu.AutoPaged;
-import su.nexmedia.engine.api.menu.click.ItemClick;
-import su.nexmedia.engine.api.menu.impl.EditorMenu;
-import su.nexmedia.engine.api.menu.impl.MenuOptions;
-import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.editor.EditorLocales;
+import su.nightexpress.excellentcrates.config.EditorLang;
+import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuViewer;
+import su.nightexpress.nightcore.menu.api.AutoFill;
+import su.nightexpress.nightcore.menu.api.AutoFilled;
+import su.nightexpress.nightcore.menu.impl.EditorMenu;
+import su.nightexpress.nightcore.util.ItemReplacer;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.IntStream;
 
-public class CrateListEditor extends EditorMenu<ExcellentCratesPlugin, CrateManager> implements AutoPaged<Crate> {
+public class CrateListEditor extends EditorMenu<CratesPlugin, CrateManager> implements AutoFilled<Crate> {
 
-    public CrateListEditor(@NotNull CrateManager crateManager) {
-        super(crateManager.plugin(), crateManager, Config.EDITOR_TITLE_CRATE.get(), 45);
+    public CrateListEditor(@NotNull CratesPlugin plugin, @NotNull CrateManager crateManager) {
+        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 45);
 
-        this.addReturn(39).setClick((viewer, event) -> {
-            this.plugin.getEditor().openNextTick(viewer, 1);
+        this.addReturn(39, (viewer, event, manager) -> {
+            this.runNextTick(() -> this.plugin.getCrateManager().openEditor(viewer.getPlayer()));
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
 
-        this.addCreation(EditorLocales.CRATE_CREATE, 41).setClick((viewer, event) -> {
-            this.handleInput(viewer, Lang.EDITOR_CRATE_ENTER_ID, wrapper -> {
-                if (!this.object.create(StringUtil.lowerCaseUnderscore(wrapper.getTextRaw()))) {
-                    EditorManager.error(viewer.getPlayer(), plugin.getMessage(Lang.CRATE_ERROR_EXISTS).getLocalized());
+        this.addCreation(EditorLang.CRATE_CREATE, 41, (viewer, event, manager) -> {
+            this.handleInput(viewer, Lang.EDITOR_ENTER_CRATE_ID, (dialog, input) -> {
+                if (!manager.create(input.getTextRaw())) {
+                    dialog.error(Lang.ERROR_DUPLICATED_CRATE.getMessage());
                     return false;
                 }
                 return true;
@@ -48,44 +42,33 @@ public class CrateListEditor extends EditorMenu<ExcellentCratesPlugin, CrateMana
 
     @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
-        super.onPrepare(viewer, options);
-        this.getItemsForPage(viewer).forEach(this::addItem);
+        this.autoFill(viewer);
     }
 
     @Override
-    public int[] getObjectSlots() {
-        return IntStream.range(0, 36).toArray();
+    protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
+
     }
 
     @Override
-    @NotNull
-    public List<Crate> getObjects(@NotNull Player player) {
-        return this.object.getCrates().stream().sorted(Comparator.comparing(Crate::getId)).toList();
-    }
-
-    @Override
-    @NotNull
-    public ItemStack getObjectStack(@NotNull Player player, @NotNull Crate crate) {
-        ItemStack item = new ItemStack(crate.getItem());
-        ItemUtil.mapMeta(item, meta -> {
-            meta.setDisplayName(EditorLocales.CRATE_OBJECT.getLocalizedName());
-            meta.setLore(EditorLocales.CRATE_OBJECT.getLocalizedLore());
-            meta.addItemFlags(ItemFlag.values());
-            ItemUtil.replace(meta, PlaceholderMap.fusion(crate.getPlaceholders(), crate.getInspector().getPlaceholders()).replacer());
+    public void onAutoFill(@NotNull MenuViewer viewer, @NotNull AutoFill<Crate> autoFill) {
+        autoFill.setSlots(IntStream.range(0, 36).toArray());
+        autoFill.setItems(this.getObject(viewer).getCrates().stream().sorted(Comparator.comparing(Crate::getId)).toList());
+        autoFill.setItemCreator(crate -> {
+            ItemStack item = new ItemStack(crate.getItem());
+            ItemReplacer.create(item).trimmed().hideFlags()
+                .readLocale(EditorLang.CRATE_OBJECT)
+                .replace(crate.getAllPlaceholders())
+                .writeMeta();
+            return item;
         });
-        return item;
-    }
-
-    @Override
-    @NotNull
-    public ItemClick getObjectClick(@NotNull Crate crate) {
-        return (viewer, event) -> {
+        autoFill.setClickAction(crate -> (viewer1, event) -> {
             if (event.isShiftClick() && event.isRightClick()) {
-                this.object.delete(crate);
-                this.openNextTick(viewer, viewer.getPage());
+                this.plugin.getCrateManager().delete(crate);
+                this.flush(viewer1);
                 return;
             }
-            crate.getEditor().openNextTick(viewer, 1);
-        };
+            this.runNextTick(() -> this.plugin.getCrateManager().openCrateEditor(viewer1.getPlayer(), crate));
+        });
     }
 }

@@ -2,28 +2,28 @@ package su.nightexpress.excellentcrates.data.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.data.AbstractUser;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.nightcore.database.AbstractUser;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
+public class CrateUser extends AbstractUser<CratesPlugin> {
+
+    // TODO CrateData class
 
     private final Map<String, Integer>                     keys;
     private final Map<String, Integer>                     keysOnHold;
     private final Map<String, Long>                        openCooldowns;
     private final Map<String, Integer>                     openingsAmount;
-    private final Map<String, Integer>                     milestones;
-    private final Map<String, Map<String, UserRewardData>> rewardWinLimits;
+    private final Map<String, Integer>                    milestones;
+    private final Map<String, Map<String, RewardWinData>> rewardWinLimits;
 
-    private boolean ignoreSync;
-
-    public CrateUser(@NotNull ExcellentCratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
+    public CrateUser(@NotNull CratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
             new HashMap<>(),
             new HashMap<>(),
@@ -35,7 +35,7 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
     }
 
     public CrateUser(
-        @NotNull ExcellentCratesPlugin plugin,
+        @NotNull CratesPlugin plugin,
         @NotNull UUID uuid,
         @NotNull String name,
         long dateCreated,
@@ -46,7 +46,7 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
         @NotNull Map<String, Long> openCooldowns,
         @NotNull Map<String, Integer> openingsAmount,
         @NotNull Map<String, Integer> milestones,
-        @NotNull Map<String, Map<String, UserRewardData>> rewardWinLimits
+        @NotNull Map<String, Map<String, RewardWinData>> rewardWinLimits
     ) {
         super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
@@ -55,14 +55,6 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
         this.openingsAmount = openingsAmount;
         this.milestones = milestones;
         this.rewardWinLimits = rewardWinLimits;
-    }
-
-    public boolean isIgnoreSync() {
-        return ignoreSync;
-    }
-
-    public void setIgnoreSync(boolean ignoreSync) {
-        this.ignoreSync = ignoreSync;
     }
 
     @NotNull
@@ -162,7 +154,6 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
 
     public void setKeys(@NotNull String id, int amount) {
         this.getKeysMap().put(id.toLowerCase(), Math.max(0, amount));
-        //this.saveData(this.plugin);
     }
 
     public int getKeys(@NotNull String id) {
@@ -171,7 +162,6 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
 
     public void addKeysOnHold(@NotNull String id, int amount) {
         this.getKeysOnHold().put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
-        //this.saveData(this.plugin);
     }
 
     public int getKeysOnHold(@NotNull String id) {
@@ -183,26 +173,34 @@ public class CrateUser extends AbstractUser<ExcellentCratesPlugin> {
     }
 
     @NotNull
-    public Map<String, Map<String, UserRewardData>> getRewardWinLimits() {
+    public Map<String, Map<String, RewardWinData>> getRewardWinLimits() {
         return rewardWinLimits;
     }
 
     @Nullable
-    public UserRewardData getRewardWinLimit(@NotNull Reward reward) {
-        return this.getRewardWinLimit(reward.getCrate().getId(), reward.getId());
+    public RewardWinData getWinData(@NotNull Reward reward) {
+        return this.getWinData(reward.getCrate().getId(), reward.getId());
+    }
+
+    @NotNull
+    public RewardWinData getRewardDataOrCreate(@NotNull Reward reward) {
+        Crate crate = reward.getCrate();
+
+        return this.rewardWinLimits.computeIfAbsent(crate.getId().toLowerCase(), k -> new HashMap<>())
+            .computeIfAbsent(reward.getId().toLowerCase(), k -> RewardWinData.create());
     }
 
     @Nullable
-    public UserRewardData getRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
+    public RewardWinData getWinData(@NotNull String crateId, @NotNull String rewardId) {
         return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
             .get(rewardId.toLowerCase());
     }
 
-    public void setRewardWinLimit(@NotNull Reward reward, @NotNull UserRewardData rewardLimit) {
+    public void setRewardWinLimit(@NotNull Reward reward, @NotNull RewardWinData rewardLimit) {
         this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
     }
 
-    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull UserRewardData rewardLimit) {
+    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull RewardWinData rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
             .put(rewardId.toLowerCase(), rewardLimit);
     }

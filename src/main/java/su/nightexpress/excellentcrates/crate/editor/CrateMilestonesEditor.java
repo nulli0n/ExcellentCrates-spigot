@@ -1,112 +1,91 @@
 package su.nightexpress.excellentcrates.crate.editor;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.menu.AutoPaged;
-import su.nexmedia.engine.api.menu.click.ItemClick;
-import su.nexmedia.engine.api.menu.impl.EditorMenu;
-import su.nexmedia.engine.api.menu.impl.MenuOptions;
-import su.nexmedia.engine.api.menu.impl.MenuViewer;
-import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
-import su.nightexpress.excellentcrates.editor.EditorLocales;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuViewer;
+import su.nightexpress.nightcore.menu.api.AutoFill;
+import su.nightexpress.nightcore.menu.api.AutoFilled;
+import su.nightexpress.nightcore.menu.impl.EditorMenu;
+import su.nightexpress.nightcore.util.ItemReplacer;
+import su.nightexpress.nightcore.util.ItemUtil;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.IntStream;
 
-public class CrateMilestonesEditor extends EditorMenu<ExcellentCratesPlugin, Crate> implements AutoPaged<Milestone> {
+public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor, AutoFilled<Milestone> {
 
-    private static final String TEXTURE_INVALID = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=";
+    public CrateMilestonesEditor(@NotNull CratesPlugin plugin) {
+        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 45);
 
-    public CrateMilestonesEditor(@NotNull ExcellentCratesPlugin plugin, @NotNull Crate crate) {
-        super(plugin, crate, Config.EDITOR_TITLE_CRATE.get(), 45);
-
-        this.addReturn(39).setClick((viewer, event) -> {
-            crate.getEditor().openNextTick(viewer, 1);
+        this.addReturn(39, (viewer, event, crate)-> {
+            this.runNextTick(() -> this.plugin.getCrateManager().openCrateEditor(viewer.getPlayer(), crate));
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
 
-        this.addCreation(EditorLocales.MILESTONE_CREATE, 41).setClick((viewer, event) -> {
-            Milestone milestone = new Milestone("null", 0, 0);
+        this.addCreation(EditorLang.MILESTONE_CREATE, 41, (viewer, event, crate) -> {
+            Milestone milestone = new Milestone(crate, "null", 0, 0);
             crate.getMilestones().add(milestone);
-            this.save(viewer);
+            this.saveMilestones(viewer, crate, true);
         });
-    }
-
-    private void save(@NotNull MenuViewer viewer) {
-        this.object.save();
-        this.openNextTick(viewer, viewer.getPage());
     }
 
     @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
-        super.onPrepare(viewer, options);
-        this.getItemsForPage(viewer).forEach(this::addItem);
+        this.autoFill(viewer);
     }
 
     @Override
-    public int[] getObjectSlots() {
-        return IntStream.range(0, 36).toArray();
+    protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
+
     }
 
     @Override
-    @NotNull
-    public List<Milestone> getObjects(@NotNull Player player) {
-        return this.object.getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList();
-    }
-
-    @Override
-    @NotNull
-    public ItemStack getObjectStack(@NotNull Player player, @NotNull Milestone milestone) {
-        Reward reward = this.object.getMilestoneReward(milestone);
-        ItemStack item = new ItemStack(reward == null ? ItemUtil.createCustomHead(TEXTURE_INVALID) : reward.getPreview());
-        ItemUtil.mapMeta(item, meta -> {
-            meta.setDisplayName(EditorLocales.MILESTONE_OBJECT.getLocalizedName());
-            meta.setLore(EditorLocales.MILESTONE_OBJECT.getLocalizedLore());
-            meta.addItemFlags(ItemFlag.values());
-            ItemUtil.replace(meta, milestone.replacePlaceholders());
+    public void onAutoFill(@NotNull MenuViewer viewer, @NotNull AutoFill<Milestone> autoFill) {
+        autoFill.setSlots(IntStream.range(0, 36).toArray());
+        autoFill.setItems(this.getObject(viewer).getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList());
+        autoFill.setItemCreator(milestone -> {
+            Reward reward = milestone.getReward();
+            ItemStack item = new ItemStack(reward == null ? ItemUtil.getSkinHead(Placeholders.SKIN_QUESTION_MARK) : reward.getPreview());
+            ItemReplacer.create(item).readLocale(EditorLang.MILESTONE_OBJECT).hideFlags().trimmed()
+                .replace(milestone.replacePlaceholders())
+                .writeMeta();
+            return item;
         });
-
-        return item;
-    }
-
-    @Override
-    @NotNull
-    public ItemClick getObjectClick(@NotNull Milestone milestone) {
-        return (viewer, event) -> {
-            if (event.isShiftClick()) {
-                if (event.isRightClick()) {
-                    this.object.getMilestones().remove(milestone);
-                    this.save(viewer);
-                    return;
+        autoFill.setClickAction(milestone -> (viewer1, event) -> {
+            this.editObject(viewer1, crate -> {
+                if (event.isShiftClick()) {
+                    if (event.isRightClick()) {
+                        crate.getMilestones().remove(milestone);
+                        this.saveMilestones(viewer, crate, true);
+                        return;
+                    }
                 }
-            }
 
-            if (event.isLeftClick()) {
-                this.handleInput(viewer, Lang.EDITOR_ENTER_AMOUNT, wrapper -> {
-                    milestone.setOpenings(wrapper.asInt());
-                    this.object.save();
-                    return true;
-                });
-            }
-            else if (event.isRightClick()) {
-                EditorManager.suggestValues(viewer.getPlayer(), this.object.getRewardsMap().keySet(), true);
-                this.handleInput(viewer, Lang.EDITOR_MILESTONE_ENTER_REWARD, wrapper -> {
-                    milestone.setRewardId(wrapper.getTextRaw());
-                    this.object.save();
-                    return true;
-                });
-            }
-        };
+                if (event.isLeftClick()) {
+                    this.handleInput(viewer1, Lang.EDITOR_ENTER_AMOUNT, (dialog, wrapper) -> {
+                        milestone.setOpenings(wrapper.asInt());
+                        this.saveMilestones(viewer, crate, false);
+                        return true;
+                    });
+                }
+                else if (event.isRightClick()) {
+                    this.handleInput(viewer1, Lang.EDITOR_ENTER_REWARD_ID, (dialog, wrapper) -> {
+                        milestone.setRewardId(wrapper.getTextRaw());
+                        this.saveMilestones(viewer, crate, false);
+                        return true;
+                    }).setSuggestions(crate.getRewardsMap().keySet(), true);
+                }
+            });
+        });
     }
 }

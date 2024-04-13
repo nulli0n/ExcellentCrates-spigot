@@ -3,39 +3,36 @@ package su.nightexpress.excellentcrates.key;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.manager.AbstractConfigHolder;
-import su.nexmedia.engine.api.placeholder.Placeholder;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.lang.LangManager;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.PDCUtil;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
-import su.nightexpress.excellentcrates.Keys;
+import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.key.editor.KeyMainEditor;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.manager.AbstractFileData;
+import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
+import su.nightexpress.nightcore.util.text.NightMessage;
 
-public class CrateKey extends AbstractConfigHolder<ExcellentCratesPlugin> implements Placeholder {
+import java.io.File;
+
+public class CrateKey extends AbstractFileData<CratesPlugin> implements Placeholder {
 
     private String    name;
-    private boolean   isVirtual;
+    private boolean   virtual;
     private ItemStack item;
-
-    private KeyMainEditor editor;
 
     private final PlaceholderMap placeholderMap;
 
-    public CrateKey(@NotNull ExcellentCratesPlugin plugin, @NotNull JYML cfg) {
-        super(plugin, cfg);
+    public CrateKey(@NotNull CratesPlugin plugin, @NotNull File file) {
+        super(plugin, file);
         this.placeholderMap = Placeholders.forKey(this);
     }
 
     @Override
-    public boolean load() {
-        this.setName(cfg.getString("Name", this.getId()));
-        this.setVirtual(cfg.getBoolean("Virtual"));
-        ItemStack item = cfg.getItem("Item");
+    protected boolean onLoad(@NotNull FileConfig config) {
+        this.setName(config.getString("Name", this.getId()));
+        this.setVirtual(config.getBoolean("Virtual"));
+        ItemStack item = config.getItem("Item");
         if (item.getType().isAir() && !this.isVirtual()) {
             item = new ItemStack(Material.TRIPWIRE_HOOK);
         }
@@ -44,17 +41,10 @@ public class CrateKey extends AbstractConfigHolder<ExcellentCratesPlugin> implem
     }
 
     @Override
-    public void onSave() {
-        cfg.set("Name", this.getName());
-        cfg.set("Virtual", this.isVirtual());
-        cfg.setItem("Item", this.getRawItem());
-    }
-
-    public void clear() {
-        if (this.editor != null) {
-            this.editor.clear();
-            this.editor = null;
-        }
+    protected void onSave(@NotNull FileConfig config) {
+        config.set("Name", this.getName());
+        config.set("Virtual", this.isVirtual());
+        config.setItem("Item", this.getRawItem());
     }
 
     @Override
@@ -64,28 +54,25 @@ public class CrateKey extends AbstractConfigHolder<ExcellentCratesPlugin> implem
     }
 
     @NotNull
-    public KeyMainEditor getEditor() {
-        if (this.editor == null) {
-            this.editor = new KeyMainEditor(this);
-        }
-        return this.editor;
-    }
-
-    @NotNull
     public String getName() {
         return name;
     }
 
+    @NotNull
+    public String getNameTranslated() {
+        return NightMessage.asLegacy(this.getName());
+    }
+
     public void setName(@NotNull String name) {
-        this.name = Colorizer.apply(name);
+        this.name = name;
     }
 
     public boolean isVirtual() {
-        return isVirtual;
+        return virtual;
     }
 
-    public void setVirtual(boolean isVirtual) {
-        this.isVirtual = isVirtual;
+    public void setVirtual(boolean virtual) {
+        this.virtual = virtual;
     }
 
     @NotNull
@@ -96,7 +83,7 @@ public class CrateKey extends AbstractConfigHolder<ExcellentCratesPlugin> implem
     @NotNull
     public ItemStack getItem() {
         ItemStack item = this.getRawItem();
-        PDCUtil.set(item, Keys.CRATE_KEY_ID, this.getId());
+        PDCUtil.set(item, Keys.keyId, this.getId());
         return item;
     }
 

@@ -1,46 +1,61 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.placeholder.Placeholder;
-import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.NumberUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.api.opening.Weighted;
+import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
+import su.nightexpress.nightcore.util.text.NightMessage;
 
-public class Rarity implements Placeholder {
+public class Rarity implements Weighted, Placeholder {
 
-    private final String id;
+    private final CratesPlugin   plugin;
+    private final String         id;
     private final PlaceholderMap placeholderMap;
 
-    private String name;
-    private double chance;
+    private String  name;
+    private double  weight;
+    private boolean isDefault;
 
-    public Rarity(@NotNull String id, @NotNull String name, double chance) {
+    public Rarity(@NotNull CratesPlugin plugin, @NotNull String id, @NotNull String name, double weight, boolean isDefault) {
+        this.plugin = plugin;
         this.id = id.toLowerCase();
         this.setName(name);
-        this.setChance(chance);
+        this.setWeight(weight);
+        this.setDefault(isDefault);
 
-        this.placeholderMap = new PlaceholderMap()
-            .add(Placeholders.RARITY_ID, this::getId)
-            .add(Placeholders.RARITY_NAME, this::getName)
-            .add(Placeholders.RARITY_CHANCE, () -> NumberUtil.format(this.getChance()))
-        ;
+        this.placeholderMap = Placeholders.forRarity(this);
     }
 
     @NotNull
-    public static Rarity read(@NotNull JYML cfg, @NotNull String path, @NotNull String id) {
-        String name = cfg.getString(path + ".Name", StringUtil.capitalizeUnderscored(id));
-        double chance = cfg.getDouble(path + ".Chance", 0D);
+    public static Rarity read(@NotNull CratesPlugin plugin, @NotNull FileConfig config, @NotNull String path, @NotNull String id) {
+        String name = config.getString(path + ".Name", StringUtil.capitalizeUnderscored(id));
+        double weight = config.getDouble(path + ".Weight", config.getDouble(path + ".Chance", 0D));
+        boolean isDefault = ConfigValue.create(path + ".Default", false).read(config);
 
-        return new Rarity(id, name, chance);
+        return new Rarity(plugin, id, name, weight, isDefault);
+    }
+
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path + ".Name", this.getName());
+        config.set(path + ".Weight", this.getWeight());
+        config.set(path + ".Default", this.isDefault());
     }
 
     @Override
     @NotNull
     public PlaceholderMap getPlaceholders() {
         return this.placeholderMap;
+    }
+
+    @Override
+    public double getRollChance() {
+        double sum = this.plugin.getCrateManager().getRarities().stream().mapToDouble(Rarity::getWeight).sum();
+        return (this.getWeight() / sum) * 100D;
     }
 
     @NotNull
@@ -53,15 +68,30 @@ public class Rarity implements Placeholder {
         return name;
     }
 
+    @NotNull
+    public String getNameTranslated() {
+        return NightMessage.asLegacy(this.getName());
+    }
+
     public void setName(@NotNull String name) {
-        this.name = Colorizer.apply(name);
+        this.name = name;
     }
 
-    public double getChance() {
-        return chance;
+    @Override
+    public double getWeight() {
+        return weight;
     }
 
-    public void setChance(double chance) {
-        this.chance = chance;
+    @Override
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public boolean isDefault() {
+        return this.isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        this.isDefault = aDefault;
     }
 }

@@ -2,11 +2,11 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
-import su.nightexpress.excellentcrates.crate.effect.Point3d;
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.excellentcrates.crate.effect.Point3D;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-public class CrateSphereEffect extends CrateEffect {
+public class CrateSphereEffect extends AbstractEffect {
 
     private static final double DELTA_ANGLE = Math.PI / 10.0;
     private static final int NUM_CIRCLES = 8;
@@ -16,8 +16,8 @@ public class CrateSphereEffect extends CrateEffect {
         super(1L, NUM_CIRCLES);
     }
 
-    public static Point3d[] getCircleCoordinates(double radius, int circleIndex) {
-        Point3d[] coordinates = new Point3d[NUM_POINTS];
+    public static Point3D[] getCircleCoordinates(double radius, int circleIndex) {
+        Point3D[] coordinates = new Point3D[NUM_POINTS];
         double angle = circleIndex * DELTA_ANGLE;
         double cosAngle = Math.cos(angle);
         double sinAngle = Math.sin(angle);
@@ -26,16 +26,16 @@ public class CrateSphereEffect extends CrateEffect {
             double x = radius * Math.cos(theta) * cosAngle;
             double y = radius * Math.sin(theta) * cosAngle;
             double z = radius * sinAngle;
-            coordinates[j] = new Point3d(x, y, z);
+            coordinates[j] = new Point3D(x, y, z);
         }
         return coordinates;
     }
 
     @Override
     public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
-        Point3d[] circlePoints = getCircleCoordinates(1D, step);
+        Point3D[] circlePoints = getCircleCoordinates(1D, step);
         for (int j = 0; j < NUM_POINTS; j++) {
-            Point3d point3d = circlePoints[j];
+            Point3D point3d = circlePoints[j];
             particle.play(location.clone().add(point3d.x, point3d.z + 0.2, point3d.y), 0f, 0f, 1);
         }
     }

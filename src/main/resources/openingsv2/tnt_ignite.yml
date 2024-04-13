@@ -1,0 +1,168 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 27
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: NORMAL
+  WinSlots: 17
+  ScriptRunner:
+    OnOpen: []
+    OnStart:
+    - '[play_sound] name:"block_redstone_torch_burnout"'
+    - '[run_animation] id:"torch_light" name:"torch1" delay:"1" slots:"9" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red1" delay:"7" slots:"10" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red2" delay:"10" slots:"11" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red3" delay:"13" slots:"12" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red4" delay:"16" slots:"13" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red5" delay:"19" slots:"14" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red6" delay:"22" slots:"15" mode:"independent" chance:"100.0"'
+    - '[run_animation] id:"redstone_light" name:"red7" delay:"25" slots:"16" mode:"independent" chance:"100.0"'
+    - ''
+    - '[play_sound] name:"entity_tnt_primed" delay:"28"'
+    - '[run_animation] id:"tnt_light" name:"tnt1" delay:"28" slots:"17" mode:"independent" chance:"100.0"'
+    - ''
+    - '[play_sound] name:"entity_generic_explode" delay:"66"'
+    - '[run_animation] id:"web" name:"web1" delay:"65" slots:"17" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web2" delay:"69" slots:"8,26,16" mode:"synchronized" chance:"100.0"'
+    - ''
+    - '[run_animation] id:"powder" name:"powder1" delay:"73" slots:"17" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"powder" name:"powder2" delay:"77" slots:"8,26,16" mode:"synchronized" chance:"100.0"'
+    - ''
+    - '[run_reward] id:"default" name:"r1" delay:"78" slots:"17" mode:"independent" chance:"100.0"'
+    - ''
+    - '[run_animation] id:"web" name:"web3" delay:"77" slots:"7,25,15" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web4" delay:"80" slots:"6,24,14" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web5" delay:"83" slots:"13" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web6" delay:"86" slots:"12" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web7" delay:"89" slots:"11" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web8" delay:"92" slots:"10" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"web" name:"web9" delay:"95" slots:"9" mode:"synchronized" chance:"100.0"'
+    - ''
+    - '[run_animation] id:"panes" name:"panes3" delay:"80" slots:"7,25,15" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes4" delay:"83" slots:"6,24,14" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes5" delay:"86" slots:"13" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes6" delay:"89" slots:"12" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes7" delay:"92" slots:"11" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes8" delay:"95" slots:"10" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"panes" name:"panes9" delay:"98" slots:"9" mode:"synchronized" chance:"100.0"'
+  Selection:
+    AutoRun: false
+    Amount: 3
+    SelectedIcon:
+      Material: CHEST
+
+Content:
+  start:
+    Slots: 9
+    Priority: 10
+    Item:
+      Material: REDSTONE_TORCH
+      Name: <light_red><b>Ignite!</b></light_red>
+    Type: start
+  
+  redstone:
+    Slots: 10,11,12,13,14,15,16
+    Priority: 1
+    Item:
+      Material: REDSTONE
+  
+  tnt:
+    Slots: 17
+    Priority: 1
+    Item:
+      Material: TNT
+  
+  border:
+    Slots: 0,1,2,3,4,5,6,7,8,18,19,20,21,22,23,24,25,26
+    Priority: 1
+    Item:
+      Material: BLACK_STAINED_GLASS_PANE
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+
+Animations:
+  panes:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: BLACK_STAINED_GLASS_PANE
+  
+  torch_light:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: REDSTONE_TORCH
+        Enchants:
+          fortune: 10
+        Item_Flags:
+        - '*'
+  
+  redstone_light:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: REDSTONE
+        Enchants:
+          fortune: 10
+        Item_Flags:
+        - '*'
+  
+  tnt_light:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: TNT
+        Enchants:
+          fortune: 10
+        Item_Flags:
+        - '*'
+  
+  web:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: COBWEB
+  
+  powder:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      s1:
+        Chance: 100.0
+        Material: GUNPOWDER

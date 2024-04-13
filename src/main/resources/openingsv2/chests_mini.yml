@@ -1,0 +1,83 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 27
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: SELECTION
+  WinSlots: 10,11,12,13,14,15,16
+  ScriptRunner:
+    OnOpen: []
+    OnStart:
+    - '[run_animation] id:"background" name:"background" delay:"0" slots:"%unselected_slots%" mode:"independent" chance:"100.0"'
+    - '[run_reward] id:"default" name:"r1" delay:"0" slots:"%selected_slot_0%" mode:"independent" chance:"100.0"'
+  Selection:
+    AutoRun: true
+    Amount: 1
+    SelectedIcon:
+      Material: PLAYER_HEAD
+      SkinURL: 47e0d63f3eccdb9b70ed1fd40db52c2afe570e00d691b14ee7882964e20835c6
+      Name: <light_yellow><b>Selected Chest</b></light_yellow>
+      Lore:
+      - <light_gray>Click to <light_yellow>delesect</light_yellow>.</light_gray>
+
+Content:
+  select:
+    Slots: 10,11,12,13,14,15,16
+    Priority: 10
+    Item:
+      Material: PLAYER_HEAD
+      SkinURL: f98bc63f05f6378bf29ef10e3d82acb3ceb73a720bf80f30bc576d0ad8c40cfb
+      Name: <light_yellow><b>Click to Select!</b></light_yellow>
+      Lore:
+      - <light_gray>You can select and open <light_yellow>one chest</light_yellow>.</light_gray>
+    Type: select
+  
+  background_1:
+    Slots: 3,4,5,12,13,14,21,22,23
+    Priority: 0
+    Item:
+      Material: YELLOW_STAINED_GLASS_PANE
+  
+  background_2:
+    Slots: 1,2,10,11,19,20,6,7,15,16,24,25
+    Priority: 0
+    Item:
+      Material: ORANGE_STAINED_GLASS_PANE
+  
+  background_3:
+    Slots: 0,9,18,8,17,26
+    Priority: 0
+    Item:
+      Material: RED_STAINED_GLASS_PANE
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 60
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 15
+      Amount: 1
+
+Animations:
+  background:
+    Spin_Times: 60
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 15
+      Amount: 1
+    Spin_Sound:
+      Name: BLOCK_NOTE_BLOCK_BELL
+      Volume: 0.6
+      Pitch: 1.0
+    Items:
+      s1:
+        Chance: 50.0
+        Material: YELLOW_STAINED_GLASS_PANE
+      s2:
+        Chance: 50.0
+        Material: RED_STAINED_GLASS_PANE
+      s3:
+        Chance: 50.0
+        Material: ORANGE_STAINED_GLASS_PANE

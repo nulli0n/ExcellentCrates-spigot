@@ -3,26 +3,26 @@ package su.nightexpress.excellentcrates.command.key;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.command.AbstractCommand;
-import su.nexmedia.engine.api.command.CommandResult;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.nightcore.command.CommandResult;
+import su.nightexpress.nightcore.command.impl.AbstractCommand;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-class GiveAllCommand extends AbstractCommand<ExcellentCratesPlugin> {
+class GiveAllCommand extends AbstractCommand<CratesPlugin> {
 
-    public GiveAllCommand(@NotNull ExcellentCratesPlugin plugin) {
+    public GiveAllCommand(@NotNull CratesPlugin plugin) {
         super(plugin, new String[]{"giveall"}, Perms.COMMAND_KEY_GIVE);
-        this.setDescription(plugin.getMessage(Lang.COMMAND_KEY_GIVE_ALL_DESC));
-        this.setUsage(plugin.getMessage(Lang.COMMAND_KEY_GIVE_ALL_USAGE));
+        this.setDescription(Lang.COMMAND_KEY_GIVE_ALL_DESC);
+        this.setUsage(Lang.COMMAND_KEY_GIVE_ALL_USAGE);
         this.addFlag(CommandFlags.SILENT);
     }
 
@@ -41,37 +41,43 @@ class GiveAllCommand extends AbstractCommand<ExcellentCratesPlugin> {
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
         if (result.length() < 4) {
-            this.printUsage(sender);
+            this.errorUsage(sender);
             return;
         }
 
         CrateKey key = plugin.getKeyManager().getKeyById(result.getArg(2));
         if (key == null) {
-            plugin.getMessage(Lang.CRATE_KEY_ERROR_INVALID).send(sender);
+            Lang.ERROR_INVALID_KEY.getMessage().send(sender);
             return;
         }
 
         int amount = Math.abs(result.getInt(3, 1));
-        if (amount <= 0) return;
+        if (amount == 0) return;
 
-        Collection<CrateUser> users = this.plugin.getUserManager().getUsersLoaded();
+        Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers();
+        boolean silent = result.hasFlag(CommandFlags.SILENT);
 
-        users.forEach(user -> {
-            this.plugin.getKeyManager().giveKey(user, key, amount);
+        players.forEach(player -> {
+            this.plugin.getKeyManager().giveKey(player, key, amount);
 
-            Player target = user.getPlayer();
-            if (target != null && !result.hasFlag(CommandFlags.SILENT)) {
-                this.plugin.getMessage(Lang.COMMAND_KEY_GIVE_NOTIFY)
+            if (!silent) {
+                Lang.COMMAND_KEY_GIVE_NOTIFY.getMessage()
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
-                    .send(target);
+                    .send(player);
             }
         });
-        this.plugin.runTaskAsync(task -> {
-            users.forEach(user -> plugin.getData().saveUser(user));
-        });
 
-        this.plugin.getMessage(Lang.COMMAND_KEY_GIVE_ALL_DONE)
+        if (key.isVirtual()) {
+            this.plugin.runTaskAsync(task -> {
+                players.forEach(player -> {
+                    CrateUser user = this.plugin.getUserManager().getUserData(player);
+                    this.plugin.getUserManager().save(user);
+                });
+            });
+        }
+
+        Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage()
             .replace(Placeholders.GENERIC_AMOUNT, amount)
             .replace(key.replacePlaceholders())
             .send(sender);

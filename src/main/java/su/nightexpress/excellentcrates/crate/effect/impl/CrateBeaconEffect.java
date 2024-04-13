@@ -2,9 +2,10 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
-public class CrateBeaconEffect extends CrateEffect {
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
+
+public class CrateBeaconEffect extends AbstractEffect {
 
     public CrateBeaconEffect() {
         super(3L, 40);

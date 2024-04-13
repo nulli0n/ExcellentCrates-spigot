@@ -1,0 +1,67 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 27
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: SELECTION
+  WinSlots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+  ScriptRunner:
+    OnOpen: []
+    OnStart:
+    - '[run_animation] id:"background" name:"background" delay:"0" slots:"%unselected_slots%" mode:"independent" chance:"100.0"'
+    - '[run_reward] id:"default" name:"r1" delay:"0" slots:"%selected_slot_0%" mode:"independent" chance:"100.0"'
+    - '[run_reward] id:"default" name:"r2" delay:"20" slots:"%selected_slot_1%" mode:"independent" chance:"100.0"'
+    - '[run_reward] id:"default" name:"r3" delay:"40" slots:"%selected_slot_2%" mode:"independent" chance:"100.0"'
+  Selection:
+    AutoRun: true
+    Amount: 3
+    SelectedIcon:
+      Material: PLAYER_HEAD
+      SkinURL: 6ed2d4a43d5556d676a53a53851a63ea19ab597668b18d0800fa0fbeacec58f3
+      Name: <light_green><b>Selected Chest</b></light_green>
+      Lore:
+      - <light_gray>Click to <light_green>delesect</light_green>.</light_gray>
+
+Content:
+  select:
+    Slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+    Priority: 10
+    Item:
+      Material: PLAYER_HEAD
+      SkinURL: f98bc63f05f6378bf29ef10e3d82acb3ceb73a720bf80f30bc576d0ad8c40cfb
+      Name: <light_green><b>Click to Select!</b></light_green>
+      Lore:
+      - <light_gray>You can select and open <light_green>3 chests</light_green>.</light_gray>
+    Type: select
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 60
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 15
+      Amount: 1
+
+Animations:
+  background:
+    Spin_Times: 67
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 15
+      Amount: 1
+    Spin_Sound:
+      Name: BLOCK_NOTE_BLOCK_BELL
+      Volume: 0.6
+      Pitch: 1.0
+    Items:
+      s1:
+        Chance: 50.0
+        Material: LIME_STAINED_GLASS_PANE
+      s2:
+        Chance: 50.0
+        Material: GREEN_STAINED_GLASS_PANE
+      s3:
+        Chance: 50.0
+        Material: WHITE_STAINED_GLASS_PANE

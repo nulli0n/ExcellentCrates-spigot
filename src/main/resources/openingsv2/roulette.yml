@@ -1,0 +1,82 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 45
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: NORMAL
+  WinSlots: 20
+  ScriptRunner:
+    OnOpen: []
+    OnStart:
+    - '[run_reward] id:"default" name:"reward1" delay:"0" slots:"39,40,41,33,24,15,5,4,3,11,20,29" mode:"sequental" chance:"100.0"'
+    - '[run_animation] id:"win_arrow1" name:"win_arrow1" delay:"0" slots:"19" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"win_arrow2" name:"win_arrow2" delay:"0" slots:"21" mode:"synchronized" chance:"100.0"'
+    - '[run_animation] id:"fill_black" name:"fill_black" delay:"0" slots:"12,13,14,22,23,30,31,32" mode:"synchronized" chance:"100.0"'
+  Selection:
+    Amount: 1
+    SelectedIcon:
+      Material: ENDER_CHEST
+    AutoRun: false
+
+Content:
+  start:
+    Slots: 12,13,14,21,22,23,30,31,32
+    Priority: 10
+    Item:
+      Material: LIME_STAINED_GLASS_PANE
+      Name: <green><b>Spin!</b></green>
+    Type: start
+  
+  background:
+    Slots: 0,1,2,3,4,5,6,7,8,9,10,11,15,16,17,18,19,20,24,25,26,27,28,29,33,34,35,36,37,38,39,40,41,42,43,44
+    Item:
+      Material: BLACK_STAINED_GLASS_PANE
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 75
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 10
+      Amount: 1
+    Spin_Sound:
+      Name: BLOCK_NOTE_BLOCK_BANJO
+      Volume: 0.9
+      Pitch: 1.0
+
+Animations:
+  fill_black:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      black:
+        Material: BLACK_STAINED_GLASS_PANE
+  
+  win_arrow1:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      black:
+        Material: PLAYER_HEAD
+        Name: <light_red><b>YOUR PRIZE →</b></light_red>
+        SkinURL: a6af217aeddf0f40064969ebb2042f7aeafbc7d0f175a27624133a3befd10281
+  
+  win_arrow2:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Items:
+      black:
+        Material: PLAYER_HEAD
+        Name: <light_red><b>← YOUR PRIZE</b></light_red>
+        SkinURL: 1c5a8aa8a4c03600a2b5a4eb6beb51d590260b095ee1cdaa976b09bdfe5661c6

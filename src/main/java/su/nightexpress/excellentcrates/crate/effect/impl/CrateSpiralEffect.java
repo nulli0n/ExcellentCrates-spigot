@@ -2,10 +2,10 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-public class CrateSpiralEffect extends CrateEffect {
+public class CrateSpiralEffect extends AbstractEffect {
 
     private static final double RADIUS = 1.0;
     private static final double VERTICAL_SPACING = 0.1;

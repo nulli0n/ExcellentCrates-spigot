@@ -11,30 +11,27 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.EngineUtils;
-import su.nexmedia.engine.utils.LocationUtil;
-import su.nexmedia.engine.utils.Pair;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
+import su.nightexpress.nightcore.util.EntityUtil;
+import su.nightexpress.nightcore.util.LocationUtil;
+import su.nightexpress.nightcore.util.Pair;
+import su.nightexpress.nightcore.util.Plugins;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class HologramInternalHandler implements HologramHandler {
 
     //private final ExcellentCrates                               plugin;
     private final Map<String, Pair<Set<Integer>, Set<Integer>>> entityIdMap;
-    private final AtomicInteger                                 entityId;
 
-    public HologramInternalHandler(@NotNull ExcellentCratesPlugin plugin) {
+    public HologramInternalHandler(@NotNull CratesPlugin plugin) {
         //this.plugin = plugin;
         this.entityIdMap = new HashMap<>();
-        this.entityId = new AtomicInteger(0);
     }
 
     @Override
@@ -46,13 +43,6 @@ public class HologramInternalHandler implements HologramHandler {
     public void shutdown() {
         new HashSet<>(this.entityIdMap.keySet()).forEach(this::remove);
         this.entityIdMap.clear();
-        this.entityId.set(0);
-    }
-
-    public int nextEntityId() {
-        this.entityId.compareAndSet(Integer.MIN_VALUE, 0);
-
-        return this.entityId.decrementAndGet();
     }
 
     @Override
@@ -64,12 +54,13 @@ public class HologramInternalHandler implements HologramHandler {
         List<String> text = crate.getHologramText();
         Collections.reverse(text);
 
-        for (Location location : crate.getBlockLocations()) {
+        double yOffset = crate.getHologramYOffset();
 
+        for (Location location : crate.getBlockLocations()) {
             World world = location.getWorld();
             if (world == null || world.getPlayers().isEmpty()) continue;
 
-            double height = location.getBlock().getBoundingBox().getHeight() / 2D;
+            double height = location.getBlock().getBoundingBox().getHeight() / 2D + yOffset;
             Location pos = LocationUtil.getCenter(location.clone()).add(0, height, 0);
 
             for (String line : text) {
@@ -105,7 +96,7 @@ public class HologramInternalHandler implements HologramHandler {
     }
 
     public int spawnHologram(@NotNull World world, @NotNull Location location, @NotNull String name) {
-        int entityID = this.nextEntityId();
+        int entityID = EntityUtil.nextEntityId();
 
         PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
         spawnPacket.getIntegers().write(0, entityID);
@@ -121,10 +112,9 @@ public class HologramInternalHandler implements HologramHandler {
             WrappedDataWatcher metadata = new WrappedDataWatcher();
 
             String text = name;
-            if (EngineUtils.hasPlaceholderAPI()) {
+            if (Plugins.hasPlaceholderAPI()) {
                 text = PlaceholderAPI.setPlaceholders(player, text);
             }
-            text = Colorizer.apply(text);
 
             Optional<?> opt = Optional.of(WrappedChatComponent.fromChatMessage(text)[0].getHandle());
             metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20); //invis
@@ -132,8 +122,6 @@ public class HologramInternalHandler implements HologramHandler {
             metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true); //custom name visible
             metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true); //no gravity
             metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01 | 0x08 | 0x10)); //isSmall, noBasePlate, set Marker
-
-            //metaContainer.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
 
             List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
             metadata.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {

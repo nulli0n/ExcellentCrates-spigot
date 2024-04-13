@@ -3,13 +3,13 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.values.UniParticle;
-import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
+import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
+import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrateTornadoEffect extends CrateEffect {
+public class CrateTornadoEffect extends AbstractEffect {
 
     private static final double Y_OFFSET           = 0.15D;
     private static final float  TORNADO_HEIGHT     = 3.15F;

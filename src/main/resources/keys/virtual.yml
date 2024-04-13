@@ -1,9 +1,0 @@
-Name: '#31eaceVirtual Crate Key'
-Virtual: true
-Item:
-  Material: TRIPWIRE_HOOK
-  Amount: 1
-  Durability: 0
-  Name: '#31eaceVirtual Crate Key'
-  Item_Flags: [ ]
-  Unbreakable: false

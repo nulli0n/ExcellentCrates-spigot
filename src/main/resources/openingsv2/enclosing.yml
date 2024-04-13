@@ -1,0 +1,116 @@
+Settings:
+  Title: <black>Opening %crate_name%</black>
+  Size: 45
+  Inventory_Type: CHEST
+  Auto_Refresh: 0
+  Mode: NORMAL
+  WinSlots: 22
+  ScriptRunner:
+    OnOpen:
+    - '[run_reward] id:"dummy" name:"dummy_1" delay:"0" slots:"0,9,18,27,36,8,17,26,35,44" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_1" delay:"7"'
+    - '[run_animation] id:"fill_black" name:"fill_1" delay:"7" slots:"0,9,18,27,36,8,17,26,35,44" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_2" delay:"0" slots:"1,10,19,28,37,7,16,25,34,43" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_2" delay:"14"'
+    - '[run_animation] id:"fill_black" name:"fill_2" delay:"14" slots:"1,10,19,28,37,7,16,25,34,43" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_3" delay:"0" slots:"2,11,20,29,38,6,15,24,33,42" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_3" delay:"21"'
+    - '[run_animation] id:"fill_gray" name:"fill_3" delay:"21" slots:"2,11,20,29,38,6,15,24,33,42" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_4" delay:"0" slots:"3,5,39,41" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_4" delay:"28"'
+    - '[run_animation] id:"fill_gray" name:"fill_4" delay:"28" slots:"3,5,39,41" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_5" delay:"0" slots:"4,40" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_5" delay:"35"'
+    - '[run_animation] id:"fill_gray" name:"fill_5" delay:"35" slots:"4,40" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_6" delay:"0" slots:"12,21,30,14,23,32" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_6" delay:"42"'
+    - '[run_animation] id:"fill_white" name:"fill_6" delay:"42" slots:"12,21,30,14,23,32" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"dummy" name:"dummy_7" delay:"0" slots:"13,31" mode:"independent" chance:"100.0"'
+    - '[stop_reward] name:"dummy_7" delay:"49"'
+    - '[run_animation] id:"fill_white" name:"fill_7" delay:"49" slots:"13,31" mode:"syncrhonized" chance:"100"'
+    - ''
+    - '[run_reward] id:"default" name:"real" delay:"0" slots:"22" mode:"independent" chance:"100.0"'
+    - '[play_sound] name:"entity_generic_explode" delay:"50"'
+    OnStart: []
+  Selection:
+    Amount: 1
+    SelectedIcon:
+      Material: ENDER_CHEST
+    AutoRun: false
+
+Content: {}
+
+Rewards:
+  default:
+    Rarities:
+    - '*'
+    Spin_Times: 25
+    Spin_Interval: 2
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Spin_Sound:
+      Volume: 0.5
+      Pitch: 1.0
+      Name: BLOCK_NOTE_BLOCK_XYLOPHONE
+  
+  dummy:
+    Rarities:
+    - '*'
+    Spin_Times: -1
+    Spin_Interval: 2
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+
+Animations:
+  fill_black:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Spin_Sound:
+      Name: BLOCK_PISTON_EXTEND
+      Volume: 1.0
+      Pitch: 1.0
+    Items:
+      pane:
+        Chance: 100.0
+        Material: BLACK_STAINED_GLASS_PANE
+  
+  fill_gray:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Spin_Sound:
+      Name: BLOCK_PISTON_EXTEND
+      Volume: 1.0
+      Pitch: 1.0
+    Items:
+      pane:
+        Chance: 100.0
+        Material: GRAY_STAINED_GLASS_PANE
+  
+  fill_white:
+    Spin_Times: 1
+    Spin_Interval: 1
+    Spin_Slowdown:
+      Step: 0
+      Amount: 0
+    Spin_Sound:
+      Name: BLOCK_PISTON_EXTEND
+      Volume: 1.0
+      Pitch: 1.0
+    Items:
+      pane:
+        Chance: 100.0
+        Material: WHITE_STAINED_GLASS_PANE
