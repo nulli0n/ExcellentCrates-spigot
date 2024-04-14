@@ -92,11 +92,6 @@ public class Config {
         "Sets whether player must hold key in main hand in order to open crate.",
         "NOTE: This setting will not work if crate has virtual keys assigned.");
 
-    @Deprecated
-    public static final ConfigValue<Boolean> CRATE_PREVENT_OPENING_SKIP = ConfigValue.create("Crate.Prevent_Opening_Skip",
-        false,
-    "When 'true' prevents force closing opening animations to get reward instantly.");
-
     public static final ConfigValue<Integer> CRATE_MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
         30,
         "Sets how many crates player can open at once when doing mass opening.",

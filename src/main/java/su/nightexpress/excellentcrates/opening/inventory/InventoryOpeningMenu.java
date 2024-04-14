@@ -124,7 +124,8 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
         if (opening == null) return;
 
         if (!opening.isCompleted() && opening.hasRewardAttempts()) {
-            this.runNextTick(() -> viewer.getPlayer().openInventory(opening.getInventory()));
+            opening.setPopupNextTick(true);
+            //this.runNextTick(() -> viewer.getPlayer().openInventory(opening.getInventory()));
         }
         else {
             opening.setCloseDelay(-1);

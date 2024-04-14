@@ -71,15 +71,17 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         Stream<RecipeChoice> choices;
         if (recipe instanceof ShapedRecipe shaped) {
             choices = shaped.getChoiceMap().values().stream();
-        } else if (recipe instanceof ShapelessRecipe shapeless) {
+        }
+        else if (recipe instanceof ShapelessRecipe shapeless) {
             choices = shapeless.getChoiceList().stream();
-        } else {
+        }
+        else {
             return false;
         }
         return choices.filter(RecipeChoice.ExactChoice.class::isInstance)
-                .map(RecipeChoice.ExactChoice.class::cast)
-                .flatMap(choice -> choice.getChoices().stream())
-                .anyMatch(this.keyManager::isKey);
+            .map(RecipeChoice.ExactChoice.class::cast)
+            .flatMap(choice -> choice.getChoices().stream())
+            .anyMatch(this.keyManager::isKey);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

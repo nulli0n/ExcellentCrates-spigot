@@ -38,6 +38,7 @@ public class InventoryOpening extends AbstractOpening {
     private Inventory inventory;
     private boolean   started;
     private long      closeDelay;
+    private boolean popupNextTick;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InventoryOpeningMenu menu,
@@ -51,6 +52,7 @@ public class InventoryOpening extends AbstractOpening {
         this.selectedSlots = new HashSet<>();
         this.scheduleds = new HashSet<>();
         this.closeDelay = Config.CRATE_OPENING_CLOSE_TIME.get();
+        this.popupNextTick = false;
     }
 
     public enum Mode {
@@ -80,6 +82,11 @@ public class InventoryOpening extends AbstractOpening {
     @Override
     protected void onTick() {
         super.onTick();
+
+        if (this.isPopupNextTick()) {
+            this.player.openInventory(this.inventory);
+            this.setPopupNextTick(false);
+        }
 
         if (!this.isStarted() && this.isAllSlotsSelected() && this.config.isAutoRun()) {
             this.start();
@@ -267,5 +274,13 @@ public class InventoryOpening extends AbstractOpening {
     @NotNull
     public Set<Integer> getUnSelectedSlots() {
         return IntStream.range(0, this.inventory.getSize()).filter(slot -> !this.isSelectedRewardSlot(slot)).boxed().collect(Collectors.toSet());
+    }
+
+    public boolean isPopupNextTick() {
+        return popupNextTick;
+    }
+
+    public void setPopupNextTick(boolean popupNextTick) {
+        this.popupNextTick = popupNextTick;
     }
 }
