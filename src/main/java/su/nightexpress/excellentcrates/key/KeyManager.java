@@ -65,22 +65,12 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         this.keysMap.clear();
     }
 
-    @NotNull
-    public KeyListEditor getKeysEditor() {
-        return keysEditor;
-    }
-
-    @NotNull
-    public KeyMainEditor getKeySettingsEditor() {
-        return keySettingsEditor;
-    }
-
     public void openKeysEditor(@NotNull Player player) {
-        this.getKeysEditor().open(player);
+        this.keysEditor.open(player, this);
     }
 
     public void openKeyEditor(@NotNull Player player, @NotNull CrateKey key) {
-        this.getKeySettingsEditor().open(player, key);
+        this.keySettingsEditor.open(player, key);
     }
 
     public boolean create(@NotNull String id) {
