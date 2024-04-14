@@ -10,9 +10,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.nightcore.manager.AbstractListener;
@@ -69,8 +67,27 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         }
     }
 
+    private boolean doesRecipeContainKeys(Recipe recipe) {
+        Stream<RecipeChoice> choices;
+        if (recipe instanceof ShapedRecipe shaped) {
+            choices = shaped.getChoiceMap().values().stream();
+        } else if (recipe instanceof ShapelessRecipe shapeless) {
+            choices = shapeless.getChoiceList().stream();
+        } else {
+            return false;
+        }
+        return choices.filter(RecipeChoice.ExactChoice.class::isInstance)
+                .map(RecipeChoice.ExactChoice.class::cast)
+                .flatMap(choice -> choice.getChoices().stream())
+                .anyMatch(this.keyManager::isKey);
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onKeyCraftShop(CraftItemEvent event) {
+    public void onKeyCraftStop(CraftItemEvent event) {
+        // Allow using keys in recipes that contain them specifically.
+        if (doesRecipeContainKeys(event.getRecipe())) {
+            return;
+        }
         CraftingInventory inventory = event.getInventory();
         if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.keyManager.isKey(item))) {
             event.setCancelled(true);
