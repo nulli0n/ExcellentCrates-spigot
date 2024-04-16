@@ -561,8 +561,10 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         opening.setRefundable(!settings.isForce());
         opening.setSaveData(settings.isSaveData());
 
-        this.plugin.getOpeningManager().startOpening(player, opening, settings.isSkipAnimation());
-
+        if (!this.plugin.getOpeningManager().startOpening(player, opening, settings.isSkipAnimation())) {
+            this.plugin.getOpeningManager().stopOpening(player);
+            return false;
+        }
         return true;
     }
 

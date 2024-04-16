@@ -10,6 +10,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
+import su.nightexpress.excellentcrates.opening.AbstractSpinner;
 import su.nightexpress.excellentcrates.opening.inventory.script.ParameterResult;
 import su.nightexpress.excellentcrates.opening.inventory.script.ScriptAction;
 import su.nightexpress.excellentcrates.opening.inventory.script.ScriptCompiledAction;
@@ -147,19 +148,20 @@ public class InventoryOpening extends AbstractOpening {
         this.start();
         this.scheduleds.forEach(Scheduled::forceRun);
         this.getSpinners().forEach(spinner -> {
-            //if (!(spinner instanceof RewardSpinner)) return;
+            if (!(spinner instanceof AbstractSpinner abstractSpinner)) return;
 
-            spinner.setCurrentSpins(spinner.getTotalSpins() - 1);
-            spinner.tick();
+            //spinner.setCurrentSpins(spinner.getTotalSpins() - 1);
+            //spinner.tick();
 
-            /*long total = Math.max(0L, spinner.getTotalSpins()) * spinner.getInterval();// + spinner.getStartDelay();
+            long total = Math.max(0L, spinner.getTotalSpins());// * spinner.getInterval();// + spinner.getStartDelay();
 
             //spinner.setStartDelay(0);
             for (int i = 0; i < total; i++) {
-                spinner.tick();
-            }*/
+                abstractSpinner.onTick();
+            }
             //System.out.println("[spinner ticks] Count: " + spinner.getCurrentSpins() + " / Total: " + spinner.getTotalSpins() + ", Done: " + spinner.isCompleted());
             spinner.stop();
+            //System.out.println("still running: " + spinner.isRunning());
         });
         this.getSpinners().removeIf(spinner -> spinner.isRunning() || !spinner.hasSpin());
         this.scheduleds.clear();

@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.opening;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import su.nightexpress.excellentcrates.opening.inventory.InventoryOpeningConfig;
 import su.nightexpress.excellentcrates.opening.inventory.InventoryOpeningMenu;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractManager;
+import su.nightexpress.nightcore.menu.MenuViewer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,9 +122,15 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
             Inventory inventory;
 
             if (!instaRoll) {
+                MenuViewer viewer = menu.getViewer(player);
+                if (viewer != null) {
+                    menu.close();
+                }
+
                 if (!menu.open(player)) return false;
 
                 inventory = player.getOpenInventory().getTopInventory();
+                if (inventory.getType() == InventoryType.CRAFTING) return false;
             }
             else {
                 inventory = menu.getOptions().createInventory();

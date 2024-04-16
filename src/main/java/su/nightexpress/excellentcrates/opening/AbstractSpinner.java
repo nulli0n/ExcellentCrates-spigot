@@ -39,7 +39,7 @@ public abstract class AbstractSpinner extends Runnable implements Spinner {
     }
 
     @Override
-    protected void onTick() {
+    public void onTick() {
         //System.out.println("SpSd/TiCt/SpCt: " + this.spinSpeedTicks + " / " + this.tickCount + " / " + this.spinCount);
 
         if (this.getSettings().getSpinSound() != null) {

@@ -76,7 +76,7 @@ public class Creator {
                 ItemUtil.editMeta(pageLeft, meta -> {
                     meta.setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("← Back")));
                 });
-                list.add(new MenuItem(pageLeft).setPriority(10).setSlots(26).setHandler(ItemHandler.forNextPage(this)));
+                list.add(new MenuItem(pageLeft).setPriority(10).setSlots(18).setHandler(ItemHandler.forPreviousPage(this)));
 
                 return list;
             }

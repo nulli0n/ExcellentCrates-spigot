@@ -213,7 +213,7 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
                 limitPermissionLore.addAll(this.rewardLimitBadPermissionLore);
             }
 
-            ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).hideFlags().trimmed()
+            ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).trimmed()
                 .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_AMOUNT, limitAmountLore)
                 .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_COOLDOWN, limitCooldownLore)
                 .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_OUT, limitOutLore)
