@@ -121,16 +121,19 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
     @Override
     public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
         InventoryOpening opening = this.getOpening(viewer.getPlayer());
-        if (opening == null) return;
+        if (opening == null) {
+            super.onClose(viewer, event);
+            return;
+        }
 
         if (!opening.isCompleted() && opening.hasRewardAttempts()) {
             opening.setPopupNextTick(true);
             //this.runNextTick(() -> viewer.getPlayer().openInventory(opening.getInventory()));
         }
         else {
-            opening.setCloseDelay(-1);
+            opening.setCloseDelay(0);
             opening.stop();
-            super.onClose(viewer, event);
+            //super.onClose(viewer, event);
         }
     }
 

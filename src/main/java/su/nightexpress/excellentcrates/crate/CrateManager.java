@@ -540,14 +540,24 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         plugin.getPluginManager().callEvent(openEvent);
         if (openEvent.isCancelled()) return false;
 
-        CrateKey key = null;
+        CrateKey key = crate.isKeyRequired() ? this.plugin.getKeyManager().getFirstKey(player, crate) : null;
+
+        Opening opening = this.plugin.getOpeningManager().createOpening(player, source, key);
+        opening.setRefundable(!settings.isForce());
+        opening.setSaveData(settings.isSaveData());
+
+        if (!this.plugin.getOpeningManager().startOpening(player, opening, settings.isSkipAnimation())) {
+            //this.plugin.getOpeningManager().stopOpening(player);
+            return false;
+        }
+
         if (!settings.isForce()) {
             // Take costs
             crate.getOpenCostMap().forEach((currency, amount) -> currency.getHandler().take(player, amount));
 
             // Take key
             if (crate.isKeyRequired()) {
-                key = this.plugin.getKeyManager().takeKey(player, crate);
+                /*key = */this.plugin.getKeyManager().takeKey(player, crate);
             }
 
             // Take crate item stack
@@ -557,14 +567,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             }
         }
 
-        Opening opening = this.plugin.getOpeningManager().createOpening(player, source, key);
-        opening.setRefundable(!settings.isForce());
-        opening.setSaveData(settings.isSaveData());
-
-        if (!this.plugin.getOpeningManager().startOpening(player, opening, settings.isSkipAnimation())) {
-            this.plugin.getOpeningManager().stopOpening(player);
-            return false;
-        }
         return true;
     }
 

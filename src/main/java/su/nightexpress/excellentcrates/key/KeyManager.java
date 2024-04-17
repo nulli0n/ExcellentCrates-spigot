@@ -158,6 +158,17 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         return null;
     }
 
+    @Nullable
+    public CrateKey getFirstKey(@NotNull Player player, @NotNull Crate crate) {
+        Predicate<ItemStack> predicate = itemStack -> this.isKey(itemStack, crate);
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && !item.getType().isAir() && predicate.test(item)) {
+                return this.getKeyByItem(item);
+            }
+        }
+        return null;
+    }
+
     public boolean isKey(@NotNull ItemStack item) {
         return this.getKeyByItem(item) != null;
     }

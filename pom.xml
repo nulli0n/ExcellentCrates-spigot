@@ -6,7 +6,7 @@
 
     <groupId>su.nightexpress.excellentcrates</groupId>
     <artifactId>ExcellentCrates</artifactId>
-    <version>5.2.2</version>
+    <version>5.2.2.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>nightcore</artifactId>
-            <version>2.5.2</version>
+            <version>2.5.2.1</version>
         </dependency>
         <dependency>
             <groupId>su.nightexpress.coinsengine</groupId>

@@ -15,7 +15,6 @@ import su.nightexpress.excellentcrates.opening.inventory.script.ParameterResult;
 import su.nightexpress.excellentcrates.opening.inventory.script.ScriptAction;
 import su.nightexpress.excellentcrates.opening.inventory.script.ScriptCompiledAction;
 import su.nightexpress.excellentcrates.opening.spinner.*;
-import su.nightexpress.nightcore.menu.impl.AbstractMenu;
 import su.nightexpress.nightcore.util.random.Rnd;
 
 import java.util.HashSet;
@@ -40,6 +39,7 @@ public class InventoryOpening extends AbstractOpening {
     private boolean   started;
     private long      closeDelay;
     private boolean popupNextTick;
+    private boolean canRemoveOpening;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InventoryOpeningMenu menu,
@@ -54,6 +54,7 @@ public class InventoryOpening extends AbstractOpening {
         this.scheduleds = new HashSet<>();
         this.closeDelay = Config.CRATE_OPENING_CLOSE_TIME.get();
         this.popupNextTick = false;
+        this.canRemoveOpening = false;
     }
 
     public enum Mode {
@@ -105,14 +106,28 @@ public class InventoryOpening extends AbstractOpening {
         this.scheduleds.clear();
 
         if (this.closeDelay == 0 || this.isEmergency()) {
-            this.getPlayer().closeInventory();
-            AbstractMenu.purge(this.getPlayer());
+            this.onClose();
+            //AbstractMenu.purge(this.getPlayer());
         }
         else if (this.closeDelay > 0) {
             this.plugin.runTaskLater(task -> {
-                this.player.closeInventory();
-                AbstractMenu.purge(this.player);
+                this.onClose();
+                //AbstractMenu.purge(this.player);
             }, this.closeDelay);
+        }
+    }
+
+    private void onClose() {
+        this.player.closeInventory();
+        this.menu.close(this.getPlayer());
+        this.canRemoveOpening = true;
+        this.removeOpening();
+    }
+
+    @Override
+    public void removeOpening() {
+        if (this.canRemoveOpening) {
+            super.removeOpening();
         }
     }
 

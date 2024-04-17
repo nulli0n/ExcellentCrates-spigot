@@ -114,6 +114,10 @@ public abstract class AbstractOpening extends Runnable implements Opening {
         }
 
         this.getSpinners().forEach(Spinner::stop);
+        this.removeOpening();
+    }
+
+    public void removeOpening() {
         this.plugin.getOpeningManager().removeOpening(this.getPlayer());
     }
 

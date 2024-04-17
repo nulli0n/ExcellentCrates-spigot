@@ -17,7 +17,6 @@ import su.nightexpress.excellentcrates.opening.inventory.InventoryOpeningConfig;
 import su.nightexpress.excellentcrates.opening.inventory.InventoryOpeningMenu;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractManager;
-import su.nightexpress.nightcore.menu.MenuViewer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,22 +114,35 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public boolean startOpening(@NotNull Player player, @NotNull Opening opening, boolean instaRoll) {
-        this.openingDataMap.put(player.getUniqueId(), opening);
+        if (this.isOpening(player)) return false;
 
-        if (opening instanceof InventoryOpening inventoryOpening) {
+        InventoryOpening inventoryOpening = opening instanceof InventoryOpening io ? io : null;
+
+        this.openingDataMap.putIfAbsent(player.getUniqueId(), opening);
+
+        if (inventoryOpening != null) {
+            if (!instaRoll) {
+                InventoryOpeningMenu menu = inventoryOpening.getMenu();
+                if (menu.isViewer(player) || !menu.open(player) || player.getOpenInventory().getType() == InventoryType.CRAFTING) {
+                    menu.close(player);
+                    return false;
+                }
+            }
+        }
+
+        if (inventoryOpening != null) {
             InventoryOpeningMenu menu = inventoryOpening.getMenu();
             Inventory inventory;
 
             if (!instaRoll) {
-                MenuViewer viewer = menu.getViewer(player);
+                /*MenuViewer viewer = menu.getViewer(player);
                 if (viewer != null) {
                     menu.close();
                 }
 
-                if (!menu.open(player)) return false;
-
+                if (!menu.open(player)) return false;*/
                 inventory = player.getOpenInventory().getTopInventory();
-                if (inventory.getType() == InventoryType.CRAFTING) return false;
+                //if (inventory.getType() == InventoryType.CRAFTING) return false;
             }
             else {
                 inventory = menu.getOptions().createInventory();
