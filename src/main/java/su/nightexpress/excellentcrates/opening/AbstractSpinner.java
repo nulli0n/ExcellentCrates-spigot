@@ -11,6 +11,7 @@ public abstract class AbstractSpinner extends Runnable implements Spinner {
     protected final CratesPlugin plugin;
     protected final String       id;
 
+    protected boolean silent;
     protected long spinCount;
     protected long spinSpeedTicks;
 
@@ -23,6 +24,16 @@ public abstract class AbstractSpinner extends Runnable implements Spinner {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean isSilent() {
+        return silent;
+    }
+
+    @Override
+    public void setSilent(boolean silent) {
+        this.silent = silent;
     }
 
     @NotNull
@@ -42,7 +53,7 @@ public abstract class AbstractSpinner extends Runnable implements Spinner {
     public void onTick() {
         //System.out.println("SpSd/TiCt/SpCt: " + this.spinSpeedTicks + " / " + this.tickCount + " / " + this.spinCount);
 
-        if (this.getSettings().getSpinSound() != null) {
+        if (!this.isSilent() && this.getSettings().getSpinSound() != null) {
             this.getSettings().getSpinSound().play(this.getOpening().getPlayer());
         }
         this.onSpin();

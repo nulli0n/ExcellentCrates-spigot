@@ -165,6 +165,7 @@ public class InventoryOpening extends AbstractOpening {
         this.getSpinners().forEach(spinner -> {
             if (!(spinner instanceof AbstractSpinner abstractSpinner)) return;
 
+            abstractSpinner.setSilent(true);
             //spinner.setCurrentSpins(spinner.getTotalSpins() - 1);
             //spinner.tick();
 

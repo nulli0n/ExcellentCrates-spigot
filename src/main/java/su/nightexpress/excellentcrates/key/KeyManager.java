@@ -143,7 +143,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     @NotNull
     public Set<CrateKey> getKeys(@NotNull Player player, @NotNull Crate crate) {
         Set<CrateKey> keys = crate.getKeys();
-        keys.removeIf(key -> !this.hasKey(player, crate));
+        keys.removeIf(key -> !this.hasKey(player, key));
         return keys;
     }
 

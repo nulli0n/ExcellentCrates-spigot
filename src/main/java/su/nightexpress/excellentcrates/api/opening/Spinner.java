@@ -6,6 +6,10 @@ public interface Spinner extends Tickable {
 
     @NotNull String getId();
 
+    boolean isSilent();
+
+    void setSilent(boolean silent);
+
     int getTotalSpins();
 
     long getCurrentSpins();
