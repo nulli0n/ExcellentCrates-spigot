@@ -132,7 +132,15 @@ public class Reward implements Weighted, Placeholder {
         RewardWinLimit playerLimit = RewardWinLimit.read(config, path + ".Win_Limit.Player");
         RewardWinLimit globalLimit = RewardWinLimit.read(config, path + ".Win_Limit.Global");
 
-        List<String> commands = config.getStringList(path + ".Commands");
+        List<String> commands = new ArrayList<>();
+        for (String command : config.getStringList(path + ".Commands")) {
+             commands.add(command
+                .replace("[CONSOLE]", "")
+                .replace("%player%", Placeholders.PLAYER_NAME)
+                .trim()
+            );
+        }
+
         List<ItemStack> items = new ArrayList<>(Stream.of(config.getItemsEncoded(path + ".Items")).toList());
         Set<String> ignoredPermissions = config.getStringSet(path + ".Ignored_For_Permissions");
 

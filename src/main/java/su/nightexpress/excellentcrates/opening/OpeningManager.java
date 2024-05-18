@@ -154,11 +154,9 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
             if (instaRoll) opening.instaRoll();
         }
         else {
+            opening.run();
             if (instaRoll) {
                 opening.instaRoll();
-            }
-            else {
-                opening.run();
             }
         }
 

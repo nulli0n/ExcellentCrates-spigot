@@ -26,6 +26,7 @@ public class BasicOpening extends AbstractOpening {
     private static final Map<UUID, Long>  REWARD_DISAPPEAR_TIME = new HashMap<>();
 
     private boolean rolled;
+    private boolean visuals;
 
     public BasicOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
         super(plugin, player, source, key);
@@ -33,7 +34,9 @@ public class BasicOpening extends AbstractOpening {
 
     @Override
     public void instaRoll() {
-        this.roll(false);
+        this.visuals = false;
+        this.roll();
+        this.stop();
     }
 
     @Override
@@ -48,10 +51,19 @@ public class BasicOpening extends AbstractOpening {
 
     @Override
     protected void onLaunch() {
-        this.roll(true);
+        this.visuals = true;
     }
 
-    public void roll(boolean visuals) {
+    @Override
+    protected void onTick() {
+        super.onTick();
+
+        if (this.isRunning()) {
+            this.roll();
+        }
+    }
+
+    public void roll() {
         this.setRefundable(false);
         this.setHasRewardAttempts(true);
 
@@ -62,7 +74,7 @@ public class BasicOpening extends AbstractOpening {
         plugin.getPluginManager().callEvent(rewardEvent);
 
         Block block = this.getSource().getBlock();
-        if (visuals && Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
+        if (this.visuals && Config.CRATE_DISPLAY_REWARD_ABOVE_BLOCK.get() && block != null) {
             if (block.getState() instanceof Lidded lidded) {
                 lidded.open();
                 addContainerSchedule(block, 3);
