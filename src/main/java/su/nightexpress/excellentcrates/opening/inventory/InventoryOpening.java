@@ -119,7 +119,7 @@ public class InventoryOpening extends AbstractOpening {
 
     private void onClose() {
         this.player.closeInventory();
-//        this.menu.close(this.getPlayer());
+        this.menu.close(this.getPlayer());
         this.canRemoveOpening = true;
         this.removeOpening();
     }

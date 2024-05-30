@@ -92,6 +92,23 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
     }
 
     @Override
+    public void close(Player player) {
+        InventoryOpening opening = this.getOpening(player);
+        if (opening == null) {
+            super.close(player);
+            return;
+        }
+
+        opening.setCloseDelay(0);
+        opening.stop();
+    }
+
+    public boolean isViewer(@NotNull Player player) {
+        // Check whether this player is viewing this menu
+        return this.getViewer(player) != null;
+    }
+
+    @Override
     protected void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
         InventoryOpening opening = this.getOpening(viewer.getPlayer());
         if (opening == null) return;
