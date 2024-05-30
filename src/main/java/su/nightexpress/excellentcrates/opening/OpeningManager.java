@@ -123,7 +123,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         if (inventoryOpening != null) {
             if (!instaRoll) {
                 InventoryOpeningMenu menu = inventoryOpening.getMenu();
-                if (menu.isViewer(player) || !menu.open(player) || player.getOpenInventory().getType() == InventoryType.CRAFTING) {
+                if (!menu.open(player) || player.getOpenInventory().getType() == InventoryType.CRAFTING) {
                     menu.close(player);
                     return false;
                 }
