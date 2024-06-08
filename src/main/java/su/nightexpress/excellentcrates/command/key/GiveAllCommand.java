@@ -16,6 +16,7 @@ import su.nightexpress.nightcore.command.impl.AbstractCommand;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class GiveAllCommand extends AbstractCommand<CratesPlugin> {
 
@@ -54,7 +55,9 @@ class GiveAllCommand extends AbstractCommand<CratesPlugin> {
         int amount = Math.abs(result.getInt(3, 1));
         if (amount == 0) return;
 
-        Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers();
+        Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers().stream()
+                .filter(p -> p.hasPermission(Perms.INCLUDE_KEY_GIVEALL))
+                .collect(Collectors.toSet());
         boolean silent = result.hasFlag(CommandFlags.SILENT);
 
         players.forEach(player -> {

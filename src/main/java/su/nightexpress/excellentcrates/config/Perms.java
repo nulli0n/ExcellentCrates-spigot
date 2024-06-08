@@ -19,6 +19,8 @@ public class Perms {
 
     public static final UniPermission MASS_OPEN = new UniPermission(PREFIX + "massopen", "Allows to use mass open feature.", TRUE);
 
+    public static final UniPermission INCLUDE_KEY_GIVEALL = new UniPermission(PREFIX + "include.giveall", "Includes the player in the crate key giveall command.", TRUE);
+
     public static final UniPermission COMMAND_RELOAD             = new UniPermission(PREFIX_COMMAND + "reload", "Access to the '/crate reload' sub-command.");
     public static final UniPermission COMMAND_EDITOR             = new UniPermission(PREFIX_COMMAND + "editor", "Access to the '/crate editor' sub-command.");
     public static final UniPermission COMMAND_DROP               = new UniPermission(PREFIX_COMMAND + "drop", "Access to the '/crate drop' sub-command.");
@@ -45,7 +47,7 @@ public class Perms {
     public static final UniPermission BYPASS_REWARD_LIMIT_COOLDOWN = new UniPermission(PREFIX_BYPASS + "reward.limit.cooldown", "Bypasses reward's win limit cooldown.");
 
     static {
-        PLUGIN.addChildren(COMMAND, BYPASS, MASS_OPEN);
+        PLUGIN.addChildren(COMMAND, BYPASS, MASS_OPEN, INCLUDE_KEY_GIVEALL);
 
         COMMAND.addChildren(
             COMMAND_RELOAD,
