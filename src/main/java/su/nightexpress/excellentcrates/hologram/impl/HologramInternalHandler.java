@@ -16,6 +16,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
+import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.nightcore.util.EntityUtil;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.Pair;
@@ -26,27 +27,32 @@ import java.util.stream.IntStream;
 
 public class HologramInternalHandler implements HologramHandler {
 
-    //private final ExcellentCrates                               plugin;
+    private final CratesPlugin                               plugin;
     private final Map<String, Pair<Set<Integer>, Set<Integer>>> entityIdMap;
 
+    private boolean disabled;
+
     public HologramInternalHandler(@NotNull CratesPlugin plugin) {
-        //this.plugin = plugin;
+        this.plugin = plugin;
         this.entityIdMap = new HashMap<>();
     }
 
     @Override
     public void setup() {
-
+        this.disabled = false;
     }
 
     @Override
     public void shutdown() {
         new HashSet<>(this.entityIdMap.keySet()).forEach(this::remove);
         this.entityIdMap.clear();
+        this.disabled = true;
     }
 
     @Override
     public void create(@NotNull Crate crate) {
+        if (this.disabled) return;
+
         this.remove(crate);
 
         Set<Integer> standIds = new HashSet<>();
@@ -64,7 +70,19 @@ public class HologramInternalHandler implements HologramHandler {
             Location pos = LocationUtil.getCenter(location.clone()).add(0, height, 0);
 
             for (String line : text) {
-                standIds.add(this.spawnHologram(world, pos.clone(), line));
+                try {
+                    standIds.add(this.spawnHologram(world, pos.clone(), line));
+                }
+                catch (Exception exception) {
+                    exception.printStackTrace();
+                    this.plugin.error("An error occured when trying to create crate hologram!");
+                    this.plugin.error("THIS IS AN ISSUE CAUSED BY " + HookId.PROTOCOL_LIB + " PLUGIN!");
+                    this.plugin.error("DO NOT REPORT THIS TO ExcellentCrates!");
+                    this.plugin.error("Holograms will be disabled until server reboot or a plugin reload.");
+                    this.destroyEntity(standIds);
+                    this.disabled = true;
+                    return;
+                }
                 pos = pos.add(0, Config.CRATE_HOLOGRAM_LINE_GAP.get(), 0);
             }
         }
@@ -77,7 +95,7 @@ public class HologramInternalHandler implements HologramHandler {
         this.remove(crate.getId());
     }
 
-    public void remove(@NotNull String id) {
+    private void remove(@NotNull String id) {
         var pair = this.entityIdMap.remove(id);
         if (pair == null) return;
 
@@ -95,7 +113,7 @@ public class HologramInternalHandler implements HologramHandler {
 
     }
 
-    public int spawnHologram(@NotNull World world, @NotNull Location location, @NotNull String name) {
+    private int spawnHologram(@NotNull World world, @NotNull Location location, @NotNull String name) {
         int entityID = EntityUtil.nextEntityId();
 
         PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
@@ -139,9 +157,13 @@ public class HologramInternalHandler implements HologramHandler {
         return entityID;
     }
 
-    public void destroyEntity(int... ids) {
+    private void destroyEntity(int... ids) {
+        this.destroyEntity(IntStream.of(ids).boxed().toList());
+    }
+
+    private void destroyEntity(Collection<Integer> ids) {
         PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroyPacket.getIntLists().write(0, IntStream.of(ids).boxed().toList());
+        destroyPacket.getIntLists().write(0, new ArrayList<>(ids));
         ProtocolLibrary.getProtocolManager().broadcastServerPacket(destroyPacket);
     }
 }

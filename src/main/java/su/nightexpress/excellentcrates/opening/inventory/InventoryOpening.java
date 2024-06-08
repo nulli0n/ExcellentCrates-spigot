@@ -39,7 +39,7 @@ public class InventoryOpening extends AbstractOpening {
     private boolean   started;
     private long      closeDelay;
     private boolean popupNextTick;
-    private boolean canRemoveOpening;
+    //private boolean canRemoveOpening;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InventoryOpeningMenu menu,
@@ -54,7 +54,7 @@ public class InventoryOpening extends AbstractOpening {
         this.scheduleds = new HashSet<>();
         this.closeDelay = Config.CRATE_OPENING_CLOSE_TIME.get();
         this.popupNextTick = false;
-        this.canRemoveOpening = false;
+        //this.canRemoveOpening = false;
     }
 
     public enum Mode {
@@ -100,36 +100,34 @@ public class InventoryOpening extends AbstractOpening {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-
+    protected void finalizeStop() {
         this.scheduleds.clear();
 
         if (this.closeDelay == 0 || this.isEmergency()) {
-            this.onClose();
+            this.doClose();
             //AbstractMenu.purge(this.getPlayer());
         }
         else if (this.closeDelay > 0) {
-            this.plugin.runTaskLater(task -> {
-                this.onClose();
-                //AbstractMenu.purge(this.player);
-            }, this.closeDelay);
+            this.plugin.runTaskLater(task -> this.doClose(), this.closeDelay);
+            //AbstractMenu.purge(this.player);
         }
     }
 
-    private void onClose() {
+    private void doClose() {
+        this.removeOpening();
         this.player.closeInventory();
         this.menu.close(this.getPlayer());
-        this.canRemoveOpening = true;
-        this.removeOpening();
+        //this.canRemoveOpening = true;
+
     }
 
-    @Override
+    /*@Override
     public void removeOpening() {
         if (this.canRemoveOpening) {
+            System.out.println("removeOpening");
             super.removeOpening();
         }
-    }
+    }*/
 
     @Override
     public boolean isCompleted() {

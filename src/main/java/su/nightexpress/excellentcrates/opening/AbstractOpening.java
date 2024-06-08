@@ -83,7 +83,7 @@ public abstract class AbstractOpening extends Runnable implements Opening {
     }
 
     @Override
-    protected void onStop() {
+    protected final void onStop() {
         if (this.isRefundable()) {
             if ((this.isEmergency() && !this.hasRewardRolled()) || !this.hasRewardAttempts()) {
                 if (this.key != null) {
@@ -114,6 +114,10 @@ public abstract class AbstractOpening extends Runnable implements Opening {
         }
 
         this.getSpinners().forEach(Spinner::stop);
+        this.finalizeStop();
+    }
+
+    protected void finalizeStop() {
         this.removeOpening();
     }
 
