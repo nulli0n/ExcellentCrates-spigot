@@ -1,0 +1,622 @@
+Command:
+  Editor:
+    Desc: Abre el editor de crates y llaves.
+  Drop:
+    Usage: <crate> <x> <y> <z> [mundo]
+    Desc: Deja caer una crate en la ubicación especificada en el mundo.
+    Done: <lgray>Se dejó caer <lyellow>%crate_name%</lyellow> en <lyellow>%location_x%, %location_y%, %location_z%</lyellow> en <lyellow>%location_world%</lyellow>.</lgray>
+  DropKey:
+    Usage: <llave> <x> <y> <z> [mundo]
+    Desc: Deja caer una llave en la ubicación especificada.
+    Done: <lgray>Se dejó caer <lyellow>%key_name%</lyellow> en <lyellow>%location_x%, %location_y%, %location_z%</lyellow> en <lyellow>%location_world%</lyellow>.</lgray>
+  Open:
+    Desc: Abre una crate.
+    Usage: <crate>
+  OpenFor:
+    Desc: Abre una crate para un jugador.
+    Uso: <jugador> <crate> [-f] [-s]
+    Done: <lgray>Se abrió <lyellow>%crate_name%</lyellow> para <lyellow>%player_name%</lyellow>.</lgray>
+    Notify: <lgray>Se te ha forzado a abrir <lyellow>%crate_name%</lyellow>.</lgray>
+  Give:
+    Usage: <jugador> <crate> [cantidad] [-s]
+    Desc: Da una crate a un jugador.
+    Done: <lgray>Se dió <lyellow>x%amount%</lyellow> crate(s) <lyellow>%crate_name%</lyellow> a <lyellow>%player_name%</lyellow>.</lgray>
+    Notify: <lgray>Recibiste <lyellow>x%amount%</lyellow> de <lyellow>%crate_name%</lyellow>.</lgray>
+  Key:
+    Desc: Gestiona las llaves del jugador.
+    Usage: '[help]'
+    Give:
+      Usage: <jugador> <llave> <cantidad> [-s] [-nosave]
+      Desc: Da una llave a un jugador.
+      Done: <lgray>Se dió <lyellow>x%amount%</lyellow> llave(s <lyellow>%key_name%</lyellow> a <lyellow>%player_name%</lyellow>.</lgray>
+      Notify: <lgray>Recibiste <lyellow>x%amount%</lyellow> de <lyellow>%key_name%</lyellow>!</lgray>
+    GiveAll:
+      Usage: <jugador> <llave> <cantidad> [-s]
+      Desc: Da una llave a todos los jugadores en línea.
+      Done: <lgray>Se dió <lyellow>x%amount%</lyellow> de <lyellow>%key_name%</lyellow> llave(s) a <lyellow>Todos los Jugadores</lyellow>.</lgray>
+    Take:
+      Usage: <jugador> <llave> <cantidad> [-s] [-nosave]
+      Desc: Toma una llave de un jugador.
+      Done: <lgray>Se tomó <lyellow>x%amount%</lyellow> de <lyellow>%key_name%</lyellow> llave(s) de <lyellow>%player_name%</lyellow>.</lgray>
+      Notify: <lgray>Perdiste <lred>x%amount%</lred> <lred>%key_name%</lred>.</lgray>
+    Set:
+      Usage: <jugador> <llave> <cantidad> [-s] [-nosave]
+      Desc: Establece la cantidad de llaves para un jugador.
+      Done: <lgray>Se estableció <lyellow>x%amount%</lyellow> de <lyellow>%key_name%</lyellow> llave(s) para <lyellow>%player_name%</lyellow>.</lgray>
+      Notify: <lgray>Tu cantidad de <lyellow>%key_name%</lyellow> ha cambiado a <lyellow>x%amount%</lyellow>.</lgray>
+    Show:
+      Desc: Inspecciona las llaves virtuales del jugador.
+      Usage: '[jugador]'
+      Format:
+        List:
+          - <noprefix>
+          - ' '
+          - '<lyellow><b>Llaves Virtuales de %player_name%: </b></lyellow>'
+          - '%entry%'
+          - ' '
+        Entry: '<lyellow>▪ <lgray>%key_name%: </lgray>x%amount%</lyellow>'
+  Preview:
+    Desc: Abre la vista previa de la crate.
+    Usage: <crate> [jugador]
+    Done:
+      Others: <lgray>Se abrió la vista previa de <lyellow>%crate_name%</lyellow> para <lyellow>%player_name%</lyellow>.</lgray>
+  ResetLimit:
+    Desc: Restablece el límite de ganancia de recompensa para la crate y recompensa especificadas.
+    Usage: <jugador> <crate> [recompensa]
+    Done:
+      Crate: <lgray>Restablecido <lyellow>%player_name%</lyellow> límite de ganancia para todas las recompensas de <lyellow>%crate_name%</lyellow>.</lgray>
+      Reward: <lgray>Restablecido <lyellow>%player_name%</lyellow> límite de ganancia para la recompensa <lyellow>%reward_name%</lyellow> de <lyellow>%crate_name%</lyellow>.</lgray>
+  ResetCooldown:
+    Desc: Restablece el tiempo de espera de apertura de la crate del jugador.
+    Usage: <jugador> <crate>
+    Done: <lgray>Restablecido <lyellow>%player_name%</lyellow> tiempo de espera de apertura para <lyellow>%crate_name%</lyellow>.</lgray>
+  Menu:
+    Usage: '[menu]'
+    Desc: Abre el menú de crates.
+    Done:
+      Others: <lgray>Abierto el menú de crates para <lyellow>%player_name%</lyellow>.</lgray>
+Crate:
+  Open:
+    Error:
+      InventorySpace:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <lred><b>Ups!</b></lred>
+        - <lgray>Limpia los espacios del inventario para abrir la crate!</lgray>
+      Cooldown:
+        Temporary:
+          - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+          - <lred><b>Tiempo de espera de la crate!</b></lred>
+          - <lgray>Puedes abrirlo en <lred>%tiempo%</lred></lgray>
+        OneTimed:
+          - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+          - <lred><b>Ups!</b></lred>
+          - <lgray>Ya has abierto esta crate de una sola vez!</lgray>
+      NoKey:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <lred><b>Ups!</b></lred>
+        - <lgray>No tienes una llave para esta crate!</lgray>
+      NoHoldKey:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <lred><b>Ups!</b></lred>
+        - <lgray>Debes sostener una llave para abrir la crate!</lgray>
+      NoRewards:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <red><b>Ups!</b></red>
+        - <lgray>No hay recompensas para ti! Intenta más tarde.</lgray>
+      CantAfford:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <lred><b>Ups!</b></lred>
+        - <lgray>Necesitas <lred>%amount%</lred> para abrirlo!</lgray>
+      Already:
+        - <output:'titles:20:80:20'><sound:'entity_villager_no'>
+        - <red><b>Ups!</b></red>
+        - <lgray>Ya estás abriendo una crate!</lgray>
+    Reward:
+      Info:
+        - <noprefix>
+        - <lgray>Ganaste <lgreen>%reward_name%</lgreen> de la <lgreen>%crate_name%</lgreen>!</lgray>
+      Broadcast:
+        - <noprefix><sound:'block_note_block_bell'>
+        - ' '
+        - ''
+        - <lgray>El jugador <lgreen>%player_name%</lgreen> acaba de ganar <lgreen>%reward_name%</lgreen> de <lgreen>%crate_name%</lgreen>!</lgray>
+        - ' '
+        - ''
+        - '<lgray>Quieres tú también? Compra llaves ahora: <click:open_url:''https://store.examplecraft.com/''><lgreen>[ABRIR TIENDA]</lgreen></click></lgray>'
+        - ' '
+    Milestone:
+      Completed:
+        - <noprefix>
+        - <sound:'entity_player_levelup'>
+        - <lgray>Completaste el hito de <lgreen>%milestone_openings% Aperturas </lgreen> y obtuviste <lgreen>%reward_name%</lgreen> como recompensa!</lgray>
+  Error:
+    Invalid: <lred>Crate inválida!</lred>
+    Exists: <lred>La crate ya existe!</lred>
+Key:
+  Error:
+    Invalid: <lred>Llave inválida!</lred>
+    Exists: <lred>La llave ya existe!</lred>
+Editor:
+  Reward:
+    Error:
+      Create:
+        Exists: <lgray>La recompensa ya existe!</lgray>
+    Enter:
+      Chance: <lgray>Ingresar <lgreen>[Probabilidad]</lgreen></lgray>
+      Command: <lgray>Ingresar <lgreen>[Comando]</lgreen></lgray>
+      Id: <lgray>Ingresar <lgreen>[Identificador de Recompensa]</lgreen></lgray>
+      Rarity: <lgray>Ingresar <lgreen>[Rareza]</lgreen></lgray>
+      Permissions: <lgray>Ingresar <lgreen>[Nodo de Permiso]</lgreen></lgray>
+  Title:
+    Crates: <black>Editor de Crates</black>
+    Keys: <black>Editor de Llaves</black>
+  Enter:
+    DisplayName: <lgray>Ingresar <lgreen>[Nombre Visible]</lgreen></lgray>
+    Amount: <lgray>Ingresar <lgreen>[Cantidad]</lgreen></lgray>
+    Value: <lgray>Ingresar <lgreen>[Valor]</lgreen></lgray>
+  Crate:
+    Enter:
+      Seconds: <lgray>Ingresar <lgreen>[Cantidad de Segundos]</lgreen></lgray>
+      Id: <lgray>Ingresar <lgreen>[Identificador de crate]</lgreen></lgray>
+      Particle:
+        Name: <lgray>Ingresar <lgreen>[Nombre de Partícula]</lgreen></lgray>
+      KeyId: <lgray>Ingresar <lgreen>[Identificador de Llave]</lgreen></lgray>
+      BlockLocation: <lgray>Haz clic en un <lgreen>[Bloque] </lgreen> para asignar la crate.</lgray>
+      HologramTemplate: <lgray>Ingresar <lgreen>[Plantilla de Holograma]</lgreen></lgray>
+      AnimationConfig: <lgray>Ingresar <lgreen>[Nombre de Animación]</lgreen></lgray>
+      PreviewConfig: <lgray>Ingresar <lgreen>[Nombre de Vista Previa]</lgreen></lgray>
+      Open_Cost: <lgray>Ingresar <lgreen>[Moneda] [Cantidad]</lgreen></lgray>
+  Item:
+    Crates:
+      Name: <lyellow><b>Crates</b></lyellow>
+      Lore:
+        - <lyellow>[▶]</lyellow> <lgray>Haz clic para <lyellow>navegar</lyellow>.</lgray>
+    Keys:
+      Name: <lyellow><b>Llaves</b></lyellow>
+      Lore:
+        - <lyellow>[▶]</lyellow> <lgray>Haz clic para <lyellow>navegar</lyellow>.</lgray>
+    Crate:
+      Object:
+        Name: '<lyellow><b>%crate_name%<r><lgray> (ID: <white>%id_crate%</white>)</lgray></r></b></lyellow>'
+        Lore:
+          - '%crate_inspect%'
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>editar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>eliminar <lred>(sin deshacer)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Nueva Crate</b></lyellow>
+        Lore: []
+      DisplayName:
+        Name: <lyellow><b>Nombre Visible</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Actual: </lgray>%crate_name%</lyellow>'
+          - ''
+          - <lgray>Nombre de la crate para mensajes, marcadores de posición</lgray>
+          - <lgray>y hologramas.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic para <lyellow>cambiar</lyellow>.</lgray>
+      Permission:
+        Name: <lyellow><b>Requisito de Permiso</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%crate_permission_required%</lyellow>'
+          - '<lyellow>● <lgray>Permiso: </lgray>%crate_permission%</lyellow>'
+          - ''
+          - <lgray>Habilita el requisito de permiso</lgray>
+          - <lgray>para abrir esta crate.</lgray>
+          - ''
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic para <lyellow>alternar</lyellow>.</lgray>
+      OpenCooldown:
+        Name: <lyellow><b>Tiempo de Espera de Apertura</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Tiempo de Espera: </lgray>%crate_open_cooldown%</lyellow>'
+          - ''
+          - <lgray>Tiempo de espera por jugador entre</lgray>
+          - <lgray>aperturas de crate.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>establecer tiempo de espera</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic derecho para <lyellow>eliminar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>hacer una sola vez</lyellow>.</lgray>
+      PreviewAndOpening:
+        Name: <lyellow><b>Vista Previa y Apertura</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Vista Previa: </lgray>%crate_preview_config%</lyellow>'
+          - '<lyellow>● <lgray>Apertura: </lgray>%crate_animation_config%</lyellow>'
+          - ''
+          - <lgray>Establece las configuraciones utilizadas para:</lgray>
+          - <lgray><lyellow>● </lyellow>Vista previa de la crate GUI (<lorange>/previews/</lorange>)</lgray>
+          - <lgray><lyellow>● </lyellow>Animación de apertura de la crate (<lorange>/openingsv2/</lorange>)</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>cambiar vista previa</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic derecho para <lyellow>cambiar apertura</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>deshabilitar vista previa</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>deshabilitar apertura</lyellow>.</lgray>
+      KeyRequirement:
+        Nombre: <lyellow><b>Requisitos de Llave</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%crate_key_required%</lyellow>'
+          - '<lyellow>● <lgray>Llaves: </lgray></lyellow>'
+          - '%crate_key_ids%'
+          - ''
+          - <lgray>El jugador debe tener ciertas llaves</lgray>
+          - <lgray>para abrir esta crate.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>agregar llave</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic derecho para <lyellow>eliminar todas</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>alternar requisito</lyellow>.</lgray>
+      OpenCost:
+        Name: <lyellow><b>Costo de Apertura</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Actual: </lgray>%crate_open_cost%</lyellow>'
+          - ''
+          - <lgray>El jugador tiene que pagar ciertas monedas</lgray>
+          - <lgray>para abrir esta crate.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>agregar costo</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>eliminar todos</lyellow>.</lgray>
+      InventoryItem:
+        Name: <lyellow><b>Item de Inventario</b></lyellow>
+        Lore:
+          - <lgray>Item que representa la crate en</lgray>
+          - <lgray>menús e inventarios de jugadores.</lgray>
+          - ''
+          - <lgray>Deberías usar sólo items <lorange>prefabricados</lorange> -</lgray>
+          - <lgray>no puedes editarlo desde aquí.</lgray>
+          - ''
+          - <lgray><orange>[❗]</orange> <lgray>Las etiquetas NBT <orange>no</orange> son compatibles!</lgray></lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Arrastrar y soltar para <lyellow>reemplazar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo para <lyellow>obtener item</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic derecho para <lyellow>obtener copia en bruto</lyellow>.</lgray>
+      Placement:
+        Info:
+          Name: <lyellow><b>Ubicación</b></lyellow>
+          Lore:
+            - <lgray>Coloca la crate en cualquier lugar del mundo</lgray>
+            - <lgray>con efectos de partículas y holograma!</lgray>
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Haz clic para <lyellow>navegar</lyellow>.</lgray>
+      Locations:
+        Name: <lyellow><b>Bloques Asignados</b></lyellow>
+        Lore:
+          - <lgray>%crate_locations%</lgray>
+          - ''
+          - <lgray>Asigna el crate a bloques específicos</lgray>
+          - <lgray>en tu mundo y <lorange>abre</lorange> y <lorange>previsualiza</lorange></lgray>
+          - <lgray>el crate cuando haces clic en ellos!</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>asignar bloque</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>eliminar todo</lyellow>.</lgray>
+      Pushback:
+        Name: <lyellow><b>Rechazo</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Estado: </lgray>%crate_pushback_enabled%</lyellow>'
+          - ''
+          - <lgray>Rechaza a los jugadores del crate</lgray>
+          - <lgray>si no cumplen con los requisitos.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>alternar</lyellow>.</lgray>
+      Hologram:
+        Name: <lyellow><b>Holograma</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Estado: </lgray>%crate_hologram_enabled%</lyellow>'
+          - '<lyellow>● <lgray>Plantilla: </lgray>%crate_hologram_template%</lyellow>'
+          - '<lyellow>● <lgray>Desplazamiento Y: </lgray>%crate_hologram_y_offset%</lyellow>'
+          - ''
+          - <lgray>Añade un holograma encima del crate</lgray>
+          - <lgray>bloque(s) con un texto de la plantilla seleccionada.</lgray>
+          - ''
+          - <lgray>Edita las plantillas de holograma en <lorange>config.yml</lorange></lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>alternar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar plantilla</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>cambiar desplazamiento Y</lyellow>.</lgray>
+      Effects:
+        Name: <lyellow><b>Efectos de Partículas</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Modelo: </lgray>%crate_effect_model%</lyellow>'
+          - '<lyellow>● <lgray>Partícula: </lgray>%crate_effect_particle_name%</lyellow>'
+          - '<lyellow>● <lgray>Datos: </lgray>%crate_effect_particle_data%</lyellow>'
+          - ''
+          - <lgray>Muestra efectos geniales alrededor del crate!</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>alternar modelo</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>cambiar partícula</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar datos</lyellow>.</lgray>
+      Particle:
+        Data:
+          Red:
+            Name: <lyellow><b>Rojo</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+          Green:
+            Name: <lyellow><b>Verde</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+          Blue:
+            Name: <lyellow><b>Azul</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+          Size:
+            Name: <lyellow><b>Tamaño</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+          Material:
+            Name: <lyellow><b>Material</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Arrastrar y soltar a <lyellow>cambiar</lyellow>.</lgray>
+          Number:
+            Name: <lyellow><b>Número</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>Actual: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+      Rewards:
+        Name: <lyellow><b>Recompensas</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Cantidad: </lgray>%crate_rewards_amount%</lyellow>'
+          - ''
+          - <lgray>Todas las posibles recompensas del crate para</lgray>
+          - <lgray>ganancias y hitos.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>navegar</lyellow>.</lgray>
+      Milestones:
+        Name: <lyellow><b>Hitos</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Hitos: </lgray>%crate_milestones_amount%</lyellow>'
+          - '<lyellow>● <lgray>Repetible: </lgray>%crate_milestones_repeatable%</lyellow>'
+          - ''
+          - <lgray>Los hitos son otra forma</lgray>
+          - <lgray>de <lorange>recompensar</lorange> a tus jugadores y</lgray>
+          - <lgray><lorange>motivar</lorange> a ellos para abrir incluso</lgray>
+          - <lgray>más crates!</lgray>
+          - ''
+          - <lgray>Dales recompensas únicas</lgray>
+          - <lgray>cada vez que abren este</lgray>
+          - <lgray>crate por <lorange>X veces</lorange>.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>navegar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>alternar repetible</lyellow>.</lgray>
+    Reward:
+      Object:
+        Name: '<lyellow><b>%reward_name%<r><lgray> (ID: <lorange>%reward_id%</lorange>)</lgray></r></b></lyellow>'
+        Lore:
+          - '%reward_inspect_content%'
+          - ''
+          - '<lyellow>● <lgray>Peso: </lgray>%reward_wieght%</lyellow>'
+          - '<lyellow>● <lgray>Probabilidad de Volver a tirar: </lgray>%reward_roll_chance%%</lyellow>'
+          - '<lyellow>● <lgray>Rareza: </lgray>%reward_rarity_name%</lyellow>'
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>editar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>mover hacia adelante</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>mover hacia atrás</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>eliminar <lred>(sin deshacer)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Nueva Recompensa</b></lyellow>
+        Lore:
+          - <lgray></lgray>
+          - ''
+          - <lgray><lyellow><b>Modo Fácil:</b></lyellow></lgray>
+          - <lgray>Clic con el item en el cursor</lgray>
+          - <lgray>para crear rápidamente una recompensa</lgray>
+          - <lgray><lgreen>con</lgreen> item físico.</lgray>
+          - ''
+          - <lgray><lyellow><b>Modo Experto:</b></lyellow></lgray>
+          - <lgray>Clic con el cursor vacío</lgray>
+          - <lgray>para crear una recompensa</lgray>
+          - <lgray><lred>sin</lred> item físico.</lgray>
+      Sort:
+        Info:
+          Name: <lyellow><b>Ordenar Recompensas</b></lyellow>
+          Lore:
+            - <lgray>Ordena automáticamente las recompensas en</lgray>
+            - <lgray>el orden especificado.</lgray>
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>navegar</lyellow>.</lgray>
+        ByWeight:
+          Name: <lyellow><b>Por Peso</b></lyellow>
+          Lore: []
+        ByRarity:
+          Name: <lyellow><b>Por Rareza</b></lyellow>
+          Lore: []
+        Byprobability:
+          Name: <lyellow><b>Por Probabilidad</b></lyellow>
+          Lore: []
+        ByName:
+          Name: <lyellow><b>Por Nombre</b></lyellow>
+          Lore: []
+        ByItem:
+          Name: <lyellow><b>Por Item</b></lyellow>
+          Lore: []
+      DisplayName:
+        Name: <lyellow><b>Nombre Visible</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Actual: </lgray>%reward_name%</lyellow>'
+          - ''
+          - <lgray>Nombre de la recompensa para mensajes y marcadores de posición.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>cambiar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>heredar de la vista previa</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>establecer para la vista previa</lyellow>.</lgray>
+      Preview:
+        Name: <lyellow><b>Item de Vista Previa</b></lyellow>
+        Lore:
+          - <lgray>Item que representa esta recompensa.</lgray>
+          - ''
+          - <lgray>Si la recompensa tiene <lorange>cero</lorange> o <lorange>múltiples</lorange></lgray>
+          - <lgray>items físicos, probablemente quieras establecer</lgray>
+          - <lgray>un item específico para identificar la recompensa.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Arrastrar y soltar para <lyellow>reemplazar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>obtener una copia</lyellow>.</lgray>
+      Weight:
+        Name: <lyellow><b>Rareza y Peso</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Rareza: </lgray>%reward_rarity_name%</lyellow>'
+          - '<lyellow>● <lgray>Peso: </lgray>%reward_wieght%</lyellow>'
+          - '<lyellow>● <lgray>Probabilidad de Rol: </lgray>%reward_roll_chance%%</lyellow>'
+          - ''
+          - <lgray>La probabilidad de rol depende de la recompensa</lgray>
+          - <lgray>y los <lorange>pesos</lorange> de la rareza.</lgray>
+          - <lgray>Cuanto <lorange>más</lorange> peso, <lorange>mayor</lorange> es la probabilidad.</lgray>
+          - ''
+          - <lgray>Lee la <lorange>documentación</lorange> para más detalles.</lgray>
+          - <lgray>Está explicado todo muy bien.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>establecer rareza</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>establecer peso</lyellow>.</lgray>
+      Commands:
+        Name: <lyellow><b>Comandos de Ganancia</b></lyellow>
+        Lore:
+          - '%reward_editor_commands%'
+          - ''
+          - <lgray>Los comandos especificados serán</lgray>
+          - <lgray>ejecutados por la <lorange>consola del servidor</lorange></lgray>
+          - <lgray>cuando el jugador gane esta recompensa.</lgray>
+          - ''
+          - <lgray>Puedes usar todos los marcadores de posición de <lorange>PlaceholderAPI</lorange>.</lgray>
+          - <lgray>Usa <lorange>%player_name%</lorange> para el nombre del jugador.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>agregar comando</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>eliminar todos</lyellow>.</lgray>
+      Items:
+        Name: <lyellow><b>Items de Ganancia</b></lyellow>
+        Lore:
+          - '%reward_editor_items%'
+          - ''
+          - <lgray>Los items especificados serán</lgray>
+          - <lgray>añadidos al <lorange>inventario del jugador</lorange></lgray>
+          - <lgray>cuando el jugador gane esta recompensa.</lgray>
+          - ''
+          - <lgray>Puedes usar todos los marcadores de posición de <lorange>PlaceholderAPI</lorange>.</lgray>
+          - <lgray>Usa <lorange>%player_name%</lorange> para el nombre del jugador.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Haz clic izquierdo en <lyellow>navegar</lyellow>.</lgray>
+      Broadcast:
+        Name: <lyellow><b>Difusión de Ganancia</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%reward_broadcast%</lyellow>'
+          - ''
+          - <lgray>Cuando está habilitado, difunde un mensaje</lgray>
+          - <lgray>cuando alguien gana esta recompensa.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>alternar</lyellow>.</lgray>
+      GlobalWinLimit:
+        Name: <lyellow><b>Límites Globales de Ganancias</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%reward_global_win_limit_enabled%</lyellow>'
+          - '<lyellow>● <lgray>Cantidad: </lgray>%reward_global_win_limit_amount%</lyellow>'
+          - '<lyellow>● <lgray>Cooldown: </lgray>%reward_global_win_limit_cooldown%</lyellow>'
+          - '<lyellow>● <lgray>Paso de Cooldown: </lgray>%reward_global_win_limit_step%</lyellow>'
+          - ''
+          - <lgray>Establece el cooldown de la recompensa y la cantidad</lgray>
+          - <lgray>de posibles ganancias para el <lorange>servidor completo</lorange>.</lgray>
+          - ''
+          - <lgray>Lee la <lorange>documentación</lorange> para más detalles.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>alternar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>cambiar cantidad</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar cooldown</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>cambiar paso de cooldown</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>cooldown a medianoche</lyellow>.</lgray>
+      PlayerWinLimit:
+        Name: <lyellow><b>Límites de Ganancias del Jugador</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%reward_player_win_limit_enabled%</lyellow>'
+          - '<lyellow>● <lgray>Cantidad: </lgray>%reward_player_win_limit_amount%</lyellow>'
+          - '<lyellow>● <lgray>Cooldown: </lgray>%reward_player_win_limit_cooldown%</lyellow>'
+          - '<lyellow>● <lgray>Paso de Cooldown: </lgray>%reward_player_win_limit_step%</lyellow>'
+          - ''
+          - <lgray>Establece el cooldown de la recompensa y la cantidad</lgray>
+          - <lgray>de posibles ganancias para <lorange>cada jugador</lorange>.</lgray>
+          - ''
+          - <lgray>Lee la <lorange>documentación</lorange> para más detalles.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Soltar] Tecla para <lyellow>alternar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>cambiar cantidad</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar cooldown</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Izquierdo para <lyellow>cambiar paso de cooldown</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>cooldown a medianoche</lyellow>.</lgray>
+    IgnoredPermissions:
+      Name: <lyellow><b>Restricciones de permisos</b></lyellow>
+      Lore:
+        - '%reward_ignored_for_permissions%'
+        - ''
+        - <lgray>Jugadores con cualquiera de los permisos especificados</lgray>
+        - <lgray>nunca ganarán esta recompensa.</lgray>
+        - ''
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>añadir</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>eliminar todo</lyellow>.</lgray>
+    Milestone:
+      Create:
+        Name: <lyellow><b>Nuevo hito</b></lyellow>
+        Lore: []
+      Object:
+        Name: '<lyellow><b>Hito: %milestone_openings%</b></lyellow>'
+        Lore:
+          - '%milestone_inspect_reward%'
+          - ''
+          - '<lyellow>● <lgray>Aperturas: </lgray>%milestone_openings%</lyellow>'
+          - '<lyellow>● <lgray>Id de recompensa: </lgray>%milestone_reward_id%</lyellow>'
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>cambiar aperturas</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar recompensa</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>eliminar <lred>(sin deshacer)</lred></lyellow>.</lgray>
+    Key:
+      Object:
+        Name: '<lyellow><b>%key_name%<r><lgray> (ID: <white>%key_id%</white>)</lgray></r></b></lyellow>'
+        Lore:
+          - '<lyellow>● <lgray>Virtual: </lgray>%key_virtual%</lyellow>'
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>editar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Derecho para <lyellow>eliminar <lred>(sin deshacer)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Nueva llave</b></lyellow>
+        Lore: []
+      DisplayName:
+        Name: <lyellow><b>Nombre para mostrar</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Actual: </lgray>%key_name%</lyellow>'
+          - ''
+          - <lgray>Nombre de la llave para mensajes, marcadores de posición</lgray>
+          - <lgray>y hologramas.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>cambiar</lyellow>.</lgray>
+      Item:
+        Name: <lyellow><b>Item clave</b></lyellow>
+        Lore:
+          - <lgray>item que representa la llave en</lgray>
+          - <lgray>los inventarios de los jugadores.</lgray>
+          - ''
+          - <lgray>Deberías usar sólo items <lorange>preDones</lorange> -</lgray>
+          - <lgray>no puedes editarlo desde aquí.</lgray>
+          - ''
+          - <lgray><orange>[❗]</orange> <lgray>Las etiquetas NBT <orange>no</orange> están soportadas!</lgray></lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Arrastrar y soltar para <lyellow>reemplazar</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>obtener el item clave</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>obtener una copia en bruto</lyellow>.</lgray>
+      Virtual:
+        Name: <lyellow><b>Virtual</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>Habilitado: </lgray>%key_virtual%</lyellow>'
+          - ''
+          - <lgray>Establece si la llave es virtual o no.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Clic para <lyellow>alternar</lyellow>.</lgray>
+Menu:
+  Invalid: <lred>El menú no existe!</lred>
+Other:
+  Midnight: Medianoche
+  Free: Gratis
