@@ -13,6 +13,7 @@ import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.hologram.HologramType;
 import su.nightexpress.excellentcrates.hologram.impl.HologramDecentHandler;
+import su.nightexpress.excellentcrates.hologram.impl.HologramFancyHandler;
 import su.nightexpress.excellentcrates.hologram.impl.HologramInternalHandler;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
@@ -109,10 +110,15 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
             if (Plugins.isInstalled(HookId.DECENT_HOLOGRAMS)) {
                 this.hologramHandler = new HologramDecentHandler(this);
             }
+        } else if (type == HologramType.FANCY_HOLOGRAMS) {
+            if (Plugins.isInstalled(HookId.FANCY_HOLOGRAMS)) {
+                this.hologramHandler = new HologramFancyHandler(this);
+            }
         }
 
         if (this.hologramHandler != null) {
             this.info("Using " + StringUtil.capitalizeUnderscored(type.name().toLowerCase()) + " hologram handler.");
+            this.hologramHandler.setup();
         }
         else {
             this.info("No plugins are available to handle crate holograms :(");
