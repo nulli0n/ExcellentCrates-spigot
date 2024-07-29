@@ -12,12 +12,13 @@ public class CratePulsarEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location loc2, @NotNull UniParticle particle, int step) {
-        Location loc = loc2.clone().add(0, -0.8D, 0);
-        double n2 = (0.5 + step * 0.15) % 3.0;
-        for (int n3 = 0; n3 < n2 * 10.0; ++n3) {
-            double n4 = 6.283185307179586 / (n2 * 10.0) * n3;
-            particle.play(getPointOnCircle(loc.clone(), false, n4, n2, 1.0), 0.1f, 0.0f, 2);
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+        Location loc = origin.clone().add(0, -0.8D, 0);
+        double y = (0.5 + step * 0.15) % 3.0;
+        for (int point = 0; point < y * 10.0; ++point) {
+            double x = 6.283185307179586 / (y * 10.0) * point;
+            Location location = getPointOnCircle(loc.clone(), false, x, y, 1.0);
+            playSafe(location, player -> particle.play(player, location, 0.1f, 0.0f, 2));
         }
     }
 }

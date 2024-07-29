@@ -72,12 +72,12 @@ class GiveAllCommand extends AbstractCommand<CratesPlugin> {
         });
 
         if (key.isVirtual()) {
-            this.plugin.runTaskAsync(task -> {
+            //this.plugin.runTaskAsync(task -> {
                 players.forEach(player -> {
                     CrateUser user = this.plugin.getUserManager().getUserData(player);
-                    this.plugin.getUserManager().save(user);
+                    this.plugin.getUserManager().saveAsync(user);
                 });
-            });
+            //});
         }
 
         Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage()

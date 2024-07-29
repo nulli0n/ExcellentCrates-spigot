@@ -12,8 +12,8 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
-import su.nightexpress.excellentcrates.key.editor.KeyListEditor;
-import su.nightexpress.excellentcrates.key.editor.KeyMainEditor;
+import su.nightexpress.excellentcrates.editor.type.CreationResult;
+import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.manager.AbstractManager;
 import su.nightexpress.nightcore.util.*;
 
@@ -25,8 +25,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, CrateKey> keysMap;
 
-    private KeyListEditor keysEditor;
-    private KeyMainEditor keySettingsEditor;
+
 
     public KeyManager(@NotNull CratesPlugin plugin) {
         super(plugin);
@@ -34,11 +33,8 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     }
 
     @Override
-    public void onLoad() {
+    protected void onLoad() {
         this.loadKeys();
-
-        this.keysEditor = new KeyListEditor(this.plugin);
-        this.keySettingsEditor = new KeyMainEditor(this.plugin);
 
         this.addListener(new KeyListener(this.plugin, this));
     }
@@ -58,26 +54,15 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     }
 
     @Override
-    public void onShutdown() {
-        if (this.keysEditor != null) this.keysEditor.clear();
-        if (this.keySettingsEditor != null) this.keySettingsEditor.clear();
-
+    protected void onShutdown() {
         this.keysMap.clear();
     }
 
-    public void openKeysEditor(@NotNull Player player) {
-        this.keysEditor.open(player, this);
-    }
-
-    public void openKeyEditor(@NotNull Player player, @NotNull CrateKey key) {
-        this.keySettingsEditor.open(player, key);
-    }
-
-    public boolean create(@NotNull String id) {
-        id = StringUtil.lowerCaseUnderscore(id);
-        if (this.getKeyById(id) != null) {
-            return false;
-        }
+    @NotNull
+    public CreationResult create(@NotNull String id) {
+        id = CrateUtils.validateId(id);
+        if (id.isBlank()) return CreationResult.ERROR_NAME;
+        if (this.getKeyById(id) != null) return CreationResult.ERROR_NAME;
 
         File file = new File(plugin.getDataFolder() + Config.DIR_KEYS, id + ".yml");
         FileUtil.create(file);
@@ -95,7 +80,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         key.save();
 
         this.loadKey(key);
-        return true;
+        return CreationResult.SUCCESS;
     }
 
     public boolean delete(@NotNull CrateKey crateKey) {

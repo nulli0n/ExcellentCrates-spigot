@@ -248,38 +248,54 @@ public class Lang extends CoreLang {
     public static final LangText CRATE_OPEN_REWARD_BROADCAST = LangText.of("Crate.Open.Reward.Broadcast",
         TAG_NO_PREFIX + SOUND.enclose(Sound.BLOCK_NOTE_BLOCK_BELL),
         " ",
-        "\n" + LIGHT_GRAY.enclose(" Player " + LIGHT_GREEN.enclose(PLAYER_DISPLAY_NAME) + " just won " + LIGHT_GREEN.enclose(REWARD_NAME) + " from " + LIGHT_GREEN.enclose(CRATE_NAME) + "!"),
+        LIGHT_GRAY.enclose(" Player " + LIGHT_GREEN.enclose(PLAYER_DISPLAY_NAME) + " just won " + LIGHT_GREEN.enclose(REWARD_NAME) + " from " + LIGHT_GREEN.enclose(CRATE_NAME) + "!"),
         " ",
-        "\n" + LIGHT_GRAY.enclose("Do you wanna too? Purchase keys now: " + CLICK.enclose(ClickEvent.Action.OPEN_URL, LIGHT_GREEN.enclose("[OPEN STORE]"), "https://store.examplecraft.com/")),
+        LIGHT_GRAY.enclose("Do you wanna too? Purchase keys now: " + CLICK.enclose(LIGHT_GREEN.enclose("[OPEN STORE]"), ClickEvent.Action.OPEN_URL, "https://store.examplecraft.com/")),
         " "
     );
+
+    public static final LangText CRATE_PREVIEW_ERROR_COOLDOWN = LangText.of("Crate.Preview.Error.Cooldown",
+        LIGHT_GRAY.enclose("You can preview this crate again in " + LIGHT_RED.enclose(GENERIC_TIME))
+    );
+
 
     public static final LangText ERROR_INVALID_CRATE = LangText.of("Crate.Error.Invalid",
         LIGHT_RED.enclose("Invalid crate!"));
 
-    public static final LangString ERROR_DUPLICATED_CRATE = LangString.of("Crate.Error.Exists",
-        LIGHT_RED.enclose("Crate already exists!"));
-
     public static final LangText ERROR_INVALID_KEY = LangText.of("Crate.Key.Error.Invalid",
         LIGHT_RED.enclose("Invalid key!"));
-
-    public static final LangString ERROR_DUPLICATED_KEY = LangString.of("Crate.Key.Error.Exists",
-        LIGHT_RED.enclose("Key already exists!"));
-
-    public static final LangString ERROR_DUPLICATED_REWARD = LangString.of("Editor.Reward.Error.Create.Exist",
-        LIGHT_GRAY.enclose("Reward already exists!"));
 
     public static final LangText ERROR_INVALID_MENU = LangText.of("Menu.Invalid",
         LIGHT_RED.enclose("Menu does not exist!"));
 
 
     public static final LangString OTHER_MIDNIGHT = LangString.of("Other.Midnight", "Midnight");
+    public static final LangString OTHER_FREE     = LangString.of("Other.Free", "Free");
 
-    public static final LangString OTHER_FREE = LangString.of("Other.Free", "Free");
 
-    public static final LangString EDITOR_TITLE_CRATES = LangString.of("Editor.Title.Crates", BLACK.enclose("Crates Editor"));
+    public static final LangString EDITOR_ERROR_BAD_NAME = LangString.of("Editor.Error.BadName",
+        LIGHT_RED.enclose("Only latin letters & numbers allowed."));
 
-    public static final LangString EDITOR_TITLE_KEYS = LangString.of("Editor.Title.Keys", BLACK.enclose("Keys Editor"));
+    public static final LangString EDITOR_ERROR_DUPLICATED_CRATE = LangString.of("Crate.Error.Exists",
+        LIGHT_RED.enclose("Crate already exists!"));
+
+    public static final LangString EDITOR_ERROR_DUPLICATED_KEY = LangString.of("Crate.Key.Error.Exists",
+        LIGHT_RED.enclose("Key already exists!"));
+
+    public static final LangString EDITOR_ERROR_DUPLICATED_REWARD = LangString.of("Editor.Reward.Error.Create.Exist",
+        LIGHT_GRAY.enclose("Reward already exists!"));
+
+    public static final LangString EDITOR_TITLE_MAIN             = LangString.of("Editor.Title.Main", BLACK.enclose("ExcellentCrates Editor"));
+    public static final LangString EDITOR_TITLE_CRATE_LIST       = LangString.of("Editor.Title.Crates", BLACK.enclose("Crates Editor"));
+    public static final LangString EDITOR_TITLE_CRATE_SETTINGS   = LangString.of("Editor.Title.Crate.Settings", BLACK.enclose("Crate Settings"));
+    public static final LangString EDITOR_TITLE_CRATE_MILESTONES = LangString.of("Editor.Title.Crate.Milestones", BLACK.enclose("Crate Milestones"));
+    public static final LangString EDITOR_TITLE_CRATE_EFFECT     = LangString.of("Editor.Title.Crate.Effect", BLACK.enclose("Crate Effect"));
+    public static final LangString EDITOR_TITLE_CRATE_PLACEMENT  = LangString.of("Editor.Title.Crate.Placement", BLACK.enclose("Crate Placement"));
+    public static final LangString EDITOR_TITLE_REWARD_LIST      = LangString.of("Editor.Title.Reward.List", BLACK.enclose("Crate Rewards"));
+    public static final LangString EDITOR_TITLE_REWARD_SETTINGS  = LangString.of("Editor.Title.Reward.Settings", BLACK.enclose("Reward Settings"));
+    public static final LangString EDITOR_TITLE_REWARD_SORT      = LangString.of("Editor.Title.Reward.Sort", BLACK.enclose("Reward Sorting"));
+    public static final LangString EDITOR_TITLE_KEY_LIST         = LangString.of("Editor.Title.Keys", BLACK.enclose("Keys Editor"));
+    public static final LangString EDITOR_TITLE_KEY_SETTINGS     = LangString.of("Editor.Title.Key.Settings", BLACK.enclose("Key Settings"));
 
     public static final LangString EDITOR_ENTER_DISPLAY_NAME = LangString.of("Editor.Enter.DisplayName",
         LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Display Name]")));
@@ -293,8 +309,8 @@ public class Lang extends CoreLang {
     public static final LangString EDITOR_ENTER_SECONDS = LangString.of("Editor.Crate.Enter.Seconds",
         LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Seconds Amount]")));
 
-    public static final LangString EDITOR_ENTER_CHANCE = LangString.of("Editor.Reward.Enter.Chance",
-        LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Chance]")));
+    public static final LangString EDITOR_ENTER_WEIGHT = LangString.of("Editor.Reward.Enter.Chance",
+        LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Weight]")));
 
     public static final LangString EDITOR_ENTER_COMMAND = LangString.of("Editor.Reward.Enter.Command",
         LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Command]")));

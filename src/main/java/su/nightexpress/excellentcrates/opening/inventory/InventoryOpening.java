@@ -38,8 +38,8 @@ public class InventoryOpening extends AbstractOpening {
     private Inventory inventory;
     private boolean   started;
     private long      closeDelay;
-    private boolean popupNextTick;
-    //private boolean canRemoveOpening;
+    private long      ticksForSkip;
+    private boolean   popupNextTick;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InventoryOpeningMenu menu,
@@ -54,7 +54,7 @@ public class InventoryOpening extends AbstractOpening {
         this.scheduleds = new HashSet<>();
         this.closeDelay = Config.CRATE_OPENING_CLOSE_TIME.get();
         this.popupNextTick = false;
-        //this.canRemoveOpening = false;
+        this.ticksForSkip = 0L;
     }
 
     public enum Mode {
@@ -69,6 +69,7 @@ public class InventoryOpening extends AbstractOpening {
     public void start() {
         this.runScripts(this.getConfig().getScriptsOnStart());
         this.started = true;
+        this.ticksForSkip = 0L;
     }
 
     public void postOpen() {
@@ -97,6 +98,7 @@ public class InventoryOpening extends AbstractOpening {
 
         this.scheduleds.removeIf(Scheduled::isCompleted);
         this.scheduleds.forEach(Scheduled::tick);
+        this.ticksForSkip++;
     }
 
     @Override
@@ -105,11 +107,9 @@ public class InventoryOpening extends AbstractOpening {
 
         if (this.closeDelay == 0 || this.isEmergency()) {
             this.doClose();
-            //AbstractMenu.purge(this.getPlayer());
         }
         else if (this.closeDelay > 0) {
             this.plugin.runTaskLater(task -> this.doClose(), this.closeDelay);
-            //AbstractMenu.purge(this.player);
         }
     }
 
@@ -117,17 +117,8 @@ public class InventoryOpening extends AbstractOpening {
         this.removeOpening();
         this.player.closeInventory();
         this.menu.close(this.getPlayer());
-        //this.canRemoveOpening = true;
 
     }
-
-    /*@Override
-    public void removeOpening() {
-        if (this.canRemoveOpening) {
-            System.out.println("removeOpening");
-            super.removeOpening();
-        }
-    }*/
 
     @Override
     public boolean isCompleted() {
@@ -143,9 +134,17 @@ public class InventoryOpening extends AbstractOpening {
         return this.getSelectedSlots().size() >= this.getConfig().getSelectionAmount();
     }
 
+    public boolean canSkip() {
+        if (!Config.CRATE_OPENING_ALLOW_SKIP.get()) return false;
+
+        long maxTicks = this.config.getMaxTicksForSkip();
+        if (maxTicks < 0) return false;
+
+        return this.ticksForSkip <= maxTicks;
+    }
+
     @Override
     public void instaRoll() {
-        //this.startDelay = 0L;
         this.closeDelay = 0L; // Do not schedule inventory closing.
         this.setRefundable(false); // Do not return keys.
 
@@ -158,22 +157,23 @@ public class InventoryOpening extends AbstractOpening {
             }
         }
 
-        this.start();
+        if (!this.isStarted()) {
+            this.start();
+        }
         this.scheduleds.forEach(Scheduled::forceRun);
         this.getSpinners().forEach(spinner -> {
             if (!(spinner instanceof AbstractSpinner abstractSpinner)) return;
 
             abstractSpinner.setSilent(true);
-            //spinner.setCurrentSpins(spinner.getTotalSpins() - 1);
-            //spinner.tick();
 
             long total = Math.max(0L, spinner.getTotalSpins());// * spinner.getInterval();// + spinner.getStartDelay();
 
-            //spinner.setStartDelay(0);
             for (int i = 0; i < total; i++) {
+                if (abstractSpinner.isCompleted()) break;
+
                 abstractSpinner.onTick();
             }
-            //System.out.println("[spinner ticks] Count: " + spinner.getCurrentSpins() + " / Total: " + spinner.getTotalSpins() + ", Done: " + spinner.isCompleted());
+            //System.out.println("[" + spinner.getId() + " ticks] Count: " + spinner.getCurrentSpins() + " / Total: " + spinner.getTotalSpins() + ", Done: " + spinner.isCompleted());
             spinner.stop();
             //System.out.println("still running: " + spinner.isRunning());
         });

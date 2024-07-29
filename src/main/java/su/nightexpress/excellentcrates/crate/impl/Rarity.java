@@ -11,6 +11,8 @@ import su.nightexpress.nightcore.util.placeholder.Placeholder;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
+import java.util.Collection;
+
 public class Rarity implements Weighted, Placeholder {
 
     private final CratesPlugin   plugin;
@@ -40,6 +42,11 @@ public class Rarity implements Weighted, Placeholder {
         return new Rarity(plugin, id, name, weight, isDefault);
     }
 
+    @NotNull
+    public static Rarity dummy(@NotNull CratesPlugin plugin) {
+        return new Rarity(plugin, "dummy", "Dummy", 100, true);
+    }
+
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Name", this.getName());
         config.set(path + ".Weight", this.getWeight());
@@ -54,7 +61,15 @@ public class Rarity implements Weighted, Placeholder {
 
     @Override
     public double getRollChance() {
-        double sum = this.plugin.getCrateManager().getRarities().stream().mapToDouble(Rarity::getWeight).sum();
+        return this.getRollChance(this.plugin.getCrateManager().getRarities());
+    }
+
+    public double getRollChance(@NotNull Crate crate) {
+        return this.getRollChance(crate.getRarities());
+    }
+
+    public double getRollChance(@NotNull Collection<Rarity> rarities) {
+        double sum = rarities.stream().mapToDouble(Rarity::getWeight).sum();
         return (this.getWeight() / sum) * 100D;
     }
 

@@ -12,7 +12,8 @@ public class CrateSimpleEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
-        particle.play(location.add(0, 0.5D, 0), 0.3f, 0.1f, 30);
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+        Location location = origin.add(0, 0.5D, 0);
+        playSafe(location, player -> particle.play(player, location, 0.3f, 0.1f, 30));
     }
 }

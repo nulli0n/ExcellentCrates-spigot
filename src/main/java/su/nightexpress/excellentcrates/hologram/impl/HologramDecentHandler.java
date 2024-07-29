@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.hologram.impl;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
@@ -10,6 +11,7 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.nightcore.util.LocationUtil;
+import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.*;
 
@@ -37,16 +39,26 @@ public class HologramDecentHandler implements HologramHandler {
     }
 
     @Override
+    public void refresh(@NotNull Crate crate) {
+        this.remove(crate);
+        this.create(crate);
+    }
+
+    @Override
     public void create(@NotNull Crate crate) {
         double yOffset = crate.getHologramYOffset();
+        Set<Hologram> holograms = this.holoCrates.computeIfAbsent(crate.getId(), set -> new HashSet<>());
 
-        crate.getBlockLocations().forEach(location -> {
-            Set<Hologram> holograms = this.holoCrates.computeIfAbsent(crate.getId(), set -> new HashSet<>());
+        crate.getBlockPositions().forEach(worldPos -> {
+            if (!worldPos.isChunkLoaded()) return;
 
-            double height = location.getBlock().getBoundingBox().getHeight() + yOffset;
-            Location pos = LocationUtil.getCenter(location.clone()).add(0, height, 0);
+            Block block = worldPos.toBlock();
+            if (block == null) return;
 
-            Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), pos, crate.getHologramText());
+            double height = block.getBoundingBox().getHeight() + yOffset;
+            Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height, 0);
+
+            Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), location, NightMessage.asLegacy(crate.getHologramText()));
             holograms.add(hologram);
         });
     }

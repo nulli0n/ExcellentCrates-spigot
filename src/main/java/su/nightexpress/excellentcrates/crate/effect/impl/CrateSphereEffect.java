@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
-import su.nightexpress.excellentcrates.crate.effect.Point3D;
+import su.nightexpress.excellentcrates.util.pos.Point3D;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 public class CrateSphereEffect extends AbstractEffect {
@@ -32,11 +32,13 @@ public class CrateSphereEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
         Point3D[] circlePoints = getCircleCoordinates(1D, step);
         for (int j = 0; j < NUM_POINTS; j++) {
             Point3D point3d = circlePoints[j];
-            particle.play(location.clone().add(point3d.x, point3d.z + 0.2, point3d.y), 0f, 0f, 1);
+            Location location = origin.clone().add(point3d.x, point3d.z + 0.2, point3d.y);
+
+            playSafe(location, player -> particle.play(player, location, 0f, 0f, 1));
         }
     }
 }

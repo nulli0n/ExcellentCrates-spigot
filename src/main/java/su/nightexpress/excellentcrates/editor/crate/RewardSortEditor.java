@@ -1,20 +1,20 @@
-package su.nightexpress.excellentcrates.crate.editor;
+package su.nightexpress.excellentcrates.editor.crate;
 
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.EditorLang;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.impl.EditorMenu;
 import su.nightexpress.nightcore.util.Colorizer;
 import su.nightexpress.nightcore.util.ItemUtil;
 
 import java.util.Comparator;
-
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class RewardSortEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor {
 
@@ -25,10 +25,10 @@ public class RewardSortEditor extends EditorMenu<CratesPlugin, Crate> implements
     private static final String TEXTURE_5 = "54dac7cf2017a2aefcdf29dc3832d407cbd9c8b6ba0e51a0a3169f6ffb62c015";
 
     public RewardSortEditor(@NotNull CratesPlugin plugin) {
-        super(plugin, BLACK.enclose("Sort Rewards"), 27);
+        super(plugin, Lang.EDITOR_TITLE_REWARD_SORT.getString(), MenuSize.CHEST_27);
 
         this.addReturn(22, (viewer, event, crate) -> {
-            this.runNextTick(() -> plugin.getCrateManager().openRewardsEditor(viewer.getPlayer(), crate));
+            this.runNextTick(() -> plugin.getEditorManager().openRewards(viewer.getPlayer(), crate));
         });
 
         this.addItem(ItemUtil.getSkinHead(TEXTURE_1), EditorLang.REWARD_SORT_BY_WEIGHT, 2, (viewer, event, crate) -> {
@@ -55,7 +55,7 @@ public class RewardSortEditor extends EditorMenu<CratesPlugin, Crate> implements
     private void sortRewards(@NotNull MenuViewer viewer, @NotNull Crate crate, @NotNull Comparator<Reward> comparator) {
         crate.setRewards(crate.getRewards().stream().sorted(comparator).toList());
         this.saveRewards(viewer, crate, false);
-        this.runNextTick(() -> this.plugin.getCrateManager().openRewardsEditor(viewer.getPlayer(), crate));
+        this.runNextTick(() -> this.plugin.getEditorManager().openRewards(viewer.getPlayer(), crate));
     }
 
     @Override

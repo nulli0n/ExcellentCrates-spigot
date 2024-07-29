@@ -227,7 +227,7 @@ public class EditorLang {
         .build();
 
     public static final LangItem REWARD_OBJECT = builder(PREFIX + "Reward.Object")
-        .name(REWARD_NAME + RESET.enclose(LIGHT_GRAY.enclose(" (ID: " + LIGHT_ORANGE.enclose(REWARD_ID) + ")")))
+        .name(REWARD_NAME + RESET.enclose(REWARD_NAME + LIGHT_GRAY.enclose(" (ID: " + LIGHT_ORANGE.enclose(REWARD_ID) + ")")))
         .textRaw(REWARD_INSPECT_CONTENT)
         .emptyLine()
         .current("Weight", Placeholders.REWARD_WEIGHT)
@@ -297,6 +297,17 @@ public class EditorLang {
         .emptyLine()
         .dragAndDrop("replace")
         .rightClick("get a copy")
+        .build();
+
+    public static final LangItem REWARD_SET_PLACEHOLDERS = builder(PREFIX + "Reward.SetPlaceholders")
+        .name("Apply Placeholders")
+        .current("Enabled", REWARD_PLACEHOLDER_APPLY)
+        .emptyLine()
+        .text("Applies crate, reward and player placeholders", "to all reward item(s) on win.")
+        .emptyLine()
+        .text("This option " + LIGHT_RED.enclose("might screw up") + " custom items.")
+        .emptyLine()
+        .click("toggle")
         .build();
 
     public static final LangItem REWARD_WEIGHT = builder(PREFIX + "Reward.Weight")

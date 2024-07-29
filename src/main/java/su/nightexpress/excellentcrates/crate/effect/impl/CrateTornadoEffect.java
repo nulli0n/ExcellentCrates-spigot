@@ -21,8 +21,8 @@ public class CrateTornadoEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location loc2, @NotNull UniParticle particle, int step) {
-        Location loc = loc2.clone().add(0.0D, 0.5D, 0.0D);
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+        Location loc = origin.clone().add(0.0D, 0.5D, 0.0D);
         double offset = 0.25D * (MAX_TORNADO_RADIUS * (2.35D / TORNADO_HEIGHT));
         double vertical = TORNADO_HEIGHT - DISTANCE * step;
 
@@ -31,7 +31,8 @@ public class CrateTornadoEffect extends AbstractEffect {
             radius = MAX_TORNADO_RADIUS;
         }
         for (Vector vector : this.createCircle(vertical, radius)) {
-            particle.play(loc.add(vector), 0.1f, 0.0f, 3);
+            Location location = loc.add(vector);
+            playSafe(location, player -> particle.play(player, location, 0.1f, 0.0f, 3));
             loc.subtract(vector);
         }
         loc.subtract(0.0D, Y_OFFSET, 0.0D);

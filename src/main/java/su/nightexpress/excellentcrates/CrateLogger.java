@@ -7,7 +7,6 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.nightcore.util.Colorizer;
 import su.nightexpress.nightcore.util.text.NightMessage;
-import su.nightexpress.nightcore.util.text.tag.TagPool;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,8 +34,7 @@ public class CrateLogger {
     private void log(@NotNull String text) {
         if (!Config.LOGS_TO_CONSOLE.get() && !Config.LOGS_TO_FILE.get()) return;
 
-        text = NightMessage.create(text, TagPool.NONE).toLegacy();
-        text = Colorizer.strip(text);
+        text = Colorizer.strip(NightMessage.asLegacy(text));
 
         if (Config.LOGS_TO_CONSOLE.get()) {
             this.plugin.info(text);

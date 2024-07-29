@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.crate.effect.impl;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
-import su.nightexpress.excellentcrates.crate.effect.Point3D;
+import su.nightexpress.excellentcrates.util.pos.Point3D;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 public class CrateHeartEffect extends AbstractEffect {
@@ -17,9 +17,9 @@ public class CrateHeartEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
         boolean isX = this.rotate;
-        location = location.add(0, 4, 0);
+        origin = origin.add(0, 4, 0);
 
         double delta = Math.PI / POINTS;
         double angle = delta * step;
@@ -31,8 +31,14 @@ public class CrateHeartEffect extends AbstractEffect {
         double realZ = isX ? x : z;
         Point3D point = new Point3D(realX / 25, (y / 25) - 1.8, realZ / 25);
         Point3D mirrored = new Point3D(isX ? -point.x : point.x, point.y, isX ? point.z : -point.z);
-        particle.play(location.clone().add(point.x, point.y, point.z), 0f, 0f, 1);
-        particle.play(location.clone().add(mirrored.x, mirrored.y, mirrored.z), 0f, 0f, 1);
+
+        Location left = origin.clone().add(point.x, point.y, point.z);
+        Location right = origin.clone().add(mirrored.x, mirrored.y, mirrored.z);
+
+        playSafe(left, player -> {
+            particle.play(player, left, 0f, 0f, 1);
+            particle.play(player, right, 0f, 0f, 1);
+        });
 
         if (step == 0) {
             this.rotate = !this.rotate;

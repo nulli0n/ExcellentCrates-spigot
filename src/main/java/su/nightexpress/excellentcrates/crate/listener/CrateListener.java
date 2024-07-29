@@ -10,20 +10,22 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
-import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.InteractType;
-import su.nightexpress.nightcore.dialog.Dialog;
 import su.nightexpress.nightcore.manager.AbstractListener;
+import su.nightexpress.nightcore.util.TimeUtil;
 
 import java.util.stream.Stream;
 
@@ -36,27 +38,9 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         this.crateManager = crateManager;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCrateBlockAssign(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        Dialog editor = Dialog.get(player);
-        if (editor == null) return;
-
-        Block block = event.getClickedBlock();
-        if (block == null) return;
-
-        event.setUseInteractedBlock(Event.Result.DENY);
-        event.setUseItemInHand(Event.Result.DENY);
-
-        if (plugin.getCrateManager().getCrateByBlock(block) != null) return;
-
-        Crate crate = CrateUtils.getAssignBlockCrate(player);
-        if (crate == null) return;
-
-        crate.getBlockLocations().add(block.getLocation());
-        crate.updateHologram();
-        crate.saveSettings();
-        Dialog.stop(player);
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onQuit(PlayerQuitEvent event) {
+        this.crateManager.removePreviewCooldown(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -89,6 +73,17 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         ClickType clickType = ClickType.from(action, player.isSneaking());
         InteractType clickAction = Config.getCrateClickAction(clickType);
         if (clickAction == null) return;
+
+        // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
+        if (clickAction == InteractType.CRATE_PREVIEW) {
+            if (this.crateManager.hasPreviewCooldown(player)) {
+                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage()
+                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.crateManager.getPreviewCooldown(player)))
+                    .send(player);
+                return;
+            }
+            this.crateManager.setPreviewCooldown(player);
+        }
 
         this.crateManager.interactCrate(player, crate, clickAction, item, block);
     }

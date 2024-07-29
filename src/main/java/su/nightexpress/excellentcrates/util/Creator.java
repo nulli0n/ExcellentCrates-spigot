@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.menu.PreviewMenu;
 import su.nightexpress.excellentcrates.menu.impl.CratesMenu;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -54,7 +55,7 @@ public class Creator {
                 ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
                 list.add(new MenuItem(grayPane).setPriority(0).setSlots(0,4,8,36,44));
 
-                ItemStack milestones = ItemUtil.getSkinHead("239945bc4c499a204210e0572779ad7bce94d9d386d5105eb92a2c741426e87a");
+                ItemStack milestones = ItemUtil.getSkinHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0");
                 ItemUtil.editMeta(milestones, meta -> {
                     meta.setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("Milestones")));
                 });
@@ -62,19 +63,19 @@ public class Creator {
 
                 ItemStack exit = ItemUtil.getSkinHead(SKIN_WRONG_MARK);
                 ItemUtil.editMeta(exit, meta -> {
-                    meta.setDisplayName(LIGHT_RED.enclose(BOLD.enclose("Exit")));
+                    meta.setDisplayName(Lang.EDITOR_ITEM_CLOSE.getLocalizedName());
                 });
                 list.add(new MenuItem(exit).setPriority(10).setSlots(40).setHandler(ItemHandler.forClose(this)));
 
                 ItemStack pageNext = ItemUtil.getSkinHead(SKIN_ARROW_RIGHT);
                 ItemUtil.editMeta(pageNext, meta -> {
-                    meta.setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("Next →")));
+                    meta.setDisplayName(Lang.EDITOR_ITEM_NEXT_PAGE.getLocalizedName());
                 });
                 list.add(new MenuItem(pageNext).setPriority(10).setSlots(26).setHandler(ItemHandler.forNextPage(this)));
 
                 ItemStack pageLeft = ItemUtil.getSkinHead(SKIN_ARROW_LEFT);
                 ItemUtil.editMeta(pageLeft, meta -> {
-                    meta.setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("← Back")));
+                    meta.setDisplayName(Lang.EDITOR_ITEM_PREVIOUS_PAGE.getLocalizedName());
                 });
                 list.add(new MenuItem(pageLeft).setPriority(10).setSlots(18).setHandler(ItemHandler.forPreviousPage(this)));
 

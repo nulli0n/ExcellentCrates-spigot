@@ -2,7 +2,6 @@ package su.nightexpress.excellentcrates.opening.inventory;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +10,7 @@ import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.impl.ConfigMenu;
 import su.nightexpress.nightcore.menu.item.ItemHandler;
@@ -19,8 +19,8 @@ import su.nightexpress.nightcore.menu.item.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
-import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.excellentcrates.Placeholders.CRATE_NAME;
+import static su.nightexpress.nightcore.util.text.tag.Tags.BLACK;
 
 public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
 
@@ -126,8 +126,13 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
             return;
         }
 
-        if (!opening.isCompleted() && opening.hasRewardAttempts()) {
-            opening.setPopupNextTick(true);
+        if (!opening.isCompleted()) {
+            if (opening.canSkip()) {
+                opening.instaRoll();
+            }
+            else /*if (opening.hasRewardAttempts())*/ {
+                opening.setPopupNextTick(true);
+            }
             //this.runNextTick(() -> viewer.getPlayer().openInventory(opening.getInventory()));
         }
         else {
@@ -140,7 +145,7 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
     @Override
     @NotNull
     protected MenuOptions createDefaultOptions() {
-        return new MenuOptions(BLACK.enclose("Opening " + CRATE_NAME), 27, InventoryType.CHEST);
+        return new MenuOptions(BLACK.enclose("Opening " + CRATE_NAME), MenuSize.CHEST_27);
     }
 
     @Override

@@ -12,15 +12,19 @@ public class CrateHelixEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
-        Location location2 = location.add(0, 0.05D, 0);
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+        Location location = origin.add(0, 0.05D, 0);
 
         double x = 0.3141592653589793 * step;
         double z = step * 0.1 % 2.5;
         double y = 0.75;
-        Location pointOnCircle = getPointOnCircle(location2, true, x, y, z);
-        Location pointOnCircle2 = getPointOnCircle(location2, true, x - Math.PI, y, z);
-        particle.play(pointOnCircle, 0, 1);
-        particle.play(pointOnCircle2, 0, 1);
+
+        Location left = getPointOnCircle(location, true, x, y, z);
+        Location right = getPointOnCircle(location, true, x - Math.PI, y, z);
+
+        playSafe(origin, player -> {
+            particle.play(left, 0, 1);
+            particle.play(right, 0, 1);
+        });
     }
 }

@@ -6,9 +6,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.nightcore.util.StringUtil;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 public class CrateUtils {
@@ -24,12 +26,26 @@ public class CrateUtils {
         return ASSIGN_BLOCK_MAP.remove(player);
     }
 
+    @NotNull
+    public static String validateId(@NotNull String id) {
+        return validateId(id, false);
+    }
+
+    @NotNull
+    public static String validateId(@NotNull String id, boolean remap) {
+        id = StringUtil.lowerCaseUnderscoreStrict(id);
+        if (id.replace("_", "").isBlank()) {
+            id = remap ? UUID.randomUUID().toString() : "";
+        }
+        return id;
+    }
+
     public static boolean isSupportedParticle(@NotNull Particle particle) {
         return particle != Particle.VIBRATION && particle != Particle.DUST_COLOR_TRANSITION;
     }
 
     public static boolean isSupportedParticleData(@NotNull UniParticle particle) {
-        return isSupportedParticleData(particle.getParticle().getDataType());
+        return particle.getParticle() != null && isSupportedParticleData(particle.getParticle().getDataType());
     }
 
     public static boolean isSupportedParticleData(@NotNull Class<?> clazz) {

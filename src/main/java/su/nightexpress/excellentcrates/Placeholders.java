@@ -87,22 +87,24 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String KEY_VIRTUAL   = "%key_virtual%";
     public static final String KEY_ITEM_NAME = "%key_item_name%";
 
+    public static final  String REWARD_ID                 = "%reward_id%";
+    public static final  String REWARD_NAME               = "%reward_name%";
     @Deprecated
-    public static final String MENU_ID = "%menu_id%";
+    private static final String REWARD_CHANCE             = "%reward_chance%";
+    @Deprecated
+    private static final String REWARD_REAL_CHANCE        = "%reward_real_chance%";
+    public static final  String REWARD_WEIGHT             = "%reward_wieght%";
+    public static final  String REWARD_ROLL_CHANCE        = "%reward_roll_chance%";
+    public static final  String REWARD_RARITY_NAME        = "%reward_rarity_name%";
+    @Deprecated
+    public static final  String REWARD_RARITY_CHANCE      = "%reward_rarity_chance%";
+    public static final  String REWARD_RARITY_WEIGHT      = "%reward_rarity_weight%";
+    public static final  String REWARD_RARITY_ROLL_CHANCE = "%reward_rarity_roll_chance%";
+    public static final  String REWARD_PREVIEW_NAME       = "%reward_preview_name%";
+    public static final  String REWARD_PREVIEW_LORE       = "%reward_preview_lore%";
+    public static final  String REWARD_BROADCAST          = "%reward_broadcast%";
+    public static final  String REWARD_PLACEHOLDER_APPLY  = "%reward_placeholder_apply%";
 
-    public static final  String REWARD_ID            = "%reward_id%";
-    public static final  String REWARD_NAME          = "%reward_name%";
-    @Deprecated
-    private static final String REWARD_CHANCE        = "%reward_chance%";
-    @Deprecated
-    private static final String REWARD_REAL_CHANCE   = "%reward_real_chance%";
-    public static final  String REWARD_WEIGHT        = "%reward_wieght%";
-    public static final  String REWARD_ROLL_CHANCE   = "%reward_roll_chance%";
-    public static final  String REWARD_RARITY_NAME   = "%reward_rarity_name%";
-    public static final  String REWARD_RARITY_CHANCE = "%reward_rarity_chance%";
-    public static final  String REWARD_PREVIEW_NAME  = "%reward_preview_name%";
-    public static final  String REWARD_PREVIEW_LORE  = "%reward_preview_lore%";
-    public static final  String REWARD_BROADCAST     = "%reward_broadcast%";
 
     public static final Function<LimitType, String> REWARD_WIN_LIMIT_ENABLED  = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_enabled%";
     public static final Function<LimitType, String> REWARD_WIN_LIMIT_AMOUNT   = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_amount%";
@@ -200,14 +202,16 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
             })
             .add(CRATE_HOLOGRAM_Y_OFFSET, () -> NumberUtil.format(crate.getHologramYOffset()))
             .add(CRATE_LOCATIONS, () -> {
-                return crate.getBlockLocations().stream().map(location -> {
-                    Block block = location.getBlock();
+                return crate.getBlockPositions().stream().map(worldPos -> {
+                    Block block = worldPos.toBlock();
+                    if (block == null) return problem("null");
+
                     String name = Tags.LIGHT_ORANGE.enclose(LangAssets.get(block.getType()));
 
-                    String x = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(location.getX()));
-                    String y = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(location.getY()));
-                    String z = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(location.getZ()));
-                    String world = Tags.LIGHT_ORANGE.enclose(LocationUtil.getWorldName(location));
+                    String x = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getX()));
+                    String y = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getY()));
+                    String z = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getZ()));
+                    String world = Tags.LIGHT_ORANGE.enclose(worldPos.getWorldName());
                     String coords = x + ", " + y + ", " + z + " in " + world;
                     String line = coords + " (" + name + ")";
 
@@ -215,7 +219,12 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
                 }).collect(Collectors.joining("\n"));
             })
             .add(CRATE_EFFECT_MODEL, () -> StringUtil.capitalizeUnderscored(crate.getEffectModel().name().toLowerCase()))
-            .add(CRATE_EFFECT_PARTICLE_NAME, () -> StringUtil.capitalizeUnderscored(crate.getEffectParticle().getParticle().name().toLowerCase()))
+            .add(CRATE_EFFECT_PARTICLE_NAME, () -> {
+                UniParticle particle = crate.getEffectParticle();
+                if (particle.getParticle() == null) return problem("Undefined");
+
+                return good(StringUtil.capitalizeUnderscored(particle.getParticle().name().toLowerCase()));
+            })
             .add(CRATE_EFFECT_PARTICLE_DATA, () -> {
                 UniParticle particle = crate.getEffectParticle();
                 if (!CrateUtils.isSupportedParticleData(particle)) return problem("Not supported");
@@ -289,6 +298,8 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
             .add(REWARD_REAL_CHANCE, () -> NumberUtil.format(reward.getRollChance()))
             .add(REWARD_RARITY_NAME, () -> reward.getRarity().getName())
             .add(REWARD_RARITY_CHANCE, () -> NumberUtil.format(reward.getRarity().getWeight()))
+            .add(REWARD_RARITY_WEIGHT, () -> NumberUtil.format(reward.getRarity().getWeight()))
+            .add(REWARD_RARITY_ROLL_CHANCE, () -> NumberUtil.format(reward.getRarity().getRollChance(reward.getCrate())))
             .add(REWARD_PREVIEW_NAME, () -> ItemUtil.getItemName(reward.getPreview()))
             .add(REWARD_PREVIEW_LORE, () -> String.join("\n", ItemUtil.getLore(reward.getPreview())));
         placeholderMap.add(reward.getRarity().getPlaceholders());
@@ -314,6 +325,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
         map
             .add(REWARD_BROADCAST, () -> CoreLang.getYesOrNo(reward.isBroadcast()))
+            .add(REWARD_PLACEHOLDER_APPLY, () -> CoreLang.getYesOrNo(reward.isPlaceholderApply()))
             .add(REWARD_IGNORED_FOR_PERMISSIONS, () -> {
                 return String.join("\n", reward.getIgnoredForPermissions().stream().map(Placeholders::good).toList());
             })

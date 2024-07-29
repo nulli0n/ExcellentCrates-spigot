@@ -12,14 +12,16 @@ public interface HologramHandler {
 
     void shutdown();
 
+    void refresh(@NotNull Crate crate);
+
     void create(@NotNull Crate crate);
 
     void remove(@NotNull Crate crate);
 
-    default void update(@NotNull Crate crate) {
-        this.remove(crate);
-        this.create(crate);
-    }
+//    default void update(@NotNull Crate crate) {
+//        this.remove(crate);
+//        this.create(crate);
+//    }
 
     void createReward(@NotNull Player player, @NotNull Reward reward, @NotNull Location location);
 

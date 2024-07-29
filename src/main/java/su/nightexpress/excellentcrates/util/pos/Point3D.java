@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.crate.effect;
+package su.nightexpress.excellentcrates.util.pos;
 
 public class Point3D {
 

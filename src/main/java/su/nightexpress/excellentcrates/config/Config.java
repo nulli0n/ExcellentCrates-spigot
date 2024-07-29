@@ -33,12 +33,24 @@ public class Config {
         true,
         "Sets whether or not reward global data (such as win limit & cooldown) will be syncrhonized along with user data.");
 
+    public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
+        true,
+        "Sets whether or not Milestones feature is enabled (globally)."
+    );
+
     public static final ConfigValue<HologramType> CRATE_HOLOGRAM_HANDLER = ConfigValue.create("Crate.Holograms.Handler",
         HologramType.class, HologramType.INTERNAL,
         "Sets which hologram handler will be used to display crate holograms.",
         "Available values: " + StringUtil.inlineEnum(HologramType.class, ", "),
         "For all handlers, except the '" + HologramType.INTERNAL.name() + "' one, you will have to install respective holograms plugin.",
         "For '" + HologramType.INTERNAL.name() + "' hologram handler you must have " + HookId.PROTOCOL_LIB + " installed and to be on " + Version.V1_19_R3.getLocalized() + " or newer.");
+
+    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_USE_DISPLAYS = ConfigValue.create("Crate.Holograms.DisplayEntities",
+        true,
+        "[" + HologramType.INTERNAL.name() + " handler only]",
+        "[" + Version.V1_20_R3.getLocalized() + "+ only]",
+        "When enabled, uses Display Entities for holograms instead of Armor Stands."
+    );
 
     public static final ConfigValue<Map<String, List<String>>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMap("Crate.Holograms.Templates",
         (cfg, path, key) -> cfg.getStringList(path + "." + key),
@@ -98,10 +110,24 @@ public class Config {
         "Setting this to high values may result in lags, stutters, errors and bugs.",
         "Especially if crate contains rewards with commands of other plugins.");
 
+    public static final ConfigValue<Long> CRATE_PREVIEW_COOLDOWN = ConfigValue.create("Crate.Preview_Cooldown",
+        2500L,
+        "Sets cooldown (in milliseconds) for crate preview by clicking crate block(s).",
+        "The main purpose of this setting is to prevent exploit using hacked clients by sending a lot of crate interaction packets causing server overload by GUI generation.",
+        "Resets on player quit.",
+        "[Default is 2500]"
+    );
+
     public static final ConfigValue<Integer> CRATE_OPENING_CLOSE_TIME = ConfigValue.create("Crate.Opening_Close_Time",
         20,
         "Sets how soon (in ticks) crate opening animation GUI will be closed when completed.",
         "1 second = 20 ticks. 20 ticks by default.");
+
+    public static final ConfigValue<Boolean> CRATE_OPENING_ALLOW_SKIP = ConfigValue.create("Crate.Opening_Allow_Skip",
+        false,
+        "Sets whether or not players can skip crate opening animations.",
+        "When enabled, make sure the check out the 'Max_Ticks_To_Skip' setting in the " + DIR_OPENINGS + " configs."
+    );
 
     public static final ConfigValue<Double> CRATE_PUSHBACK_Y = ConfigValue.create("Crate.Block_Pushback.Y",
         -0.4D,
@@ -124,7 +150,8 @@ public class Config {
         },
         (cfg, path, map) -> map.forEach((click, action) -> cfg.set(path + "." + click.name(), action)),
         () -> Map.of(
-            ClickType.LEFT, InteractType.CRATE_PREVIEW, ClickType.RIGHT, InteractType.CRATE_OPEN,
+            ClickType.LEFT, InteractType.CRATE_PREVIEW,
+            ClickType.RIGHT, InteractType.CRATE_OPEN,
             ClickType.SHIFT_RIGHT, InteractType.CRATE_MASS_OPEN
         ),
         "Defines the crate behavior on certain clicks.",
@@ -147,5 +174,14 @@ public class Config {
     @Nullable
     public static InteractType getCrateClickAction(@NotNull ClickType clickType) {
         return CRATE_CLICK_ACTIONS.get().get(clickType);
+    }
+
+    public static boolean isMilestonesEnabled() {
+        return MILESTONES_ENABLED.get();
+    }
+
+    @NotNull
+    public static HologramType getHologramType() {
+        return CRATE_HOLOGRAM_HANDLER.get();
     }
 }

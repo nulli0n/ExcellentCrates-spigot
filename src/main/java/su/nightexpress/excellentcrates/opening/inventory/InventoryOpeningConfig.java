@@ -18,6 +18,7 @@ public class InventoryOpeningConfig {
     private final InventoryOpening.Mode mode;
     private final boolean               autoRun;
     private final int[]                 winSlots;
+    private final long                  maxTicksForSkip;
     private final List<String>          scriptsOnOpen;
     private final List<String>          scriptsOnStart;
 
@@ -30,6 +31,7 @@ public class InventoryOpeningConfig {
     public InventoryOpeningConfig(@NotNull InventoryOpening.Mode mode,
                                   boolean autoRun,
                                   int[] winSlots,
+                                  long maxTicksForSkip,
                                   @NotNull List<String> scriptsOnOpen,
                                   @NotNull List<String> scriptsOnStart,
                                   int selectionAmount,
@@ -39,6 +41,7 @@ public class InventoryOpeningConfig {
         this.mode = mode;
         this.autoRun = autoRun;
         this.winSlots = winSlots;
+        this.maxTicksForSkip = maxTicksForSkip;
         this.scriptsOnOpen = new ArrayList<>(scriptsOnOpen);
         this.scriptsOnStart = new ArrayList<>(scriptsOnStart);
         this.selectionAmount = selectionAmount;
@@ -47,40 +50,47 @@ public class InventoryOpeningConfig {
         this.animationSpinSettingsMap = new HashMap<>(animationSpinSettingsMap);
     }
 
-    public static InventoryOpeningConfig read(@NotNull FileConfig cfg) {
+    @NotNull
+    public static InventoryOpeningConfig read(@NotNull FileConfig config) {
         InventoryOpening.Mode mode = ConfigValue.create("Settings.Mode",
             InventoryOpening.Mode.class,
             InventoryOpening.Mode.NORMAL
-        ).read(cfg);
+        ).read(config);
 
-        int[] winSlots = ConfigValue.create("Settings.WinSlots", new int[0]).read(cfg);
+        int[] winSlots = ConfigValue.create("Settings.WinSlots", new int[0]).read(config);
 
-        List<String> scriptsOnOpen = ConfigValue.create("Settings.ScriptRunner.OnOpen", List.of()).read(cfg);
+        long maxTicksForSkip = ConfigValue.create("Settings.Max_Ticks_To_Skip",
+            40L,
+            "Sets max. amount of the opening ticks while players can skip the opening animation.",
+            "Set to -1 to disable (no skip)."
+        ).read(config);
 
-        List<String> scriptsOnStart = ConfigValue.create("Settings.ScriptRunner.OnStart", List.of()).read(cfg);
+        List<String> scriptsOnOpen = ConfigValue.create("Settings.ScriptRunner.OnOpen", List.of()).read(config);
 
-        boolean autoRun = ConfigValue.create("Settings.Selection.AutoRun", false).read(cfg);
+        List<String> scriptsOnStart = ConfigValue.create("Settings.ScriptRunner.OnStart", List.of()).read(config);
 
-        int selectionAmount = ConfigValue.create("Settings.Selection.Amount", 1).read(cfg);
+        boolean autoRun = ConfigValue.create("Settings.Selection.AutoRun", false).read(config);
+
+        int selectionAmount = ConfigValue.create("Settings.Selection.Amount", 1).read(config);
 
         ItemStack selectedIcon = ConfigValue.create("Settings.Selection.SelectedIcon",
             new ItemStack(Material.ENDER_CHEST)
-        ).read(cfg);
+        ).read(config);
 
         Map<String, RewardSpinSettings> rewardSpinSettingsMap = new HashMap<>();
-        cfg.getSection("Rewards").forEach(sId -> {
-            RewardSpinSettings settings = RewardSpinSettings.read(cfg, "Rewards." + sId, sId);
+        config.getSection("Rewards").forEach(sId -> {
+            RewardSpinSettings settings = RewardSpinSettings.read(config, "Rewards." + sId, sId);
             rewardSpinSettingsMap.put(sId.toLowerCase(), settings);
         });
 
         Map<String, AnimationSpinSettings> animationSpinSettingsMap = new HashMap<>();
-        cfg.getSection("Animations").forEach(sId -> {
-            AnimationSpinSettings settings = AnimationSpinSettings.read(cfg, "Animations." + sId, sId);
+        config.getSection("Animations").forEach(sId -> {
+            AnimationSpinSettings settings = AnimationSpinSettings.read(config, "Animations." + sId, sId);
             animationSpinSettingsMap.put(sId.toLowerCase(), settings);
         });
 
         return new InventoryOpeningConfig(
-            mode, autoRun, winSlots,
+            mode, autoRun, winSlots, maxTicksForSkip,
             scriptsOnOpen, scriptsOnStart,
             selectionAmount, selectedIcon,
             rewardSpinSettingsMap,
@@ -95,6 +105,10 @@ public class InventoryOpeningConfig {
 
     public int[] getWinSlots() {
         return winSlots;
+    }
+
+    public long getMaxTicksForSkip() {
+        return maxTicksForSkip;
     }
 
     @NotNull

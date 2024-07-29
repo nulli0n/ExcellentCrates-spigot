@@ -18,7 +18,7 @@ public class CrateVortexEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location loc, @NotNull UniParticle particle, int step) {
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
         for (int boost = 0; boost < 3; boost++) {
             for (int strand = 1; strand <= STRANDS; ++strand) {
                 float progress = step / (float) PARTICLES;
@@ -26,8 +26,8 @@ public class CrateVortexEffect extends AbstractEffect {
                 double addX = Math.cos(point) * progress * RADIUS;
                 double addZ = Math.sin(point) * progress * RADIUS;
                 double addY = 3.5D - 0.02 * 5 * step;
-                Location location = loc.clone().add(addX, addY, addZ);
-                particle.play(location, 0.1f, 0.0f, 1);
+                Location location = origin.clone().add(addX, addY, addZ);
+                playSafe(location, player -> particle.play(player, location, 0.1f, 0.0f, 1));
             }
         }
     }

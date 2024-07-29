@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.crate.editor;
+package su.nightexpress.excellentcrates.editor.crate;
 
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -12,6 +12,7 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.impl.EditorMenu;
 import su.nightexpress.nightcore.util.ItemReplacer;
@@ -22,10 +23,10 @@ import su.nightexpress.nightcore.util.wrapper.UniParticle;
 public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor {
 
     public CratePlacementEditor(@NotNull CratesPlugin plugin) {
-        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 36);
+        super(plugin, Lang.EDITOR_TITLE_CRATE_PLACEMENT.getString(), MenuSize.CHEST_36);
 
         this.addReturn(31, (viewer, event, crate) -> {
-            this.runNextTick(() -> this.plugin.getCrateManager().openCrateEditor(viewer.getPlayer(), crate));
+            this.runNextTick(() -> this.plugin.getEditorManager().openCrate(viewer.getPlayer(), crate));
         });
 
         this.addItem(Material.ARMOR_STAND, EditorLang.CRATE_HOLOGRAM, 10, (viewer, event, crate) -> {
@@ -38,8 +39,9 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
                 });
             }
             else if (event.isLeftClick()) {
+                crate.removeHologram();
                 crate.setHologramEnabled(!crate.isHologramEnabled());
-                crate.updateHologram();
+                crate.createHologram();
                 this.saveSettings(viewer, crate, true);
             }
             else if (event.isRightClick()) {
@@ -59,7 +61,7 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
                 this.handleInput(viewer, Lang.EDITOR_ENTER_BLOCK_LOCATION, (dialog, input) -> false);
             }
             else {
-                crate.getBlockLocations().clear();
+                crate.clearBlockPositions();
                 crate.updateHologram();
                 this.saveSettings(viewer, crate, false);
             }
@@ -78,12 +80,14 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
             else {
                 if (event.isRightClick()) {
                     if (CrateUtils.isSupportedParticleData(crate.getEffectParticle())) {
-                        this.runNextTick(() -> plugin.getCrateManager().openCrateParticleEditor(viewer.getPlayer(), crate));
+                        this.runNextTick(() -> plugin.getEditorManager().openParticle(viewer.getPlayer(), crate));
                     }
                 }
                 else if (event.isLeftClick()) {
                     this.handleInput(viewer, Lang.EDITOR_ENTER_PARTICLE_NAME, (dialog, wrapper) -> {
-                        Particle particle = StringUtil.getEnum(wrapper.getTextRaw(), Particle.class).orElse(Particle.REDSTONE);
+                        Particle particle = StringUtil.getEnum(wrapper.getTextRaw(), Particle.class).orElse(null);
+                        if (particle == null) return true;
+
                         crate.setEffectParticle(UniParticle.of(particle));
                         this.saveSettings(viewer, crate, false);
                         return true;
@@ -93,7 +97,7 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
         });
 
         this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
-            ItemReplacer.replace(item, this.getObject(viewer).getAllPlaceholders().replacer());
+            ItemReplacer.replace(item, this.getLink(viewer).getAllPlaceholders().replacer());
         }));
     }
 

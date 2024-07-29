@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +16,11 @@ import su.nightexpress.excellentcrates.crate.effect.EffectModel;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.hologram.HologramType;
 import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.excellentcrates.util.pos.BlockPos;
+import su.nightexpress.excellentcrates.util.pos.WorldPos;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractFileData;
-import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.PDCUtil;
 import su.nightexpress.nightcore.util.placeholder.Placeholder;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
@@ -35,9 +37,9 @@ import java.util.stream.Collectors;
 
 public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder {
 
-    private final Set<CrateKey>                 keys;
-    private final Set<Location>                 blockLocations;
-    private final Set<Milestone>                milestones;
+    private final Set<CrateKey>  keys;
+    private final Set<WorldPos>  blockPositions;
+    private final Set<Milestone> milestones;
     private final Map<Currency, Double>         openCostMap;
     private final LinkedHashMap<String, Reward> rewardMap;
     private final PlaceholderMap                placeholderMap;
@@ -46,7 +48,7 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     private String      name;
     private String      openingConfig;
     private String      previewConfig;
-    private boolean     isPermissionRequired;
+    private boolean     permissionRequired;
     private int         openCooldown;
     private boolean     keyRequired;
     private ItemStack   item;
@@ -65,7 +67,7 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         this.keys = new HashSet<>();
         this.openCostMap = new HashMap<>();
         this.rewardMap = new LinkedHashMap<>();
-        this.blockLocations = new HashSet<>();
+        this.blockPositions = new HashSet<>();
         this.milestones = new HashSet<>();
         this.placeholderMap = Placeholders.forCrate(this);
         this.placeholderFullMap = Placeholders.forCrateAll(this);
@@ -85,6 +87,23 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
             config.remove("Block.Hologram.Text");
             config.remove("Block.Hologram.Offset");
             config.set("Block.Hologram.Template", this.getId());
+        }
+
+        if (config.contains("Block.Locations")) {
+            List<WorldPos> positions = new ArrayList<>();
+
+            config.getStringList("Block.Locations").forEach(raw -> {
+                String[] split = raw.split(",");
+                if (split.length != 6) return;
+
+                String worldName = split[5];
+                BlockPos blockPos = BlockPos.deserialize(raw);
+
+                positions.add(new WorldPos(worldName, blockPos));
+            });
+            config.remove("Block.Locations");
+            config.set("Block.Positions", positions.stream().map(WorldPos::serialize).toList());
+            positions.clear();
         }
         // Setting migration - end
 
@@ -121,10 +140,16 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
 
         this.setItem(config.getItem("Item"));
 
+        this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
+        this.blockPositions.removeIf(pos -> {
+            Block block = pos.toBlock();
+            return block != null && block.isEmpty();
+        });
+
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
         this.setHologramTemplate(config.getString("Block.Hologram.Template", Placeholders.DEFAULT));
-        this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", Config.CRATE_HOLOGRAM_HANDLER.get() == HologramType.INTERNAL ? 0 : 0.5));
+        this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", Config.getHologramType() == HologramType.INTERNAL ? 0 : 0.5));
 
         EffectModel model = config.getEnum("Block.Effect.Model", EffectModel.class, EffectModel.SIMPLE);
         UniParticle particle = UniParticle.read(config, "Block.Effect.Particle");
@@ -171,7 +196,8 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         config.set("Key.Ids", this.getKeyNames());
         config.setItem("Item", this.getRawItem());
 
-        config.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
+        //config.set("Block.Locations", LocationUtil.serialize(new ArrayList<>(this.getBlockLocations())));
+        config.set("Block.Positions", this.blockPositions.stream().map(WorldPos::serialize).toList());
         config.set("Block.Pushback.Enabled", this.isPushbackEnabled());
         config.set("Block.Hologram.Enabled", this.isHologramEnabled());
         config.set("Block.Hologram.Template", this.getHologramTemplate());
@@ -188,9 +214,14 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
 
     private void writeRewards(@NotNull FileConfig config) {
         config.remove("Rewards.List");
-        this.rewardMap.forEach((id, reward) -> {
-            reward.write(config, "Rewards.List." + id);
-        });
+        this.getRewards().forEach(reward -> this.writeReward(config, reward));
+//        this.rewardMap.forEach((id, reward) -> {
+//            reward.write(config, "Rewards.List." + id);
+//        });
+    }
+
+    private void writeReward(@NotNull FileConfig config, @NotNull Reward reward) {
+        reward.write(config, "Rewards.List." + reward.getId());
     }
 
     private void writeMilestones(@NotNull FileConfig config) {
@@ -203,22 +234,26 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     }
 
     public void saveSettings() {
-        this.saveSection(this::writeSettings);
+        this.writeConfig(this::writeSettings);
     }
 
     public void saveRewards() {
-        this.saveSection(this::writeRewards);
+        this.writeConfig(this::writeRewards);
+    }
+
+    public void saveReward(@NotNull Reward reward) {
+        this.writeConfig(config -> this.writeReward(config, reward));
     }
 
     public void saveMilestones() {
-        this.saveSection(this::writeMilestones);
+        this.writeConfig(this::writeMilestones);
     }
 
     public void saveLastOpenData() {
-        this.saveSection(this::writeLastOpenData);
+        this.writeConfig(this::writeLastOpenData);
     }
 
-    private void saveSection(@NotNull Consumer<FileConfig> consumer) {
+    private void writeConfig(@NotNull Consumer<FileConfig> consumer) {
         FileConfig config = this.getConfig();
 
         consumer.accept(config);
@@ -236,11 +271,12 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return placeholderFullMap;
     }
 
-    public void loadLocations() {
-        this.getBlockLocations().addAll(LocationUtil.deserialize(this.getConfig().getStringList("Block.Locations")));
-        this.getBlockLocations().removeIf(location -> location.getBlock().isEmpty());
-        this.updateHologram();
-    }
+//    @Deprecated
+//    public void loadLocations() {
+//        this.getBlockLocations().addAll(LocationUtil.deserialize(this.getConfig().getStringList("Block.Locations")));
+//        this.getBlockLocations().removeIf(location -> location.getBlock().isEmpty());
+//        this.updateHologram();
+//    }
 
     public void loadRewardWinDatas() {
         this.getRewards().forEach(Reward::loadGlobalWinData);
@@ -260,28 +296,32 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     }
 
     public void createHologram() {
-        if (!this.isHologramEnabled()) return;
-
-        HologramHandler hologramHandler = plugin.getHologramHandler();
-        if (hologramHandler == null) return;
-
-        hologramHandler.create(this);
+        this.manageHologram(handler -> handler.create(this));
     }
 
     public void removeHologram() {
-        HologramHandler hologramHandler = plugin.getHologramHandler();
-        if (hologramHandler == null) return;
-
-        hologramHandler.remove(this);
+        this.manageHologram(handler -> handler.remove(this));
     }
 
     public void updateHologram() {
-        this.removeHologram();
-        this.createHologram();
+        this.manageHologram(handler -> handler.refresh(this));
+    }
+
+    private void manageHologram(@NotNull Consumer<HologramHandler> consumer) {
+        if (!this.isHologramEnabled()) return;
+
+        HologramHandler handler = plugin.getHologramHandler();
+        if (handler == null) return;
+
+        consumer.accept(handler);
     }
 
     public boolean hasRewards() {
         return !this.getRewards().isEmpty();
+    }
+
+    public boolean hasMilestones() {
+        return Config.isMilestonesEnabled() && !this.getMilestones().isEmpty();
     }
 
     public boolean isGoodKey(@NotNull CrateKey key) {
@@ -344,7 +384,7 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     public List<String> getHologramText() {
         List<String> text = new ArrayList<>(Config.CRATE_HOLOGRAM_TEMPLATES.get().getOrDefault(this.getHologramTemplate(), Collections.emptyList()));
         text.replaceAll(this.replacePlaceholders());
-        return NightMessage.asLegacy(text);
+        return text;
     }
 
     public boolean hasRewards(@NotNull Player player) {
@@ -402,6 +442,16 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return Rnd.getByWeight(rewards);
     }
 
+    public void addBlockPosition(@NotNull Location location) {
+        WorldPos pos = WorldPos.from(location);
+
+        this.blockPositions.add(pos);
+    }
+
+    public void clearBlockPositions() {
+        this.blockPositions.clear();
+    }
+
     @NotNull
     public String getName() {
         return this.name;
@@ -435,11 +485,11 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     }
 
     public boolean isPermissionRequired() {
-        return isPermissionRequired;
+        return permissionRequired;
     }
 
     public void setPermissionRequired(boolean isPermissionRequired) {
-        this.isPermissionRequired = isPermissionRequired;
+        this.permissionRequired = isPermissionRequired;
     }
 
     public int getOpenCooldown() {
@@ -518,16 +568,8 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     }
 
     @NotNull
-    public Set<Location> getBlockLocations() {
-        return blockLocations;
-    }
-
-    public void addBlockLocation(@NotNull Location location) {
-        this.getBlockLocations().add(location);
-    }
-
-    public void removeBlockLocation(@NotNull Location location) {
-        this.getBlockLocations().remove(location);
+    public Set<WorldPos> getBlockPositions() {
+        return new HashSet<>(this.blockPositions);
     }
 
     public boolean isHologramEnabled() {
@@ -571,6 +613,7 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
 
     public void setEffectParticle(@NotNull UniParticle effectParticle) {
         this.effectParticle = effectParticle;
+        this.effectParticle.validateData();
     }
 
     @Nullable
@@ -594,6 +637,11 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
     @NotNull
     public LinkedHashMap<String, Reward> getRewardsMap() {
         return new LinkedHashMap<>(this.rewardMap);
+    }
+
+    @NotNull
+    public Set<Rarity> getRarities() {
+        return this.getRewards().stream().map(Reward::getRarity).collect(Collectors.toSet());
     }
 
     @NotNull

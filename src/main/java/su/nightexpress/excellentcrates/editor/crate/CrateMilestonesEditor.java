@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.crate.editor;
+package su.nightexpress.excellentcrates.editor.crate;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +11,7 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.api.AutoFill;
 import su.nightexpress.nightcore.menu.api.AutoFilled;
@@ -24,10 +25,10 @@ import java.util.stream.IntStream;
 public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor, AutoFilled<Milestone> {
 
     public CrateMilestonesEditor(@NotNull CratesPlugin plugin) {
-        super(plugin, Lang.EDITOR_TITLE_CRATES.getString(), 45);
+        super(plugin, Lang.EDITOR_TITLE_CRATE_MILESTONES.getString(), MenuSize.CHEST_45);
 
         this.addReturn(39, (viewer, event, crate)-> {
-            this.runNextTick(() -> this.plugin.getCrateManager().openCrateEditor(viewer.getPlayer(), crate));
+            this.runNextTick(() -> this.plugin.getEditorManager().openCrate(viewer.getPlayer(), crate));
         });
         this.addNextPage(44);
         this.addPreviousPage(36);
@@ -52,7 +53,7 @@ public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> imple
     @Override
     public void onAutoFill(@NotNull MenuViewer viewer, @NotNull AutoFill<Milestone> autoFill) {
         autoFill.setSlots(IntStream.range(0, 36).toArray());
-        autoFill.setItems(this.getObject(viewer).getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList());
+        autoFill.setItems(this.getLink(viewer).getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList());
         autoFill.setItemCreator(milestone -> {
             Reward reward = milestone.getReward();
             ItemStack item = new ItemStack(reward == null ? ItemUtil.getSkinHead(Placeholders.SKIN_QUESTION_MARK) : reward.getPreview());
@@ -62,30 +63,30 @@ public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> imple
             return item;
         });
         autoFill.setClickAction(milestone -> (viewer1, event) -> {
-            this.editObject(viewer1, crate -> {
-                if (event.isShiftClick()) {
-                    if (event.isRightClick()) {
-                        crate.getMilestones().remove(milestone);
-                        this.saveMilestones(viewer, crate, true);
-                        return;
-                    }
-                }
+            Crate crate = this.getLink(viewer1);
 
-                if (event.isLeftClick()) {
-                    this.handleInput(viewer1, Lang.EDITOR_ENTER_AMOUNT, (dialog, wrapper) -> {
-                        milestone.setOpenings(wrapper.asInt());
-                        this.saveMilestones(viewer, crate, false);
-                        return true;
-                    });
+            if (event.isShiftClick()) {
+                if (event.isRightClick()) {
+                    crate.getMilestones().remove(milestone);
+                    this.saveMilestones(viewer, crate, true);
+                    return;
                 }
-                else if (event.isRightClick()) {
-                    this.handleInput(viewer1, Lang.EDITOR_ENTER_REWARD_ID, (dialog, wrapper) -> {
-                        milestone.setRewardId(wrapper.getTextRaw());
-                        this.saveMilestones(viewer, crate, false);
-                        return true;
-                    }).setSuggestions(crate.getRewardsMap().keySet(), true);
-                }
-            });
+            }
+
+            if (event.isLeftClick()) {
+                this.handleInput(viewer1, Lang.EDITOR_ENTER_AMOUNT, (dialog, input) -> {
+                    milestone.setOpenings(input.asInt());
+                    this.saveMilestones(viewer, crate, false);
+                    return true;
+                });
+            }
+            else if (event.isRightClick()) {
+                this.handleInput(viewer1, Lang.EDITOR_ENTER_REWARD_ID, (dialog, input) -> {
+                    milestone.setRewardId(input.getTextRaw());
+                    this.saveMilestones(viewer, crate, false);
+                    return true;
+                }).setSuggestions(crate.getRewardsMap().keySet(), true);
+            }
         });
     }
 }

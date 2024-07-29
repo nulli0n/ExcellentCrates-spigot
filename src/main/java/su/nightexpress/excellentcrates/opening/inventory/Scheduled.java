@@ -15,6 +15,8 @@ public class Scheduled {
     }
 
     public void forceRun() {
+        if (this.isCompleted()) return;
+
         this.ticksLeft = 1L;
         this.tick();
     }

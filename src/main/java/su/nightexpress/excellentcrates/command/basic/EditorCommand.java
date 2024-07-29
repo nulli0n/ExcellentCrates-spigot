@@ -19,6 +19,6 @@ public class EditorCommand extends AbstractCommand<CratesPlugin> {
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-        this.plugin.getCrateManager().openEditor((Player) sender);
+        this.plugin.getEditorManager().openEditor((Player) sender);
     }
 }

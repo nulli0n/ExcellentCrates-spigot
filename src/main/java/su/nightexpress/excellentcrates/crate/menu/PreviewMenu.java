@@ -1,7 +1,6 @@
 package su.nightexpress.excellentcrates.crate.menu;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +14,7 @@ import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.api.AutoFill;
 import su.nightexpress.nightcore.menu.api.AutoFilled;
@@ -36,10 +36,10 @@ import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<Reward>, Linked<CrateSource> {
 
-    private static final String PLACEHOLDER_WIN_LIMIT_AMOUNT        = "%win_limit_amount%";
-    private static final String PLACEHOLDER_WIN_LIMIT_COOLDOWN      = "%win_limit_cooldown%";
-    private static final String PLACEHOLDER_WIN_LIMIT_OUT           = "%win_limit_drained%";
-    private static final String PLACEHOLDER_WIN_LIMIT_NO_PERMISSION = "%win_limit_no_permission%";
+    private static final String WIN_LIMIT_AMOUNT        = "%win_limit_amount%";
+    private static final String WIN_LIMIT_COOLDOWN      = "%win_limit_cooldown%";
+    private static final String WIN_LIMIT_OUT           = "%win_limit_drained%";
+    private static final String WIN_LIMIT_NO_PERMISSION = "%win_limit_no_permission%";
 
     private int[]        rewardSlots;
     private String       rewardName;
@@ -66,13 +66,14 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
             Player player = viewer.getPlayer();
 
             this.runNextTick(() -> {
+                player.closeInventory();
                 this.plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
             });
         }));
 
         this.addHandler(this.milesHandler = new ItemHandler("milestones", (viewer, event) -> {
             this.runNextTick(() -> {
-                this.plugin.getCrateManager().getMilestonesMenu().open(viewer.getPlayer(), this.getLink(viewer));
+                this.plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer));
             });
         }));
 
@@ -89,63 +90,10 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
                     return source.getItem() != null || source.getBlock() != null;
                 });
             }
+            else if (menuItem.getHandler() == this.milesHandler) {
+                menuItem.getOptions().setVisibilityPolicy(viewer -> this.getLink(viewer).getCrate().hasMilestones());
+            }
         });
-    }
-
-    @Override
-    @NotNull
-    protected MenuOptions createDefaultOptions() {
-        return new MenuOptions(BLACK.enclose(CRATE_NAME), 45, InventoryType.CHEST);
-    }
-
-    @Override
-    @NotNull
-    protected List<MenuItem> createDefaultItems() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    protected void loadAdditional() {
-        this.hideExceededRewards = ConfigValue.create("Reward.Hide_Drained_Rewards",
-            true,
-            "Sets whether or not to hide rewards that player can not win anymore."
-        ).read(cfg);
-
-        this.rewardSlots = ConfigValue.create("Reward.Slots",
-            new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34},
-            "Sets slots to display crate rewards."
-        ).read(cfg);
-
-        this.rewardName = ConfigValue.create("Reward.Name", LIGHT_YELLOW.enclose(BOLD.enclose(REWARD_PREVIEW_NAME))).read(cfg);
-
-        this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
-            REWARD_PREVIEW_LORE,
-            "",
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Chance: ") + REWARD_ROLL_CHANCE + "%"),
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Rarity: ") + REWARD_RARITY_NAME + " " + LIGHT_GRAY.enclose("(" + WHITE.enclose(REWARD_RARITY_CHANCE + "%") + ")")),
-            "",
-            PLACEHOLDER_WIN_LIMIT_AMOUNT,
-            PLACEHOLDER_WIN_LIMIT_COOLDOWN,
-            PLACEHOLDER_WIN_LIMIT_OUT,
-            PLACEHOLDER_WIN_LIMIT_NO_PERMISSION
-        )).read(cfg);
-
-        this.rewardLimitAmountLore = ConfigValue.create("Reward.Lore.Win_Limit.Amount", Lists.newList(
-            LIGHT_GRAY.enclose(LIGHT_GREEN.enclose("✔") + " You can win this " + LIGHT_GREEN.enclose(GENERIC_AMOUNT) + " more times.")
-        )).read(cfg);
-
-        this.rewardLimitCoolownLore = ConfigValue.create("Reward.Lore.Win_Limit.Cooldown", Lists.newList(
-            LIGHT_GRAY.enclose(LIGHT_ORANGE.enclose("[❗]") + " You can win this again in " + LIGHT_ORANGE.enclose(GENERIC_TIME) + ".")
-        )).read(cfg);
-
-        this.rewardLimitOutLore = ConfigValue.create("Reward.Lore.Win_Limit.Drained", Lists.newList(
-            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this " + LIGHT_RED.enclose("anymore") + ".")
-        )).read(cfg);
-
-        this.rewardLimitBadPermissionLore = ConfigValue.create("Reward.Lore.Win_Limit.No_Permission", Lists.newList(
-            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this.")
-        )).read(cfg);
-
     }
 
     @Override
@@ -154,15 +102,11 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
         return this.viewLink;
     }
 
-    public int[] getRewardSlots() {
-        return rewardSlots;
-    }
-
     @Override
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {
         CrateSource source = this.getLink(viewer);
 
-        options.setTitle(source.getCrate().replacePlaceholders().apply(options.getTitle()));
+        options.editTitle(source.getCrate().replacePlaceholders());
         this.autoFill(viewer);
     }
 
@@ -214,15 +158,77 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
             }
 
             ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).trimmed()
-                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_AMOUNT, limitAmountLore)
-                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_COOLDOWN, limitCooldownLore)
-                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_OUT, limitOutLore)
-                .replaceLoreExact(PLACEHOLDER_WIN_LIMIT_NO_PERMISSION, limitPermissionLore)
+                .replace(WIN_LIMIT_AMOUNT, limitAmountLore)
+                .replace(WIN_LIMIT_COOLDOWN, limitCooldownLore)
+                .replace(WIN_LIMIT_OUT, limitOutLore)
+                .replace(WIN_LIMIT_NO_PERMISSION, limitPermissionLore)
                 .replace(reward.getPlaceholders())
                 .replace(crate.getPlaceholders())
                 .replacePlaceholderAPI(player)
                 .writeMeta();
             return item;
         });
+    }
+
+    @Override
+    @NotNull
+    protected MenuOptions createDefaultOptions() {
+        return new MenuOptions(BLACK.enclose(CRATE_NAME), MenuSize.CHEST_45);
+    }
+
+    @Override
+    @NotNull
+    protected List<MenuItem> createDefaultItems() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    protected void loadAdditional() {
+        this.hideExceededRewards = ConfigValue.create("Reward.Hide_Drained_Rewards",
+            true,
+            "Sets whether or not to hide rewards that player can not win anymore."
+        ).read(cfg);
+
+        this.rewardSlots = ConfigValue.create("Reward.Slots",
+            new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34},
+            "Sets slots to display crate rewards."
+        ).read(cfg);
+
+        this.rewardName = ConfigValue.create("Reward.Name",
+            LIGHT_YELLOW.enclose(BOLD.enclose(REWARD_PREVIEW_NAME))
+        ).read(cfg);
+
+        this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
+            REWARD_PREVIEW_LORE,
+            "",
+            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Chance: ") + REWARD_ROLL_CHANCE + "%"),
+            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Rarity: ") + REWARD_RARITY_NAME + " " + LIGHT_GRAY.enclose("(" + WHITE.enclose(REWARD_RARITY_ROLL_CHANCE + "%") + ")")),
+            "",
+            WIN_LIMIT_AMOUNT,
+            WIN_LIMIT_COOLDOWN,
+            WIN_LIMIT_OUT,
+            WIN_LIMIT_NO_PERMISSION
+        )).read(cfg);
+
+        this.rewardLimitAmountLore = ConfigValue.create("Reward.Lore.Win_Limit.Amount", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_GREEN.enclose("✔") + " You can win this " + LIGHT_GREEN.enclose(GENERIC_AMOUNT) + " more times.")
+        )).read(cfg);
+
+        this.rewardLimitCoolownLore = ConfigValue.create("Reward.Lore.Win_Limit.Cooldown", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_ORANGE.enclose("[❗]") + " You can win this again in " + LIGHT_ORANGE.enclose(GENERIC_TIME) + ".")
+        )).read(cfg);
+
+        this.rewardLimitOutLore = ConfigValue.create("Reward.Lore.Win_Limit.Drained", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this " + LIGHT_RED.enclose("anymore") + ".")
+        )).read(cfg);
+
+        this.rewardLimitBadPermissionLore = ConfigValue.create("Reward.Lore.Win_Limit.No_Permission", Lists.newList(
+            LIGHT_GRAY.enclose(LIGHT_RED.enclose("✘") + " Sorry, you can not win this.")
+        )).read(cfg);
+
+    }
+
+    public int[] getRewardSlots() {
+        return rewardSlots;
     }
 }

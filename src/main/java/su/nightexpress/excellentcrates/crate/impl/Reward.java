@@ -42,8 +42,9 @@ public class Reward implements Weighted, Placeholder {
     private String          name;
     private double          weight;
     private Rarity          rarity;
-    private boolean         broadcast;
-    private RewardWinLimit  playerWinLimit;
+    private boolean        broadcast;
+    private boolean        placeholderApply;
+    private RewardWinLimit playerWinLimit;
     private RewardWinLimit  globalWinLimit;
     private ItemStack       preview;
     private List<ItemStack> items;
@@ -58,6 +59,7 @@ public class Reward implements Weighted, Placeholder {
         double weight = 25D;
         Rarity rarity = plugin.getCrateManager().getDefaultRarity();
         boolean broadcast = false;
+        boolean setPlaceholders = false;
         RewardWinLimit playerWinLimit = new RewardWinLimit(false, -1, 0, 1);
         RewardWinLimit globalWinLimit = new RewardWinLimit(false, -1, 0, 1);
         ItemStack preview = ItemUtil.getSkinHead(Placeholders.SKIN_NEW_REWARD);
@@ -65,7 +67,7 @@ public class Reward implements Weighted, Placeholder {
         List<String> commands = new ArrayList<>();
         Set<String> ignoredPermissions = new HashSet<>();
 
-        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, playerWinLimit, globalWinLimit, preview, items, commands, ignoredPermissions);
+        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, setPlaceholders, playerWinLimit, globalWinLimit, preview, items, commands, ignoredPermissions);
     }
 
     public Reward(
@@ -77,6 +79,7 @@ public class Reward implements Weighted, Placeholder {
         double weight,
         @NotNull Rarity rarity,
         boolean broadcast,
+        boolean placeholderApply,
 
         @NotNull RewardWinLimit playerWinLimit,
         @NotNull RewardWinLimit globalWinLimit,
@@ -94,6 +97,7 @@ public class Reward implements Weighted, Placeholder {
         this.setWeight(weight);
         this.setRarity(rarity);
         this.setBroadcast(broadcast);
+        this.setPlaceholderApply(placeholderApply);
 
         this.setPlayerWinLimit(playerWinLimit);
         this.setGlobalWinLimit(globalWinLimit);
@@ -116,6 +120,7 @@ public class Reward implements Weighted, Placeholder {
         if (rarity == null) rarity = plugin.getCrateManager().getDefaultRarity();
 
         boolean broadcast = config.getBoolean(path + ".Broadcast");
+        boolean placeholderApply = config.getBoolean(path + ".Placeholder_Apply");
         ItemStack preview = config.getItemEncoded(path + ".Preview");
         if (preview == null) preview = new ItemStack(Material.BARRIER);
 
@@ -135,6 +140,7 @@ public class Reward implements Weighted, Placeholder {
         List<String> commands = new ArrayList<>();
         for (String command : config.getStringList(path + ".Commands")) {
              commands.add(command
+                 // Legacy placeholder validation
                 .replace("[CONSOLE]", "")
                 .replace("%player%", Placeholders.PLAYER_NAME)
                 .trim()
@@ -144,7 +150,7 @@ public class Reward implements Weighted, Placeholder {
         List<ItemStack> items = new ArrayList<>(Stream.of(config.getItemsEncoded(path + ".Items")).toList());
         Set<String> ignoredPermissions = config.getStringSet(path + ".Ignored_For_Permissions");
 
-        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, playerLimit, globalLimit, preview, items, commands, ignoredPermissions);
+        return new Reward(plugin, crate, id, name, weight, rarity, broadcast, placeholderApply, playerLimit, globalLimit, preview, items, commands, ignoredPermissions);
     }
 
     public void write(@NotNull FileConfig config, @NotNull String path) {
@@ -152,6 +158,7 @@ public class Reward implements Weighted, Placeholder {
         config.set(path + ".Weight", this.getWeight());
         config.set(path + ".Rarity", this.getRarity().getId());
         config.set(path + ".Broadcast", this.isBroadcast());
+        config.set(path + ".Placeholder_Apply", this.isPlaceholderApply());
         this.getPlayerWinLimit().write(config, path + ".Win_Limit.Player");
         this.getGlobalWinLimit().write(config, path + ".Win_Limit.Global");
         config.setItemEncoded(path + ".Preview", this.getPreview());
@@ -288,37 +295,45 @@ public class Reward implements Weighted, Placeholder {
     }
 
     public void giveContent(@NotNull Player player) {
-        UnaryOperator<String> papi = str -> Plugins.hasPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, str) : str;
-        UnaryOperator<String> inter = PlaceholderMap.fusion(this.getCrate().getPlaceholders(), this.getPlaceholders()).replacer();
-        UnaryOperator<String> forPlayer = Placeholders.forPlayer(player);
-        Function<String, String> combo = inter.andThen(forPlayer);
+        boolean doPlaceholders = this.isPlaceholderApply();
 
-        if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
-            combo = combo.andThen(papi);
+        Function<String, String> replacer;
+        if (doPlaceholders || !this.getCommands().isEmpty()) {
+            UnaryOperator<String> papi = str -> Plugins.hasPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, str) : str;
+            UnaryOperator<String> inter = PlaceholderMap.fusion(this.getCrate().getPlaceholders(), this.getPlaceholders()).replacer();
+            UnaryOperator<String> forPlayer = Placeholders.forPlayer(player);
+            Function<String, String> combo = inter.andThen(forPlayer);
+
+            if (Config.CRATE_PLACEHOLDER_API_FOR_REWARDS.get()) {
+                combo = combo.andThen(papi);
+            }
+
+            replacer = combo;
         }
-
-        Function<String, String> replacer = combo;
+        else replacer = null;
 
         this.getItems().forEach(item -> {
             ItemStack give = new ItemStack(item);
 
-            ItemUtil.editMeta(give, meta -> {
-                if (meta.hasDisplayName()) {
-                    meta.setDisplayName(replacer.apply(meta.getDisplayName()));
-                }
+            if (doPlaceholders) {
+                ItemUtil.editMeta(give, meta -> {
+                    if (meta.hasDisplayName()) {
+                        meta.setDisplayName(replacer.apply(meta.getDisplayName()));
+                    }
 
-                List<String> loreHas = meta.getLore();
-                if (loreHas != null) {
-                    loreHas.replaceAll(replacer::apply);
-                    meta.setLore(loreHas);
-                }
-            });
+                    List<String> loreHas = meta.getLore();
+                    if (loreHas != null) {
+                        loreHas.replaceAll(replacer::apply);
+                        meta.setLore(loreHas);
+                    }
+                });
+            }
 
             Players.addItem(player, give);
         });
 
         this.getCommands().forEach(command -> {
-            Players.dispatchCommand(player, inter.apply(command));
+            Players.dispatchCommand(player, replacer == null ? command : replacer.apply(command));
         });
     }
 
@@ -370,8 +385,8 @@ public class Reward implements Weighted, Placeholder {
     public double getRollChance() {
         Rarity rarity = this.getRarity();
 
-        double sum = this.getCrate().getRewards(rarity).stream().mapToDouble(Reward::getWeight).sum();
-        double rarityChance = rarity.getRollChance();
+        double sum = this.crate.getRewards(rarity).stream().mapToDouble(Reward::getWeight).sum();
+        double rarityChance = rarity.getRollChance(this.crate);
         double chance = (this.getWeight() / sum) * (rarityChance / 100D);
 
         return chance * 100D;
@@ -426,6 +441,14 @@ public class Reward implements Weighted, Placeholder {
 
     public void setBroadcast(boolean broadcast) {
         this.broadcast = broadcast;
+    }
+
+    public void setPlaceholderApply(boolean placeholderApply) {
+        this.placeholderApply = placeholderApply;
+    }
+
+    public boolean isPlaceholderApply() {
+        return placeholderApply;
     }
 
     public boolean isOneTimed() {

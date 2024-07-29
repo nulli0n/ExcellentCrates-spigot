@@ -12,10 +12,12 @@ public class CrateBeaconEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
-        double n2 = 0.8975979010256552 * step;
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+        double x = 0.8975979010256552 * step;
         for (int i = step; i > Math.max(0, step - 25); --i) {
-            particle.play(getPointOnCircle(location, true, n2, 0.55, i * 0.75), 0.0f, 0.15f, 0.0f, 0.0f, 4);
+            Location location = getPointOnCircle(origin, true, x, 0.55, i * 0.75);
+
+            playSafe(location, player -> particle.play(player, location, 0.0f, 0.15f, 0.0f, 0.0f, 4));
         }
     }
 }

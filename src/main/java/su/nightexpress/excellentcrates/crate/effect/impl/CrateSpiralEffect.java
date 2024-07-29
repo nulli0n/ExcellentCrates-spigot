@@ -18,12 +18,14 @@ public class CrateSpiralEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location location, @NotNull UniParticle particle, int step) {
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
         double deltaAngle = (END_ANGLE - START_ANGLE) / NUM_POINTS;
         double angle = START_ANGLE + step * deltaAngle;
         double x = RADIUS * Math.cos(angle);
         double z = RADIUS * Math.sin(angle);
         double y = VERTICAL_SPACING * angle;
-        particle.play(location.clone().add(x, y, z), 0f, 0f, 5);
+        Location location = origin.clone().add(x, y, z);
+
+        playSafe(location, player -> particle.play(player, location, 0f, 0f, 5));
     }
 }
