@@ -61,6 +61,7 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
                 Map<String, Map<String, RewardWinData>> rewardWinLimits = this.gson.fromJson(resultSet.getString(COLUMN_REWARD_WIN_LIMITS.getName()), new TypeToken<Map<String, Map<String, RewardWinData>>>() {}.getType());
 
                 if (openingsAmount == null) openingsAmount = new HashMap<>();
+                if (milestones == null) milestones = new HashMap<>();
 
                 openCooldowns.keySet().removeIf(crateId -> plugin.getCrateManager().getCrateById(crateId) == null);
                 rewardWinLimits.keySet().removeIf(crateId -> plugin.getCrateManager().getCrateById(crateId) == null);
@@ -95,12 +96,14 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
     @Override
     public void onSynchronize() {
         for (CrateUser user : this.plugin.getUserManager().getLoaded()) {
+            if (plugin.getUserManager().isScheduledToSave(user)) continue;
+
             // Do not sync while opening crates.
             Player player = user.getPlayer();
             if (player != null && plugin.getOpeningManager().isOpening(player)) continue;
 
             CrateUser fresh = this.getUser(user.getId());
-            if (fresh == null) continue;
+            if (fresh == null || !fresh.isSyncReady()) continue;
 
             user.getKeysMap().clear();
             user.getKeysMap().putAll(fresh.getKeysMap());
