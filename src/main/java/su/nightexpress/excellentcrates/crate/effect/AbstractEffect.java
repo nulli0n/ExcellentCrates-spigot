@@ -45,7 +45,7 @@ public abstract class AbstractEffect {
         if (this.count++ % (int) this.getInterval() != 0) return;
         if (this.step < 0) return;
 
-        this.doStep(LocationUtil.getCenter(location.clone(), false), particle, this.step);
+        this.doStep(LocationUtil.setCenter2D(location.clone()), particle, this.step);
 
         // Do a 0.5s pause when particle effect is finished.
         if (this.step/*++*/ >= this.getDuration()) {
@@ -66,7 +66,11 @@ public abstract class AbstractEffect {
         if (world == null) return;
 
         Set<Player> players = new HashSet<>(world.getPlayers());
-        players.forEach(consumer);
+        players.forEach(player -> {
+            if (player == null || !player.isOnline()) return;
+
+            consumer.accept(player);
+        });
     }
 
     public final long getInterval() {

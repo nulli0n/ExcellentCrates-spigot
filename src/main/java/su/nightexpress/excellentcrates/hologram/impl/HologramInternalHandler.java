@@ -178,6 +178,9 @@ public class HologramInternalHandler implements HologramHandler {
                 }
 
                 for (Location location : locations) {
+                    World world = location.getWorld();
+                    if (world == null || !world.getPlayers().contains(player)) continue;
+
                     Location clone = location.clone(); // Clone to keep the location in list unmodified for next players.
                     for (String line : text) {
                         bundle.containers.addAll(0, this.createHologramPackets(idList, clone, line));
