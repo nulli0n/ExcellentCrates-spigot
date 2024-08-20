@@ -67,6 +67,15 @@ public class PlaceholderHook {
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
             if (player == null) return null;
 
+            if (params.startsWith("formatted_keys_")) {
+                String id = params.substring("formatted_keys_".length());
+                Crate crate = plugin.getCrateManager().getCrateById(id);
+                if (crate == null) return null;
+
+                int keys = plugin.getKeyManager().getKeysAmount(player, crate);
+                return NumberUtil.compact(keys);
+            }
+            
             if (params.startsWith("keys_")) {
                 String id = params.substring("keys_".length());
                 Crate crate = plugin.getCrateManager().getCrateById(id);
