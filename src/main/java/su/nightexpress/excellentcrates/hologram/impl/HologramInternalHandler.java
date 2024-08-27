@@ -193,7 +193,7 @@ public class HologramInternalHandler implements HologramHandler {
 
         // Synchronize all the packets sending with the main thread to reduce hologram flicker.
         if (action == Action.REFRESH && !this.plugin.getServer().isPrimaryThread()) {
-            this.plugin.runTask(task -> this.sendBundles(bundles));
+            this.plugin.runTask(() -> this.sendBundles(bundles));
         }
         // Otherwise do it in the current thread.
         else {

@@ -142,7 +142,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         }
         this.plugin.info("Loaded " + this.crateMap.size() + " crates.");
 
-        this.plugin.runTaskAsync(task -> this.getCrates().forEach(Crate::loadRewardWinDatas));
+        this.plugin.runTaskAsync(() -> this.getCrates().forEach(Crate::loadRewardWinDatas));
     }
 
     private void loadCrate(@NotNull Crate crate) {

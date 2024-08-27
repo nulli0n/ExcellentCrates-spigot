@@ -105,7 +105,7 @@ public abstract class AbstractOpening extends Runnable implements Opening {
             this.plugin.getCrateManager().proceedMilestones(player, crate);
 
             if (this.isSaveData() && !this.isEmergency()) {
-                this.plugin.runTaskAsync(task -> {
+                this.plugin.runTaskAsync(() -> {
                     CrateUser user = this.plugin.getUserManager().getUserData(player);
                     this.crate.saveRewardWinDatas();
                     this.plugin.getUserManager().save(user);

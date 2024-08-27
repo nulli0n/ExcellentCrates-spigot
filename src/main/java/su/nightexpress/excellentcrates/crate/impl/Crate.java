@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
+import com.github.Anon8281.universalScheduler.foliaScheduler.FoliaScheduler;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -141,10 +142,19 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         this.setItem(config.getItem("Item"));
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
-        this.blockPositions.removeIf(pos -> {
+        List<WorldPos> blockPositionsTemp = new ArrayList<>(blockPositions);
+        for (WorldPos pos : blockPositionsTemp) {
             Block block = pos.toBlock();
-            return block != null && block.isEmpty();
-        });
+            if (block != null) {
+                new FoliaScheduler(plugin).runTask(Objects.requireNonNull(pos.toBlock()).getLocation(), () -> {
+                    if (block.isEmpty()) {
+                        this.blockPositions.remove(pos);
+                    }
+                });
+            }else {
+                this.blockPositions.remove(pos);
+            }
+        }
 
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));

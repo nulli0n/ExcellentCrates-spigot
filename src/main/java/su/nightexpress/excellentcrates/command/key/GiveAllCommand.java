@@ -72,7 +72,7 @@ class GiveAllCommand extends AbstractCommand<CratesPlugin> {
         });
 
         if (key.isVirtual()) {
-            //this.plugin.runTaskAsync(task -> {
+            //this.plugin.runTaskAsync(() -> {
                 players.forEach(player -> {
                     CrateUser user = this.plugin.getUserManager().getUserData(player);
                     this.plugin.getUserManager().saveAsync(user);

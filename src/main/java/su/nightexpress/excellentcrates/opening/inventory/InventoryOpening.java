@@ -109,7 +109,7 @@ public class InventoryOpening extends AbstractOpening {
             this.doClose();
         }
         else if (this.closeDelay > 0) {
-            this.plugin.runTaskLater(task -> this.doClose(), this.closeDelay);
+            this.plugin.runTaskLater(() -> this.doClose(), this.closeDelay);
         }
     }
 
