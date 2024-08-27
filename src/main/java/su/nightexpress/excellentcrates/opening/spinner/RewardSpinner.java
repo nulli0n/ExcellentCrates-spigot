@@ -5,9 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class RewardSpinner extends InventorySpinner {
 
-    private final RewardSpinSettings  settings;
+    private final RewardSpinSettings settings;
     private final Map<Rarity, Double> rarityWeightMap;
 
     public RewardSpinner(@NotNull CratesPlugin plugin,
@@ -39,8 +39,7 @@ public class RewardSpinner extends InventorySpinner {
         Set<Rarity> rarities = new HashSet<>();
         if (this.settings.getRarities().contains(Placeholders.WILDCARD)) {
             rarities.addAll(plugin.getCrateManager().getRarities());
-        }
-        else {
+        } else {
             plugin.getCrateManager().getRarities().forEach(rarity -> {
                 if (this.settings.getRarities().contains(rarity.getId())) {
                     rarities.add(rarity);

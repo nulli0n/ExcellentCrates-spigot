@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class CrateSource {
 
-    private final Crate     crate;
+    private final Crate crate;
     private final ItemStack item;
-    private final Block     block;
+    private final Block block;
 
     public CrateSource(@NotNull Crate crate) {
         this(crate, null, null);

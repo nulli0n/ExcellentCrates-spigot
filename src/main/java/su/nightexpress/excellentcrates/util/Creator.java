@@ -18,8 +18,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.nightcore.util.text.tag.Tags.BOLD;
+import static su.nightexpress.nightcore.util.text.tag.Tags.LIGHT_YELLOW;
 
 public class Creator {
 
@@ -50,10 +51,10 @@ public class Creator {
                 List<MenuItem> list = new ArrayList<>();
 
                 ItemStack blackPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-                list.add(new MenuItem(blackPane).setPriority(0).setSlots(1,2,3,5,6,7,9,18,27,17,26,35,37,38,39,40,41,42,43));
+                list.add(new MenuItem(blackPane).setPriority(0).setSlots(1, 2, 3, 5, 6, 7, 9, 18, 27, 17, 26, 35, 37, 38, 39, 40, 41, 42, 43));
 
                 ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-                list.add(new MenuItem(grayPane).setPriority(0).setSlots(0,4,8,36,44));
+                list.add(new MenuItem(grayPane).setPriority(0).setSlots(0, 4, 8, 36, 44));
 
                 ItemStack milestones = ItemUtil.getSkinHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0");
                 ItemUtil.editMeta(milestones, meta -> {

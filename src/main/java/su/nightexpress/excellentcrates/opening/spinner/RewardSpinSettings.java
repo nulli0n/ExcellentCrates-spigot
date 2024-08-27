@@ -30,12 +30,12 @@ public class RewardSpinSettings extends SpinSettings {
         Set<String> rarities = ConfigValue.create(path + ".Rarities", Set.of(Placeholders.WILDCARD)).read(cfg);
 
         return new RewardSpinSettings(
-            settings.getSpinTimes(),
-            settings.getSpinTickInterval(),
-            settings.getSpinSlowdownStep(),
-            settings.getSpinSlowdownAmount(),
-            settings.getSpinSound(),
-            rarities);
+                settings.getSpinTimes(),
+                settings.getSpinTickInterval(),
+                settings.getSpinSlowdownStep(),
+                settings.getSpinSlowdownAmount(),
+                settings.getSpinSound(),
+                rarities);
     }
 
     @NotNull

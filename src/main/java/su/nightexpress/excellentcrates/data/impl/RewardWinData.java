@@ -5,17 +5,17 @@ import su.nightexpress.excellentcrates.crate.impl.RewardWinLimit;
 
 public class RewardWinData {
 
-    private int  amount;
+    private int amount;
     private long expireDate;
-
-    @NotNull
-    public static RewardWinData create() {
-        return new RewardWinData(0, 0);
-    }
 
     public RewardWinData(int amount, long expireDate) {
         this.setAmount(amount);
         this.setExpireDate(expireDate);
+    }
+
+    @NotNull
+    public static RewardWinData create() {
+        return new RewardWinData(0, 0);
     }
 
     public int getAmount() {

@@ -4,8 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractFileData;
 import su.nightexpress.nightcore.util.PDCUtil;
@@ -17,11 +17,10 @@ import java.io.File;
 
 public class CrateKey extends AbstractFileData<CratesPlugin> implements Placeholder {
 
-    private String    name;
-    private boolean   virtual;
-    private ItemStack item;
-
     private final PlaceholderMap placeholderMap;
+    private String name;
+    private boolean virtual;
+    private ItemStack item;
 
     public CrateKey(@NotNull CratesPlugin plugin, @NotNull File file) {
         super(plugin, file);
@@ -58,13 +57,13 @@ public class CrateKey extends AbstractFileData<CratesPlugin> implements Placehol
         return name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     @NotNull
     public String getNameTranslated() {
         return NightMessage.asLegacy(this.getName());
-    }
-
-    public void setName(@NotNull String name) {
-        this.name = name;
     }
 
     public boolean isVirtual() {

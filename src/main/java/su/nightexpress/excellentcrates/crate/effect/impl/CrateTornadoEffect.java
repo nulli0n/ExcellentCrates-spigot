@@ -11,10 +11,10 @@ import java.util.List;
 
 public class CrateTornadoEffect extends AbstractEffect {
 
-    private static final double Y_OFFSET           = 0.15D;
-    private static final float  TORNADO_HEIGHT     = 3.15F;
-    private static final float  MAX_TORNADO_RADIUS = 2.25F;
-    private static final double DISTANCE           = 0.375D;
+    private static final double Y_OFFSET = 0.15D;
+    private static final float TORNADO_HEIGHT = 3.15F;
+    private static final float MAX_TORNADO_RADIUS = 2.25F;
+    private static final double DISTANCE = 0.375D;
 
     public CrateTornadoEffect() {
         super(2L, 8);

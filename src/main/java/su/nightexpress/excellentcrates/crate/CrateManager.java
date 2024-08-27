@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.api.event.CrateOpenEvent;
 import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
@@ -44,12 +44,12 @@ import java.util.*;
 
 public class CrateManager extends AbstractManager<CratesPlugin> {
 
-    private final Map<String, Rarity>      rarityMap;
-    private final Map<String, Crate>       crateMap;
+    private final Map<String, Rarity> rarityMap;
+    private final Map<String, Crate> crateMap;
     private final Map<String, PreviewMenu> previewMap;
     private final Map<UUID, Long> previewCooldown;
 
-    private MilestonesMenu   milestonesMenu;
+    private MilestonesMenu milestonesMenu;
 
     public CrateManager(@NotNull CratesPlugin plugin) {
         super(plugin);
@@ -78,7 +78,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
     private void loadRarities() {
         FileConfig config = this.plugin.getConfig();
-        
+
         if (!config.contains("Rewards.Rarities")) {
             Set<Rarity> rarities = new HashSet<>();
 
@@ -148,8 +148,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     private void loadCrate(@NotNull Crate crate) {
         if (crate.load()) {
             this.crateMap.put(crate.getId(), crate);
-        }
-        else this.plugin.error("Crate not loaded: '" + crate.getFile().getName() + "'.");
+        } else this.plugin.error("Crate not loaded: '" + crate.getFile().getName() + "'.");
     }
 
     @Override
@@ -413,9 +412,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         if (!settings.isForce() && user.isCrateOnCooldown(crate)) {
             long expireDate = user.getCrateCooldown(crate);
             (expireDate < 0 ? Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED : Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY).getMessage()
-                .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(expireDate))
-                .replace(crate.replacePlaceholders())
-                .send(player);
+                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(expireDate))
+                    .replace(crate.replacePlaceholders())
+                    .send(player);
             return false;
         }
 
@@ -439,8 +438,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 double amount = entry.getValue();
                 if (currency.getHandler().getBalance(player) < amount) {
                     Lang.CRATE_OPEN_ERROR_CANT_AFFORD.getMessage()
-                        .replace(Placeholders.GENERIC_AMOUNT, currency.format(amount))
-                        .replace(crate.replacePlaceholders()).send(player);
+                            .replace(Placeholders.GENERIC_AMOUNT, currency.format(amount))
+                            .replace(crate.replacePlaceholders()).send(player);
                     return false;
                 }
             }
@@ -472,7 +471,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
             // Take key
             if (crate.isKeyRequired()) {
-                /*key = */this.plugin.getKeyManager().takeKey(player, crate);
+                /*key = */
+                this.plugin.getKeyManager().takeKey(player, crate);
             }
 
             // Take crate item stack
@@ -489,7 +489,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         if (amount == 0) return;
 
         CrateUser user = plugin.getUserManager().getUserData(player);
-        int has = user.getOpeningsAmount(crate) ;
+        int has = user.getOpeningsAmount(crate);
         user.setOpeningsAmount(crate, has + amount);
     }
 
@@ -507,10 +507,10 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             if (reward != null) {
                 reward.giveContent(player);
                 Lang.CRATE_OPEN_MILESTONE_COMPLETED.getMessage()
-                    .replace(crate.replacePlaceholders())
-                    .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(milestones))
-                    .replace(reward.replacePlaceholders())
-                    .send(player);
+                        .replace(crate.replacePlaceholders())
+                        .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(milestones))
+                        .replace(reward.replacePlaceholders())
+                        .send(player);
             }
 
             if (milestones >= milestonesMax && crate.isMilestonesRepeatable()) {

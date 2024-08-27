@@ -40,6 +40,6 @@ public class VaultEconomyHandler implements CurrencyHandler {
     @Override
     public void set(@NotNull Player player, double amount) {
         this.take(player, this.getBalance(player));
-        this.give(player,amount);
+        this.give(player, amount);
     }
 }

@@ -27,9 +27,9 @@ import java.util.HashSet;
 
 public class CrateMainEditor extends EditorMenu<CratesPlugin, Crate> implements CrateEditor {
 
-    private static final String TEXTURE_KEYS       = "311790e8005c7f972c469b7b875eab218e0713afe5f2edfd468659910ed622e3";
-    private static final String TEXTURE_REWARDS    = "663029cc8167897e6535a3c5734bbabaff188d0905f9d9353afac62a06dadf86";
-    private static final String TEXTURE_PLACEMENT  = "181e124a2765c4b320d754f04e1807ad7b3c26ff95376d0b4263c4e1ae84e758";
+    private static final String TEXTURE_KEYS = "311790e8005c7f972c469b7b875eab218e0713afe5f2edfd468659910ed622e3";
+    private static final String TEXTURE_REWARDS = "663029cc8167897e6535a3c5734bbabaff188d0905f9d9353afac62a06dadf86";
+    private static final String TEXTURE_PLACEMENT = "181e124a2765c4b320d754f04e1807ad7b3c26ff95376d0b4263c4e1ae84e758";
     private static final String TEXTURE_MILESTONES = "d194a22345d9cdde75168299ad61873bc105e3ae73cd6c9ac02a285291ad0f1b";
 
     public CrateMainEditor(@NotNull CratesPlugin plugin) {
@@ -73,22 +73,19 @@ public class CrateMainEditor extends EditorMenu<CratesPlugin, Crate> implements 
             if (event.isShiftClick()) {
                 if (event.isLeftClick()) {
                     crate.setPreviewConfig(null);
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     crate.setOpeningConfig(null);
                 }
 
                 this.saveSettings(viewer, crate, true);
-            }
-            else {
+            } else {
                 if (event.isLeftClick()) {
                     this.handleInput(viewer, Lang.EDITOR_ENTER_PREVIEW_CONFIG, (dialog, input) -> {
                         crate.setPreviewConfig(input.getTextRaw());
                         this.saveSettings(viewer, crate, false);
                         return true;
                     }).setSuggestions(plugin.getCrateManager().getPreviewNames(), true);
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     this.handleInput(viewer, Lang.EDITOR_ENTER_ANIMATION_CONFIG, (dialog, input) -> {
                         crate.setOpeningConfig(input.getTextRaw());
                         this.saveSettings(viewer, crate, false);
@@ -108,12 +105,10 @@ public class CrateMainEditor extends EditorMenu<CratesPlugin, Crate> implements 
                     }
                     return true;
                 }).setSuggestions(plugin.getKeyManager().getKeyIds(), true);
-            }
-            else if (event.isRightClick()) {
+            } else if (event.isRightClick()) {
                 crate.setKeys(new HashSet<>());
                 this.saveSettings(viewer, crate, true);
-            }
-            else if (event.getClick() == ClickType.DROP) {
+            } else if (event.getClick() == ClickType.DROP) {
                 crate.setKeyRequired(!crate.isKeyRequired());
                 this.saveSettings(viewer, crate, true);
             }

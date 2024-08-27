@@ -13,9 +13,9 @@ public class RewardWinLimit {
     public static final int MIDNIGHT_VALUE = -2;
 
     private boolean enabled;
-    private int     amount;
-    private long    cooldown;
-    private int     cooldownStep;
+    private int amount;
+    private long cooldown;
+    private int cooldownStep;
 
     public RewardWinLimit(boolean enabled, int amount, long cooldown, int cooldownStep) {
         this.setEnabled(enabled);

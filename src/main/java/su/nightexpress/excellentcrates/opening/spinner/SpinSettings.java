@@ -8,18 +8,18 @@ import su.nightexpress.nightcore.util.wrapper.UniSound;
 
 public class SpinSettings {
 
-    private final int      spinTimes;
-    private final long     spinTickInterval;
-    private final long     spinSlowdownStep;
-    private final long     spinSlowdownAmount;
+    private final int spinTimes;
+    private final long spinTickInterval;
+    private final long spinSlowdownStep;
+    private final long spinSlowdownAmount;
     private final UniSound spinSound;
 
     public SpinSettings(
-        int spinTimes,
-        long spinTickInterval,
-        long spinSlowdownStep,
-        long spinSlowdownAmount,
-        @Nullable UniSound spinSound
+            int spinTimes,
+            long spinTickInterval,
+            long spinSlowdownStep,
+            long spinSlowdownAmount,
+            @Nullable UniSound spinSound
     ) {
         this.spinTimes = spinTimes;
         this.spinTickInterval = Math.max(1, spinTickInterval);

@@ -15,8 +15,8 @@ import java.util.stream.IntStream;
 public abstract class InventorySpinner extends AbstractSpinner {
 
     protected final InventoryOpening opening;
-    protected final SpinMode         mode;
-    protected final int[]            slots;
+    protected final SpinMode mode;
+    protected final int[] slots;
 
     public InventorySpinner(@NotNull CratesPlugin plugin,
                             @NotNull String id,
@@ -62,8 +62,7 @@ public abstract class InventorySpinner extends AbstractSpinner {
 
             if (index == 0) {
                 inventory.setItem(slot, item);
-            }
-            else {
+            } else {
                 int previousSlot = slots[index - 1];
                 inventory.setItem(slot, this.opening.getInventory().getItem(previousSlot));
             }

@@ -9,9 +9,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.impl.*;
 import su.nightexpress.excellentcrates.config.EditorLang;
+import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.impl.LimitType;
+import su.nightexpress.excellentcrates.crate.impl.Rarity;
+import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.crate.impl.RewardWinLimit;
 import su.nightexpress.nightcore.menu.MenuOptions;
 import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
@@ -27,15 +30,15 @@ import java.util.stream.Stream;
 public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implements CrateEditor {
 
     private static final String TEXTURE_COMMAND = "d174349f79311d104d7917d32bf7a0dcee423421ca9e8a131f2d402a3c538572";
-    private static final String TEXTURE_ITEMS   = "7a3c8c6d3aaa96363d4bef2578f1024781ea14e9d85a9dcfc0935847a6fb5c8d";
-    private static final String TEXTURE_PERMS   = "264d3ca1206e921c66a2cef74b854170541e4ee9abe8fa678cfaf964964a16a2";
-    private static final String TEXTURE_WEIGHT  = "e0a443e0eca7f5d30622dd937f1e5ea2cdf15d10c27a199c68a7ce09c39f6b69";
+    private static final String TEXTURE_ITEMS = "7a3c8c6d3aaa96363d4bef2578f1024781ea14e9d85a9dcfc0935847a6fb5c8d";
+    private static final String TEXTURE_PERMS = "264d3ca1206e921c66a2cef74b854170541e4ee9abe8fa678cfaf964964a16a2";
+    private static final String TEXTURE_WEIGHT = "e0a443e0eca7f5d30622dd937f1e5ea2cdf15d10c27a199c68a7ce09c39f6b69";
 
     public RewardMainEditor(@NotNull CratesPlugin plugin) {
         super(plugin, Lang.EDITOR_TITLE_REWARD_SETTINGS.getString(), MenuSize.CHEST_54);
 
         this.addReturn(49, (viewer, event, reward) -> {
-           this.runNextTick(() -> plugin.getEditorManager().openRewards(viewer.getPlayer(), reward.getCrate()));
+            this.runNextTick(() -> plugin.getEditorManager().openRewards(viewer.getPlayer(), reward.getCrate()));
         });
 
         this.addItem(Material.ITEM_FRAME, EditorLang.REWARD_PREVIEW, 4, (viewer, event, reward) -> {
@@ -66,8 +69,7 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
             if (event.isShiftClick()) {
                 if (event.isLeftClick()) {
                     reward.setName(ItemUtil.getItemName(reward.getPreview()));
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     ItemStack preview = reward.getPreview();
                     ItemUtil.editMeta(preview, meta -> meta.setDisplayName(reward.getNameTranslated()));
                     reward.setPreview(preview);
@@ -111,14 +113,14 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
         });
 
         this.addItem(Material.WATER_BUCKET, EditorLang.REWARD_PLAYER_WIN_LIMIT, 25, this.getWinLimitClick(LimitType.PLAYER))
-            .getOptions().addDisplayModifier((viewer, itemStack) -> {
-                if (!this.getLink(viewer).getWinLimit(LimitType.PLAYER).isEnabled()) itemStack.setType(Material.BUCKET);
-            });
+                .getOptions().addDisplayModifier((viewer, itemStack) -> {
+                    if (!this.getLink(viewer).getWinLimit(LimitType.PLAYER).isEnabled()) itemStack.setType(Material.BUCKET);
+                });
 
         this.addItem(Material.LAVA_BUCKET, EditorLang.REWARD_GLOBAL_WIN_LIMIT, 34, this.getWinLimitClick(LimitType.GLOBAL))
-            .getOptions().addDisplayModifier((viewer, itemStack) -> {
-                if (!this.getLink(viewer).getWinLimit(LimitType.GLOBAL).isEnabled()) itemStack.setType(Material.BUCKET);
-            });
+                .getOptions().addDisplayModifier((viewer, itemStack) -> {
+                    if (!this.getLink(viewer).getWinLimit(LimitType.GLOBAL).isEnabled()) itemStack.setType(Material.BUCKET);
+                });
 
         this.addItem(ItemUtil.getSkinHead(TEXTURE_COMMAND), EditorLang.REWARD_COMMANDS, 32, (viewer, event, reward) -> {
             if (event.isRightClick()) {
@@ -181,8 +183,7 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
                         this.saveReward(viewer, reward, false);
                         return true;
                     });
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     winLimit.setMidnightCooldown();
                     this.saveReward(viewer, reward, true);
                 }
@@ -195,8 +196,7 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
                     this.saveReward(viewer, reward, false);
                     return true;
                 });
-            }
-            else if (event.isRightClick()) {
+            } else if (event.isRightClick()) {
                 this.handleInput(viewer, Lang.EDITOR_ENTER_SECONDS, (dialog, input) -> {
                     winLimit.setCooldown(input.asAnyInt(0));
                     this.saveReward(viewer, reward, false);

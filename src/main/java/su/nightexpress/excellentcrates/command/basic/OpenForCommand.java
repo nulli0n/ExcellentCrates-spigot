@@ -62,9 +62,9 @@ public class OpenForCommand extends AbstractCommand<CratesPlugin> {
         }
         if (sender != player) {
             Lang.COMMAND_OPEN_FOR_DONE.getMessage()
-                .replace(Placeholders.forPlayer(player))
-                .replace(crate.replacePlaceholders())
-                .send(sender);
+                    .replace(Placeholders.forPlayer(player))
+                    .replace(crate.replacePlaceholders())
+                    .send(sender);
         }
 
         boolean force = result.hasFlag(CommandFlags.FORCE);

@@ -27,7 +27,7 @@ public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> imple
     public CrateMilestonesEditor(@NotNull CratesPlugin plugin) {
         super(plugin, Lang.EDITOR_TITLE_CRATE_MILESTONES.getString(), MenuSize.CHEST_45);
 
-        this.addReturn(39, (viewer, event, crate)-> {
+        this.addReturn(39, (viewer, event, crate) -> {
             this.runNextTick(() -> this.plugin.getEditorManager().openCrate(viewer.getPlayer(), crate));
         });
         this.addNextPage(44);
@@ -58,8 +58,8 @@ public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> imple
             Reward reward = milestone.getReward();
             ItemStack item = new ItemStack(reward == null ? ItemUtil.getSkinHead(Placeholders.SKIN_QUESTION_MARK) : reward.getPreview());
             ItemReplacer.create(item).readLocale(EditorLang.MILESTONE_OBJECT).hideFlags().trimmed()
-                .replace(milestone.replacePlaceholders())
-                .writeMeta();
+                    .replace(milestone.replacePlaceholders())
+                    .writeMeta();
             return item;
         });
         autoFill.setClickAction(milestone -> (viewer1, event) -> {
@@ -79,8 +79,7 @@ public class CrateMilestonesEditor extends EditorMenu<CratesPlugin, Crate> imple
                     this.saveMilestones(viewer, crate, false);
                     return true;
                 });
-            }
-            else if (event.isRightClick()) {
+            } else if (event.isRightClick()) {
                 this.handleInput(viewer1, Lang.EDITOR_ENTER_REWARD_ID, (dialog, input) -> {
                     milestone.setRewardId(input.getTextRaw());
                     this.saveMilestones(viewer, crate, false);

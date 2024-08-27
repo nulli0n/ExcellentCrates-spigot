@@ -10,13 +10,13 @@ import java.util.function.BiConsumer;
 
 public class ScriptAction {
 
-    private final String                                             name;
-    private final     Set<Parameter<?>>                             parameters;
-    private final     BiConsumer<InventoryOpening, ParameterResult> executor;
+    private final String name;
+    private final Set<Parameter<?>> parameters;
+    private final BiConsumer<InventoryOpening, ParameterResult> executor;
 
     public ScriptAction(@NotNull String name,
                         @NotNull BiConsumer<InventoryOpening, ParameterResult> executor,
-                        Parameter<?>...                       parameters) {
+                        Parameter<?>... parameters) {
         this.name = name.toLowerCase();
         this.parameters = new HashSet<>(Arrays.asList(parameters));
         this.executor = executor;

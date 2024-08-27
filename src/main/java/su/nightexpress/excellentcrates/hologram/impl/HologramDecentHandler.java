@@ -18,7 +18,7 @@ import java.util.*;
 public class HologramDecentHandler implements HologramHandler {
 
     private final Map<String, Set<Hologram>> holoCrates;
-    private final Map<Player, Hologram>      holoRewards;
+    private final Map<Player, Hologram> holoRewards;
 
     public HologramDecentHandler(@NotNull CratesPlugin plugin) {
         this.holoCrates = new HashMap<>();

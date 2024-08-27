@@ -56,10 +56,6 @@ public class WorldPos {
         return deserialize(str);
     }
 
-    public void write(@NotNull FileConfig config, @NotNull String path) {
-        config.set(path, this.serialize());
-    }
-
     @NotNull
     public static WorldPos deserialize(@NotNull String str) {
         String[] split = str.split(",");
@@ -72,6 +68,10 @@ public class WorldPos {
         String worldName = split[3];
 
         return new WorldPos(worldName, x, y, z);
+    }
+
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path, this.serialize());
     }
 
     @NotNull
@@ -168,10 +168,10 @@ public class WorldPos {
     @Override
     public String toString() {
         return "WorldPos{" +
-            "x=" + x +
-            ", y=" + y +
-            ", z=" + z +
-            ", worldName='" + worldName + '\'' +
-            '}';
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", worldName='" + worldName + '\'' +
+                '}';
     }
 }

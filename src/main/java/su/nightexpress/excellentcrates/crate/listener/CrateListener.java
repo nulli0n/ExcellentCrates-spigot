@@ -78,8 +78,8 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         if (clickAction == InteractType.CRATE_PREVIEW) {
             if (this.crateManager.hasPreviewCooldown(player)) {
                 Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage()
-                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.crateManager.getPreviewCooldown(player)))
-                    .send(player);
+                        .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.crateManager.getPreviewCooldown(player)))
+                        .send(player);
                 return;
             }
             this.crateManager.setPreviewCooldown(player);

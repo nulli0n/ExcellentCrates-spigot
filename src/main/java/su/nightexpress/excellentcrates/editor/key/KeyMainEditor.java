@@ -39,8 +39,7 @@ public class KeyMainEditor extends EditorMenu<CratesPlugin, CrateKey> {
             if (cursor == null || cursor.getType().isAir()) {
                 if (event.isLeftClick()) {
                     Players.addItem(viewer.getPlayer(), key.getItem());
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     Players.addItem(viewer.getPlayer(), key.getRawItem());
                 }
                 return;

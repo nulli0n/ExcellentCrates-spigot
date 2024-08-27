@@ -11,15 +11,20 @@ import java.util.Collection;
 
 public interface Opening extends Tickable {
 
-    @NotNull Player getPlayer();
+    @NotNull
+    Player getPlayer();
 
-    @NotNull CrateSource getSource();
+    @NotNull
+    CrateSource getSource();
 
-    @NotNull Crate getCrate();
+    @NotNull
+    Crate getCrate();
 
-    @Nullable CrateKey getKey();
+    @Nullable
+    CrateKey getKey();
 
-    @NotNull Collection<Spinner> getSpinners();
+    @NotNull
+    Collection<Spinner> getSpinners();
 
     void instaRoll();
 

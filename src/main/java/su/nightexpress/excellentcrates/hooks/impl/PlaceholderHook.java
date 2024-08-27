@@ -82,8 +82,7 @@ public class PlaceholderHook {
 
                 CrateUser user = plugin.getUserManager().getUserData(player);
                 return NumberUtil.format(user.getOpeningsAmount(crate));
-            }
-            else if (params.startsWith("cooldown_")) {
+            } else if (params.startsWith("cooldown_")) {
                 String id = params.substring("cooldown_".length());
                 Crate crate = plugin.getCrateManager().getCrateById(id);
                 if (crate == null) return null;
@@ -98,10 +97,10 @@ public class PlaceholderHook {
                 Duration duration = Duration.between(now, time);
 
                 return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
-                    .replace("hh", String.valueOf(duration.toHours()))
-                    .replace("mm", String.valueOf(duration.toMinutesPart()))
-                    .replace("ss", String.valueOf(duration.toSecondsPart()))
-                    ;
+                        .replace("hh", String.valueOf(duration.toHours()))
+                        .replace("mm", String.valueOf(duration.toMinutesPart()))
+                        .replace("ss", String.valueOf(duration.toSecondsPart()))
+                        ;
             }
 
             return null;

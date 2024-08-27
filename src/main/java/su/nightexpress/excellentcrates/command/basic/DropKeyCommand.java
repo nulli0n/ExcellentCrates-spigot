@@ -35,17 +35,15 @@ public class DropKeyCommand extends AbstractCommand<CratesPlugin> {
 
             if (arg == 2) {
                 return List.of(
-                    String.valueOf(location.getBlockX()),
-                    location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ()
+                        String.valueOf(location.getBlockX()),
+                        location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ()
                 );
-            }
-            else if (arg == 3) {
+            } else if (arg == 3) {
                 return List.of(
-                    String.valueOf(location.getBlockY()),
-                    location.getBlockY() + " " + location.getBlockZ()
+                        String.valueOf(location.getBlockY()),
+                        location.getBlockY() + " " + location.getBlockZ()
                 );
-            }
-            else {
+            } else {
                 return List.of(String.valueOf(location.getBlockZ()));
             }
         }
@@ -77,10 +75,8 @@ public class DropKeyCommand extends AbstractCommand<CratesPlugin> {
             if (!(sender instanceof Player player)) {
                 this.errorUsage(sender);
                 return;
-            }
-            else world = player.getWorld();
-        }
-        else {
+            } else world = player.getWorld();
+        } else {
             world = plugin.getServer().getWorld(result.getArg(5));
             if (world == null) {
                 Lang.ERROR_INVALID_WORLD.getMessage(plugin).send(sender);
@@ -92,8 +88,8 @@ public class DropKeyCommand extends AbstractCommand<CratesPlugin> {
         if (!plugin.getKeyManager().spawnKey(key, location)) return;
 
         Lang.COMMAND_DROP_KEY_DONE.getMessage()
-            .replace(key.replacePlaceholders())
-            .replace(Placeholders.forLocation(location))
-            .send(sender);
+                .replace(key.replacePlaceholders())
+                .replace(Placeholders.forLocation(location))
+                .send(sender);
     }
 }

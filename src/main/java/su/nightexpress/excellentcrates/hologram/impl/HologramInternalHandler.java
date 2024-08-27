@@ -20,7 +20,10 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
-import su.nightexpress.nightcore.util.*;
+import su.nightexpress.nightcore.util.EntityUtil;
+import su.nightexpress.nightcore.util.LocationUtil;
+import su.nightexpress.nightcore.util.Plugins;
+import su.nightexpress.nightcore.util.Version;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.*;
@@ -29,52 +32,17 @@ import java.util.function.Consumer;
 
 public class HologramInternalHandler implements HologramHandler {
 
-    private final CratesPlugin        plugin;
-    private final ProtocolManager     protocolManager;
+    private final CratesPlugin plugin;
+    private final ProtocolManager protocolManager;
     private final Map<String, IdList> entityIdMap;
 
     private boolean useDisplays;
-    private double  lineGap;
+    private double lineGap;
 
     public HologramInternalHandler(@NotNull CratesPlugin plugin) {
         this.plugin = plugin;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         this.entityIdMap = new HashMap<>();
-    }
-
-    public static class IdList {
-
-        private final Set<Integer> holoramIds;
-        private final Set<Integer> itemIds;
-
-        public IdList() {
-            this.holoramIds = ConcurrentHashMap.newKeySet();
-            this.itemIds = ConcurrentHashMap.newKeySet();
-        }
-
-        @NotNull
-        public Set<Integer> getAll() {
-            Set<Integer> set = new HashSet<>();
-            set.addAll(this.holoramIds);
-            set.addAll(this.itemIds);
-            return set;
-        }
-
-        public void clear() {
-            this.holoramIds.clear();
-            this.itemIds.clear();
-        }
-    }
-
-    private record PacketBundle(Player player, List<PacketContainer> containers) {
-
-        public void add(PacketContainer container) {
-            this.containers.add(container);
-        }
-    }
-
-    private enum Action {
-        REMOVE, ADD, REFRESH
     }
 
     @Override
@@ -303,5 +271,40 @@ public class HologramInternalHandler implements HologramHandler {
         container.getIntLists().write(0, new ArrayList<>(list));
 
         return container;
+    }
+
+    private enum Action {
+        REMOVE, ADD, REFRESH
+    }
+
+    public static class IdList {
+
+        private final Set<Integer> holoramIds;
+        private final Set<Integer> itemIds;
+
+        public IdList() {
+            this.holoramIds = ConcurrentHashMap.newKeySet();
+            this.itemIds = ConcurrentHashMap.newKeySet();
+        }
+
+        @NotNull
+        public Set<Integer> getAll() {
+            Set<Integer> set = new HashSet<>();
+            set.addAll(this.holoramIds);
+            set.addAll(this.itemIds);
+            return set;
+        }
+
+        public void clear() {
+            this.holoramIds.clear();
+            this.itemIds.clear();
+        }
+    }
+
+    private record PacketBundle(Player player, List<PacketContainer> containers) {
+
+        public void add(PacketContainer container) {
+            this.containers.add(container);
+        }
     }
 }

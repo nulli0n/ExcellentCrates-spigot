@@ -4,7 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Spinner extends Tickable {
 
-    @NotNull String getId();
+    @NotNull
+    String getId();
 
     boolean isSilent();
 

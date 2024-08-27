@@ -36,12 +36,12 @@ public class AnimationSpinSettings extends SpinSettings {
         });
 
         return new AnimationSpinSettings(
-            settings.getSpinTimes(),
-            settings.getSpinTickInterval(),
-            settings.getSpinSlowdownStep(),
-            settings.getSpinSlowdownAmount(),
-            settings.getSpinSound(),
-            itemsMap
+                settings.getSpinTimes(),
+                settings.getSpinTickInterval(),
+                settings.getSpinSlowdownStep(),
+                settings.getSpinSlowdownAmount(),
+                settings.getSpinSound(),
+                itemsMap
         );
     }
 

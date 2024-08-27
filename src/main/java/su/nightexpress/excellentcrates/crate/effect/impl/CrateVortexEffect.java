@@ -7,11 +7,11 @@ import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 public class CrateVortexEffect extends AbstractEffect {
 
-    private static final int    STRANDS   = 2;
-    private static final int    PARTICLES = 170 / 5;
-    private static final float  RADIUS    = 1.5F;
-    private static final float  CURVE     = 2.0F;
-    private static final double ROTATION  = 0.7853981633974483D;
+    private static final int STRANDS = 2;
+    private static final int PARTICLES = 170 / 5;
+    private static final float RADIUS = 1.5F;
+    private static final float CURVE = 2.0F;
+    private static final double ROTATION = 0.7853981633974483D;
 
     public CrateVortexEffect() {
         super(1L, PARTICLES);
