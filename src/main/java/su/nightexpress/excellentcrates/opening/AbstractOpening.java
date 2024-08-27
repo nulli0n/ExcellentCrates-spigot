@@ -20,12 +20,12 @@ import java.util.Map;
 
 public abstract class AbstractOpening extends Runnable implements Opening {
 
-    protected final CratesPlugin         plugin;
+    protected final CratesPlugin plugin;
     protected final Map<String, Spinner> spinnerMap;
-    protected final Player               player;
-    protected final CrateSource          source;
-    protected final Crate                crate;
-    protected final CrateKey             key;
+    protected final Player player;
+    protected final CrateSource source;
+    protected final Crate crate;
+    protected final CrateKey key;
 
     protected boolean refundable;
     protected boolean hasRewardAttempts;
@@ -105,7 +105,7 @@ public abstract class AbstractOpening extends Runnable implements Opening {
             this.plugin.getCrateManager().proceedMilestones(player, crate);
 
             if (this.isSaveData() && !this.isEmergency()) {
-                this.plugin.runTaskAsync(task -> {
+                this.plugin.runTaskAsync(() -> {
                     CrateUser user = this.plugin.getUserManager().getUserData(player);
                     this.crate.saveRewardWinDatas();
                     this.plugin.getUserManager().save(user);

@@ -25,8 +25,8 @@ public class CrateLogger {
         Crate crate = reward.getCrate();
 
         String text = player.getName() + " won " + reward.getName() +
-            " (ID: " + reward.getId() + ", Weight: " + reward.getWeight() + ")" +
-            " from " + crate.getName() + " (ID: " + crate.getId() + ")";
+                " (ID: " + reward.getId() + ", Weight: " + reward.getWeight() + ")" +
+                " from " + crate.getName() + " (ID: " + crate.getId() + ")";
 
         this.log(text);
     }
@@ -48,8 +48,7 @@ public class CrateLogger {
                 output.append("[").append(date).append("] ").append(text);
                 output.newLine();
                 output.close();
-            }
-            catch (IOException exception) {
+            } catch (IOException exception) {
                 exception.printStackTrace();
             }
         }

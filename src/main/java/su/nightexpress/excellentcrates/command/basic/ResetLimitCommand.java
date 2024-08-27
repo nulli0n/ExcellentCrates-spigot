@@ -4,9 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
@@ -67,16 +67,15 @@ public class ResetLimitCommand extends AbstractCommand<CratesPlugin> {
         if (reward == null) {
             user.removeRewardWinLimit(crate.getId());
             message = Lang.COMMAND_RESET_LIMIT_DONE_CRATE.getMessage();
-        }
-        else {
+        } else {
             user.removeRewardWinLimit(crate.getId(), reward.getId());
             message = Lang.COMMAND_RESET_LIMIT_DONE_REWARD.getMessage().replace(reward.replacePlaceholders());
         }
         this.plugin.getUserManager().saveAsync(user);
 
         message
-            .replace(Placeholders.PLAYER_NAME, user.getName())
-            .replace(crate.replacePlaceholders())
-            .send(sender);
+                .replace(Placeholders.PLAYER_NAME, user.getName())
+                .replace(crate.replacePlaceholders())
+                .send(sender);
     }
 }

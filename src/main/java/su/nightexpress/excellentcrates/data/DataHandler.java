@@ -26,15 +26,15 @@ import java.util.function.Function;
 
 public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser> {
 
-    private static final SQLColumn COLUMN_KEYS              = SQLColumn.of("keys", ColumnType.STRING);
-    private static final SQLColumn COLUMN_KEYS_ON_HOLD      = SQLColumn.of("keysOnHold", ColumnType.STRING);
-    private static final SQLColumn COLUMN_CRATE_COOLDOWNS   = SQLColumn.of("crateCooldowns", ColumnType.STRING);
-    private static final SQLColumn COLUMN_CRATE_OPENINGS    = SQLColumn.of("crateOpenings", ColumnType.STRING);
-    private static final SQLColumn COLUMN_CRATE_MILESTONES  = SQLColumn.of("crateMilestones", ColumnType.STRING);
+    private static final SQLColumn COLUMN_KEYS = SQLColumn.of("keys", ColumnType.STRING);
+    private static final SQLColumn COLUMN_KEYS_ON_HOLD = SQLColumn.of("keysOnHold", ColumnType.STRING);
+    private static final SQLColumn COLUMN_CRATE_COOLDOWNS = SQLColumn.of("crateCooldowns", ColumnType.STRING);
+    private static final SQLColumn COLUMN_CRATE_OPENINGS = SQLColumn.of("crateOpenings", ColumnType.STRING);
+    private static final SQLColumn COLUMN_CRATE_MILESTONES = SQLColumn.of("crateMilestones", ColumnType.STRING);
     private static final SQLColumn COLUMN_REWARD_WIN_LIMITS = SQLColumn.of("rewardWinLimits", ColumnType.STRING);
 
-    private static final SQLColumn COLUMN_CRATE_ID    = SQLColumn.of("crateId", ColumnType.STRING);
-    private static final SQLColumn COLUMN_REWARD_ID   = SQLColumn.of("rewardId", ColumnType.STRING);
+    private static final SQLColumn COLUMN_CRATE_ID = SQLColumn.of("crateId", ColumnType.STRING);
+    private static final SQLColumn COLUMN_REWARD_ID = SQLColumn.of("rewardId", ColumnType.STRING);
     private static final SQLColumn COLUMN_REWARD_DATA = SQLColumn.of("rewardData", ColumnType.STRING);
 
     private final String rewardDataTable;
@@ -53,12 +53,18 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
                 long dateCreated = resultSet.getLong(COLUMN_USER_DATE_CREATED.getName());
                 long lastOnline = resultSet.getLong(COLUMN_USER_LAST_ONLINE.getName());
 
-                Map<String, Integer> keys = this.gson.fromJson(resultSet.getString(COLUMN_KEYS.getName()), new TypeToken<Map<String, Integer>>() {}.getType());
-                Map<String, Integer> keysOnHold = this.gson.fromJson(resultSet.getString(COLUMN_KEYS_ON_HOLD.getName()), new TypeToken<Map<String, Integer>>() {}.getType());
-                Map<String, Long> openCooldowns = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_COOLDOWNS.getName()), new TypeToken<Map<String, Long>>() {}.getType());
-                Map<String, Integer> openingsAmount = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_OPENINGS.getName()), new TypeToken<Map<String, Integer>>(){}.getType());
-                Map<String, Integer> milestones = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_MILESTONES.getName()), new TypeToken<Map<String, Integer>>(){}.getType());
-                Map<String, Map<String, RewardWinData>> rewardWinLimits = this.gson.fromJson(resultSet.getString(COLUMN_REWARD_WIN_LIMITS.getName()), new TypeToken<Map<String, Map<String, RewardWinData>>>() {}.getType());
+                Map<String, Integer> keys = this.gson.fromJson(resultSet.getString(COLUMN_KEYS.getName()), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Integer> keysOnHold = this.gson.fromJson(resultSet.getString(COLUMN_KEYS_ON_HOLD.getName()), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Long> openCooldowns = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_COOLDOWNS.getName()), new TypeToken<Map<String, Long>>() {
+                }.getType());
+                Map<String, Integer> openingsAmount = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_OPENINGS.getName()), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Integer> milestones = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_MILESTONES.getName()), new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                Map<String, Map<String, RewardWinData>> rewardWinLimits = this.gson.fromJson(resultSet.getString(COLUMN_REWARD_WIN_LIMITS.getName()), new TypeToken<Map<String, Map<String, RewardWinData>>>() {
+                }.getType());
 
                 if (openingsAmount == null) openingsAmount = new HashMap<>();
                 if (milestones == null) milestones = new HashMap<>();
@@ -67,9 +73,8 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
                 rewardWinLimits.keySet().removeIf(crateId -> plugin.getCrateManager().getCrateById(crateId) == null);
 
                 return new CrateUser(plugin, uuid, name, dateCreated, lastOnline,
-                    keys, keysOnHold, openCooldowns, openingsAmount, milestones, rewardWinLimits);
-            }
-            catch (SQLException exception) {
+                        keys, keysOnHold, openCooldowns, openingsAmount, milestones, rewardWinLimits);
+            } catch (SQLException exception) {
                 exception.printStackTrace();
                 return null;
             }
@@ -77,9 +82,9 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
 
         this.winDataFunction = resultSet -> {
             try {
-                return this.gson.fromJson(resultSet.getString(COLUMN_REWARD_DATA.getName()), new TypeToken<RewardWinData>(){}.getType());
-            }
-            catch (SQLException exception) {
+                return this.gson.fromJson(resultSet.getString(COLUMN_REWARD_DATA.getName()), new TypeToken<RewardWinData>() {
+                }.getType());
+            } catch (SQLException exception) {
                 exception.printStackTrace();
                 return null;
             }
@@ -90,7 +95,7 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
     @NotNull
     protected GsonBuilder registerAdapters(@NotNull GsonBuilder builder) {
         return super.registerAdapters(builder)
-            .registerTypeAdapter(RewardWinData.class, new RewardWinDataSerializer());
+                .registerTypeAdapter(RewardWinData.class, new RewardWinDataSerializer());
     }
 
     @Override
@@ -129,17 +134,17 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
         super.createUserTable();
 
         this.addColumn(this.tableUsers,
-            COLUMN_KEYS_ON_HOLD.toValue("{}"),
-            COLUMN_CRATE_COOLDOWNS.toValue("{}"),
-            COLUMN_CRATE_OPENINGS.toValue("{}"),
-            COLUMN_REWARD_WIN_LIMITS.toValue("{}"),
-            COLUMN_CRATE_MILESTONES.toValue("{}")
-            );
+                COLUMN_KEYS_ON_HOLD.toValue("{}"),
+                COLUMN_CRATE_COOLDOWNS.toValue("{}"),
+                COLUMN_CRATE_OPENINGS.toValue("{}"),
+                COLUMN_REWARD_WIN_LIMITS.toValue("{}"),
+                COLUMN_CRATE_MILESTONES.toValue("{}")
+        );
 
         this.createTable(this.rewardDataTable, Lists.newList(
-            COLUMN_CRATE_ID,
-            COLUMN_REWARD_ID,
-            COLUMN_REWARD_DATA
+                COLUMN_CRATE_ID,
+                COLUMN_REWARD_ID,
+                COLUMN_REWARD_DATA
         ));
     }
 
@@ -147,9 +152,9 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
     @NotNull
     protected List<SQLColumn> getExtraColumns() {
         return Arrays.asList(
-            COLUMN_KEYS, COLUMN_KEYS_ON_HOLD,
-            COLUMN_CRATE_COOLDOWNS, COLUMN_CRATE_OPENINGS, COLUMN_CRATE_MILESTONES,
-            COLUMN_REWARD_WIN_LIMITS
+                COLUMN_KEYS, COLUMN_KEYS_ON_HOLD,
+                COLUMN_CRATE_COOLDOWNS, COLUMN_CRATE_OPENINGS, COLUMN_CRATE_MILESTONES,
+                COLUMN_REWARD_WIN_LIMITS
         );
     }
 
@@ -157,12 +162,12 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
     @NotNull
     protected List<SQLValue> getSaveColumns(@NotNull CrateUser user) {
         return Arrays.asList(
-            COLUMN_KEYS.toValue(this.gson.toJson(user.getKeysMap())),
-            COLUMN_KEYS_ON_HOLD.toValue(this.gson.toJson(user.getKeysOnHold())),
-            COLUMN_CRATE_COOLDOWNS.toValue(this.gson.toJson(user.getCrateCooldowns())),
-            COLUMN_CRATE_OPENINGS.toValue(this.gson.toJson(user.getOpeningsAmountMap())),
-            COLUMN_CRATE_MILESTONES.toValue(this.gson.toJson(user.getMilestonesMap())),
-            COLUMN_REWARD_WIN_LIMITS.toValue(this.gson.toJson(new HashMap<>(user.getRewardWinLimits())))
+                COLUMN_KEYS.toValue(this.gson.toJson(user.getKeysMap())),
+                COLUMN_KEYS_ON_HOLD.toValue(this.gson.toJson(user.getKeysOnHold())),
+                COLUMN_CRATE_COOLDOWNS.toValue(this.gson.toJson(user.getCrateCooldowns())),
+                COLUMN_CRATE_OPENINGS.toValue(this.gson.toJson(user.getOpeningsAmountMap())),
+                COLUMN_CRATE_MILESTONES.toValue(this.gson.toJson(user.getMilestonesMap())),
+                COLUMN_REWARD_WIN_LIMITS.toValue(this.gson.toJson(new HashMap<>(user.getRewardWinLimits())))
         );
     }
 
@@ -175,31 +180,31 @@ public class DataHandler extends AbstractUserDataHandler<CratesPlugin, CrateUser
     @Nullable
     public RewardWinData getRewardWinData(@NotNull Reward reward) {
         return this.load(this.rewardDataTable, this.winDataFunction, Collections.emptyList(), Lists.newList(
-            SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
-            SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())))
+                SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
+                SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())))
         ).orElse(null);
     }
 
     public void addRewardWinData(@NotNull Reward reward, @NotNull RewardWinData winData) {
         this.insert(this.rewardDataTable, Lists.newList(
-            COLUMN_CRATE_ID.toValue(reward.getCrate().getId()),
-            COLUMN_REWARD_ID.toValue(reward.getId()),
-            COLUMN_REWARD_DATA.toValue(this.gson.toJson(winData))
+                COLUMN_CRATE_ID.toValue(reward.getCrate().getId()),
+                COLUMN_REWARD_ID.toValue(reward.getId()),
+                COLUMN_REWARD_DATA.toValue(this.gson.toJson(winData))
         ));
     }
 
     public void saveRewardWinData(@NotNull Reward reward, @NotNull RewardWinData winData) {
         this.update(this.rewardDataTable, Lists.newList(
-            COLUMN_REWARD_DATA.toValue(this.gson.toJson(winData))
-        ),
-            SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
-            SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())));
+                        COLUMN_REWARD_DATA.toValue(this.gson.toJson(winData))
+                ),
+                SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
+                SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())));
     }
 
     public void deleteRewardWinData(@NotNull Reward reward) {
         this.delete(this.rewardDataTable,
-            SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
-            SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())));
+                SQLCondition.equal(COLUMN_CRATE_ID.toValue(reward.getCrate().getId())),
+                SQLCondition.equal(COLUMN_REWARD_ID.toValue(reward.getId())));
     }
 
     public void deleteRewardWinData(@NotNull Crate crate) {

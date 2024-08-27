@@ -31,7 +31,9 @@ import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.NumberUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
@@ -40,23 +42,20 @@ import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<Milestone>, Linked<CrateSource> {
 
     private static final String PLACEHOLDER_OPENINGS_LEFT = "%openings_left%";
-
-    private String       mileCompName;
-    private List<String> mileCompLore;
-    private String       mileIncName;
-    private List<String> mileIncLore;
-    private int[]        mileSlots;
-    private ItemStack    mileCompItem;
-    private ItemStack    mileIncItem;
-
-    private boolean   pointerEnabled;
-    private int       pointerPerMile;
-    private int[]     pointerSlots;
-    private ItemStack pointerComp;
-    private ItemStack pointerInc;
-
     private final ItemHandler returnHandler;
     private final ViewLink<CrateSource> link;
+    private String mileCompName;
+    private List<String> mileCompLore;
+    private String mileIncName;
+    private List<String> mileIncLore;
+    private int[] mileSlots;
+    private ItemStack mileCompItem;
+    private ItemStack mileIncItem;
+    private boolean pointerEnabled;
+    private int pointerPerMile;
+    private int[] pointerSlots;
+    private ItemStack pointerComp;
+    private ItemStack pointerInc;
 
     public MilestonesMenu(@NotNull CratesPlugin plugin) {
         super(plugin, FileConfig.loadOrExtract(plugin, Config.FILE_MILESTONES));
@@ -74,7 +73,7 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
 
     @Override
     protected @NotNull MenuOptions createDefaultOptions() {
-        return new MenuOptions(BLACK.enclose("Crate Milestones"), 27,  InventoryType.CHEST);
+        return new MenuOptions(BLACK.enclose("Crate Milestones"), 27, InventoryType.CHEST);
     }
 
     @Override
@@ -83,10 +82,10 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
         List<MenuItem> list = new ArrayList<>();
 
         ItemStack border = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        list.add(new MenuItem(border).setSlots(0,1,2,3,4,5,6,7,8,18,19,20,21,22,23,24,25,26).setPriority(0));
+        list.add(new MenuItem(border).setSlots(0, 1, 2, 3, 4, 5, 6, 7, 8, 18, 19, 20, 21, 22, 23, 24, 25, 26).setPriority(0));
 
         ItemStack background = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        list.add(new MenuItem(background).setSlots(9,10,11,12,13,14,15,16,17).setPriority(0));
+        list.add(new MenuItem(background).setSlots(9, 10, 11, 12, 13, 14, 15, 16, 17).setPriority(0));
 
         ItemStack back = ItemUtil.getSkinHead(SKIN_ARROW_DOWN);
         ItemUtil.editMeta(back, meta -> {
@@ -112,39 +111,39 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
     @Override
     protected void loadAdditional() {
         this.mileCompName = ConfigValue.create("Milestones.Completed.Name",
-            LIGHT_GREEN.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Completed") + ")")
+                LIGHT_GREEN.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Completed") + ")")
         ).read(cfg);
 
         this.mileCompLore = ConfigValue.create("Milestones.Completed.Lore", Lists.newList(
-            LIGHT_GREEN.enclose(BOLD.enclose("Info:")),
-            LIGHT_GREEN.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
-            "",
-            LIGHT_GREEN.enclose("✔") + " " + LIGHT_GRAY.enclose("You have completed this milestone.")
+                LIGHT_GREEN.enclose(BOLD.enclose("Info:")),
+                LIGHT_GREEN.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
+                "",
+                LIGHT_GREEN.enclose("✔") + " " + LIGHT_GRAY.enclose("You have completed this milestone.")
         )).read(cfg);
 
         this.mileIncName = ConfigValue.create("Milestones.Incompleted.Name",
-            LIGHT_YELLOW.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Incompleted") + ")")
+                LIGHT_YELLOW.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Incompleted") + ")")
         ).read(cfg);
 
         this.mileIncLore = ConfigValue.create("Milestones.Incompleted.Lore", Lists.newList(
-            LIGHT_YELLOW.enclose(BOLD.enclose("Info:")),
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Openings Left: ") + PLACEHOLDER_OPENINGS_LEFT),
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
-            "",
-            LIGHT_RED.enclose("✘") + " " + LIGHT_GRAY.enclose("You haven''t completed this milestone yet.")
+                LIGHT_YELLOW.enclose(BOLD.enclose("Info:")),
+                LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Openings Left: ") + PLACEHOLDER_OPENINGS_LEFT),
+                LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
+                "",
+                LIGHT_RED.enclose("✘") + " " + LIGHT_GRAY.enclose("You haven''t completed this milestone yet.")
         )).read(cfg);
 
-        this.mileSlots = ConfigValue.create("Milestones.Slots", new int[]{10,12,14,16}).read(cfg);
+        this.mileSlots = ConfigValue.create("Milestones.Slots", new int[]{10, 12, 14, 16}).read(cfg);
 
         if (ConfigValue.create("Milestones.Completed.Custom_Item.Enabled", true).read(cfg)) {
             this.mileCompItem = ConfigValue.create("Milestones.Completed.Custom_Item",
-                ItemUtil.getSkinHead(SKIN_CHECK_MARK)
+                    ItemUtil.getSkinHead(SKIN_CHECK_MARK)
             ).read(cfg);
         }
 
         if (ConfigValue.create("Milestones.Incompleted.Custom_Item.Enabled", false).read(cfg)) {
             this.mileIncItem = ConfigValue.create("Milestones.Incompleted.Custom_Item",
-                ItemUtil.getSkinHead(SKIN_WRONG_MARK)
+                    ItemUtil.getSkinHead(SKIN_WRONG_MARK)
             ).read(cfg);
         }
 
@@ -152,14 +151,14 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
 
         this.pointerPerMile = ConfigValue.create("Milestones.Pointer.Per_Milestone", 2).read(cfg);
 
-        this.pointerSlots = ConfigValue.create("Milestones.Pointer.Slots", new int[]{1,19,3,21,5,23,7,25}).read(cfg);
+        this.pointerSlots = ConfigValue.create("Milestones.Pointer.Slots", new int[]{1, 19, 3, 21, 5, 23, 7, 25}).read(cfg);
 
         this.pointerComp = ConfigValue.create("Milestones.Pointer.Completed",
-            new ItemStack(Material.LIME_STAINED_GLASS_PANE)
+                new ItemStack(Material.LIME_STAINED_GLASS_PANE)
         ).read(cfg);
 
         this.pointerInc = ConfigValue.create("Milestones.Pointer.Incompleted",
-            new ItemStack(Material.WHITE_STAINED_GLASS_PANE)
+                new ItemStack(Material.WHITE_STAINED_GLASS_PANE)
         ).read(cfg);
     }
 
@@ -224,19 +223,18 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
                 name = this.mileCompName;
                 lore = new ArrayList<>(this.mileCompLore);
                 if (this.mileCompItem != null) item = this.mileCompItem;
-            }
-            else {
+            } else {
                 name = this.mileIncName;
                 lore = new ArrayList<>(this.mileIncLore);
                 if (this.mileIncItem != null) item = this.mileIncItem;
             }
 
             ItemReplacer.create(item).hideFlags().trimmed().setDisplayName(name).setLore(lore)
-                .replace(crate.getPlaceholders())
-                .replace(reward.getPlaceholders())
-                .replace(milestone.getPlaceholders())
-                .replace(PLACEHOLDER_OPENINGS_LEFT, NumberUtil.format(milestone.getOpenings() - openings))
-                .writeMeta();
+                    .replace(crate.getPlaceholders())
+                    .replace(reward.getPlaceholders())
+                    .replace(milestone.getPlaceholders())
+                    .replace(PLACEHOLDER_OPENINGS_LEFT, NumberUtil.format(milestone.getOpenings() - openings))
+                    .writeMeta();
 
             return item;
         });

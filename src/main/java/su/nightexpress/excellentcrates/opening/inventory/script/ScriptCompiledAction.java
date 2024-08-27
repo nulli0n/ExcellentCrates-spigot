@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class ScriptCompiledAction {
 
-    private final ScriptAction    action;
+    private final ScriptAction action;
     private final ParameterResult parameterResult;
 
     public ScriptCompiledAction(@NotNull ScriptAction action, @NotNull ParameterResult parameterResult) {

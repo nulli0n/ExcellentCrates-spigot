@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class Parameter<V> {
 
-    private final String              name;
+    private final String name;
     private final Function<String, V> parser;
 
     public Parameter(@NotNull String name, @NotNull Function<String, V> parser) {

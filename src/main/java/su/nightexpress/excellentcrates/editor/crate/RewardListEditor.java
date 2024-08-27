@@ -90,15 +90,15 @@ public class RewardListEditor extends EditorMenu<CratesPlugin, Crate> implements
             autoFill.setSlots(previewMenu.getRewardSlots());
         }
         else {*/
-            autoFill.setSlots(IntStream.range(0, 36).toArray());
+        autoFill.setSlots(IntStream.range(0, 36).toArray());
         //}
 
         autoFill.setItems(this.getLink(viewer).getRewards());
         autoFill.setItemCreator(reward -> {
             ItemStack item = reward.getPreview();
             ItemReplacer.create(item).readLocale(EditorLang.REWARD_OBJECT).hideFlags().trimmed()
-                .replace(reward.getAllPlaceholders())
-                .writeMeta();
+                    .replace(reward.getAllPlaceholders())
+                    .writeMeta();
             return item;
         });
 
@@ -122,8 +122,7 @@ public class RewardListEditor extends EditorMenu<CratesPlugin, Crate> implements
 
                     all.remove(index);
                     all.add(index + 1, reward);
-                }
-                else if (event.isRightClick()) {
+                } else if (event.isRightClick()) {
                     if (index == 0) return;
 
                     all.remove(index);

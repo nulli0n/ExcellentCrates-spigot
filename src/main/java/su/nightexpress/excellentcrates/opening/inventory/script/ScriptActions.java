@@ -70,7 +70,7 @@ public class ScriptActions {
     @NotNull
     public static ScriptAction register(@NotNull String name,
                                         @NotNull BiConsumer<InventoryOpening, ParameterResult> executor,
-                                        Parameter<?>...                       parameters) {
+                                        Parameter<?>... parameters) {
         return register(new ScriptAction(name, executor, parameters));
     }
 

@@ -37,14 +37,12 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
                     this.saveSettings(viewer, crate, false);
                     return true;
                 });
-            }
-            else if (event.isLeftClick()) {
+            } else if (event.isLeftClick()) {
                 crate.removeHologram();
                 crate.setHologramEnabled(!crate.isHologramEnabled());
                 crate.createHologram();
                 this.saveSettings(viewer, crate, true);
-            }
-            else if (event.isRightClick()) {
+            } else if (event.isRightClick()) {
                 this.handleInput(viewer, Lang.EDITOR_ENTER_HOLOGRAM_TEMPLATE, (dialog, input) -> {
                     crate.setHologramTemplate(input.getTextRaw());
                     crate.updateHologram();
@@ -59,8 +57,7 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
             if (event.isLeftClick()) {
                 CrateUtils.setAssignBlockCrate(viewer.getPlayer(), crate);
                 this.handleInput(viewer, Lang.EDITOR_ENTER_BLOCK_LOCATION, (dialog, input) -> false);
-            }
-            else {
+            } else {
                 crate.clearBlockPositions();
                 crate.updateHologram();
                 this.saveSettings(viewer, crate, false);
@@ -76,14 +73,12 @@ public class CratePlacementEditor extends EditorMenu<CratesPlugin, Crate> implem
             if (event.getClick() == ClickType.DROP) {
                 crate.setEffectModel(Lists.next(crate.getEffectModel()));
                 this.saveSettings(viewer, crate, true);
-            }
-            else {
+            } else {
                 if (event.isRightClick()) {
                     if (CrateUtils.isSupportedParticleData(crate.getEffectParticle())) {
                         this.runNextTick(() -> plugin.getEditorManager().openParticle(viewer.getPlayer(), crate));
                     }
-                }
-                else if (event.isLeftClick()) {
+                } else if (event.isLeftClick()) {
                     this.handleInput(viewer, Lang.EDITOR_ENTER_PARTICLE_NAME, (dialog, wrapper) -> {
                         Particle particle = StringUtil.getEnum(wrapper.getTextRaw(), Particle.class).orElse(null);
                         if (particle == null) return true;

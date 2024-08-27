@@ -11,12 +11,12 @@ import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 
 public class ConfigCurrency implements Currency {
 
-    private final boolean         enabled;
-    private final String          id;
-    private final String          name;
-    private final String          format;
+    private final boolean enabled;
+    private final String id;
+    private final String name;
+    private final String format;
     private final CurrencyHandler handler;
-    private final PlaceholderMap  placeholderMap;
+    private final PlaceholderMap placeholderMap;
 
     public ConfigCurrency(boolean enabled, @NotNull String id, @NotNull String name, @NotNull String format, @NotNull CurrencyHandler handler) {
         this.enabled = enabled;

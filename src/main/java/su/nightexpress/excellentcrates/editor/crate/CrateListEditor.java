@@ -4,10 +4,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.editor.type.CreationResult;
 import su.nightexpress.nightcore.menu.MenuOptions;
 import su.nightexpress.nightcore.menu.MenuSize;
@@ -64,9 +64,9 @@ public class CrateListEditor extends EditorMenu<CratesPlugin, CrateManager> impl
         autoFill.setItemCreator(crate -> {
             ItemStack item = crate.getRawItem();
             ItemReplacer.create(item).trimmed().hideFlags()
-                .readLocale(EditorLang.CRATE_OBJECT)
-                .replace(crate.getAllPlaceholders())
-                .writeMeta();
+                    .readLocale(EditorLang.CRATE_OBJECT)
+                    .replace(crate.getAllPlaceholders())
+                    .writeMeta();
             return item;
         });
         autoFill.setClickAction(crate -> (viewer1, event) -> {

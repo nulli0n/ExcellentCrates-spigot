@@ -22,14 +22,63 @@ import java.util.UUID;
 
 public class BasicOpening extends AbstractOpening {
 
-    private static final Map<Block, Long> CONTAINER_CLOSE_TIME  = new HashMap<>();
-    private static final Map<UUID, Long>  REWARD_DISAPPEAR_TIME = new HashMap<>();
+    private static final Map<Block, Long> CONTAINER_CLOSE_TIME = new HashMap<>();
+    private static final Map<UUID, Long> REWARD_DISAPPEAR_TIME = new HashMap<>();
 
     private boolean rolled;
     private boolean visuals;
 
     public BasicOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
         super(plugin, player, source, key);
+    }
+
+    public static void addContainerSchedule(@NotNull Block block, int seconds) {
+        CONTAINER_CLOSE_TIME.put(block, System.currentTimeMillis() + seconds * 1000L);
+    }
+
+    public static void addRewardSchedule(@NotNull Player player, int seconds) {
+        REWARD_DISAPPEAR_TIME.put(player.getUniqueId(), System.currentTimeMillis() + seconds * 1000L);
+    }
+
+    public static void clearVisuals(@NotNull CratesPlugin plugin) {
+        CONTAINER_CLOSE_TIME.clear();
+
+        REWARD_DISAPPEAR_TIME.forEach((uuid, date) -> {
+            HologramHandler hologramHandler = plugin.getHologramHandler();
+            if (hologramHandler == null) return;
+
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player == null) return;
+
+            hologramHandler.removeReward(player);
+        });
+        REWARD_DISAPPEAR_TIME.clear();
+    }
+
+    public static void tickVisuals(@NotNull CratesPlugin plugin) {
+        CONTAINER_CLOSE_TIME.entrySet().removeIf(entry -> {
+            long date = entry.getValue();
+            if (System.currentTimeMillis() < date) return false;
+
+            if (entry.getKey().getState() instanceof Lidded lidded) {
+                lidded.close();
+            }
+            return true;
+        });
+
+        REWARD_DISAPPEAR_TIME.entrySet().removeIf(entry -> {
+            HologramHandler hologramHandler = plugin.getHologramHandler();
+            if (hologramHandler == null) return true;
+
+            Player player = plugin.getServer().getPlayer(entry.getKey());
+            if (player == null) return true;
+
+            long date = entry.getValue();
+            if (System.currentTimeMillis() < date) return false;
+
+            hologramHandler.removeReward(player);
+            return true;
+        });
     }
 
     @Override
@@ -89,54 +138,5 @@ public class BasicOpening extends AbstractOpening {
         }
 
         this.rolled = true;
-    }
-
-    public static void addContainerSchedule(@NotNull Block block, int seconds) {
-        CONTAINER_CLOSE_TIME.put(block, System.currentTimeMillis() + seconds * 1000L);
-    }
-
-    public static void addRewardSchedule(@NotNull Player player, int seconds) {
-        REWARD_DISAPPEAR_TIME.put(player.getUniqueId(), System.currentTimeMillis() + seconds * 1000L);
-    }
-
-    public static void clearVisuals(@NotNull CratesPlugin plugin) {
-        CONTAINER_CLOSE_TIME.clear();
-
-        REWARD_DISAPPEAR_TIME.forEach((uuid, date) -> {
-            HologramHandler hologramHandler = plugin.getHologramHandler();
-            if (hologramHandler == null) return;
-
-            Player player = plugin.getServer().getPlayer(uuid);
-            if (player == null) return;
-
-            hologramHandler.removeReward(player);
-        });
-        REWARD_DISAPPEAR_TIME.clear();
-    }
-
-    public static void tickVisuals(@NotNull CratesPlugin plugin) {
-        CONTAINER_CLOSE_TIME.entrySet().removeIf(entry -> {
-            long date = entry.getValue();
-            if (System.currentTimeMillis() < date) return false;
-
-            if (entry.getKey().getState() instanceof Lidded lidded) {
-                lidded.close();
-            }
-            return true;
-        });
-
-        REWARD_DISAPPEAR_TIME.entrySet().removeIf(entry -> {
-            HologramHandler hologramHandler = plugin.getHologramHandler();
-            if (hologramHandler == null) return true;
-
-            Player player = plugin.getServer().getPlayer(entry.getKey());
-            if (player == null) return true;
-
-            long date = entry.getValue();
-            if (System.currentTimeMillis() < date) return false;
-
-            hologramHandler.removeReward(player);
-            return true;
-        });
     }
 }

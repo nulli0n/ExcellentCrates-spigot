@@ -16,37 +16,37 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
 
     // TODO CrateData class
 
-    private final Map<String, Integer>                     keys;
-    private final Map<String, Integer>                     keysOnHold;
-    private final Map<String, Long>                        openCooldowns;
-    private final Map<String, Integer>                     openingsAmount;
-    private final Map<String, Integer>                    milestones;
+    private final Map<String, Integer> keys;
+    private final Map<String, Integer> keysOnHold;
+    private final Map<String, Long> openCooldowns;
+    private final Map<String, Integer> openingsAmount;
+    private final Map<String, Integer> milestones;
     private final Map<String, Map<String, RewardWinData>> rewardWinLimits;
 
     public CrateUser(@NotNull CratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>()
+                new HashMap<>(),
+                new HashMap<>(),
+                new HashMap<>(),
+                new HashMap<>(),
+                new HashMap<>(),
+                new HashMap<>()
         );
     }
 
     public CrateUser(
-        @NotNull CratesPlugin plugin,
-        @NotNull UUID uuid,
-        @NotNull String name,
-        long dateCreated,
-        long lastOnline,
+            @NotNull CratesPlugin plugin,
+            @NotNull UUID uuid,
+            @NotNull String name,
+            long dateCreated,
+            long lastOnline,
 
-        @NotNull Map<String, Integer> keys,
-        @NotNull Map<String, Integer> keysOnHold,
-        @NotNull Map<String, Long> openCooldowns,
-        @NotNull Map<String, Integer> openingsAmount,
-        @NotNull Map<String, Integer> milestones,
-        @NotNull Map<String, Map<String, RewardWinData>> rewardWinLimits
+            @NotNull Map<String, Integer> keys,
+            @NotNull Map<String, Integer> keysOnHold,
+            @NotNull Map<String, Long> openCooldowns,
+            @NotNull Map<String, Integer> openingsAmount,
+            @NotNull Map<String, Integer> milestones,
+            @NotNull Map<String, Map<String, RewardWinData>> rewardWinLimits
     ) {
         super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
@@ -69,8 +69,7 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
     public void setCrateCooldown(@NotNull String id, long endDate) {
         if (endDate == 0L) {
             this.getCrateCooldowns().remove(id.toLowerCase());
-        }
-        else {
+        } else {
             this.getCrateCooldowns().put(id.toLowerCase(), endDate);
         }
     }
@@ -187,13 +186,13 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
         Crate crate = reward.getCrate();
 
         return this.rewardWinLimits.computeIfAbsent(crate.getId().toLowerCase(), k -> new HashMap<>())
-            .computeIfAbsent(reward.getId().toLowerCase(), k -> RewardWinData.create());
+                .computeIfAbsent(reward.getId().toLowerCase(), k -> RewardWinData.create());
     }
 
     @Nullable
     public RewardWinData getWinData(@NotNull String crateId, @NotNull String rewardId) {
         return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
-            .get(rewardId.toLowerCase());
+                .get(rewardId.toLowerCase());
     }
 
     public void setRewardWinLimit(@NotNull Reward reward, @NotNull RewardWinData rewardLimit) {
@@ -202,7 +201,7 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
 
     public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull RewardWinData rewardLimit) {
         this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
-            .put(rewardId.toLowerCase(), rewardLimit);
+                .put(rewardId.toLowerCase(), rewardLimit);
     }
 
     public void removeRewardWinLimit(@NotNull String crateId) {
@@ -211,6 +210,6 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
 
     public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
         this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
-            .remove(rewardId.toLowerCase());
+                .remove(rewardId.toLowerCase());
     }
 }

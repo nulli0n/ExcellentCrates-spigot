@@ -3,13 +3,13 @@ package su.nightexpress.excellentcrates.opening;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Opening;
-import su.nightexpress.excellentcrates.opening.spinner.SpinSettings;
 import su.nightexpress.excellentcrates.api.opening.Spinner;
+import su.nightexpress.excellentcrates.opening.spinner.SpinSettings;
 
 public abstract class AbstractSpinner extends Runnable implements Spinner {
 
     protected final CratesPlugin plugin;
-    protected final String       id;
+    protected final String id;
 
     protected boolean silent;
     protected long spinCount;

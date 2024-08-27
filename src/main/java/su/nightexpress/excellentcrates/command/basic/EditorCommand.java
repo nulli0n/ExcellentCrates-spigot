@@ -4,8 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.nightcore.command.CommandResult;
 import su.nightexpress.nightcore.command.impl.AbstractCommand;
 

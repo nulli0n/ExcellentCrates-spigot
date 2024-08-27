@@ -16,16 +16,16 @@ import java.util.Map;
 public class InventoryOpeningConfig {
 
     private final InventoryOpening.Mode mode;
-    private final boolean               autoRun;
-    private final int[]                 winSlots;
-    private final long                  maxTicksForSkip;
-    private final List<String>          scriptsOnOpen;
-    private final List<String>          scriptsOnStart;
+    private final boolean autoRun;
+    private final int[] winSlots;
+    private final long maxTicksForSkip;
+    private final List<String> scriptsOnOpen;
+    private final List<String> scriptsOnStart;
 
-    private final int       selectionAmount;
+    private final int selectionAmount;
     private final ItemStack selectedIcon;
 
-    private final Map<String, RewardSpinSettings>    rewardSpinSettingsMap;
+    private final Map<String, RewardSpinSettings> rewardSpinSettingsMap;
     private final Map<String, AnimationSpinSettings> animationSpinSettingsMap;
 
     public InventoryOpeningConfig(@NotNull InventoryOpening.Mode mode,
@@ -53,16 +53,16 @@ public class InventoryOpeningConfig {
     @NotNull
     public static InventoryOpeningConfig read(@NotNull FileConfig config) {
         InventoryOpening.Mode mode = ConfigValue.create("Settings.Mode",
-            InventoryOpening.Mode.class,
-            InventoryOpening.Mode.NORMAL
+                InventoryOpening.Mode.class,
+                InventoryOpening.Mode.NORMAL
         ).read(config);
 
         int[] winSlots = ConfigValue.create("Settings.WinSlots", new int[0]).read(config);
 
         long maxTicksForSkip = ConfigValue.create("Settings.Max_Ticks_To_Skip",
-            40L,
-            "Sets max. amount of the opening ticks while players can skip the opening animation.",
-            "Set to -1 to disable (no skip)."
+                40L,
+                "Sets max. amount of the opening ticks while players can skip the opening animation.",
+                "Set to -1 to disable (no skip)."
         ).read(config);
 
         List<String> scriptsOnOpen = ConfigValue.create("Settings.ScriptRunner.OnOpen", List.of()).read(config);
@@ -74,7 +74,7 @@ public class InventoryOpeningConfig {
         int selectionAmount = ConfigValue.create("Settings.Selection.Amount", 1).read(config);
 
         ItemStack selectedIcon = ConfigValue.create("Settings.Selection.SelectedIcon",
-            new ItemStack(Material.ENDER_CHEST)
+                new ItemStack(Material.ENDER_CHEST)
         ).read(config);
 
         Map<String, RewardSpinSettings> rewardSpinSettingsMap = new HashMap<>();
@@ -90,11 +90,11 @@ public class InventoryOpeningConfig {
         });
 
         return new InventoryOpeningConfig(
-            mode, autoRun, winSlots, maxTicksForSkip,
-            scriptsOnOpen, scriptsOnStart,
-            selectionAmount, selectedIcon,
-            rewardSpinSettingsMap,
-            animationSpinSettingsMap
+                mode, autoRun, winSlots, maxTicksForSkip,
+                scriptsOnOpen, scriptsOnStart,
+                selectionAmount, selectedIcon,
+                rewardSpinSettingsMap,
+                animationSpinSettingsMap
         );
     }
 

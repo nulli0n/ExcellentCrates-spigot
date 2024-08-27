@@ -9,13 +9,6 @@ public enum ClickType {
     LEFT, RIGHT, SHIFT_LEFT, SHIFT_RIGHT;
 
     @NotNull
-    private ClickType shifted(boolean shift) {
-        if (!shift) return this;
-
-        return this == LEFT ? SHIFT_LEFT : this == RIGHT ? SHIFT_RIGHT : this;
-    }
-
-    @NotNull
     public static ClickType from(@NotNull InventoryClickEvent event) {
         return (event.isRightClick() ? RIGHT : LEFT).shifted(event.isShiftClick());
         /*if (event.isShiftClick()) {
@@ -35,5 +28,12 @@ public enum ClickType {
         boolean isRight = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
 
         return (isRight ? RIGHT : LEFT).shifted(shift);
+    }
+
+    @NotNull
+    private ClickType shifted(boolean shift) {
+        if (!shift) return this;
+
+        return this == LEFT ? SHIFT_LEFT : this == RIGHT ? SHIFT_RIGHT : this;
     }
 }

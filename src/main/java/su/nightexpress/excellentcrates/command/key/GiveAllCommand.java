@@ -4,10 +4,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.command.CommandResult;
@@ -65,24 +65,24 @@ class GiveAllCommand extends AbstractCommand<CratesPlugin> {
 
             if (!silent) {
                 Lang.COMMAND_KEY_GIVE_NOTIFY.getMessage()
-                    .replace(Placeholders.GENERIC_AMOUNT, amount)
-                    .replace(key.replacePlaceholders())
-                    .send(player);
+                        .replace(Placeholders.GENERIC_AMOUNT, amount)
+                        .replace(key.replacePlaceholders())
+                        .send(player);
             }
         });
 
         if (key.isVirtual()) {
-            //this.plugin.runTaskAsync(task -> {
-                players.forEach(player -> {
-                    CrateUser user = this.plugin.getUserManager().getUserData(player);
-                    this.plugin.getUserManager().saveAsync(user);
-                });
+            //this.plugin.runTaskAsync(() -> {
+            players.forEach(player -> {
+                CrateUser user = this.plugin.getUserManager().getUserData(player);
+                this.plugin.getUserManager().saveAsync(user);
+            });
             //});
         }
 
         Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage()
-            .replace(Placeholders.GENERIC_AMOUNT, amount)
-            .replace(key.replacePlaceholders())
-            .send(sender);
+                .replace(Placeholders.GENERIC_AMOUNT, amount)
+                .replace(key.replacePlaceholders())
+                .send(sender);
     }
 }

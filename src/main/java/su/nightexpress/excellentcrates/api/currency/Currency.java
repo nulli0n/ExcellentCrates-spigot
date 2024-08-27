@@ -15,8 +15,8 @@ public interface Currency extends Placeholder {
     @NotNull
     default String format(double amount) {
         return this.replacePlaceholders().apply(this.getFormat()
-            .replace(Placeholders.GENERIC_AMOUNT, this.formatValue(amount))
-            .replace(Placeholders.GENERIC_NAME, this.getName())
+                .replace(Placeholders.GENERIC_AMOUNT, this.formatValue(amount))
+                .replace(Placeholders.GENERIC_NAME, this.getName())
         );
     }
 
@@ -24,11 +24,15 @@ public interface Currency extends Placeholder {
         return amount;
     }
 
-    @NotNull CurrencyHandler getHandler();
+    @NotNull
+    CurrencyHandler getHandler();
 
-    @NotNull String getId();
+    @NotNull
+    String getId();
 
-    @NotNull String getName();
+    @NotNull
+    String getName();
 
-    @NotNull String getFormat();
+    @NotNull
+    String getFormat();
 }

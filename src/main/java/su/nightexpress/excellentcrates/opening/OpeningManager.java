@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, InventoryOpeningMenu> menuMap;
-    private final Map<UUID, Opening>                openingDataMap;
+    private final Map<UUID, Opening> openingDataMap;
 
     public OpeningManager(@NotNull CratesPlugin plugin) {
         super(plugin);
@@ -143,8 +143,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
                 if (!menu.open(player)) return false;*/
                 inventory = player.getOpenInventory().getTopInventory();
                 //if (inventory.getType() == InventoryType.CRAFTING) return false;
-            }
-            else {
+            } else {
                 inventory = menu.getOptions().createInventory();
             }
 
@@ -152,8 +151,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
             inventoryOpening.postOpen();
 
             if (instaRoll) opening.instaRoll();
-        }
-        else {
+        } else {
             opening.run();
             if (instaRoll) {
                 opening.instaRoll();

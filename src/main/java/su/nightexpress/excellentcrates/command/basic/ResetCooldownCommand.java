@@ -4,9 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.nightcore.command.CommandResult;
@@ -58,8 +58,8 @@ public class ResetCooldownCommand extends AbstractCommand<CratesPlugin> {
         this.plugin.getUserManager().saveAsync(user);
 
         Lang.COMMAND_RESET_COOLDOWN_DONE.getMessage()
-            .replace(Placeholders.PLAYER_NAME, user.getName())
-            .replace(crate.replacePlaceholders())
-            .send(sender);
+                .replace(Placeholders.PLAYER_NAME, user.getName())
+                .replace(crate.replacePlaceholders())
+                .send(sender);
     }
 }

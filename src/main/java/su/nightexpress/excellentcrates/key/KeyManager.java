@@ -26,7 +26,6 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     private final Map<String, CrateKey> keysMap;
 
 
-
     public KeyManager(@NotNull CratesPlugin plugin) {
         super(plugin);
         this.keysMap = new HashMap<>();
@@ -49,8 +48,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     private void loadKey(@NotNull CrateKey crateKey) {
         if (crateKey.load()) {
             this.keysMap.put(crateKey.getId(), crateKey);
-        }
-        else this.plugin.error("Key not loaded: '" + crateKey.getFile().getName() + "'.");
+        } else this.plugin.error("Key not loaded: '" + crateKey.getFile().getName() + "'.");
     }
 
     @Override
@@ -217,14 +215,12 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getUserData(player);
             user.setKeys(key.getId(), amount);
-        }
-        else {
+        } else {
             ItemStack keyItem = key.getItem();
             int has = Players.countItem(player, keyItem);
             if (has > amount) {
                 Players.takeItem(player, keyItem, has - amount);
-            }
-            else if (has < amount) {
+            } else if (has < amount) {
                 Players.addItem(player, keyItem, amount - has);
             }
         }
@@ -240,8 +236,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
 
         if (key.isVirtual()) {
             user.addKeys(key.getId(), amount);
-        }
-        else {
+        } else {
             user.addKeysOnHold(key.getId(), amount);
         }
     }
@@ -250,8 +245,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getUserData(player);
             user.addKeys(key.getId(), amount);
-        }
-        else {
+        } else {
             ItemStack keyItem = key.getItem();
             keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
             Players.addItem(player, keyItem);
@@ -283,8 +277,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getUserData(player);
             user.takeKeys(key.getId(), amount);
-        }
-        else {
+        } else {
             Predicate<ItemStack> predicate = this.getItemStackPredicate(key);
             int has = Players.countItem(player, predicate);
             if (has < amount) amount = has;

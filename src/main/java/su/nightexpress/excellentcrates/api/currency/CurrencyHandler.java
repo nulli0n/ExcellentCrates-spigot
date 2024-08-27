@@ -6,7 +6,8 @@ import su.nightexpress.excellentcrates.Placeholders;
 
 public interface CurrencyHandler {
 
-    @NotNull String getDefaultName();
+    @NotNull
+    String getDefaultName();
 
     @NotNull
     default String getDefaultFormat() {

@@ -39,10 +39,6 @@ public class BlockPos {
         return deserialize(str);
     }
 
-    public void write(@NotNull FileConfig config, @NotNull String path) {
-        config.set(path, this.serialize());
-    }
-
     @NotNull
     public static BlockPos deserialize(@NotNull String str) {
         String[] split = str.split(",");
@@ -53,6 +49,10 @@ public class BlockPos {
         int z = (int) NumberUtil.getAnyDouble(split[2], 0);
 
         return new BlockPos(x, y, z);
+    }
+
+    public void write(@NotNull FileConfig config, @NotNull String path) {
+        config.set(path, this.serialize());
     }
 
     @NotNull
@@ -123,9 +123,9 @@ public class BlockPos {
     @Override
     public String toString() {
         return "BlockPos{" +
-            "x=" + x +
-            ", y=" + y +
-            ", z=" + z +
-            '}';
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 }

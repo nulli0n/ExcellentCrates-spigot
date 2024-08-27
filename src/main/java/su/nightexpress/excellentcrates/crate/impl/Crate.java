@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
+import com.github.Anon8281.universalScheduler.foliaScheduler.FoliaScheduler;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -7,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.EffectModel;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
@@ -37,30 +38,30 @@ import java.util.stream.Collectors;
 
 public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder {
 
-    private final Set<CrateKey>  keys;
-    private final Set<WorldPos>  blockPositions;
+    private final Set<CrateKey> keys;
+    private final Set<WorldPos> blockPositions;
     private final Set<Milestone> milestones;
-    private final Map<Currency, Double>         openCostMap;
+    private final Map<Currency, Double> openCostMap;
     private final LinkedHashMap<String, Reward> rewardMap;
-    private final PlaceholderMap                placeholderMap;
-    private final PlaceholderMap                placeholderFullMap;
+    private final PlaceholderMap placeholderMap;
+    private final PlaceholderMap placeholderFullMap;
 
-    private String      name;
-    private String      openingConfig;
-    private String      previewConfig;
-    private boolean     permissionRequired;
-    private int         openCooldown;
-    private boolean     keyRequired;
-    private ItemStack   item;
-    private boolean     milestonesRepeatable;
-    private boolean     pushbackEnabled;
-    private boolean     hologramEnabled;
-    private String      hologramTemplate;
-    private double      hologramYOffset;
+    private String name;
+    private String openingConfig;
+    private String previewConfig;
+    private boolean permissionRequired;
+    private int openCooldown;
+    private boolean keyRequired;
+    private ItemStack item;
+    private boolean milestonesRepeatable;
+    private boolean pushbackEnabled;
+    private boolean hologramEnabled;
+    private String hologramTemplate;
+    private double hologramYOffset;
     private EffectModel effectModel;
     private UniParticle effectParticle;
-    private String      lastOpener;
-    private String      lastReward;
+    private String lastOpener;
+    private String lastReward;
 
     public Crate(@NotNull CratesPlugin plugin, @NotNull File file) {
         super(plugin, file);
@@ -125,8 +126,8 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         }
 
         this.setKeyRequired(ConfigValue.create("Key.Required",
-            true,
-            "Sets whether or not keys are required to open this crate."
+                true,
+                "Sets whether or not keys are required to open this crate."
         ).read(config));
 
         config.getStringList("Key.Ids").forEach(keyId -> {
@@ -141,10 +142,19 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         this.setItem(config.getItem("Item"));
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
-        this.blockPositions.removeIf(pos -> {
+        List<WorldPos> blockPositionsTemp = new ArrayList<>(blockPositions);
+        for (WorldPos pos : blockPositionsTemp) {
             Block block = pos.toBlock();
-            return block != null && block.isEmpty();
-        });
+            if (block != null) {
+                new FoliaScheduler(plugin).runTask(Objects.requireNonNull(pos.toBlock()).getLocation(), () -> {
+                    if (block.isEmpty()) {
+                        this.blockPositions.remove(pos);
+                    }
+                });
+            } else {
+                this.blockPositions.remove(pos);
+            }
+        }
 
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
@@ -457,13 +467,13 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return this.name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     @NotNull
     public String getNameTranslated() {
         return NightMessage.asLegacy(this.getName());
-    }
-
-    public void setName(@NotNull String name) {
-        this.name = name;
     }
 
     @Nullable
@@ -529,13 +539,13 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return new HashSet<>(this.keys);
     }
 
-    public boolean addKey(@NotNull CrateKey key) {
-        return this.keys.add(key);
-    }
-
     public void setKeys(@NotNull Set<CrateKey> keys) {
         this.keys.clear();
         this.keys.addAll(keys);
+    }
+
+    public boolean addKey(@NotNull CrateKey key) {
+        return this.keys.add(key);
     }
 
     @NotNull
@@ -649,6 +659,12 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return this.getRewardsMap().values();
     }
 
+    public void setRewards(@NotNull List<Reward> rewards) {
+        this.rewardMap.clear();
+        this.rewardMap.putAll(rewards.stream().collect(
+                Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
+    }
+
     @NotNull
     public List<Reward> getRewards(@NotNull Rarity rarity) {
         return this.getRewards(null, rarity);
@@ -668,12 +684,6 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         };
 
         return new ArrayList<>(this.getRewards().stream().filter(predicate).toList());
-    }
-
-    public void setRewards(@NotNull List<Reward> rewards) {
-        this.rewardMap.clear();
-        this.rewardMap.putAll(rewards.stream().collect(
-            Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
     }
 
     @Nullable

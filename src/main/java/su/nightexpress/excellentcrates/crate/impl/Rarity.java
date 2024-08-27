@@ -15,12 +15,12 @@ import java.util.Collection;
 
 public class Rarity implements Weighted, Placeholder {
 
-    private final CratesPlugin   plugin;
-    private final String         id;
+    private final CratesPlugin plugin;
+    private final String id;
     private final PlaceholderMap placeholderMap;
 
-    private String  name;
-    private double  weight;
+    private String name;
+    private double weight;
     private boolean isDefault;
 
     public Rarity(@NotNull CratesPlugin plugin, @NotNull String id, @NotNull String name, double weight, boolean isDefault) {
@@ -83,13 +83,13 @@ public class Rarity implements Weighted, Placeholder {
         return name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     @NotNull
     public String getNameTranslated() {
         return NightMessage.asLegacy(this.getName());
-    }
-
-    public void setName(@NotNull String name) {
-        this.name = name;
     }
 
     @Override

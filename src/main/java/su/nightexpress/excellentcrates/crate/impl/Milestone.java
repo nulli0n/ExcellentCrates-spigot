@@ -13,8 +13,8 @@ public class Milestone implements Placeholder {
     private final PlaceholderMap placeholderMap;
 
     private String rewardId;
-    private int    priority;
-    private int    openings;
+    private int priority;
+    private int openings;
 
     public Milestone(@NotNull Crate crate, @NotNull String rewardId, int priority, int openings) {
         this.crate = crate;

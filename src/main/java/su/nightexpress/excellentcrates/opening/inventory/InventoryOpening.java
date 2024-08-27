@@ -26,20 +26,20 @@ import java.util.stream.IntStream;
 
 public class InventoryOpening extends AbstractOpening {
 
-    private static final String                    PLACEHOLDER_UNSELECTED_SLOTS = "%unselected_slots%";
-    private static final String                    PLACEHOLDER_SELECTED_SLOTS   = "%selected_slots%";
-    private static final Function<Integer, String> PLACEHOLDER_SELECTED_SLOT    = slot -> "%selected_slot_" + slot + "%";
+    private static final String PLACEHOLDER_UNSELECTED_SLOTS = "%unselected_slots%";
+    private static final String PLACEHOLDER_SELECTED_SLOTS = "%selected_slots%";
+    private static final Function<Integer, String> PLACEHOLDER_SELECTED_SLOT = slot -> "%selected_slot_" + slot + "%";
 
-    private final InventoryOpeningMenu   menu;
+    private final InventoryOpeningMenu menu;
     private final InventoryOpeningConfig config;
-    private final Set<Integer>           selectedSlots;
-    private final Set<Scheduled>         scheduleds;
+    private final Set<Integer> selectedSlots;
+    private final Set<Scheduled> scheduleds;
 
     private Inventory inventory;
-    private boolean   started;
-    private long      closeDelay;
-    private long      ticksForSkip;
-    private boolean   popupNextTick;
+    private boolean started;
+    private long closeDelay;
+    private long ticksForSkip;
+    private boolean popupNextTick;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InventoryOpeningMenu menu,
@@ -55,10 +55,6 @@ public class InventoryOpening extends AbstractOpening {
         this.closeDelay = Config.CRATE_OPENING_CLOSE_TIME.get();
         this.popupNextTick = false;
         this.ticksForSkip = 0L;
-    }
-
-    public enum Mode {
-        NORMAL, SELECTION
     }
 
     @Override
@@ -107,9 +103,8 @@ public class InventoryOpening extends AbstractOpening {
 
         if (this.closeDelay == 0 || this.isEmergency()) {
             this.doClose();
-        }
-        else if (this.closeDelay > 0) {
-            this.plugin.runTaskLater(task -> this.doClose(), this.closeDelay);
+        } else if (this.closeDelay > 0) {
+            this.plugin.runTaskLater(() -> this.doClose(), this.closeDelay);
         }
     }
 
@@ -240,8 +235,8 @@ public class InventoryOpening extends AbstractOpening {
             if (script.isBlank()) return;
             if (this.getMode() == Mode.SELECTION) {
                 script = script
-                    .replace(PLACEHOLDER_SELECTED_SLOTS, String.join(",", this.getSelectedSlots().stream().map(String::valueOf).toList()))
-                    .replace(PLACEHOLDER_UNSELECTED_SLOTS, String.join(",", this.getUnSelectedSlots().stream().map(String::valueOf).toList()));
+                        .replace(PLACEHOLDER_SELECTED_SLOTS, String.join(",", this.getSelectedSlots().stream().map(String::valueOf).toList()))
+                        .replace(PLACEHOLDER_UNSELECTED_SLOTS, String.join(",", this.getUnSelectedSlots().stream().map(String::valueOf).toList()));
 
                 int index = 0;
                 for (int slot : this.getSelectedSlots()) {
@@ -298,5 +293,9 @@ public class InventoryOpening extends AbstractOpening {
 
     public void setPopupNextTick(boolean popupNextTick) {
         this.popupNextTick = popupNextTick;
+    }
+
+    public enum Mode {
+        NORMAL, SELECTION
     }
 }

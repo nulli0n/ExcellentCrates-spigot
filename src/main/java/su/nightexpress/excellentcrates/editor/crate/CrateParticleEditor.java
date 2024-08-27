@@ -54,58 +54,57 @@ public class CrateParticleEditor extends EditorMenu<CratesPlugin, Crate> impleme
         }, dustOptions -> dustOptions.getColor().getBlue());
 
         this.addItem(Material.SLIME_BALL, EditorLang.CRATE_PARTICLE_DATA_SIZE, 16, (viewer, event, crate) -> {
-            UniParticle oldParticle = crate.getEffectParticle();
-            Particle.DustOptions oldOptions = this.getDustOptions(oldParticle);
+                    UniParticle oldParticle = crate.getEffectParticle();
+                    Particle.DustOptions oldOptions = this.getDustOptions(oldParticle);
 
-            this.handleInput(viewer, Lang.EDITOR_ENTER_VALUE, (dialog, input) -> {
-                float value = (float) input.asDouble();
-                UniParticle particle = new UniParticle(oldParticle.getParticle(), new Particle.DustOptions(oldOptions.getColor(), value));
-                crate.setEffectParticle(particle);
-                this.saveSettings(viewer, crate, false);
-                return true;
-            });
+                    this.handleInput(viewer, Lang.EDITOR_ENTER_VALUE, (dialog, input) -> {
+                        float value = (float) input.asDouble();
+                        UniParticle particle = new UniParticle(oldParticle.getParticle(), new Particle.DustOptions(oldOptions.getColor(), value));
+                        crate.setEffectParticle(particle);
+                        this.saveSettings(viewer, crate, false);
+                        return true;
+                    });
 
-        }).getOptions()
-            .addVisibilityPolicy(viewer -> this.isDusty(this.getLink(viewer).getEffectParticle()))
-            .addDisplayModifier((viewer, itemStack) -> {
-                UniParticle particle = this.getLink(viewer).getEffectParticle();
-                Particle.DustOptions dustOptions = this.getDustOptions(particle);
+                }).getOptions()
+                .addVisibilityPolicy(viewer -> this.isDusty(this.getLink(viewer).getEffectParticle()))
+                .addDisplayModifier((viewer, itemStack) -> {
+                    UniParticle particle = this.getLink(viewer).getEffectParticle();
+                    Particle.DustOptions dustOptions = this.getDustOptions(particle);
 
-                ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, String.valueOf(dustOptions.getSize())));
-            });
+                    ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, String.valueOf(dustOptions.getSize())));
+                });
 
         /*
             Material related.
          */
 
         this.addItem(Material.STONE, EditorLang.CRATE_PARTICLE_DATA_MATERIAL, 13, (viewer, event, crate) -> {
-            UniParticle particle = crate.getEffectParticle();
+                    UniParticle particle = crate.getEffectParticle();
 
-            ItemStack cursor = event.getCursor();
-            if (cursor == null || cursor.getType().isAir()) return;
+                    ItemStack cursor = event.getCursor();
+                    if (cursor == null || cursor.getType().isAir()) return;
 
-            if (particle.getParticle().getDataType() == BlockData.class) {
-                if (!cursor.getType().isBlock()) return;
+                    if (particle.getParticle().getDataType() == BlockData.class) {
+                        if (!cursor.getType().isBlock()) return;
 
-                crate.setEffectParticle(UniParticle.of(particle.getParticle(), cursor.getType().createBlockData()));
-            }
-            else {
-                if (!cursor.getType().isItem()) return;
+                        crate.setEffectParticle(UniParticle.of(particle.getParticle(), cursor.getType().createBlockData()));
+                    } else {
+                        if (!cursor.getType().isItem()) return;
 
-                crate.setEffectParticle(UniParticle.of(particle.getParticle(), cursor));
-            }
-            this.saveSettings(viewer, crate, false);
-            event.getView().setCursor(null);
-            this.flush(viewer);
-        }).getOptions()
-            .addVisibilityPolicy(viewer -> this.isMaterial(this.getLink(viewer).getEffectParticle()))
-            .addDisplayModifier((viewer, itemStack) -> {
-                UniParticle particle = this.getLink(viewer).getEffectParticle();
-                Material material = this.getMaterial(particle);
+                        crate.setEffectParticle(UniParticle.of(particle.getParticle(), cursor));
+                    }
+                    this.saveSettings(viewer, crate, false);
+                    event.getView().setCursor(null);
+                    this.flush(viewer);
+                }).getOptions()
+                .addVisibilityPolicy(viewer -> this.isMaterial(this.getLink(viewer).getEffectParticle()))
+                .addDisplayModifier((viewer, itemStack) -> {
+                    UniParticle particle = this.getLink(viewer).getEffectParticle();
+                    Material material = this.getMaterial(particle);
 
-                itemStack.setType(material);
-                ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, LangAssets.get(material)));
-            });
+                    itemStack.setType(material);
+                    ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, LangAssets.get(material)));
+                });
 
 
         /*
@@ -121,8 +120,7 @@ public class CrateParticleEditor extends EditorMenu<CratesPlugin, Crate> impleme
 
                 if (this.isInteger(particle)) {
                     particle2 = new UniParticle(particle.getParticle(), (int) value);
-                }
-                else {
+                } else {
                     particle2 = new UniParticle(particle.getParticle(), value);
                 }
                 crate.setEffectParticle(particle2);
@@ -147,26 +145,26 @@ public class CrateParticleEditor extends EditorMenu<CratesPlugin, Crate> impleme
                                 @NotNull BiFunction<Integer, Particle.DustOptions, Color> colorCreator,
                                 @NotNull Function<Particle.DustOptions, Integer> getColor) {
         this.addItem(material, langItem, slot, (viewer, event, crate) -> {
-            UniParticle oldParticle = crate.getEffectParticle();
-            Particle.DustOptions oldOptions = this.getDustOptions(oldParticle);
+                    UniParticle oldParticle = crate.getEffectParticle();
+                    Particle.DustOptions oldOptions = this.getDustOptions(oldParticle);
 
-            this.handleInput(viewer, Lang.EDITOR_ENTER_VALUE, (dialog, input) -> {
-                int value = input.asInt();
-                Color color = colorCreator.apply(value, oldOptions);
-                UniParticle particle = new UniParticle(oldParticle.getParticle(), new Particle.DustOptions(color, oldOptions.getSize()));
-                crate.setEffectParticle(particle);
-                this.saveSettings(viewer, crate, false);
-                return true;
-            });
+                    this.handleInput(viewer, Lang.EDITOR_ENTER_VALUE, (dialog, input) -> {
+                        int value = input.asInt();
+                        Color color = colorCreator.apply(value, oldOptions);
+                        UniParticle particle = new UniParticle(oldParticle.getParticle(), new Particle.DustOptions(color, oldOptions.getSize()));
+                        crate.setEffectParticle(particle);
+                        this.saveSettings(viewer, crate, false);
+                        return true;
+                    });
 
-        }).getOptions()
-            .addVisibilityPolicy(viewer -> this.isDusty(this.getLink(viewer).getEffectParticle()))
-            .addDisplayModifier((viewer, itemStack) -> {
-                UniParticle particle = this.getLink(viewer).getEffectParticle();
-                Particle.DustOptions dustOptions = this.getDustOptions(particle);
+                }).getOptions()
+                .addVisibilityPolicy(viewer -> this.isDusty(this.getLink(viewer).getEffectParticle()))
+                .addDisplayModifier((viewer, itemStack) -> {
+                    UniParticle particle = this.getLink(viewer).getEffectParticle();
+                    Particle.DustOptions dustOptions = this.getDustOptions(particle);
 
-                ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, String.valueOf(getColor.apply(dustOptions))));
-            });
+                    ItemReplacer.replace(itemStack, str -> str.replace(Placeholders.GENERIC_VALUE, String.valueOf(getColor.apply(dustOptions))));
+                });
     }
 
     @Override
@@ -217,8 +215,7 @@ public class CrateParticleEditor extends EditorMenu<CratesPlugin, Crate> impleme
         Particle.DustOptions dustOptions;
         if (particle.getData() instanceof Particle.DustOptions dust) {
             dustOptions = dust;
-        }
-        else dustOptions = new Particle.DustOptions(Color.WHITE, 1F);
+        } else dustOptions = new Particle.DustOptions(Color.WHITE, 1F);
 
         return dustOptions;
     }

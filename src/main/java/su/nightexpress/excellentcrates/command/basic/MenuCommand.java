@@ -65,8 +65,8 @@ public class MenuCommand extends AbstractCommand<CratesPlugin> {
 
         if (sender != player) {
             Lang.COMMAND_MENU_DONE_OTHERS.getMessage()
-                .replace(Placeholders.forPlayer(player))
-                .send(sender);
+                    .replace(Placeholders.forPlayer(player))
+                    .send(sender);
         }
     }
 }
