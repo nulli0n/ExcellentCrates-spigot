@@ -3,6 +3,12 @@ version: '${project.version}'
 name: ExcellentCrates
 author: NightExpress
 desciption: Fully customizable crates with rewards. Enjoy.
-depend: [ nightcore ]
-softdepend: [ CoinsEngine, DecentHolograms, Vault, PlaceholderAPI, ProtocolLib ]
-api-version: 1.18
+depend:
+  - nightcore
+softdepend:
+  - CoinsEngine
+  - Vault
+  - PlaceholderAPI
+  - ProtocolLib
+  - packetevents
+api-version: 1.19

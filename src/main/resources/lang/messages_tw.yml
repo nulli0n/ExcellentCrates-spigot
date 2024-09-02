@@ -1,560 +1,1174 @@
 Command:
   Drop:
     Usage: <crateId> <world> <x> <y> <z>
-    Desc: 在世界的指定位置放下箱子.
-    Done: Dropped &6%crate_name%&7 at &6%location_x%&7, &6%location_y%&7, &6%location_z%&7
-      in &6%location_world%&7.
+    Desc: 在指定世界的位置丟下箱子。
+    Done: 已在 &6%world%&7 的 &6%x%&7, &6%y%&7, &6%z%&7 丟下了 &6%crate_name%&7。
   ForceOpen:
-    Desc: 強行為玩家打開一個箱子.
+    Desc: 強制玩家打開箱子。
     Usage: <crateId> [player]
-    Done: Force opened &6%crate_name%&7 for &6%player_name%&7.
-    Notify: You have been forced to open &6%crate_name%&7.
+    Done: 已為 &6%player_name%&7 強制打開了 &6%crate_name%&7。
+    Notify: 您已被強制打開 &6%crate_name%&7。
   Give:
     Usage: <player | *> <crateId> [amount]
-    Desc: 給玩家一個箱子.
-    Done: Given &6x%amount% &7of &6%crate_name% &7crate(s) to &6%player_display_name%&7.
-    Notify: You recieved &6x%amount% &7of &6%crate_name%&7!
+    Desc: 給玩家箱子。
+    Done: '&f已給 &a%player_name% &f&a%amount% &f個 &a%crate_name% &f箱子。'
+    Notify: '&f您已收到 &ax%amount% &f個 &a%crate_name%!'
   Key:
-    Desc: 管理或查看玩家的箱子鑰匙.
+    Desc: 管理或查看玩家的箱子鑰匙。
     Error:
-      Player: '&c無法處理離線/無效玩家 &7%player_name%&c 的操作!'
+      Player: '&c無法處理離線/無效玩家 &e%player_name%&c 的操作!'
     Give:
       Usage: <player | *> <keyId> <amount>
-      Desc: 將箱子鑰匙交給玩家.
-      Done: Given &ax%amount% &7of &a%key_name% &7key(s) to &a%player_name%&7.
-      Notify: You recieved &ax%amount% &7of &a%key_name%&7!
+      Desc: 給玩家箱子鑰匙。
+      Done: '&f已給 &a%player_name% &f&a%amount% &f個 &a%key_name% 鑰匙。'
+      Notify: '&f您已收到 &ax%amount% &f個 &a%key_name% 鑰匙!'
     Take:
       Usage: <player | *> <keyId> <amount>
-      Desc: T從玩家那裡拿箱子鑰匙.
-      Done: Taken &cx%amount% &c%key_name% &7key(s) from &c%player_name%
-      Notify: You lost &cx%amount% &c%key_name%&7!
+      Desc: 從玩家那裡取走箱子鑰匙。
+      Done: '&f已從 &a%player_name% &f取走 &ax%amount% %key_name% 鑰匙'
+      Notify: '&f您已失去 &ex%amount% %key_name% 鑰匙!'
     Set:
       Usage: <player | *> <keyId> <amount>
-      Desc: 為玩家設置箱子鑰匙數量.
-      Done: Set &ex%amount% &7of &e%key_name% &7key(s) for &e%player_name%&7.
-      Notify: Your &e%key_name%&7 amount has been changed to &ex%amount%&7!
+      Desc: 設置玩家的箱子鑰匙數量。
+      Done: '&f已為 &a%player_name% &f設置了 &ax%amount% &f個 &a%key_name% 鑰匙。'
+      Notify: '&f您的 &a%key_name% &f數量已更改為 &ax%amount%!'
     Show:
-      Desc: 顯示您或其他玩家鑰匙的數量.
+      Desc: 顯示您或其他玩家的鑰匙數量。
       Usage: '[player]'
       Format:
         List:
-        - '{message: ~prefix: false;}'
-        - '&6&m              &6&l[ &a%player_name% &e&lCrate Keys &6&l]&6&m              &6'
-        - '&7'
-        - '&6▸ &e%key_name%: &6%amount%'
+          - '{message: ~prefix: false;}'
+          - '&6&m              &6&l[ &a%player_name% &e&l箱子鑰匙 &6&l]&6&m              &6'
+          - '&7'
+          - '&6▸ &e%key_name%: &6%amount%'
+        Entry: '<lyellow>▪ <lgray>%key_name%: </lgray>x%amount%</lyellow>'
+    Usage: '[help]'
+    GiveAll:
+      Usage: <player> <key> <amount> [-s]
+      Desc: 給所有在線玩家鑰匙。
+      Done: '#d4d9d8已給 #fdf35ex%amount%#d4d9d8 個 #fdf35e%key_name%#d4d9d8 鑰匙給 #fdf35e所有玩家#d4d9d8。'
   Preview:
-    Desc: 打開箱子預覽.
+    Desc: 打開箱子預覽。
     Usage: <crateId> [player]
     Done:
-      Others: 為 &6%player_display_name%&7 打開 &6%crate_name%&7 預覽.
+      Others: 為 &6%player_name%&7 打開了 &6%crate_name%&7 預覽。
   ResetLimit:
-    Desc: 重置指定箱子和獎勵的獎勵獲勝限制.
+    Desc: 重置指定箱子和獎勵的獎勵限制。
     Usage: <player> <crateId> [rewardId]
     Done:
-      Crate: 為 &6%crate_name%&7 的所有獎勵重置 &6%player_name% &7win 限制.
-      Reward: Reset &6%player_name% &7win limit for &6%reward_name% &7reward of &6%crate_name%&7.
+      Crate: 重置了 &6%player_name%&7 在 &6%crate_name%&7 中所有獎勵的獲取限制。
+      Reward: 重置了 &6%player_name%&7 在 &6%crate_name%&7 中 &6%reward_name%&7 獎勵的獲取限制。
   ResetCooldown:
-    Desc: 重置指定箱子的玩家冷卻時間.
+    Desc: 重置玩家的指定箱子冷卻時間。
     Usage: <player> <crateId>
-    Done: 為 &6%crate_name%&7 重置 &6%player_name% &7冷卻時間.
+    Done: 已重置 &6%player_name%&7 的 &6%crate_name%&7 冷卻時間。
   Menu:
     Usage: '[menuId]'
-    Desc: 打開板條箱菜單.
+    Desc: 打開箱子菜單。
     Done:
-      Others: 為 &6%player_display_name%&7 打開 &6%menu_id%&7 箱子菜單.
+      Others: 為 &6%player_name%&7 打開了 &6%menu_id%&7 箱子菜單。
+  Editor:
+    Desc: 打開箱子和鑰匙編輯器。
+  Open:
+    Desc: 使 [玩家] 打開一個箱子。
+    Usage: <crate> [player] [-f] [-s]
+    Done: '#d4d9d8已強制 #fdf35e%player_name%#d4d9d8 打開 #fdf35e%crate_name%#d4d9d8。'
+    Notify: '#d4d9d8您已被強制打開 #fdf35e%crate_name%#d4d9d8。'
+  DropKey:
+    Usage: <key> <x> <y> <z> [world]
+    Desc: 在指定位置丟下鑰匙。
+    Done: '#d4d9d8已在 #fdf35e%location_world%#d4d9d8 的 #fdf35e%location_x%, %location_y%, %location_z%#d4d9d8 丟下 #fdf35e%key_name%#d4d9d8。'
+  OpenFor:
+    Desc: 為玩家打開箱子。
+    Usage: <player> <crate> [-f] [-s]
+    Done: <lgray>為 <lyellow>%player_name%</lyellow> 打開了 <lyellow>%crate_name%</lyellow>。</lgray>
+    Notify: <lgray>您已被強制打開 <lyellow>%crate_name%</lyellow>。</lgray>
 Crate:
   Error:
-    Invalid: '&c箱子無效！!'
+    Invalid: '&c無效的箱子!'
+    Exists: '#fd5e5e該ID的箱子已存在!'
   Open:
     Error:
-      InventorySpace: '&c請清理您的背包以打開箱子!'
+      InventorySpace: '&f請清理您的背包!'
       Cooldown:
-        Temporary: '&cY您必須等待 &6%time% &7 才能再次打開 &6%crate_name%&7!'
-        OneTimed: '&c你已經打開了這個箱子，你不能再打開它!'
-      NoKey: '&c你沒有這個箱子的鑰匙!'
-      NoRewards: '&c這個箱子不包含任何獎勵給你!'
+        Temporary: '&c您需要等待 &6%time% &7後才能再次打開 &6%crate_name%&7!'
+        OneTimed: '&f您已經打開過此箱子'
+      NoKey: '&f您沒有打開此箱子的鑰匙!'
+      NoRewards: '&f此箱子不包含任何獎勵'
       Cost:
-        Money: '&c你沒有足夠的錢來打開這個箱子!'
-        Exp: '&c你沒有足夠的 exp 等級來打開這個箱子!'
+        Money: '&f您沒有足夠的錢打開此箱子!'
+        Exp: '&f您沒有足夠的經驗!'
+      NoHoldKey: '&c您必須持有鑰匙才能打開此箱子!'
+      CantAfford:
+        - <! type:"titles:20:80:20" sound:"ENTITY_VILLAGER_NO" !>
+        - '#fd5e5e&l哎呀!'
+        - '#d4d9d8您需要 #fd5e5e%amount%#d4d9d8 來打開它!'
+      Already:
+        - <output:"titles:20:80:20"><sound:"entity_villager_no">
+        - <red><b>哎呀!</b></red>
+        - <lgray>您已經在打開箱子了!</lgray>
     Reward:
-      Info: 您從 &6%crate_name%&7 獲得了 &6%reward_name% &7獎勵!
-      Broadcast: '&7玩家 &a%player_display_name% &7 剛剛從 &6%crate_name%&7 獲得了 &6%reward_name% &7 獎勵!'
+      Info: '&f您從 &f%crate_name%&7 中獲得了 &f%reward_name%&7 獎勵!'
+      Broadcast: '&a%player_name% &f打開了 &r%crate_name%&f 並獲得了獎勵 &8→ &d%reward_name%!'
+    Milestone:
+      Completed: '<! prefix:"false" sound:"ENTITY_PLAYER_LEVELUP" !>#d4d9d8您已完成 #aefd5e%milestone_openings% 開箱次數 #d4d9d8並獲得獎勵 #aefd5e%reward_name%#d4d9d8!'
   Key:
     Error:
       Invalid: '&c無效的鑰匙!'
+      Exists: '#fd5e5e該ID的鑰匙已存在!'
   Placeholder:
     Cooldown:
-      Blank: 準備開啟!
+      Blank: 可以打開了!
 Menu:
   Invalid: '&c菜單不存在!'
 Editor:
   Crate:
     Enter:
-      Id: '&7輸入 &a獨特e &7箱子 &aID&7...'
-      DisplayName: '&7輸入箱子 &a顯示名稱&7...'
+      Id: '&7輸入 &a唯一 &7的箱子 &a識別碼&7...'
+      DisplayName: '&7輸入箱子的 &a顯示名稱&7...'
       Particle:
         Name: '&7輸入 &a粒子 &7名稱...'
-        Data: '&7輸入 &a粒子 &7資料...'
-      KeyId: '&7輸入 &a鑰匙 &7ID...'
+        Data: '&7輸入 &a粒子 &7數據...'
+        MaterialData: '#d4d9d8輸入 #aefd5e[物品材質]#d4d9d8 - #aefd5e[鑽石塊]'
+        RedstoneData: '#d4d9d8輸入 #aefd5e[顏色] [大小]#d4d9d8 - #aefd5e[255,0,0] [1.5]'
+      KeyId: '&7輸入 &a鑰匙 &7識別碼...'
       Block:
-        Location: '&7點擊一個 &a方塊 &7綁定箱子...'
+        Location: '&7點擊一個 &a方塊 &7來分配箱子...'
         Hologram:
-          Text: '&7輸入 &a文字 &7行數...'
-          Offset: '&7數入 &a偏移 &7數值...'
-      Cooldown: '&7輸入 &a冷卻 &7幾秒後...'
+          Text: '&7輸入 &a全息文本 &7行...'
+          Offset: '&7輸入 &a偏移量 &7值...'
+      Cooldown: '&7輸入 &a冷卻時間 &7（秒）...'
       Citizens: '&7輸入 &aCitizens NPC &7ID...'
-      AnimationConfig: '&7輸入 &a動畫 config &7名稱...'
-      PreviewConfig: '&7輸入 &a預覽 config &7名稱...'
+      AnimationConfig: '&7輸入 &a動畫配置 &7名稱...'
+      PreviewConfig: '&7輸入 &a預覽配置 &7名稱...'
       OpenCost:
         Money: '&7輸入 &a金錢 &7成本...'
         Exp: '&7輸入 &a經驗等級 &7成本...'
+      BlockLocation: '#d4d9d8點擊 #aefd5e[方塊] #d4d9d8 來分配箱子。'
+      HologramTemplate: '#d4d9d8輸入 #aefd5e[全息模板]'
+      Open_Cost: '#d4d9d8輸入 #aefd5e[貨幣] [數量]'
+      Seconds: <lgray>輸入 <lgreen>[秒數]</lgreen></lgray>
     Error:
       Create:
-        Exists: '&c具有此類 ID 的箱子已存在!'
+        Exists: '&c該ID的箱子已存在!'
+    BlockPushback:
+      Name: '#ffed6a&l方塊推回'
+      Lore:
+        - '#ffed6a&l當前:'
+        - '#ffed6a▪ #bdc8c9啟用: #ffed6a%crate_block_pushback_enabled%'
+        - ''
+        - '#bdc8c9設置當玩家無法打開箱子時'
+        - '#bdc8c9是否會被推回。'
+        - ''
+        - '#bbff6a&l操作:'
+        - '#bbff6a▪ #bdc8c9左鍵點擊: #bbff6a切換'
   Reward:
     Enter:
-      Id: '&7輸入 &a獨特 &7獎勵 &aID&7...'
-      DisplayName: '&7輸入獎勵 &a顯示名稱&7...'
-      Chance: '&7輸入贏得 &a機率&7...'
+      Id: '&7輸入 &a唯一 &7的獎勵 &a識別碼&7...'
+      DisplayName: '&7輸入獎勵的 &a顯示名稱&7...'
+      Chance: '&7輸入獲得 &a機率&7...'
       Command: '&7輸入 &a指令&7...'
       WinLimit:
-        Amount: '&7輸入贏得獎勵 &a數量&7...'
-        Cooldown: '&7輸入贏得獎勵 &a冷卻&7...'
+        Amount: '&7輸入獲獎限制 &a數量&7...'
+        Cooldown: '&7輸入獲獎限制 &a冷卻時間&7...'
+      Permissions: '&7輸入 &a權限&7...'
+      Rarity: '#d4d9d8輸入 #aefd5e[稀有度]'
     Error:
       Create:
-        Exist: '&c這個id的獎勵已經存在了!'
+        Exist: '&c該ID的獎勵已存在!'
   Key:
     Error:
       Create:
-        Exist: 具有此類 ID 的鑰匙已存在!
+        Exist: 該ID的鑰匙已存在!
   CrateEditorType:
     EDITOR_CRATES:
-      Name: 板條箱編輯器
+      Name: 箱子編輯器
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7在此處創建和配置您的箱子!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊&f創建'
+        - '&6&l[?] 描述:'
+        - '&7在這裡創建和配置您的箱子!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f導航'
     EDITOR_KEYS:
       Name: 鑰匙編輯器
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7在此處創建和配置箱子鑰匙!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊&f創建'
+        - '&6&l[?] 描述:'
+        - '&7在這裡創建和配置箱子鑰匙!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f導航'
     CRATE_OBJECT:
       Name: '&e%crate_name% &7(ID: &f%crate_id%&7)'
       Lore:
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f編輯'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f刪除 &7(無法復原)'
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f編輯'
+        - '&x&8&6&d&e&2&aShift-右鍵 &f刪除 &7(無法撤銷)'
     CRATE_CREATE:
       Name: 創建箱子
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7創建一個新的箱子.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f創建'
+        - '&6&l[?] 描述:'
+        - '&7創建一個新的箱子。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f創建'
     CRATE_CHANGE_NAME:
-      Name: 板條箱顯示名稱
+      Name: 箱子顯示名稱
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%crate_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置箱子顯示名稱.'
-      - '&7此名稱用於消息, GUI, 全息圖等.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
+        - '&b&l[?] 當前:'
+        - '&a%crate_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置箱子的顯示名稱。此'
+        - '&7名稱將用於消息、GUI、'
+        - '&7全息圖等。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
     CRATE_CHANGE_PERMISSION:
-      Name: Permission Requirement
+      Name: 權限需求
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a是否啟用: &f%crate_permission_required%'
-      - '&a節點: &f%crate_permission%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置是否需要權限才能打開這個箱子.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f切換'
+        - '&b&l[?] 當前:'
+        - '&a啟用: &f%crate_permission_required%'
+        - '&a節點: &f%crate_permission%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置是否需要權限才能'
+        - '&7打開此箱子。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f切換'
     CRATE_CHANGE_COOLDOWN:
-      Name: 開啟冷卻
+      Name: 打開冷卻時間
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%crate_opening_cooldown%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置再次打開這個箱子的冷卻時間.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0設置為負值時,箱子只能打開一次.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f關閉'
-      - '&x&8&6&d&e&2&a[Q] 鍵 &f一次性'
+        - '&b&l[?] 當前:'
+        - '&a%crate_opening_cooldown%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置再次打開此'
+        - '&7箱子所需等待的時間。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0當設置為負值時，箱子'
+        - '&x&F&F&C&3&0&0只能打開一次。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
+        - '&x&8&6&d&e&2&a右鍵點擊 &f禁用'
+        - '&x&8&6&d&e&2&a[Q] 鍵 &f一次性'
     CRATE_CHANGE_CONFIG:
       Name: GUI 佈局
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a預覽: &f%crate_preview_config%'
-      - '&a開啟動畫: &f%crate_animation_config%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置用於箱子預覽和打開 GUI 的配置.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0您可以在中創建/編輯板條箱預覽'
-      - '&x&f&f&c&3&0&0/previews/ folder.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0您可以在中創建/編輯板條箱動畫'
-      - '&x&f&f&c&3&0&0/openings/ folder.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改 開啟動畫'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f關閉 開啟動畫'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f更改 預覽'
-      - '&x&8&6&d&e&2&aShift右鍵點擊 &f關閉 預覽'
+        - '&b&l[?] 當前:'
+        - '&a預覽: &f%crate_preview_config%'
+        - '&a打開: &f%crate_animation_config%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置用於箱子'
+        - '&7預覽和打開的GUI配置。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0您可以在'
+        - '&x&F&F&C&3&0&0/previews/ 文件夾中創建/編輯箱子預覽。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0您可以在'
+        - '&x&F&F&C&3&0&0/openings/ 文件夾中創建/編輯箱子打開動畫。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f更改打開動畫'
+        - '&x&8&6&d&e&2&a右鍵點擊 &f禁用打開動畫'
+        - '&x&8&6&d&e&2&aShift-左鍵 &f更改預覽'
+        - '&x&8&6&d&e&2&aShift-右鍵 &f禁用預覽'
     CRATE_CHANGE_KEYS:
-      Name: 綁定鑰匙
+      Name: 附加鑰匙
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%crate_key_ids%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置箱子鑰匙列表,這將打開這個箱子.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0如果沒有附上鑰匙,則無需任何鑰匙即可打開箱子.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9確保提供正確的鑰匙 ID!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f新增鑰匙'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f清除列表'
+        - '&b&l[?] 當前:'
+        - '&a%crate_key_ids%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置可以'
+        - '&7打開此箱子的鑰匙列表。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0如果沒有附加鑰匙，箱子'
+        - '&x&F&F&C&3&0&0可以無需鑰匙打開。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9請確保提供正確的鑰匙'
+        - '&x&C&7&0&0&3&9識別碼!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f添加鑰匙'
+        - '&x&8&6&d&e&2&a右鍵點擊 &f清空列表'
     CRATE_CHANGE_CITIZENS:
-      Name: 邦定 Citizens NPCs
+      Name: 附加市民NPC
       Lore:
-      - '&b&l[?] 當前:'
-      - '&aNPC Ids:'
-      - '&a%crate_attached_citizens%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置將在點擊時打開和預覽此板條箱的 NPC ID 列表.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9你必須安裝 Citizens 插件!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f新增 NPC'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f清除列表'
+        - '&b&l[?] 當前:'
+        - '&aNPC ID:'
+        - '&a%crate_attached_citizens%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置可以'
+        - '&7通過點擊打開和預覽此箱子'
+        - '&7的NPC ID列表。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9您必須安裝Citizens插件!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f添加NPC'
+        - '&x&8&6&d&e&2&a右鍵點擊 &f清空列表'
     CRATE_CHANGE_OPEN_COST:
-      Name: 開啟成本
+      Name: 打開成本
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a金錢成本: &f$%crate_opening_cost_money%'
-      - '&a經驗等級: &f%crate_opening_cost_exp%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置玩家打開這個箱子需要支付多少金錢/經驗值.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9你必須安裝 Vault + 經濟插件'
-      - '&x&c&7&0&0&3&9金錢成本才會正常工作'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改 金錢'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f更改 經驗'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f關閉金錢'
-      - '&x&8&6&d&e&2&aShift右鍵點擊 &f關閉經驗'
+        - '&b&l[?] 當前:'
+        - '&a金錢: &f$%crate_opening_cost_money%'
+        - '&a經驗等級: &f%crate_opening_cost_exp%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置玩家'
+        - '&7為打開此箱子需要支付的'
+        - '&7金錢/經驗數量。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9您必須安裝Vault + 經濟插件'
+        - '&x&C&7&0&0&3&9才能使用金錢成本功能!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊 &f更改金錢'
+        - '&x&8&6&d&e&2&a右鍵點擊 &f更改經驗'
+        - '&x&8&6&d&e&2&aShift-左鍵 &f禁用金錢'
+        - '&x&8&6&d&e&2&aShift-右鍵 &f禁用經驗'
     CRATE_CHANGE_ITEM:
-      Name: 板條箱物品
+      Name: 箱子物品
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%crate_item_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置箱子物品'
-      - '&7當您將此箱子交給玩家或將其添加到箱子菜單時將使用.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0在將其放在這裡之前設定自定義物品名稱'
-      - '&x&f&f&c&3&0&Lore和其他設置以獲得最佳結果.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a拖放 &f代替'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f獲取物品'
+        - '&b&l[?] 當前:'
+        - '&a%crate_item_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置箱子物品，當'
+        - '&7您將此箱子給予玩家時'
+        - '&7或將其添加到箱子菜單時將使用此物品。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0在將物品放入此處之前'
+        - '&x&F&F&C&3&0&0請先應用自定義名稱、說明等設置'
+        - '&x&F&F&C&3&0&0以獲得最佳效果。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖放以替換'
+        - '&x&8&6&d&e&2&a右鍵點擊以獲取物品'
     CRATE_CHANGE_BLOCK_LOCATION:
-      Name: Block Locations & Pushback
+      Name: 方塊位置和推回
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%crate_block_locations%'
-      - '&a擊飛啟用狀態: &f%crate_block_pushback_enabled%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置此箱子將附加到的方塊位置列表.'
-      - '&7點擊該方塊時,它將預覽或打開板條箱.'
-      - '&7還設置箱子是否應該在玩家無法打開箱子時將其擊飛.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f綁定方塊'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f清除列表'
-      - '&x&8&6&d&e&2&a[Q] Key to &f切換 擊飛'
+        - '&b&l[?] 當前:'
+        - '&a%crate_block_locations%'
+        - '&a推回啟用: &f%crate_block_pushback_enabled%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置箱子將附加到的方塊位置列表。'
+        - '&7玩家可以點擊這些方塊'
+        - '&7來預覽或打開箱子。'
+        - '&7還設置當玩家無法打開箱子時'
+        - '&7是否會被推回。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊以分配方塊'
+        - '&x&8&6&d&e&2&a右鍵點擊以清空列表'
+        - '&x&8&6&d&e&2&a[Q] 鍵切換推回'
     CRATE_CHANGE_BLOCK_HOLOGRAM:
       Name: 方塊全息圖
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a是否啟用: &f%crate_block_hologram_enabled%'
-      - '&aY 偏移量: &f%crate_block_hologram_offset_y%'
-      - '&a文字:'
-      - '&a%crate_block_hologram_text%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7將全息圖文本設置為出現在板條箱塊上方.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9您必須安裝全息圖插件:'
-      - '&x&c&7&0&0&3&9- HolographicDisplays'
-      - '&x&c&7&0&0&3&9- DecentHolograms'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f新增一航'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f清除文字'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f切換 Hologram'
-      - '&x&8&6&d&e&2&aShift右鍵點擊 &f更改 Y 偏移量'
+        - '&b&l[?] 當前:'
+        - '&a啟用: &f%crate_block_hologram_enabled%'
+        - '&aY 偏移: &f%crate_block_hologram_offset_y%'
+        - '&a文本:'
+        - '&a%crate_block_hologram_text%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置在箱子方塊上方出現的全息圖文本。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9您必須安裝以下全息圖插件之一:'
+        - '&x&C&7&0&0&3&9- HolographicDisplays'
+        - '&x&C&7&0&0&3&9- DecentHolograms'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊添加行'
+        - '&x&8&6&d&e&2&a右鍵點擊清空文本'
+        - '&x&8&6&d&e&2&aShift-左鍵切換全息圖'
+        - '&x&8&6&d&e&2&aShift-右鍵更改Y偏移'
     CRATE_CHANGE_BLOCK_EFFECT:
       Name: 方塊效果
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a模型: &f%crate_block_effect_model%'
-      - '&a粒子: &f%crate_block_effect_particle_name%'
-      - '&a資料: &f%crate_block_effect_particle_data%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置效果以無限地圍繞板條箱塊.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0彩色粒子的數據格式: ''R,G,B'''
-      - '&x&f&f&c&3&0&0(255,0,0)'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0物品/方塊粒子的數據格式: MATERIAL_NAME'
-      - '&x&f&f&c&3&0&0(SAND)'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a[Q] 鍵 &f切換 模型l'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改 粒子'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f更改 資另'
+        - '&b&l[?] 當前:'
+        - '&a模型: &f%crate_block_effect_model%'
+        - '&a粒子: &f%crate_block_effect_particle_name%'
+        - '&a數據: &f%crate_block_effect_particle_data%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置箱子方塊周圍無限播放的效果。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0彩色粒子的數據格式: ''R,G,B'''
+        - '&x&F&F&C&3&0&0(255,0,0)'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0物品/方塊粒子的數據格式: MATERIAL_NAME'
+        - '&x&F&F&C&3&0&0(沙)'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a[Q] 鍵切換模型'
+        - '&x&8&6&d&e&2&a左鍵點擊更改粒子'
+        - '&x&8&6&d&e&2&a右鍵點擊更改數據'
     CRATE_CHANGE_REWARDS:
       Name: 箱子獎勵
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7Here you can create and manage'
-      - '&7rewards for the crate.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f瀏覽'
+        - '&6&l[?] 描述:'
+        - '&7在這裡您可以創建和管理'
+        - '&7箱子的獎勵。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊導航'
     REWARD_OBJECT:
       Name: '&e%reward_name% &7(ID: &f%reward_id%&7)'
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7機率: &f%reward_chance%%'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f編輯'
-      - '&x&8&6&d&e&2&a[Q] Key to &f刪除  &7(無法復原)'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f前移'
-      - '&x&8&6&d&e&2&aShift右鍵點擊 &f後移'
+        - '&6&l[?] 描述:'
+        - '&7機率: &f%reward_chance%%'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊編輯'
+        - '&x&8&6&d&e&2&a[Q] 鍵刪除 &7(無法撤銷)'
+        - '&x&8&6&d&e&2&aShift-左鍵移動到前面'
+        - '&x&8&6&d&e&2&aShift-右鍵移動到後面'
     REWARD_CREATE:
       Name: 創建獎勵
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7為箱子創建一個新的獎勵.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f創建'
-      - '&x&8&6&d&e&2&a拖放 &f快速創建'
+        - '&6&l[?] 描述:'
+        - '&7為箱子創建新的獎勵。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊創建'
+        - '&x&8&6&d&e&2&a拖放以快速創建'
     REWARD_SORT:
-      Name: Sort Rewards
+      Name: 排序獎勵
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7按特定順序自動對您的獎勵進行排序.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f按機會排序'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f按類型排序'
-      - '&x&8&6&d&e&2&aShift左鍵點擊 &f按名稱分類'
+        - '&6&l[?] 描述:'
+        - '&7自動按一定順序排序您的獎勵。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊按機率排序'
+        - '&x&8&6&d&e&2&a右鍵點擊按類型排序'
+        - '&x&8&6&d&e&2&aShift-左鍵點擊按名稱排序'
     REWARD_CHANGE_NAME:
-      Name: Reward Display Name
+      Name: 獎勵顯示名稱
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%reward_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置獎勵顯示名稱.此名稱主要用於消息中.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9這不是獎勵預覽物品名稱!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f與預覽名稱同步'
+        - '&b&l[?] 當前:'
+        - '&a%reward_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置獎勵顯示名稱。此'
+        - '&7名稱主要用於消息中。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9這不是獎勵預覽'
+        - '&x&C&7&0&0&3&9物品名稱!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊更改'
+        - '&x&8&6&d&e&2&a右鍵點擊同步預覽名稱'
     REWARD_CHANGE_PREVIEW:
-      Name: 獎勵物品
+      Name: 預覽物品
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%reward_preview_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置此獎勵的預覽物品'
-      - '&7該物品將顯示在箱子預覽和打開 GUI 中以顯示獎勵.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0將自定義名稱、Lore和其他設置應用到物品'
-      - '&x&f&f&c&3&0&0然後將其放在這里以獲得最佳效果.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a拖放 &f替換'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f獲得物品'
+        - '&b&l[?] 當前:'
+        - '&a%reward_preview_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置此獎勵的預覽物品。'
+        - '&7此物品將顯示在箱子預覽和'
+        - '&7打開的GUI中以顯示獎勵。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0在將物品放入此處之前'
+        - '&x&F&F&C&3&0&0請先應用自定義名稱、說明等設置'
+        - '&x&F&F&C&3&0&0以獲得最佳效果。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖放以替換'
+        - '&x&8&6&d&e&2&a右鍵點擊獲取物品'
     REWARD_CHANGE_CHANCE:
       Name: 機率
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%reward_chance%%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置滾動此獎勵的機會.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0獎勵機會實際上起到了“權重”的作用,'
-      - '&x&f&f&c&3&0&0因此它們不必達到 100%.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
+        - '&b&l[?] 當前:'
+        - '&a%reward_chance%%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置此獎勵的獲得機率。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0獎勵機率實際上是作為''權重''工作的，'
+        - '&x&F&F&C&3&0&0所以它們不必是'
+        - '&x&F&F&C&3&0&0100%。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊更改'
     REWARD_CHANGE_COMMANDS:
-      Name: Reward Commands
+      Name: 獎勵指令
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%reward_commands%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7將此獎勵提供給玩家時將執行的命令列表.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0添加命令時在聊天中查找命令前綴.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f新增指令'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f清除列表'
+        - '&b&l[?] 當前:'
+        - '&a%reward_commands%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7列出獲得此獎勵時'
+        - '&7將執行的指令。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0在添加指令時請查看聊天中的指令前綴。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊添加指令'
+        - '&x&8&6&d&e&2&a右鍵點擊清空列表'
     REWARD_CHANGE_ITEMS:
       Name: 獎勵物品
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7給予此獎勵時將添加到玩家背包中的物品列表.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0只需關閉背包以保存退貨.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &fNavigate'
+        - '&6&l[?] 描述:'
+        - '&7列出獲得此獎勵時'
+        - '&7將添加到玩家背包中的物品。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0只需關閉背包即可保存'
+        - '&x&F&F&C&3&0&0並返回。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊導航'
     REWARD_CHANGE_BROADCAST:
       Name: 廣播
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a是否啟用: &f%reward_broadcast%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置是否向所有在線玩家廣播此獎勵的獲勝消息.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f切換'
+        - '&b&l[?] 當前:'
+        - '&a啟用: &f%reward_broadcast%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置是否在獲得此獎勵時'
+        - '&7向所有在線玩家廣播消息。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊切換'
     REWARD_CHANGE_WIN_LIMITS:
-      Name: Win Limits
+      Name: 獲獎限制
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a數量: &f%reward_win_limit_amount%'
-      - '&a冷卻: &f%reward_win_limit_cooldown%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置可以向玩家推出此獎勵的次數和頻率.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0將數量設置為 -1 表示無限制.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0將冷卻時間設置為-1以獲得一次性獎勵.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9限制是針對每個玩家的,而不是全部的.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改 數量'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f更改 冷卻'
-      - '&x&8&6&d&e&2&a[Q] 鍵 &f關閉'
+        - '&b&l[?] 當前:'
+        - '&a數量: &f%reward_win_limit_amount%'
+        - '&a冷卻時間: &f%reward_win_limit_cooldown%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置每個玩家'
+        - '&7可以再次獲得此獎勵的次數和頻率。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0將數量設置為-1以取消限制。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0將冷卻時間設置為-1'
+        - '&x&F&F&C&3&0&0將其設置為一次性獎勵。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9限制是每個玩家的，不是全局的。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊更改數量'
+        - '&x&8&6&d&e&2&a右鍵點擊更改冷卻時間'
+        - '&x&8&6&d&e&2&a[Q] 鍵禁用'
     KEY_OBJECT:
       Name: '&e%key_name% &7(ID: &f%key_id%&7)'
       Lore:
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0是否虛擬: &f%key_virtual%'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f編輯'
-      - '&x&8&6&d&e&2&aShift右鍵點擊 &f刪除  &7(無法復原)'
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0是否虛擬: &f%key_virtual%'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊編輯'
+        - '&x&8&6&d&e&2&aShift-右鍵刪除 &7(無法撤銷)'
     KEY_CREATE:
       Name: 創建鑰匙
       Lore:
-      - '&6&l[?] 描述:'
-      - '&7創建新的鑰匙.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f創建'
+        - '&6&l[?] 描述:'
+        - '&7創建一個新的箱子鑰匙。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊創建'
     KEY_CHANGE_NAME:
-      Name: Key Display Name
+      Name: 鑰匙顯示名稱
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%key_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置鑰匙顯示名稱.此名稱主要用於消息中.'
-      - ' '
-      - '&c&l[!] 警告:'
-      - '&x&c&7&0&0&3&9該選項不影響鑰匙的顯示名稱!'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f更改'
+        - '&b&l[?] 當前:'
+        - '&a%key_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置鑰匙顯示名稱。此'
+        - '&7名稱主要用於消息中。'
+        - ' '
+        - '&c&l[!] 警告:'
+        - '&x&C&7&0&0&3&9此選項不會影響鑰匙物品的顯示名稱!'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊更改'
     KEY_CHANGE_ITEM:
       Name: 鑰匙物品
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a%key_item_name%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置鑰匙物品,當鑰匙被給予玩家的物品欄時將被使用.'
-      - ' '
-      - '&e&l[!] 筆記:'
-      - '&x&f&f&c&3&0&0在將項目放在這裡之前設定自定義名稱'
-      - '&x&f&f&c&3&0&0Lore和其他設置以獲得最佳效果'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a拖放 &f覆蓋'
-      - '&x&8&6&d&e&2&a右鍵點擊 &f獲取物品'
+        - '&b&l[?] 當前:'
+        - '&a%key_item_name%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置箱子鑰匙物品，當'
+        - '&7鑰匙被給予玩家背包時將使用此物品。'
+        - ' '
+        - '&e&l[!] 注意:'
+        - '&x&F&F&C&3&0&0在將物品放入此處之前'
+        - '&x&F&F&C&3&0&0請先應用自定義名稱、說明等設置'
+        - '&x&F&F&C&3&0&0以獲得最佳效果。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a拖放以替換'
+        - '&x&8&6&d&e&2&a右鍵點擊獲取物品'
     KEY_CHANGE_VIRTUAL:
       Name: 虛擬鑰匙
       Lore:
-      - '&b&l[?] 當前:'
-      - '&a是否虛擬: &f%key_virtual%'
-      - ' '
-      - '&6&l[?] 描述:'
-      - '&7設置此鑰匙是否為虛擬鑰匙.'
-      - '&7虛擬鑰匙不能作為物品提供'
-      - '&7並存儲在數據庫中.'
-      - ' '
-      - '&x&5&5&e&1&3&6&l[>] 動作:'
-      - '&x&8&6&d&e&2&a左鍵點擊 &f切換'
+        - '&b&l[?] 當前:'
+        - '&a是否虛擬: &f%key_virtual%'
+        - ' '
+        - '&6&l[?] 描述:'
+        - '&7設置此鑰匙是否為虛擬鑰匙。'
+        - '&7虛擬鑰匙不能'
+        - '&7作為物品給予玩家，並'
+        - '&7存儲在數據庫中。'
+        - ' '
+        - '&x&5&5&e&1&3&6&l[>] 操作:'
+        - '&x&8&6&d&e&2&a左鍵點擊切換'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#ffed6a&l權限限制'
+      Lore:
+        - '#ffed6a&l當前:'
+        - '#bdc8c9%reward_ignored_for_permissions%'
+        - ''
+        - '#bdc8c9擁有任一權限的玩家'
+        - '#bdc8c9將無法獲得此獎勵。'
+        - ''
+        - '#bbff6a&l操作:'
+        - '#bbff6a▪ #bdc8c9左鍵點擊: #bbff6a添加權限'
+        - '#bbff6a▪ #bdc8c9右鍵點擊: #bbff6a清空列表'
+    KEY_VIRTUAL:
+      Name: '#ffed6a&l虛擬'
+      Lore:
+        - '#ffed6a&l當前:'
+        - '#ffed6a▪ #bdc8c9是否虛擬: #ffed6a%key_virtual%'
+        - ''
+        - '#bdc8c9設置此鑰匙是否為虛擬鑰匙。'
+        - ''
+        - '#ffa76a&l注意:'
+        - '#ffa76a▪ #bdc8c9虛擬鑰匙存儲在數據庫中，不在背包中。'
+        - ''
+        - '#bbff6a&l操作:'
+        - '#bbff6a▪ #bdc8c9左鍵點擊: #bbff6a切換'
+    Reward:
+      Rarity:
+        Name: '#ffed6a&l稀有度'
+        Lore:
+          - '#bdc8c9設置獎勵的稀有度。'
+          - '#bdc8c9了解更多詳情請訪問插件Wiki。'
+          - ''
+          - '#ffed6a&l當前:'
+          - '#ffed6a▪ #bdc8c9稀有度: #ffed6a%reward_rarity_name%'
+          - ''
+          - '#bbff6a&l操作:'
+          - '#bbff6a▪ #bdc8c9左鍵點擊: #bbff6a更改'
+  Enter:
+    DisplayName: '#d4d9d8輸入 #aefd5e[顯示名稱]'
+    Amount: '#d4d9d8輸入 #aefd5e[數量]'
+    Value: <lgray>輸入 <lgreen>[數值]</lgreen></lgray>
+  Milestone:
+    Enter:
+      Reward: '#d4d9d8輸入 #aefd5e[獎勵ID]'
+  Item:
+    Crate:
+      Milestones:
+        Name: '#fdf35e&l里程碑'
+        Lore:
+          - '#fdf35e▪ #d4d9d8可重複: #fdf35e%crate_milestones_repeatable%'
+          - ''
+          - '#d4d9d8在這裡創建和管理里程碑!'
+          - ''
+          - '#aefd5e&l操作:'
+          - '#aefd5e▪ #d4d9d8左鍵點擊: #aefd5e打開'
+          - '#aefd5e▪ #d4d9d8右鍵點擊: #aefd5e切換可重複'
+      Object:
+        Name: '#ead931&l%crate_name%#aaa8a8 (ID: #e8f2f2%crate_id%#aaa8a8)'
+        Lore:
+          - '#aaa8a8%crate_inspect_keys%'
+          - '#aaa8a8%crate_inspect_rewards%'
+          - '#aaa8a8%crate_inspect_opening%'
+          - '#aaa8a8%crate_inspect_preview%'
+          - '#aaa8a8%crate_inspect_hologram%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 編輯)'
+          - '#aaa8a8(#e8f2f2Shift-右鍵#aaa8a8 刪除 #ea3131無法撤銷)'
+      Create:
+        Name: '#ead931&l新箱子'
+        Lore: []
+      DisplayName:
+        Name: '#ead931&l顯示名稱'
+        Lore:
+          - '#aaa8a8通用箱子名稱，'
+          - '#aaa8a8與箱子物品名稱 #ea3131無關#aaa8a8。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8名稱: #ead931%crate_name%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+      Permission:
+        Name: '#ead931&l權限需求'
+        Lore:
+          - '#aaa8a8設置是否需要權限才能'
+          - '#aaa8a8打開此箱子。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8啟用: #ead931%crate_permission_required%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - '#ead931▪ #aaa8a8節點: #ead931%crate_permission%'
+      OpenCooldown:
+        Name: '#ead931&l打開冷卻時間'
+        Lore:
+          - '#aaa8a8設置玩家再次打開此箱子'
+          - '#aaa8a8需要等待的時間。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8冷卻時間: #ead931%crate_open_cooldown%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - ''
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 禁用)'
+          - '#aaa8a8(#e8f2f2[Q] 鍵#aaa8a8 一次性)'
+      Template:
+        Name: '#ead931&l預覽和動畫'
+        Lore:
+          - '#aaa8a8%crate_inspect_preview%'
+          - '#aaa8a8%crate_inspect_opening%'
+          - ''
+          - '#aaa8a8設置用於箱子'
+          - '#aaa8a8預覽和打開的GUI配置。'
+          - ''
+          - '#aaa8a8您可以在'
+          - '#aaa8a8#e8f2f2/previews/#aaa8a8 和 #e8f2f2/openings/#aaa8a8 文件夾中找到（或創建）它們。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8預覽: #ead931%crate_preview_config%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - '#aaa8a8打開: #ead931%crate_animation_config%#aaa8a8 (#e8f2f2右鍵點擊#aaa8a8)'
+          - ''
+          - '#aaa8a8(按住 #e8f2f2Shift#aaa8a8 點擊以禁用)'
+      Keys:
+        Name: '#ead931&l附加鑰匙'
+        Lore:
+          - '#aaa8a8%crate_inspect_keys%'
+          - ''
+          - '#aaa8a8設置可以'
+          - '#aaa8a8打開此箱子的鑰匙。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8%crate_key_ids%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 添加)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 清空)'
+      OpenCost:
+        Name: '#ead931&l打開成本'
+        Lore:
+          - '#aaa8a8設置玩家需要支付'
+          - '#aaa8a8的金錢/經驗數量'
+          - '#aaa8a8來打開此箱子。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8成本: #ead931%crate_open_cost%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - ''
+          - '#aaa8a8(#e8f2f2[Q] 鍵#aaa8a8 清空)'
+      InventoryItem:
+        Name: '#ead931&l背包物品'
+        Lore:
+          - '#aaa8a8此物品用於顯示'
+          - '#aaa8a8箱子在箱子菜單中，並'
+          - '#aaa8a8當您將箱子給予玩家時'
+          - '#aaa8a8使用此物品。'
+          - ''
+          - '#aaa8a8在將物品放入此處之前'
+          - '#aaa8a8應先設置其 #ea3131名稱'
+          - '#aaa8a8和 #ea3131說明#aaa8a8。'
+          - ''
+          - '#aaa8a8(#e8f2f2拖放#aaa8a8 替換)'
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 獲取箱子物品)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 獲取副本)'
+      Placement:
+        Info:
+          Name: '#ead931&l放置'
+          Lore:
+            - '#aaa8a8在世界上任意位置放置箱子'
+            - '#aaa8a8使用炫酷的'
+            - '#aaa8a8#e8f2f2粒子效果#aaa8a8 和 #e8f2f2全息圖#aaa8a8!'
+            - ''
+            - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 導航)'
+        Locations:
+          Name: '#ead931&l分配的方塊'
+          Lore:
+            - '#aaa8a8玩家可以與以下列表中的方塊'
+            - '#aaa8a8互動來打開'
+            - '#aaa8a8或預覽箱子。'
+            - ''
+            - '#ead931&l當前:'
+            - '#aaa8a8%crate_locations%'
+            - ''
+            - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 添加)'
+            - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 清空)'
+        Pushback:
+          Name: '#ead931&l推回'
+          Lore:
+            - '#aaa8a8設置當玩家無法打開箱子時'
+            - '#aaa8a8是否會被推回。'
+            - ''
+            - '#ead931&l當前:'
+            - '#ead931▪ #aaa8a8啟用: #ead931%crate_pushback_enabled%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+        Hologram:
+          Name: '#ead931&l全息圖'
+          Lore:
+            - '#aaa8a8%crate_inspect_hologram%'
+            - ''
+            - '#aaa8a8在箱子方塊上方創建全息圖'
+            - '#aaa8a8帶有特定的文本模板。'
+            - ''
+            - '#ead931&l當前:'
+            - '#ead931▪ #aaa8a8啟用: #ead931%crate_hologram_enabled%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+            - '#ead931▪ #aaa8a8模板: #ead931%crate_hologram_template%#aaa8a8 (#e8f2f2右鍵點擊#aaa8a8)'
+            - ''
+        Effects:
+          Name: '#ead931&l粒子效果'
+          Lore:
+            - '#aaa8a8創建炫酷的箱子粒子效果!'
+            - ''
+            - '#ead931&l當前:'
+            - '#ead931▪ #aaa8a8模型: #ead931%crate_effect_model%#aaa8a8 (#e8f2f2[Q] 鍵#aaa8a8)'
+            - '#ead931▪ #aaa8a8粒子: #ead931%crate_effect_particle_name%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+            - '#ead931▪ #aaa8a8數據: #ead931%crate_effect_particle_data%#aaa8a8 (#e8f2f2右鍵點擊#aaa8a8)'
+      Rewards:
+        Name: '#ead931&l獎勵'
+        Lore:
+          - '#aaa8a8%crate_inspect_rewards%'
+          - ''
+          - '#aaa8a8在這裡您可以創建通用'
+          - '#aaa8a8的箱子獎勵，以及'
+          - '#aaa8a8里程碑獎勵。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8獎勵數量: #ead931%crate_rewards_amount%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+      PreviewAndOpening:
+        Name: <lyellow><b>預覽和打開</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>預覽: </lgray>%crate_preview_config%</lyellow>'
+          - '<lyellow>● <lgray>打開: </lgray>%crate_animation_config%</lyellow>'
+          - ''
+          - <lgray>設置用於:</lgray>
+          - <lgray><lyellow>● </lyellow>箱子預覽 GUI (<lorange>/previews/</lorange>)</lgray>
+          - <lgray><lyellow>● </lyellow>箱子打開動畫 (<lorange>/openingsv2/</lorange>)</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>左鍵點擊 <lyellow>更改預覽</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>右鍵點擊 <lyellow>更改打開</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-左鍵 <lyellow>禁用預覽</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-右鍵 <lyellow>禁用打開</lyellow>。</lgray>
+      KeyRequirement:
+        Name: <lyellow><b>鑰匙需求</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>啟用: </lgray>%crate_key_required%</lyellow>'
+          - '<lyellow>● <lgray>鑰匙: </lgray></lyellow>'
+          - '%crate_key_ids%'
+          - ''
+          - <lgray>玩家必須擁有某些鑰匙</lgray>
+          - <lgray>才能打開此箱子。</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>左鍵點擊 <lyellow>添加鑰匙</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>右鍵點擊 <lyellow>清空</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] 鍵切換需求。</lgray>
+      Particle:
+        Data:
+          Red:
+            Name: <lyellow><b>紅色</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>點擊 <lyellow>更改</lyellow>。</lgray>
+          Green:
+            Name: <lyellow><b>綠色</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>點擊 <lyellow>更改</lyellow>。</lgray>
+          Blue:
+            Name: <lyellow><b>藍色</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>點擊 <lyellow>更改</lyellow>。</lgray>
+          Size:
+            Name: <lyellow><b>大小</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>點擊 <lyellow>更改</lyellow>。</lgray>
+          Material:
+            Name: <lyellow><b>材質</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>拖放 <lyellow>更改</lyellow>。</lgray>
+          Number:
+            Name: <lyellow><b>數量</b></lyellow>
+            Lore:
+              - '<lyellow>● <lgray>當前: </lgray>%value%</lyellow>'
+              - ''
+              - <lyellow>[▶]</lyellow> <lgray>點擊 <lyellow>更改</lyellow>。</lgray>
+    Milestone:
+      Create:
+        Name: '#fdf35e&l新里程碑'
+        Lore: []
+      Object:
+        Name: '#fdf35e&l里程碑: %milestone_openings%'
+        Lore:
+          - '#fdf35e▪ #d4d9d8開箱次數: #fdf35e%milestone_openings%'
+          - '#fdf35e▪ #d4d9d8獎勵ID: #fdf35e%milestone_reward_id%'
+          - ''
+          - '#aefd5e&l操作:'
+          - '#aefd5e▪ #d4d9d8左鍵點擊: #aefd5e更改開箱次數'
+          - '#aefd5e▪ #d4d9d8右鍵點擊: #aefd5e更改獎勵ID'
+          - '#aefd5e▪ #d4d9d8Shift-右鍵: #aefd5e刪除 #fd5e5e無法撤銷'
+    Crates:
+      Name: '#ead931&l箱子'
+      Lore:
+        - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 導航)'
+    Keys:
+      Name: '#ead931&l鑰匙'
+      Lore:
+        - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 導航)'
+    Reward:
+      Object:
+        Name: '#ead931&l%reward_name%#aaa8a8 (ID: #e8f2f2%reward_id%#aaa8a8)'
+        Lore:
+          - '#aaa8a8%reward_inspect_content%'
+          - ''
+          - '#ead931▪ #aaa8a8機率: #ead931%reward_chance%%'
+          - '#ead931▪ #aaa8a8實際機率: #ead931%reward_real_chance%%'
+          - '#ead931▪ #aaa8a8稀有度: #ead931%reward_rarity_name%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 編輯)'
+          - '#aaa8a8(#e8f2f2Shift-左鍵#aaa8a8 向前移動)'
+          - '#aaa8a8(#e8f2f2Shift-右鍵#aaa8a8 向後移動)'
+          - '#aaa8a8(#e8f2f2[Q] 鍵#aaa8a8 刪除 #ea3131無法撤銷)'
+      Create:
+        Name: '#ead931&l新獎勵'
+        Lore:
+          - '#aaa8a8如標題所述...'
+          - ''
+          - '#aaa8a8#74ea31[!]#aaa8a8 將物品拖放到 #74ea31此按鈕'
+          - '#aaa8a8以快速創建!'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 手動創建)'
+      Sort:
+        Name: '#ead931&l排序獎勵'
+        Lore:
+          - '#aaa8a8自動按'
+          - '#aaa8a8指定順序排序獎勵。'
+          - ''
+          - '#74ea31▪ #aaa8a8[Num 1]: #74ea31按機率'
+          - '#74ea31▪ #aaa8a8[Num 2]: #74ea31按類型'
+          - '#74ea31▪ #aaa8a8[Num 3]: #74ea31按名稱'
+          - '#74ea31▪ #aaa8a8[Num 4]: #74ea31按稀有度'
+        Info:
+          Name: <lyellow><b>排序獎勵</b></lyellow>
+          Lore:
+            - <lgray>自動按指定順序</lgray>
+            - <lgray>排序獎勵。</lgray>
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>左鍵點擊 <lyellow>導航</lyellow>。</lgray>
+        ByWeight:
+          Name: <lyellow><b>按權重</b></lyellow>
+          Lore: []
+        ByRarity:
+          Name: <lyellow><b>按稀有度</b></lyellow>
+          Lore: []
+        ByChance:
+          Name: <lyellow><b>按機率</b></lyellow>
+          Lore: []
+        ByName:
+          Name: <lyellow><b>按名稱</b></lyellow>
+          Lore: []
+        ByItem:
+          Name: <lyellow><b>按物品</b></lyellow>
+          Lore: []
+      DisplayName:
+        Name: '#ead931&l顯示名稱'
+        Lore:
+          - '#aaa8a8通用獎勵名稱，'
+          - '#aaa8a8與獎勵物品或預覽無關 #ea3131無關#aaa8a8。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8顯示名稱: #ead931%reward_name%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 編輯)'
+          - '#aaa8a8(#e8f2f2Shift-左鍵#aaa8a8 繼承自預覽)'
+          - '#aaa8a8(#e8f2f2Shift-右鍵#aaa8a8 設置為預覽)'
+      Preview:
+        Name: '#ead931&l預覽物品'
+        Lore:
+          - '#aaa8a8用於箱子預覽和'
+          - '#aaa8a8打開的GUI中的'
+          - '#aaa8a8獎勵 #e8f2f2表示#aaa8a8。'
+          - ''
+          - '#aaa8a8#ea3131[!]#aaa8a8 這與玩家'
+          - '#aaa8a8從此獎勵中獲得的內容 #ea3131無關#aaa8a8。'
+          - ''
+          - '#aaa8a8(#e8f2f2拖放#aaa8a8 替換)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 獲取副本)'
+      Weight:
+        Name: '#ead931&l稀有度和權重'
+        Lore:
+          - '#aaa8a8設置獎勵的稀有度和權重。'
+          - '#aaa8a8#ea3131(詳情請閱讀文檔)'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8稀有度: #ead931%reward_rarity_name%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - '#ead931▪ #aaa8a8原始機率: #ead931%reward_chance%%#aaa8a8 (#e8f2f2右鍵點擊#aaa8a8)'
+          - '#ead931▪ #aaa8a8實際機率: #ead931%reward_real_chance%%'
+      Commands:
+        Name: '#ead931&l指令'
+        Lore:
+          - '#aaa8a8列出的所有指令將'
+          - '#aaa8a8在玩家獲得此獎勵時'
+          - '#aaa8a8從 #e8f2f2控制台#aaa8a8 執行。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8%reward_editor_commands%'
+          - ''
+          - '#aaa8a8#ead931&l佔位符:'
+          - '#ead931▪ #aaa8a8PlaceholderAPI: #ead931所有佔位符。'
+          - '#ead931▪ #aaa8a8%player_name%: #ead931用於玩家名稱。'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 添加)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 清空)'
+      Items:
+        Name: '#ead931&l物品'
+        Lore:
+          - '#aaa8a8列出的所有物品將'
+          - '#aaa8a8在玩家獲得此獎勵時'
+          - '#aaa8a8添加到玩家背包中。'
+          - ''
+          - '#aaa8a8您可以在物品名稱和說明中使用 #e8f2f2PlaceholderAPI#aaa8a8 佔位符。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8%reward_editor_items%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 編輯)'
+      Broadcast:
+        Name: '#ead931&l廣播'
+        Lore:
+          - '#aaa8a8設置是否在獲得此獎勵時'
+          - '#aaa8a8廣播消息。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8啟用: #ead931%reward_broadcast%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+      WinLimits:
+        Name: '#ead931&l獲獎限制'
+        Lore:
+          - '#aaa8a8設置每個玩家'
+          - '#aaa8a8可以再次獲得此獎勵的次數和頻率。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8數量: #ead931%reward_win_limit_amount%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+          - '#ead931▪ #aaa8a8冷卻時間: #ead931%reward_win_limit_cooldown%#aaa8a8 (#e8f2f2右鍵點擊#aaa8a8)'
+          - ''
+          - '#aaa8a8(#e8f2f2Shift-左鍵#aaa8a8 一次性)'
+          - '#aaa8a8(#e8f2f2Shift-右鍵#aaa8a8 禁用)'
+      IgnoredPermissions:
+        Name: '#ead931&l權限限制'
+        Lore:
+          - '#aaa8a8擁有下列任一權限的玩家'
+          - '#aaa8a8將無法獲得此獎勵。'
+          - ''
+          - '#ead931&l當前:'
+          - '#aaa8a8%reward_ignored_for_permissions%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 添加)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 清空)'
+      GlobalWinLimit:
+        Name: <lyellow><b>全局獲獎限制</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>啟用: </lgray>%reward_global_win_limit_enabled%</lyellow>'
+          - '<lyellow>● <lgray>數量: </lgray>%reward_global_win_limit_amount%</lyellow>'
+          - '<lyellow>● <lgray>冷卻時間: </lgray>%reward_global_win_limit_cooldown%</lyellow>'
+          - '<lyellow>● <lgray>冷卻步長: </lgray>%reward_global_win_limit_step%</lyellow>'
+          - ''
+          - <lgray>設置此獎勵的全局冷卻時間和次數。</lgray>
+          - ''
+          - <lgray>詳情請閱讀 <lorange>文檔</lorange>。</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] 鍵切換。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>左鍵點擊 <lyellow>更改數量</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>右鍵點擊 <lyellow>更改冷卻時間</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-左鍵 <lyellow>更改冷卻步長</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-右鍵 <lyellow>午夜冷卻</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[F / Swap] 鍵重置存儲數據。</lgray>
+      PlayerWinLimit:
+        Name: <lyellow><b>玩家獲獎限制</b></lyellow>
+        Lore:
+          - '<lyellow>● <lgray>啟用: </lgray>%reward_player_win_limit_enabled%</lyellow>'
+          - '<lyellow>● <lgray>數量: </lgray>%reward_player_win_limit_amount%</lyellow>'
+          - '<lyellow>● <lgray>冷卻時間: </lgray>%reward_player_win_limit_cooldown%</lyellow>'
+          - '<lyellow>● <lgray>冷卻步長: </lgray>%reward_player_win_limit_step%</lyellow>'
+          - ''
+          - <lgray>設置此獎勵的每個玩家的冷卻時間和次數。</lgray>
+          - ''
+          - <lgray>詳情請閱讀 <lorange>文檔</lorange>。</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] 鍵切換。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>左鍵點擊 <lyellow>更改數量</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>右鍵點擊 <lyellow>更改冷卻時間</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-左鍵 <lyellow>更改冷卻步長</lyellow>。</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-右鍵 <lyellow>午夜冷卻</lyellow>。</lgray>
+    Key:
+      Object:
+        Name: '#ead931&l%key_name%#aaa8a8 (ID: #e8f2f2%key_id%#aaa8a8)'
+        Lore:
+          - '#ead931▪ #aaa8a8虛擬: #ead931%key_virtual%'
+          - ''
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 編輯)'
+          - '#aaa8a8(#e8f2f2Shift-右鍵#aaa8a8 刪除 #ea3131無法撤銷)'
+      Create:
+        Name: '#ead931&l新鑰匙'
+        Lore: []
+      DisplayName:
+        Name: '#ead931&l顯示名稱'
+        Lore:
+          - '#aaa8a8通用鑰匙名稱，'
+          - '#aaa8a8與鑰匙物品名稱 #ea3131無關#aaa8a8。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8名稱: #ead931%key_name%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+      Item:
+        Name: '#ead931&l鑰匙物品'
+        Lore:
+          - '#aaa8a8設置實體鑰匙物品。'
+          - ''
+          - '#aaa8a8您應該在將物品放入此處之前'
+          - '#aaa8a8設置其 #ea3131名稱#aaa8a8'
+          - '#aaa8a8和 #ea3131說明#aaa8a8。'
+          - ''
+          - '#aaa8a8(#e8f2f2拖放#aaa8a8 替換)'
+          - '#aaa8a8(#e8f2f2左鍵點擊#aaa8a8 獲取鑰匙物品)'
+          - '#aaa8a8(#e8f2f2右鍵點擊#aaa8a8 獲取副本)'
+      Virtual:
+        Name: '#ead931&l虛擬'
+        Lore:
+          - '#aaa8a8設置鑰匙是否為虛擬。'
+          - ''
+          - '#ead931&l當前:'
+          - '#ead931▪ #aaa8a8啟用: #ead931%key_virtual%#aaa8a8 (#e8f2f2左鍵點擊#aaa8a8)'
+  Title:
+    Crates: <black>箱子編輯器</black>
+    Keys: <black>鑰匙編輯器</black>
+Other:
+  Midnight: 午夜
+  Free: 免費

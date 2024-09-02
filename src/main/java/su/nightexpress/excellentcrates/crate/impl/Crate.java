@@ -7,14 +7,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.EffectModel;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
-import su.nightexpress.excellentcrates.hologram.HologramType;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.util.pos.BlockPos;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
@@ -149,7 +148,7 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
         this.setHologramTemplate(config.getString("Block.Hologram.Template", Placeholders.DEFAULT));
-        this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", Config.getHologramType() == HologramType.INTERNAL ? 0 : 0.5));
+        this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", 0D));
 
         EffectModel model = config.getEnum("Block.Effect.Model", EffectModel.class, EffectModel.SIMPLE);
         UniParticle particle = UniParticle.read(config, "Block.Effect.Particle");
@@ -360,6 +359,10 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
         return !this.openCostMap.isEmpty();
     }
 
+    public boolean hasOpenCooldown() {
+        return this.openCooldown != 0;
+    }
+
     public boolean hasPermission(@NotNull Player player) {
         if (!this.isPermissionRequired()) return true;
 
@@ -382,9 +385,8 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
 
     @NotNull
     public List<String> getHologramText() {
-        List<String> text = new ArrayList<>(Config.CRATE_HOLOGRAM_TEMPLATES.get().getOrDefault(this.getHologramTemplate(), Collections.emptyList()));
-        text.replaceAll(this.replacePlaceholders());
-        return text;
+        //text.replaceAll(this.replacePlaceholders()); will replace it later in hologram handler
+        return new ArrayList<>(Config.CRATE_HOLOGRAM_TEMPLATES.get().getOrDefault(this.getHologramTemplate(), Collections.emptyList()));
     }
 
     public boolean hasRewards(@NotNull Player player) {
@@ -719,5 +721,14 @@ public class Crate extends AbstractFileData<CratesPlugin> implements Placeholder
 
     public int getMaxMilestone() {
         return this.getMilestones().stream().mapToInt(Milestone::getOpenings).max().orElse(0);
+    }
+
+//    public int getNextMilestone(int openings) {
+//        return this.getMilestones().stream().mapToInt(Milestone::getOpenings).filter(value -> value > openings).min().orElse(0);
+//    }
+
+    @Nullable
+    public Milestone getNextMilestone(int openings) {
+        return this.getMilestones().stream().filter(milestone -> milestone.getOpenings() > openings).min(Comparator.comparingInt(Milestone::getOpenings)).orElse(null);
     }
 }

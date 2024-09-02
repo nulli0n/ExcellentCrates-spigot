@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
@@ -21,7 +22,7 @@ public class CrateTornadoEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step, @NotNull Player player) {
         Location loc = origin.clone().add(0.0D, 0.5D, 0.0D);
         double offset = 0.25D * (MAX_TORNADO_RADIUS * (2.35D / TORNADO_HEIGHT));
         double vertical = TORNADO_HEIGHT - DISTANCE * step;
@@ -32,7 +33,7 @@ public class CrateTornadoEffect extends AbstractEffect {
         }
         for (Vector vector : this.createCircle(vertical, radius)) {
             Location location = loc.add(vector);
-            playSafe(location, player -> particle.play(player, location, 0.1f, 0.0f, 3));
+            particle.play(player, location, 0.1f, 0.0f, 3);
             loc.subtract(vector);
         }
         loc.subtract(0.0D, Y_OFFSET, 0.0D);
@@ -40,7 +41,7 @@ public class CrateTornadoEffect extends AbstractEffect {
 
     private List<Vector> createCircle(double vertical, double radius) {
         double amount = radius * 64.0D;
-        double d2 = 6.283185307179586D / amount;
+        double d2 = 2 * Math.PI / amount;
         List<Vector> vectors = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             double d3 = i * d2;

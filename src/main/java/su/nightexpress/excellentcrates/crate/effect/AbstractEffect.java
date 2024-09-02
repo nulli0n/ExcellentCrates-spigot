@@ -1,15 +1,10 @@
 package su.nightexpress.excellentcrates.crate.effect;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public abstract class AbstractEffect {
 
@@ -36,7 +31,7 @@ public abstract class AbstractEffect {
         }
     }
 
-    public void step(@NotNull Location location, @NotNull UniParticle particle) {
+    public void step(@NotNull Location location, @NotNull UniParticle particle, @NotNull Player player) {
         /*if (this.step < 0) {
             this.step++;
         }*/
@@ -45,7 +40,7 @@ public abstract class AbstractEffect {
         if (this.count++ % (int) this.getInterval() != 0) return;
         if (this.step < 0) return;
 
-        this.doStep(LocationUtil.setCenter2D(location.clone()), particle, this.step);
+        this.doStep(LocationUtil.setCenter2D(location.clone()), particle, this.step, player);
 
         // Do a 0.5s pause when particle effect is finished.
         if (this.step/*++*/ >= this.getDuration()) {
@@ -54,23 +49,11 @@ public abstract class AbstractEffect {
         }
     }
 
-    public abstract void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step);
+    public abstract void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step, @NotNull Player player);
 
     @NotNull
     public static Location getPointOnCircle(@NotNull Location location, boolean doCopy, double x, double z, double y) {
         return (doCopy ? location.clone() : location).add(Math.cos(x) * z, y, Math.sin(x) * z);
-    }
-
-    protected static void playSafe(@NotNull Location location, @NotNull Consumer<Player> consumer) {
-        World world = location.getWorld();
-        if (world == null) return;
-
-        Set<Player> players = new HashSet<>(world.getPlayers());
-        players.forEach(player -> {
-            if (player == null || !player.isOnline()) return;
-
-            consumer.accept(player);
-        });
     }
 
     public final long getInterval() {

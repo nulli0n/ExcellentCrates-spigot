@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.currency.Currency;
 import su.nightexpress.excellentcrates.api.event.CrateOpenEvent;
 import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
@@ -26,7 +26,6 @@ import su.nightexpress.excellentcrates.crate.menu.MilestonesMenu;
 import su.nightexpress.excellentcrates.crate.menu.PreviewMenu;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.editor.type.CreationResult;
-import su.nightexpress.excellentcrates.hologram.HologramType;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.impl.BasicOpening;
 import su.nightexpress.excellentcrates.util.CrateUtils;
@@ -66,7 +65,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
 
-        if (this.plugin.hasHolograms() && Config.getHologramType() == HologramType.INTERNAL) {
+        if (this.plugin.hasHolograms()) {
             this.addTask(plugin.createAsyncTask(this::updateCrateHolograms).setSecondsInterval(Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get()));
         }
 
@@ -410,7 +409,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         }
 
         CrateUser user = plugin.getUserManager().getUserData(player);
-        if (!settings.isForce() && user.isCrateOnCooldown(crate)) {
+        if (!settings.isForce() && crate.hasOpenCooldown() && user.isCrateOnCooldown(crate)) {
             long expireDate = user.getCrateCooldown(crate);
             (expireDate < 0 ? Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED : Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY).getMessage()
                 .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(expireDate))
@@ -566,7 +565,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 Location location = worldPos.toLocation();
                 if (location == null) return;
 
-                effect.step(LocationUtil.setCenter3D(location), particle);
+                CrateUtils.getPlayersForEffects(location).forEach(player -> {
+                    effect.step(LocationUtil.setCenter3D(location), particle, player);
+                });
             });
         });
 

@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 
 public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
-    public static final String WIKI_URL          = "https://github.com/nulli0n/ExcellentCrates-spigot/wiki/";
-    public static final String WIKI_PLACEHOLDERS = WIKI_URL + "Internal-Placeholders";
+    public static final String WIKI_URL          = "https://nightexpress.gitbook.io/excellentcrates/";
+    public static final String WIKI_PLACEHOLDERS = WIKI_URL + "utility/placeholders";
 
     public static final String CHECK_MARK = Tags.GREEN.enclose("✔");
     public static final String WARN_MARK  = Tags.ORANGE.enclose("[❗]");
@@ -93,7 +93,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     private static final String REWARD_CHANCE             = "%reward_chance%";
     @Deprecated
     private static final String REWARD_REAL_CHANCE        = "%reward_real_chance%";
-    public static final  String REWARD_WEIGHT             = "%reward_wieght%";
+    public static final  String REWARD_WEIGHT             = "%reward_weight%";
     public static final  String REWARD_ROLL_CHANCE        = "%reward_roll_chance%";
     public static final  String REWARD_RARITY_NAME        = "%reward_rarity_name%";
     @Deprecated

@@ -35,7 +35,9 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onKeyPlace(BlockPlaceEvent event) {
         ItemStack item = event.getItemInHand();
-        event.setCancelled(this.keyManager.isKey(item));
+        if (this.keyManager.isKey(item)) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

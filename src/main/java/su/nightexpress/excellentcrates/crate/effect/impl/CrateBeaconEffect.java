@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.crate.effect.impl;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.effect.AbstractEffect;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
@@ -12,12 +13,12 @@ public class CrateBeaconEffect extends AbstractEffect {
     }
 
     @Override
-    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step) {
-        double x = 0.8975979010256552 * step;
-        for (int i = step; i > Math.max(0, step - 25); --i) {
-            Location location = getPointOnCircle(origin, true, x, 0.55, i * 0.75);
+    public void doStep(@NotNull Location origin, @NotNull UniParticle particle, int step, @NotNull Player player) {
+        double x = 2 * Math.PI / 7D * step;
+        for (int yStep = step; yStep > Math.max(0, step - 25); --yStep) {
+            Location location = getPointOnCircle(origin, true, x, 0.55, yStep * 0.75);
 
-            playSafe(location, player -> particle.play(player, location, 0.0f, 0.15f, 0.0f, 0.0f, 4));
+            particle.play(player, location, 0.0f, 0.15f, 0.0f, 0.0f, 4);
         }
     }
 }

@@ -12,9 +12,8 @@ import su.nightexpress.excellentcrates.data.UserManager;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.editor.EditorManager;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
-import su.nightexpress.excellentcrates.hologram.HologramType;
-import su.nightexpress.excellentcrates.hologram.impl.HologramDecentHandler;
-import su.nightexpress.excellentcrates.hologram.impl.HologramInternalHandler;
+import su.nightexpress.excellentcrates.hologram.impl.HologramPacketsHandler;
+import su.nightexpress.excellentcrates.hologram.impl.HologramProtocolHandler;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
@@ -26,15 +25,13 @@ import su.nightexpress.nightcore.command.api.NightPluginCommand;
 import su.nightexpress.nightcore.command.base.ReloadSubCommand;
 import su.nightexpress.nightcore.config.PluginDetails;
 import su.nightexpress.nightcore.util.Plugins;
-import su.nightexpress.nightcore.util.StringUtil;
-import su.nightexpress.nightcore.util.Version;
 
 public class CratesPlugin extends NightDataPlugin<CrateUser> {
 
     private DataHandler dataHandler;
     private UserManager userManager;
 
-    private EditorManager editorManager;
+    private EditorManager   editorManager;
     private CurrencyManager currencyManager;
     private OpeningManager  openingManager;
     private KeyManager      keyManager;
@@ -47,7 +44,7 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
     @Override
     @NotNull
     protected PluginDetails getDefaultDetails() {
-        return PluginDetails.create("Crates", new String[]{"excellentcrates", "ecrates", "crates", "crate", "case", "cases"})
+        return PluginDetails.create("Crates", new String[]{"crates", "ecrates", "excellentcrates", "crate", "case", "cases"})
             .setConfigClass(Config.class)
             .setLangClass(Lang.class)
             .setPermissionsClass(Perms.class);
@@ -58,8 +55,8 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         Keys.load(this);
 
         this.getLangManager().loadEntries(EditorLang.class);
-        this.registerCommands();
-        this.setupHologramHandler();
+        this.loadCommands();
+        this.loadHologramHandler();
 
         this.crateLogger = new CrateLogger(this);
 
@@ -95,35 +92,20 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         }
     }
 
-    private void setupHologramHandler() {
-        HologramType type = Config.getHologramType();
-        if (type == HologramType.INTERNAL) {
-            if (Plugins.isInstalled(HookId.PROTOCOL_LIB)) {
-                if (Version.isBehind(Version.V1_19_R3)) {
-                    this.error("Your server version (" + Version.getCurrent().getLocalized() + ") is not supported by internal holograms handler. Change holograms handler in config.yml.");
-                }
-                else if (!Plugins.isLoaded(HookId.PROTOCOL_LIB)) {
-                    this.error(HookId.PROTOCOL_LIB + " is not working correctly.");
-                    this.error("Download the latest build at:");
-                    this.error("https://ci.dmulloy2.net/job/ProtocolLib/");
-                }
-                else {
-                    this.hologramHandler = new HologramInternalHandler(this);
-                }
-            }
+    private void loadHologramHandler() {
+        if (Plugins.isInstalled(HookId.PACKET_EVENTS)) {
+            this.hologramHandler = new HologramPacketsHandler(this);
         }
-        else if (type == HologramType.DECENT_HOLOGRAMS) {
-            if (Plugins.isInstalled(HookId.DECENT_HOLOGRAMS)) {
-                this.hologramHandler = new HologramDecentHandler(this);
-            }
+        else if (Plugins.isInstalled(HookId.PROTOCOL_LIB)) {
+            this.hologramHandler = new HologramProtocolHandler(this);
         }
 
         if (this.hasHolograms()) {
             this.hologramHandler.setup();
-            this.info("Using " + StringUtil.capitalizeUnderscored(type.name().toLowerCase()) + " hologram handler.");
         }
         else {
-            this.info("No plugins are available to handle crate holograms.");
+            this.warn("You have no packet library plugins installed for the Holograms feature to work.");
+            this.warn("Please install one of the following plugins to enable crate holograms: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB);
         }
     }
 
@@ -142,7 +124,7 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         }
     }
 
-    private void registerCommands() {
+    private void loadCommands() {
         NightPluginCommand baseCommand = this.getBaseCommand();
         baseCommand.addChildren(new EditorCommand(this));
         baseCommand.addChildren(new DropCommand(this));

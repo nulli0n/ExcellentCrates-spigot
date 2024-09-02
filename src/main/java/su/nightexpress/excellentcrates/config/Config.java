@@ -2,12 +2,12 @@ package su.nightexpress.excellentcrates.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.util.InteractType;
-import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.util.ClickType;
-import su.nightexpress.excellentcrates.hologram.HologramType;
+import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
-import su.nightexpress.nightcore.util.*;
+import su.nightexpress.nightcore.util.Plugins;
+import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.Version;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class Config {
 
@@ -38,16 +38,13 @@ public class Config {
         "Sets whether or not Milestones feature is enabled (globally)."
     );
 
-    public static final ConfigValue<HologramType> CRATE_HOLOGRAM_HANDLER = ConfigValue.create("Crate.Holograms.Handler",
-        HologramType.class, HologramType.INTERNAL,
-        "Sets which hologram handler will be used to display crate holograms.",
-        "Available values: " + StringUtil.inlineEnum(HologramType.class, ", "),
-        "For all handlers, except the '" + HologramType.INTERNAL.name() + "' one, you will have to install respective holograms plugin.",
-        "For '" + HologramType.INTERNAL.name() + "' hologram handler you must have " + HookId.PROTOCOL_LIB + " installed and to be on " + Version.V1_19_R3.getLocalized() + " or newer.");
+    public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
+        24,
+        "Sets max. distance where players can see crate particles and holograms."
+    );
 
     public static final ConfigValue<Boolean> CRATE_HOLOGRAM_USE_DISPLAYS = ConfigValue.create("Crate.Holograms.DisplayEntities",
         true,
-        "[" + HologramType.INTERNAL.name() + " handler only]",
         "[" + Version.V1_20_R3.getLocalized() + "+ only]",
         "When enabled, uses Display Entities for holograms instead of Armor Stands."
     );
@@ -70,45 +67,48 @@ public class Config {
 
     public static final ConfigValue<Double> CRATE_HOLOGRAM_LINE_GAP = ConfigValue.create("Crate.Holograms.LineGap",
         0.3D,
-        "[For INTERNAL handler only]",
-        "Sets the gap between hologram lines.");
+        "Sets the gap between hologram lines."
+    );
 
     public static final ConfigValue<Integer> CRATE_HOLOGRAM_UPDATE_INTERVAL = ConfigValue.create("Crate.Holograms.Update_Interval",
         5,
-        "[For INTERNAL handler only]",
-        "Sets how often (in seconds) crate holograms will be updated.",
-        "Basically, this just removes them and adding back with updated placeholders.",
-        "Setting this to low values may result in flickering.",
-        "Setting this to high values may result in some players missing them until updated.");
+        "Sets how often (in seconds) crate holograms will update."
+    );
 
     public static final ConfigValue<String> CRATE_COOLDOWN_FORMATTER_TIME = ConfigValue.create("Crate.Cooldown_Formatter.Time",
         "hh:mm:ss",
-        "Sets time formatter for crate opening cooldown.", "'hh' - hours, 'mm' - minutes, 'ss' - seconds.");
+        "Sets time formatter for crate opening cooldown.", "'hh' - hours, 'mm' - minutes, 'ss' - seconds."
+    );
 
     public static final ConfigValue<String> CRATE_COOLDOWN_FORMATTER_READY = ConfigValue.create("Crate.Cooldown_Formatter.Ready",
         LIGHT_GREEN.enclose("Ready to Open!"),
-        "Sets the custom message instead of empty counter when there is no cooldown for a crate.");
+        "Sets the custom message instead of empty counter when there is no cooldown for a crate."
+    );
 
     public static final ConfigValue<Boolean> CRATE_PLACEHOLDER_API_FOR_REWARDS = ConfigValue.create("Crate.PlaceholderAPI_For_Rewards",
         false,
         "When 'true' replaces " + Plugins.PLACEHOLDER_API + " placeholders in reward item's name and lore when obtained by players.",
-        "NOTE: This setting may 'corrupt' item's lore layout in some cases. Ask " + Plugins.PLACEHOLDER_API + " devs if you're experiencing issues.");
+        "NOTE: This setting may 'corrupt' item's lore layout in some cases. Ask " + Plugins.PLACEHOLDER_API + " devs if you're experiencing issues."
+    );
 
     public static final ConfigValue<Boolean> CRATE_DISPLAY_REWARD_ABOVE_BLOCK = ConfigValue.create("Crate.Display_Reward_Above_Block",
         true,
         "When 'true' and if crate has NO opening animation, holographic reward will appear above crate block for a short amount of time.",
-        "This option will have effect only when interacted with crate blocks.");
+        "This option will have effect only when interacted with crate blocks."
+    );
 
     public static final ConfigValue<Boolean> CRATE_HOLD_KEY_TO_OPEN = ConfigValue.create("Crate.Hold_Key_To_Open",
         false,
         "Sets whether player must hold key in main hand in order to open crate.",
-        "NOTE: This setting will not work if crate has virtual keys assigned.");
+        "NOTE: This setting will not work if crate has virtual keys assigned."
+    );
 
     public static final ConfigValue<Integer> CRATE_MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
         30,
         "Sets how many crates player can open at once when doing mass opening.",
         "Setting this to high values may result in lags, stutters, errors and bugs.",
-        "Especially if crate contains rewards with commands of other plugins.");
+        "Especially if crate contains rewards with commands of other plugins."
+    );
 
     public static final ConfigValue<Long> CRATE_PREVIEW_COOLDOWN = ConfigValue.create("Crate.Preview_Cooldown",
         2500L,
@@ -180,8 +180,8 @@ public class Config {
         return MILESTONES_ENABLED.get();
     }
 
-    @NotNull
-    public static HologramType getHologramType() {
-        return CRATE_HOLOGRAM_HANDLER.get();
-    }
+//    @NotNull
+//    public static HologramType getHologramType() {
+//        return CRATE_HOLOGRAM_HANDLER.get();
+//    }
 }

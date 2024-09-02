@@ -1,17 +1,18 @@
 package su.nightexpress.excellentcrates.util;
 
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Vibration;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.nightcore.util.StringUtil;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class CrateUtils {
 
@@ -24,6 +25,21 @@ public class CrateUtils {
     @Nullable
     public static Crate getAssignBlockCrate(@NotNull Player player) {
         return ASSIGN_BLOCK_MAP.remove(player);
+    }
+
+    @NotNull
+    public static Set<Player> getPlayersForEffects(@NotNull Location location) {
+        int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
+
+        World world = location.getWorld();
+        if (world == null) return Collections.emptySet();
+
+        Set<Player> players = new HashSet<>(world.getPlayers());
+        players.removeIf(player -> {
+            return player.getWorld() != world || player.getLocation().distance(location) > distance;
+        });
+
+        return players;
     }
 
     @NotNull
