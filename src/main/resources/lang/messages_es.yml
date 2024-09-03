@@ -393,7 +393,7 @@ Editor:
         Lore:
           - '%reward_inspect_content%'
           - ''
-          - '<lyellow>● <lgray>Peso: </lgray>%reward_wieght%</lyellow>'
+          - '<lyellow>● <lgray>Peso: </lgray>%reward_weight%</lyellow>'
           - '<lyellow>● <lgray>Probabilidad de Volver a tirar: </lgray>%reward_roll_chance%%</lyellow>'
           - '<lyellow>● <lgray>Rareza: </lgray>%reward_rarity_name%</lyellow>'
           - ''
@@ -463,7 +463,7 @@ Editor:
         Name: <lyellow><b>Rareza y Peso</b></lyellow>
         Lore:
           - '<lyellow>● <lgray>Rareza: </lgray>%reward_rarity_name%</lyellow>'
-          - '<lyellow>● <lgray>Peso: </lgray>%reward_wieght%</lyellow>'
+          - '<lyellow>● <lgray>Peso: </lgray>%reward_weight%</lyellow>'
           - '<lyellow>● <lgray>Probabilidad de Rol: </lgray>%reward_roll_chance%%</lyellow>'
           - ''
           - <lgray>La probabilidad de rol depende de la recompensa</lgray>
