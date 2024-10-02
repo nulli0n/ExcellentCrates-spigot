@@ -30,8 +30,4 @@ public interface Opening extends Tickable {
     boolean hasRewardAttempts();
 
     void setHasRewardAttempts(boolean hadRewardAttempts);
-
-    boolean isSaveData();
-
-    void setSaveData(boolean saveData);
 }

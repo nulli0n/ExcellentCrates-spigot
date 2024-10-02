@@ -293,6 +293,7 @@ public class Lang extends CoreLang {
     public static final LangString EDITOR_TITLE_CRATE_PLACEMENT  = LangString.of("Editor.Title.Crate.Placement", BLACK.enclose("Crate Placement"));
     public static final LangString EDITOR_TITLE_REWARD_LIST      = LangString.of("Editor.Title.Reward.List", BLACK.enclose("Crate Rewards"));
     public static final LangString EDITOR_TITLE_REWARD_SETTINGS  = LangString.of("Editor.Title.Reward.Settings", BLACK.enclose("Reward Settings"));
+    public static final LangString EDITOR_TITLE_REWARD_LIMITS    = LangString.of("Editor.Title.Reward.Limits", BLACK.enclose("Reward Limits"));
     public static final LangString EDITOR_TITLE_REWARD_SORT      = LangString.of("Editor.Title.Reward.Sort", BLACK.enclose("Reward Sorting"));
     public static final LangString EDITOR_TITLE_KEY_LIST         = LangString.of("Editor.Title.Keys", BLACK.enclose("Keys Editor"));
     public static final LangString EDITOR_TITLE_KEY_SETTINGS     = LangString.of("Editor.Title.Key.Settings", BLACK.enclose("Key Settings"));

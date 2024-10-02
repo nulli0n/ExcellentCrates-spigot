@@ -8,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.opening.Weighted;
+import su.nightexpress.excellentcrates.api.Weighted;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
+import su.nightexpress.excellentcrates.data.impl.CrateData;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
-import su.nightexpress.excellentcrates.data.impl.RewardWinData;
+import su.nightexpress.excellentcrates.data.impl.LimitData;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Players;
@@ -42,16 +43,16 @@ public class Reward implements Weighted, Placeholder {
     private String          name;
     private double          weight;
     private Rarity          rarity;
-    private boolean        broadcast;
-    private boolean        placeholderApply;
-    private RewardWinLimit playerWinLimit;
-    private RewardWinLimit  globalWinLimit;
+    private boolean         broadcast;
+    private boolean         placeholderApply;
+    private LimitValues     playerLimits;
+    private LimitValues     globalLimits;
     private ItemStack       preview;
     private List<ItemStack> items;
     private List<String>    commands;
     private Set<String>     ignoredForPermissions;
 
-    private RewardWinData globalWinData;
+    private LimitData globalLimitData;
 
     @NotNull
     public static Reward createEmpty(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull String id) {
@@ -60,8 +61,8 @@ public class Reward implements Weighted, Placeholder {
         Rarity rarity = plugin.getCrateManager().getDefaultRarity();
         boolean broadcast = false;
         boolean setPlaceholders = false;
-        RewardWinLimit playerWinLimit = new RewardWinLimit(false, -1, 0, 1);
-        RewardWinLimit globalWinLimit = new RewardWinLimit(false, -1, 0, 1);
+        LimitValues playerWinLimit = new LimitValues(false, -1, 0, 1);
+        LimitValues globalWinLimit = new LimitValues(false, -1, 0, 1);
         ItemStack preview = ItemUtil.getSkinHead(Placeholders.SKIN_NEW_REWARD);
         List<ItemStack> items = new ArrayList<>();
         List<String> commands = new ArrayList<>();
@@ -70,25 +71,23 @@ public class Reward implements Weighted, Placeholder {
         return new Reward(plugin, crate, id, name, weight, rarity, broadcast, setPlaceholders, playerWinLimit, globalWinLimit, preview, items, commands, ignoredPermissions);
     }
 
-    public Reward(
-        @NotNull CratesPlugin plugin,
-        @NotNull Crate crate,
-        @NotNull String id,
+    public Reward(@NotNull CratesPlugin plugin,
+                  @NotNull Crate crate,
+                  @NotNull String id,
 
-        @NotNull String name,
-        double weight,
-        @NotNull Rarity rarity,
-        boolean broadcast,
-        boolean placeholderApply,
+                  @NotNull String name,
+                  double weight,
+                  @NotNull Rarity rarity,
+                  boolean broadcast,
+                  boolean placeholderApply,
 
-        @NotNull RewardWinLimit playerWinLimit,
-        @NotNull RewardWinLimit globalWinLimit,
+                  @NotNull LimitValues playerLimits,
+                  @NotNull LimitValues globalLimits,
 
-        @NotNull ItemStack preview,
-        @NotNull List<ItemStack> items,
-        @NotNull List<String> commands,
-        @NotNull Set<String> ignoredForPermissions
-    ) {
+                  @NotNull ItemStack preview,
+                  @NotNull List<ItemStack> items,
+                  @NotNull List<String> commands,
+                  @NotNull Set<String> ignoredForPermissions) {
         this.plugin = plugin;
         this.crate = crate;
         this.id = id.toLowerCase();
@@ -99,8 +98,8 @@ public class Reward implements Weighted, Placeholder {
         this.setBroadcast(broadcast);
         this.setPlaceholderApply(placeholderApply);
 
-        this.setPlayerWinLimit(playerWinLimit);
-        this.setGlobalWinLimit(globalWinLimit);
+        this.setPlayerLimits(playerLimits);
+        this.setGlobalLimits(globalLimits);
 
         this.setItems(items);
         this.setCommands(commands);
@@ -128,14 +127,14 @@ public class Reward implements Weighted, Placeholder {
             int winLimitAmount = config.getInt(path + ".Win_Limits.Amount", -1);
             long winLimitCooldown = config.getLong(path + ".Win_Limits.Cooldown", 0L);
 
-            RewardWinLimit winLimit = new RewardWinLimit(winLimitAmount > 0, winLimitAmount, winLimitCooldown, 1);
+            LimitValues winLimit = new LimitValues(winLimitAmount > 0, winLimitAmount, winLimitCooldown, 1);
             winLimit.write(config, path + ".Win_Limit.Player");
 
             config.remove(path + ".Win_Limits");
         }
 
-        RewardWinLimit playerLimit = RewardWinLimit.read(config, path + ".Win_Limit.Player");
-        RewardWinLimit globalLimit = RewardWinLimit.read(config, path + ".Win_Limit.Global");
+        LimitValues playerLimit = LimitValues.read(config, path + ".Win_Limit.Player");
+        LimitValues globalLimit = LimitValues.read(config, path + ".Win_Limit.Global");
 
         List<String> commands = new ArrayList<>();
         for (String command : config.getStringList(path + ".Commands")) {
@@ -159,8 +158,8 @@ public class Reward implements Weighted, Placeholder {
         config.set(path + ".Rarity", this.getRarity().getId());
         config.set(path + ".Broadcast", this.isBroadcast());
         config.set(path + ".Placeholder_Apply", this.isPlaceholderApply());
-        this.getPlayerWinLimit().write(config, path + ".Win_Limit.Player");
-        this.getGlobalWinLimit().write(config, path + ".Win_Limit.Global");
+        this.playerLimits.write(config, path + ".Win_Limit.Player");
+        this.globalLimits.write(config, path + ".Win_Limit.Global");
         config.setItemEncoded(path + ".Preview", this.getPreview());
         config.set(path + ".Commands", this.getCommands());
         config.setItemsEncoded(path + ".Items", this.getItems());
@@ -178,59 +177,35 @@ public class Reward implements Weighted, Placeholder {
         return placeholderFullMap;
     }
 
-    public void loadGlobalWinData() {
-        RewardWinLimit winLimit = this.getGlobalWinLimit();
-        if (!winLimit.isEnabled()) return;
-
-        RewardWinData winData = this.plugin.getData().getRewardWinData(this);
-        if (winData == null/* || winData.isExpired()*/) {
-            winData = RewardWinData.create();
-            //this.plugin.getData().deleteRewardWinData(this);
-            this.plugin.getData().addRewardWinData(this, winData);
-        }
-        this.globalWinData = winData;
-    }
-
-    public void saveGlobalWinData() {
-        RewardWinLimit winLimit = this.getGlobalWinLimit();
-        if (!winLimit.isEnabled() || this.globalWinData == null) return;
-
-        this.plugin.getData().saveRewardWinData(this, this.globalWinData);
-    }
-
-    public void resetGlobalWinData() {
-        this.plugin.getData().deleteRewardWinData(this);
-
-        this.loadGlobalWinData();
+    public void loadGlobalLimit(@Nullable LimitData limitData) {
+        this.globalLimitData = limitData;
     }
 
     public boolean hasContent() {
         return !this.getItems().isEmpty() || !this.getCommands().isEmpty();
     }
 
-    public int getWinsAmountLeft(@NotNull Player player) {
-        RewardWinLimit globalLimit = this.getGlobalWinLimit();
-        RewardWinLimit playerLimit = this.getPlayerWinLimit();
+    public int getAvailableDraws(@NotNull Player player) {
+        int globalLeft = globalLimits.getAmount();
+        int playerLeft = playerLimits.getAmount();
 
-        int globalLeft = globalLimit.getAmount();
-        int playerLeft = playerLimit.getAmount();
+        if (globalLimits.isEnabled() && !globalLimits.isUnlimitedAmount()) {
+            if (this.globalLimitData != null) {
+                if (this.globalLimitData.isOutOfStock(globalLimits)) return 0;
 
-        if (globalLimit.isEnabled() && !globalLimit.isUnlimitedAmount()) {
-            if (this.globalWinData != null) {
-                if (this.globalWinData.isOut(globalLimit)) return 0;
-
-                globalLeft = Math.max(0, globalLimit.getAmount() - this.globalWinData.getAmount());
+                globalLeft = Math.max(0, globalLimits.getAmount() - this.globalLimitData.getAmount());
             }
         }
         else globalLeft = -1;
 
-        if (playerLimit.isEnabled() && !playerLimit.isUnlimitedAmount()) {
+        if (playerLimits.isEnabled() && !playerLimits.isUnlimitedAmount()) {
             CrateUser user = this.plugin.getUserManager().getUserData(player);
-            RewardWinData winData = user.getWinData(this);
+            CrateData data = user.getCrateData(this.crate);
+            LimitData winData = data.getRewardLimit(this);
             if (winData != null) {
-                if (winData.isOut(playerLimit)) return 0;
+                if (winData.isOutOfStock(playerLimits)) return 0;
 
-                playerLeft = Math.max(0, playerLimit.getAmount() - winData.getAmount());
+                playerLeft = Math.max(0, playerLimits.getAmount() - winData.getAmount());
             }
         }
         else playerLeft = -1;
@@ -242,23 +217,21 @@ public class Reward implements Weighted, Placeholder {
         return Math.min(playerLeft, globalLeft);
     }
 
-    public long getWinCooldown(@NotNull Player player) {
-        RewardWinLimit globalLimit = this.getGlobalWinLimit();
-        RewardWinLimit playerLimit = this.getPlayerWinLimit();
-
+    public long getDrawCooldown(@NotNull Player player) {
         long globalLeft = 0L;
         long playerLeft = 0L;
 
-        if (globalLimit.isEnabled()) {
-            if (this.globalWinData != null && this.globalWinData.isOnCooldown()) {
-                globalLeft = this.globalWinData.getExpireDate();
+        if (globalLimits.isEnabled()) {
+            if (this.globalLimitData != null && this.globalLimitData.hasCooldown()) {
+                globalLeft = this.globalLimitData.getExpireDate();
             }
         }
 
-        if (playerLimit.isEnabled()) {
+        if (playerLimits.isEnabled()) {
             CrateUser user = this.plugin.getUserManager().getUserData(player);
-            RewardWinData winData = user.getWinData(this);
-            if (winData != null && winData.isOnCooldown()) {
+            CrateData data = user.getCrateData(this.crate);
+            LimitData winData = data.getRewardLimit(this);
+            if (winData != null && winData.hasCooldown()) {
                 playerLeft = winData.getExpireDate();
             }
         }
@@ -275,22 +248,23 @@ public class Reward implements Weighted, Placeholder {
     }
 
     public boolean canWin(@NotNull Player player) {
+        if (!this.isRollable()) return false;
         if (this.hasBadPermissions(player)) return false;
 
-        RewardWinLimit globalLimit = this.getGlobalWinLimit();
-        if (globalLimit.isEnabled()) {
-            if (this.globalWinData != null && (this.globalWinData.isOut(globalLimit) || this.globalWinData.isOnCooldown())) {
+        if (this.globalLimits.isEnabled() && this.globalLimitData != null) {
+            if (this.globalLimitData.isOutOfStock(this.globalLimits) || this.globalLimitData.hasCooldown()) {
                 return false;
             }
         }
 
-        RewardWinLimit playerLimit = this.getPlayerWinLimit();
-        if (playerLimit.isEnabled()) {
+        if (this.playerLimits.isEnabled()) {
             CrateUser user = this.plugin.getUserManager().getUserData(player);
-            RewardWinData winData = user.getWinData(this);
+            CrateData data = user.getCrateData(this.crate);
+            LimitData limitData = data.getRewardLimit(this);
 
-            return winData == null || (!winData.isOut(playerLimit) && !winData.isOnCooldown());
+            return limitData == null || (!limitData.isOutOfStock(this.playerLimits) && !limitData.hasCooldown());
         }
+
         return true;
     }
 
@@ -353,26 +327,26 @@ public class Reward implements Weighted, Placeholder {
                 .broadcast();
         }
 
-        RewardWinLimit globalLimit = this.getGlobalWinLimit();
-        if (globalLimit.isEnabled() && this.globalWinData != null) {
-            if (!globalLimit.isUnlimitedAmount()) {
-                this.globalWinData.setAmount(globalWinData.getAmount() + 1);
+        if (globalLimits.isEnabled() && this.globalLimitData != null) {
+            if (!globalLimits.isUnlimitedAmount()) {
+                this.globalLimitData.setAmount(globalLimitData.getAmount() + 1);
             }
-            if (globalLimit.hasCooldown() && globalLimit.isCooldownStep(globalWinData.getAmount())) {
-                this.globalWinData.setExpireDate(globalLimit.generateCooldownTimestamp());
+            if (globalLimits.hasCooldown() && globalLimits.isCooldownStep(globalLimitData.getAmount())) {
+                this.globalLimitData.setExpireDate(globalLimits.generateCooldownTimestamp());
             }
+            this.plugin.getData().scheduleLimitSave(this);
         }
 
-        RewardWinLimit playerLimit = this.getPlayerWinLimit();
-        if (playerLimit.isEnabled()) {
+        if (playerLimits.isEnabled()) {
             CrateUser user = this.plugin.getUserManager().getUserData(player);
-            RewardWinData rewardData = user.getRewardDataOrCreate(this);
+            CrateData data = user.getCrateData(this.crate);
+            LimitData rewardData = data.getRewardLimitOrCreate(this);
 
-            if (!playerLimit.isUnlimitedAmount() && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_AMOUNT)) {
+            if (!playerLimits.isUnlimitedAmount() && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_AMOUNT)) {
                 rewardData.setAmount(rewardData.getAmount() + 1);
             }
-            if (playerLimit.hasCooldown() && playerLimit.isCooldownStep(rewardData.getAmount()) && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_COOLDOWN)) {
-                rewardData.setExpireDate(playerLimit.generateCooldownTimestamp());
+            if (playerLimits.hasCooldown() && playerLimits.isCooldownStep(rewardData.getAmount()) && !player.hasPermission(Perms.BYPASS_REWARD_LIMIT_COOLDOWN)) {
+                rewardData.setExpireDate(playerLimits.generateCooldownTimestamp());
             }
         }
 
@@ -452,39 +426,35 @@ public class Reward implements Weighted, Placeholder {
     }
 
     public boolean isOneTimed() {
-        return this.getPlayerWinLimit().isOneTimed() || this.getGlobalWinLimit().isOneTimed();
+        return this.playerLimits.isOneTimed() || this.globalLimits.isOneTimed();
     }
 
     @NotNull
-    public RewardWinLimit getWinLimit(@NotNull LimitType limitType) {
-        return limitType == LimitType.PLAYER ? this.playerWinLimit : this.globalWinLimit;
+    public LimitValues getLimitValues(@NotNull LimitType limitType) {
+        return limitType == LimitType.PLAYER ? this.playerLimits : this.globalLimits;
     }
 
     @NotNull
-    public RewardWinLimit getPlayerWinLimit() {
-        return playerWinLimit;
+    public LimitValues getPlayerLimits() {
+        return playerLimits;
     }
 
-    public void setPlayerWinLimit(@NotNull RewardWinLimit playerWinLimit) {
-        this.playerWinLimit = playerWinLimit;
+    public void setPlayerLimits(@NotNull LimitValues playerLimits) {
+        this.playerLimits = playerLimits;
     }
 
     @NotNull
-    public RewardWinLimit getGlobalWinLimit() {
-        return globalWinLimit;
+    public LimitValues getGlobalLimits() {
+        return globalLimits;
     }
 
-    public void setGlobalWinLimit(@NotNull RewardWinLimit globalWinLimit) {
-        this.globalWinLimit = globalWinLimit;
+    public void setGlobalLimits(@NotNull LimitValues globalLimits) {
+        this.globalLimits = globalLimits;
     }
 
     @Nullable
-    public RewardWinData getGlobalWinData() {
-        return globalWinData;
-    }
-
-    public void setGlobalWinData(@Nullable RewardWinData globalWinData) {
-        this.globalWinData = globalWinData;
+    public LimitData getGlobalLimitData() {
+        return globalLimitData;
     }
 
     @NotNull
@@ -503,7 +473,7 @@ public class Reward implements Weighted, Placeholder {
 
     public void setCommands(@NotNull List<String> commands) {
         this.commands = new ArrayList<>(commands);
-        this.commands.removeIf(String::isEmpty);
+        this.commands.removeIf(String::isBlank);
     }
 
     @NotNull

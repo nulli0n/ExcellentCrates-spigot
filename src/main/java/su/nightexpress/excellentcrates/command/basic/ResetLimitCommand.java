@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.data.impl.CrateData;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.nightcore.command.CommandResult;
 import su.nightexpress.nightcore.command.impl.AbstractCommand;
@@ -63,16 +64,19 @@ public class ResetLimitCommand extends AbstractCommand<CratesPlugin> {
         }
 
         Reward reward = result.length() >= 4 ? crate.getReward(result.getArg(3)) : null;
+
+        CrateData data = user.getCrateData(crate);
+
         LangMessage message;
         if (reward == null) {
-            user.removeRewardWinLimit(crate.getId());
+            data.getRewardDataMap().clear();
             message = Lang.COMMAND_RESET_LIMIT_DONE_CRATE.getMessage();
         }
         else {
-            user.removeRewardWinLimit(crate.getId(), reward.getId());
+            data.removeRewardLimit(reward.getId());
             message = Lang.COMMAND_RESET_LIMIT_DONE_REWARD.getMessage().replace(reward.replacePlaceholders());
         }
-        this.plugin.getUserManager().saveAsync(user);
+        this.plugin.getUserManager().scheduleSave(user);
 
         message
             .replace(Placeholders.PLAYER_NAME, user.getName())

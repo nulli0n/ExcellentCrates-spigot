@@ -21,7 +21,6 @@ import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
@@ -47,8 +46,6 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final  String RARITY_ID          = "%rarity_id%";
     public static final  String RARITY_NAME        = "%rarity_name%";
     public static final  String RARITY_WEIGHT      = "%rarity_weight%";
-    @Deprecated
-    private static final String RARITY_CHANCE      = "%rarity_chance%";
     public static final  String RARITY_ROLL_CHANCE = "%rarity_roll_chance%";
 
     public static final String MILESTONE_OPENINGS       = "%milestone_openings%";
@@ -89,15 +86,9 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
     public static final  String REWARD_ID                 = "%reward_id%";
     public static final  String REWARD_NAME               = "%reward_name%";
-    @Deprecated
-    private static final String REWARD_CHANCE             = "%reward_chance%";
-    @Deprecated
-    private static final String REWARD_REAL_CHANCE        = "%reward_real_chance%";
     public static final  String REWARD_WEIGHT             = "%reward_weight%";
     public static final  String REWARD_ROLL_CHANCE        = "%reward_roll_chance%";
     public static final  String REWARD_RARITY_NAME        = "%reward_rarity_name%";
-    @Deprecated
-    public static final  String REWARD_RARITY_CHANCE      = "%reward_rarity_chance%";
     public static final  String REWARD_RARITY_WEIGHT      = "%reward_rarity_weight%";
     public static final  String REWARD_RARITY_ROLL_CHANCE = "%reward_rarity_roll_chance%";
     public static final  String REWARD_PREVIEW_NAME       = "%reward_preview_name%";
@@ -106,10 +97,15 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final  String REWARD_PLACEHOLDER_APPLY  = "%reward_placeholder_apply%";
 
 
-    public static final Function<LimitType, String> REWARD_WIN_LIMIT_ENABLED  = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_enabled%";
-    public static final Function<LimitType, String> REWARD_WIN_LIMIT_AMOUNT   = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_amount%";
-    public static final Function<LimitType, String> REWARD_WIN_LIMIT_COOLDOWN = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_cooldown%";
-    public static final Function<LimitType, String> REWARD_WIN_LIMIT_STEP     = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_step%";
+//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_ENABLED  = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_enabled%";
+//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_AMOUNT   = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_amount%";
+//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_COOLDOWN = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_cooldown%";
+//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_STEP     = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_step%";
+
+    public static final String LIMIT_ENABLED       = "%limit_enabled%";
+    public static final String LIMIT_AMOUNT        = "%limit_amount%";
+    public static final String LIMIT_COOLDOWN      = "%limit_cooldown%";
+    public static final String LIMIT_COOLDOWN_STEP = "%limit_cooldown_step%";
 
     public static final String REWARD_IGNORED_FOR_PERMISSIONS = "%reward_ignored_for_permissions%";
     public static final String REWARD_EDITOR_COMMANDS         = "%reward_editor_commands%";
@@ -294,10 +290,10 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
             .add(REWARD_NAME, reward::getName)
             .add(REWARD_WEIGHT, () -> NumberUtil.format(reward.getWeight()))
             .add(REWARD_ROLL_CHANCE, () -> NumberUtil.format(reward.getRollChance()))
-            .add(REWARD_CHANCE, () -> NumberUtil.format(reward.getWeight()))
-            .add(REWARD_REAL_CHANCE, () -> NumberUtil.format(reward.getRollChance()))
+            .add("%reward_chance%", () -> NumberUtil.format(reward.getWeight()))
+            .add("%reward_real_chance%", () -> NumberUtil.format(reward.getRollChance()))
             .add(REWARD_RARITY_NAME, () -> reward.getRarity().getName())
-            .add(REWARD_RARITY_CHANCE, () -> NumberUtil.format(reward.getRarity().getWeight()))
+            .add("%reward_rarity_chance%", () -> NumberUtil.format(reward.getRarity().getWeight())) // legacy
             .add(REWARD_RARITY_WEIGHT, () -> NumberUtil.format(reward.getRarity().getWeight()))
             .add(REWARD_RARITY_ROLL_CHANCE, () -> NumberUtil.format(reward.getRarity().getRollChance(reward.getCrate())))
             .add(REWARD_PREVIEW_NAME, () -> ItemUtil.getItemName(reward.getPreview()))
@@ -308,20 +304,32 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     }
 
     @NotNull
+    public static PlaceholderMap forLimit(@NotNull LimitValues values) {
+        return new PlaceholderMap()
+            .add(LIMIT_ENABLED, () -> Lang.getYesOrNo(values.isEnabled()))
+            .add(LIMIT_AMOUNT, () -> values.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(values.getAmount()))
+            .add(LIMIT_COOLDOWN_STEP, () -> String.valueOf(values.getCooldownStep()))
+            .add(LIMIT_COOLDOWN, () -> {
+                if (!values.hasCooldown()) return Lang.OTHER_DISABLED.getString();
+                return values.isMidnight() ? Lang.OTHER_MIDNIGHT.getString() : TimeUtil.formatTime(values.getCooldown() * 1000L);
+            });
+    }
+
+    @NotNull
     public static PlaceholderMap forRewardEditor(@NotNull Reward reward) {
         PlaceholderMap map = new PlaceholderMap();
 
-        for (LimitType limitType : LimitType.values()) {
-            RewardWinLimit winLimit = reward.getWinLimit(limitType);
-            map
-                .add(REWARD_WIN_LIMIT_ENABLED.apply(limitType), () -> Lang.getYesOrNo(winLimit.isEnabled()))
-                .add(REWARD_WIN_LIMIT_AMOUNT.apply(limitType), () -> winLimit.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(winLimit.getAmount()))
-                .add(REWARD_WIN_LIMIT_STEP.apply(limitType), () -> String.valueOf(winLimit.getCooldownStep()))
-                .add(REWARD_WIN_LIMIT_COOLDOWN.apply(limitType), () -> {
-                    if (!winLimit.hasCooldown()) return Lang.OTHER_DISABLED.getString();
-                    return winLimit.isMidnight() ? Lang.OTHER_MIDNIGHT.getString() : TimeUtil.formatTime(winLimit.getCooldown() * 1000L);
-                });
-        }
+//        for (LimitType limitType : LimitType.values()) {
+//            LimitValues winLimit = reward.getWinLimit(limitType);
+//            map
+//                .add(REWARD_WIN_LIMIT_ENABLED.apply(limitType), () -> Lang.getYesOrNo(winLimit.isEnabled()))
+//                .add(REWARD_WIN_LIMIT_AMOUNT.apply(limitType), () -> winLimit.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(winLimit.getAmount()))
+//                .add(REWARD_WIN_LIMIT_STEP.apply(limitType), () -> String.valueOf(winLimit.getCooldownStep()))
+//                .add(REWARD_WIN_LIMIT_COOLDOWN.apply(limitType), () -> {
+//                    if (!winLimit.hasCooldown()) return Lang.OTHER_DISABLED.getString();
+//                    return winLimit.isMidnight() ? Lang.OTHER_MIDNIGHT.getString() : TimeUtil.formatTime(winLimit.getCooldown() * 1000L);
+//                });
+//        }
 
         map
             .add(REWARD_BROADCAST, () -> CoreLang.getYesOrNo(reward.isBroadcast()))
@@ -362,7 +370,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
             .add(RARITY_ID, rarity::getId)
             .add(RARITY_NAME, rarity::getName)
             .add(RARITY_WEIGHT, () -> NumberUtil.format(rarity.getWeight()))
-            .add(RARITY_CHANCE, () -> NumberUtil.format(rarity.getWeight()))
+            .add("%rarity_chance%", () -> NumberUtil.format(rarity.getWeight()))
             .add(RARITY_ROLL_CHANCE, () -> NumberUtil.format(rarity.getRollChance()));
     }
 

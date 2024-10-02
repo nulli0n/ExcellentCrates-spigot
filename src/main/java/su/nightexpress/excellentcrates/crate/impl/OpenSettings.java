@@ -6,12 +6,10 @@ public class OpenSettings {
 
     private boolean force;
     private boolean skipAnimation;
-    private boolean saveData;
 
     public OpenSettings() {
         this.setForce(false);
         this.setSkipAnimation(false);
-        this.setSaveData(true);
     }
 
     public boolean isForce() {
@@ -31,16 +29,6 @@ public class OpenSettings {
     @NotNull
     public OpenSettings setSkipAnimation(boolean skipAnimation) {
         this.skipAnimation = skipAnimation;
-        return this;
-    }
-
-    public boolean isSaveData() {
-        return saveData;
-    }
-
-    @NotNull
-    public OpenSettings setSaveData(boolean saveData) {
-        this.saveData = saveData;
         return this;
     }
 }

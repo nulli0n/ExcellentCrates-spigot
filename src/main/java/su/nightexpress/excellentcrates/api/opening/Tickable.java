@@ -16,12 +16,6 @@ public interface Tickable {
 
     long getTickCount();
 
-    /*@Deprecated
-    long getStartDelay();
-
-    @Deprecated
-    void setStartDelay(long delay);*/
-
     default boolean isTickTime() {
         return this.getTickCount() == 0 || this.getTickCount() % this.getInterval() == 0L;
     }

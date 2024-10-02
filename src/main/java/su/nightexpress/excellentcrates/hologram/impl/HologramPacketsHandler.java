@@ -58,7 +58,7 @@ public class HologramPacketsHandler extends AbstractHologramHandler<PacketWrappe
     @SuppressWarnings("deprecation")
     @Override
     @NotNull
-    protected List<PacketWrapper<?>> createHologramPackets(@NotNull Player player, int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
+    protected List<PacketWrapper<?>> createHologramPackets(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
         List<PacketWrapper<?>> list = new ArrayList<>();
 
         PacketWrapper<?> spawnPacket = this.createSpawnPacket(type, location, entityID);
@@ -79,7 +79,7 @@ public class HologramPacketsHandler extends AbstractHologramHandler<PacketWrappe
             }
         });
 
-        list.add(spawnPacket);
+        if (create) list.add(spawnPacket);
         list.add(dataPacket);
 
         return list;

@@ -7,7 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Opening;
+import su.nightexpress.excellentcrates.api.opening.OpeningProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.CrateSource;
+import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.menu.MenuOptions;
 import su.nightexpress.nightcore.menu.MenuSize;
@@ -22,7 +25,7 @@ import java.util.List;
 import static su.nightexpress.excellentcrates.Placeholders.CRATE_NAME;
 import static su.nightexpress.nightcore.util.text.tag.Tags.BLACK;
 
-public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
+public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> implements OpeningProvider {
 
     private InventoryOpeningConfig openingConfig;
 
@@ -83,9 +86,15 @@ public class InventoryOpeningMenu extends ConfigMenu<CratesPlugin> {
         return openingConfig;
     }
 
+    @Override
+    @NotNull
+    public InventoryOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
+        return new InventoryOpening(this.plugin, this, this.openingConfig, player, source, key);
+    }
+
     @Nullable
     private InventoryOpening getOpening(@NotNull Player player) {
-        Opening opening = this.plugin.getOpeningManager().getOpeningData(player);
+        Opening opening = this.plugin.getOpeningManager().getOpening(player);
         if (!(opening instanceof InventoryOpening inventoryOpening)) return null;
 
         return inventoryOpening;

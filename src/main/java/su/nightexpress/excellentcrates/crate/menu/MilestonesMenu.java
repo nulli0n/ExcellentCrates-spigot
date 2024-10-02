@@ -2,7 +2,6 @@ package su.nightexpress.excellentcrates.crate.menu;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.core.CoreLang;
 import su.nightexpress.nightcore.menu.MenuOptions;
+import su.nightexpress.nightcore.menu.MenuSize;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.api.AutoFill;
 import su.nightexpress.nightcore.menu.api.AutoFilled;
@@ -73,8 +73,9 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
     }
 
     @Override
-    protected @NotNull MenuOptions createDefaultOptions() {
-        return new MenuOptions(BLACK.enclose("Crate Milestones"), 27,  InventoryType.CHEST);
+    @NotNull
+    protected MenuOptions createDefaultOptions() {
+        return new MenuOptions(BLACK.enclose("Crate Milestones"), MenuSize.CHEST_27);
     }
 
     @Override
@@ -199,16 +200,13 @@ public class MilestonesMenu extends ConfigMenu<CratesPlugin> implements AutoFill
             Reward reward = milestone.getReward();
             if (reward == null) return new ItemStack(Material.AIR);
 
-            //Set<Milestone> milestones = crate.getMilestones();
-            int openings = user.getMilestones(crate);
+            int openings = user.getCrateData(crate).getMilestone();
             boolean isCompleted = openings >= milestone.getOpenings();
             String name;
             List<String> lore;
             ItemStack item = reward.getPreview();
 
             if (this.pointerEnabled) {
-                //int counter = link.counter.getAndIncrement();
-
                 ItemStack pointerItem = new ItemStack(isCompleted ? this.pointerComp : this.pointerInc);
                 int[] pointerSlots = new int[this.pointerPerMile];
                 int start = this.pointerPerMile * counter.getAndIncrement();

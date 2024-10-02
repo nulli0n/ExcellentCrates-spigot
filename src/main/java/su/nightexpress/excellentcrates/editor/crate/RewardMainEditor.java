@@ -1,7 +1,6 @@
 package su.nightexpress.excellentcrates.editor.crate;
 
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -110,15 +109,17 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
             }
         });
 
-        this.addItem(Material.WATER_BUCKET, EditorLang.REWARD_PLAYER_WIN_LIMIT, 25, this.getWinLimitClick(LimitType.PLAYER))
-            .getOptions().addDisplayModifier((viewer, itemStack) -> {
-                if (!this.getLink(viewer).getWinLimit(LimitType.PLAYER).isEnabled()) itemStack.setType(Material.BUCKET);
-            });
+        this.addItem(Material.LIME_DYE, EditorLang.REWARD_PLAYER_LIMIT, 25, (viewer, event, reward) -> {
+            this.runNextTick(() -> plugin.getEditorManager().openRewardLimit(viewer.getPlayer(), reward, LimitType.PLAYER));
+        }).getOptions().addDisplayModifier((viewer, itemStack) -> {
+            if (!this.getLink(viewer).getLimitValues(LimitType.PLAYER).isEnabled()) itemStack.setType(Material.GRAY_DYE);
+        });
 
-        this.addItem(Material.LAVA_BUCKET, EditorLang.REWARD_GLOBAL_WIN_LIMIT, 34, this.getWinLimitClick(LimitType.GLOBAL))
-            .getOptions().addDisplayModifier((viewer, itemStack) -> {
-                if (!this.getLink(viewer).getWinLimit(LimitType.GLOBAL).isEnabled()) itemStack.setType(Material.BUCKET);
-            });
+        this.addItem(Material.LIME_DYE, EditorLang.REWARD_GLOBAL_LIMIT, 34, (viewer, event, reward) -> {
+            this.runNextTick(() -> plugin.getEditorManager().openRewardLimit(viewer.getPlayer(), reward, LimitType.GLOBAL));
+        }).getOptions().addDisplayModifier((viewer, itemStack) -> {
+            if (!this.getLink(viewer).getLimitValues(LimitType.GLOBAL).isEnabled()) itemStack.setType(Material.GRAY_DYE);
+        });
 
         this.addItem(ItemUtil.getSkinHead(TEXTURE_COMMAND), EditorLang.REWARD_COMMANDS, 32, (viewer, event, reward) -> {
             if (event.isRightClick()) {
@@ -153,57 +154,6 @@ public class RewardMainEditor extends EditorMenu<CratesPlugin, Reward> implement
         this.getItems().forEach(menuItem -> menuItem.getOptions().addDisplayModifier((viewer, item) -> {
             ItemReplacer.replace(item, Placeholders.forRewardAll(this.getLink(viewer)).replacer());
         }));
-    }
-
-    @NotNull
-    private EditorHandler<Reward> getWinLimitClick(@NotNull LimitType limitType) {
-        return (viewer, event, reward) -> {
-            RewardWinLimit winLimit = reward.getWinLimit(limitType);
-
-            if (event.getClick() == ClickType.SWAP_OFFHAND && limitType == LimitType.GLOBAL) {
-                reward.resetGlobalWinData();
-                return;
-            }
-
-            if (event.getClick() == ClickType.DROP) {
-                winLimit.setEnabled(!winLimit.isEnabled());
-                if (winLimit.isEnabled() && limitType == LimitType.GLOBAL) {
-                    reward.loadGlobalWinData();
-                }
-                this.saveReward(viewer, reward, true);
-                return;
-            }
-
-            if (event.isShiftClick()) {
-                if (event.isLeftClick()) {
-                    this.handleInput(viewer, Lang.EDITOR_ENTER_AMOUNT, (dialog, input) -> {
-                        winLimit.setCooldownStep(input.asInt(1));
-                        this.saveReward(viewer, reward, false);
-                        return true;
-                    });
-                }
-                else if (event.isRightClick()) {
-                    winLimit.setMidnightCooldown();
-                    this.saveReward(viewer, reward, true);
-                }
-                return;
-            }
-
-            if (event.isLeftClick()) {
-                this.handleInput(viewer, Lang.EDITOR_ENTER_AMOUNT, (dialog, input) -> {
-                    winLimit.setAmount(input.asAnyInt(-1));
-                    this.saveReward(viewer, reward, false);
-                    return true;
-                });
-            }
-            else if (event.isRightClick()) {
-                this.handleInput(viewer, Lang.EDITOR_ENTER_SECONDS, (dialog, input) -> {
-                    winLimit.setCooldown(input.asAnyInt(0));
-                    this.saveReward(viewer, reward, false);
-                    return true;
-                });
-            }
-        };
     }
 
     @Override

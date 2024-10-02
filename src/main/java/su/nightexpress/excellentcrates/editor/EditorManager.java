@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.LimitType;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.crate.menu.CratesEditorMenu;
 import su.nightexpress.excellentcrates.editor.crate.*;
@@ -23,6 +24,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
     private CratePlacementEditor  placementEditor;
     private RewardListEditor      rewardsEditor;
     private RewardMainEditor      rewardSettingsEditor;
+    private RewardLimitEditor     rewardLimitEditor;
     private RewardSortEditor      rewardSortEditor;
 
     private KeyListEditor keysEditor;
@@ -43,6 +45,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
         this.placementEditor = new CratePlacementEditor(this.plugin);
         this.rewardsEditor = new RewardListEditor(this.plugin);
         this.rewardSettingsEditor = new RewardMainEditor(this.plugin);
+        this.rewardLimitEditor = new RewardLimitEditor(this.plugin);
         this.rewardSortEditor = new RewardSortEditor(this.plugin);
 
         this.keysEditor = new KeyListEditor(this.plugin);
@@ -60,6 +63,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
         if (this.placementEditor != null) this.placementEditor.clear();
         if (this.rewardsEditor != null) this.rewardsEditor.clear();
         if (this.rewardSettingsEditor != null) this.rewardSettingsEditor.clear();
+        if (this.rewardLimitEditor != null) this.rewardLimitEditor.clear();
         if (this.rewardSortEditor != null) this.rewardSortEditor.clear();
 
         if (this.keysEditor != null) this.keysEditor.clear();
@@ -104,6 +108,10 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
 
     public void openReward(@NotNull Player player, @NotNull Reward reward) {
         this.rewardSettingsEditor.open(player, reward);
+    }
+
+    public void openRewardLimit(@NotNull Player player, @NotNull Reward reward, @NotNull LimitType type) {
+        this.rewardLimitEditor.open(player, reward, type);
     }
 
 

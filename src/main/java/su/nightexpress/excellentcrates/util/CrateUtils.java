@@ -1,9 +1,6 @@
 package su.nightexpress.excellentcrates.util;
 
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Vibration;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,19 +24,23 @@ public class CrateUtils {
         return ASSIGN_BLOCK_MAP.remove(player);
     }
 
+    public static long createTimestamp(long seconds) {
+        return seconds < 0 ? -1L : System.currentTimeMillis() + seconds * 1000L;
+    }
+
     @NotNull
     public static Set<Player> getPlayersForEffects(@NotNull Location location) {
-        int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
-
-        World world = location.getWorld();
-        if (world == null) return Collections.emptySet();
-
-        Set<Player> players = new HashSet<>(world.getPlayers());
-        players.removeIf(player -> {
-            return player.getWorld() != world || player.getLocation().distance(location) > distance;
-        });
+        Set<Player> players = new HashSet<>(Bukkit.getServer().getOnlinePlayers());
+        players.removeIf(player -> !isInEffectRange(player, location));
 
         return players;
+    }
+
+    public static boolean isInEffectRange(@NotNull Player player, @NotNull Location location) {
+        World world = location.getWorld();
+        int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
+
+        return player.getWorld() == world && player.getLocation().distance(location) <= distance;
     }
 
     @NotNull

@@ -8,8 +8,9 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.data.impl.CrateData;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
-import su.nightexpress.excellentcrates.data.impl.RewardWinData;
+import su.nightexpress.excellentcrates.data.impl.LimitData;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -124,6 +125,7 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
         autoFill.setItems((this.hideExceededRewards ? crate.getRewards(player) : crate.getRewards()).stream().filter(Reward::isRollable).toList());
         autoFill.setItemCreator(reward -> {
             CrateUser user = plugin.getUserManager().getUserData(player);
+            CrateData crateData = user.getCrateData(crate);
             ItemStack item = reward.getPreview();
 
             List<String> limitAmountLore = new ArrayList<>();
@@ -131,17 +133,17 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
             List<String> limitOutLore = new ArrayList<>();
             List<String> limitPermissionLore = new ArrayList<>();
             if (!reward.hasBadPermissions(player)) {
-                RewardWinData playerWinData = user.getWinData(reward);
-                RewardWinData globalWinData = reward.getGlobalWinData();
+                LimitData playerWinData = crateData.getRewardLimit(reward);
+                LimitData globalWinData = reward.getGlobalLimitData();
 
-                boolean playerLimitOut = playerWinData != null && playerWinData.isOut(reward.getPlayerWinLimit());
-                boolean globalLimitOut = globalWinData != null && globalWinData.isOut(reward.getGlobalWinLimit());
+                boolean playerLimitOut = playerWinData != null && playerWinData.isOutOfStock(reward.getPlayerLimits());
+                boolean globalLimitOut = globalWinData != null && globalWinData.isOutOfStock(reward.getGlobalLimits());
                 if (playerLimitOut || globalLimitOut) {
                     limitOutLore.addAll(this.rewardLimitOutLore);
                 }
                 else {
-                    int amountLeft = reward.getWinsAmountLeft(player);
-                    long expireIn = reward.getWinCooldown(player);
+                    int amountLeft = reward.getAvailableDraws(player);
+                    long expireIn = reward.getDrawCooldown(player);
 
                     if (amountLeft > 0) {
                         limitAmountLore.addAll(this.rewardLimitAmountLore);
@@ -157,7 +159,9 @@ public class PreviewMenu extends ConfigMenu<CratesPlugin> implements AutoFilled<
                 limitPermissionLore.addAll(this.rewardLimitBadPermissionLore);
             }
 
-            ItemReplacer.create(item).setDisplayName(this.rewardName).setLore(this.rewardLore).trimmed()
+            ItemReplacer.create(item).trimmed()
+                .setDisplayName(this.rewardName)
+                .setLore(this.rewardLore)
                 .replace(WIN_LIMIT_AMOUNT, limitAmountLore)
                 .replace(WIN_LIMIT_COOLDOWN, limitCooldownLore)
                 .replace(WIN_LIMIT_OUT, limitOutLore)

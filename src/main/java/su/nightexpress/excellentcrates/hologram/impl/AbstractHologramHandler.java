@@ -14,13 +14,9 @@ import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
-import su.nightexpress.nightcore.util.EntityUtil;
-import su.nightexpress.nightcore.util.LocationUtil;
-import su.nightexpress.nightcore.util.Plugins;
-import su.nightexpress.nightcore.util.Version;
+import su.nightexpress.nightcore.util.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractHologramHandler<T> implements HologramHandler {
 
@@ -38,43 +34,40 @@ public abstract class AbstractHologramHandler<T> implements HologramHandler {
     protected static class EntityList {
 
         private final List<HologramEntity> holograms;
-        private final Set<Integer>                                itemIds;
 
         public EntityList() {
             this.holograms = new ArrayList<>();
-            this.itemIds = ConcurrentHashMap.newKeySet();
         }
 
         @NotNull
         public List<HologramEntity> getHolograms() {
-            return holograms;
+            return this.holograms;
         }
 
         @NotNull
         public Set<Integer> getIDs() {
             Set<Integer> idList = new HashSet<>();
-            holograms.forEach(hologramEntity -> idList.add(hologramEntity.entityID));
+            this.holograms.forEach(entity -> idList.add(entity.entityID));
             return idList;
         }
 
         public void clear() {
             this.holograms.clear();
-            this.itemIds.clear();
         }
     }
 
-    protected static class HologramEntity {
+    protected record HologramEntity(int entityID, WorldPos position, String text, double gap, Set<UUID> players) {
 
-        private final int      entityID;
-        private final WorldPos position;
-        private final String   text;
-        private final double   gap;
+        public void addPlayer(@NotNull Player player) {
+            this.players.add(player.getUniqueId());
+        }
 
-        public HologramEntity(int entityID, WorldPos position, String text, double gap) {
-            this.entityID = entityID;
-            this.position = position;
-            this.text = text;
-            this.gap = gap;
+        public void removePlayer(@NotNull Player player) {
+            this.players.remove(player.getUniqueId());
+        }
+
+        public boolean isCreated(@NotNull Player player) {
+            return this.players.contains(player.getUniqueId());
         }
     }
 
@@ -102,27 +95,35 @@ public abstract class AbstractHologramHandler<T> implements HologramHandler {
         double yOffset = crate.getHologramYOffset();
         if (this.useDisplays) yOffset += 0.2;
 
-        for (HologramEntity hologramEntity : entityList.getHolograms()) {
-            WorldPos pos = hologramEntity.position;
-            if (!pos.isChunkLoaded()) return;
+        for (HologramEntity entity : entityList.getHolograms()) {
+            WorldPos position = entity.position;
+            if (!position.isChunkLoaded()) return;
 
-            World world = pos.getWorld();
-            Block block = pos.toBlock();
+            World world = position.getWorld();
+            Block block = position.toBlock();
             if (world == null || block == null) return;
 
             double height = block.getBoundingBox().getHeight() / 2D + yOffset;
-            Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + hologramEntity.gap, 0);
+            Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + entity.gap, 0);
 
-            CrateUtils.getPlayersForEffects(location).forEach(player -> {
-                //if (player.getWorld() != world) return;
-                //if (player.getLocation().distance(location) > 32D) return;
+            new HashSet<>(plugin.getServer().getOnlinePlayers()).forEach(player -> {
+                if (!CrateUtils.isInEffectRange(player, location)) {
+                    entity.removePlayer(player);
+                    this.sendPacket(player, this.createDestroyPacket(Lists.newSet(entity.entityID)));
+                    return;
+                }
 
-                String text = crate.replacePlaceholders().apply(hologramEntity.text);
+                String text = crate.replacePlaceholders().apply(entity.text);
                 if (Plugins.hasPlaceholderAPI()) {
                     text = PlaceholderAPI.setPlaceholders(player, text);
                 }
 
-                this.sendHologramPackets(player, hologramEntity.entityID, location, text);
+                boolean create = !entity.isCreated(player);
+                if (create) {
+                    entity.addPlayer(player);
+                }
+
+                this.sendHologramPackets(player, entity.entityID, create, location, text);
             });
         }
     }
@@ -141,7 +142,7 @@ public abstract class AbstractHologramHandler<T> implements HologramHandler {
             for (String text : originText) {
                 int entityID = EntityUtil.nextEntityId();
 
-                list.holograms.add(new HologramEntity(entityID, pos, text, currentGap));
+                list.holograms.add(new HologramEntity(entityID, pos, text, currentGap, new HashSet<>()));
                 currentGap += this.lineGap;
             }
         });
@@ -170,10 +171,10 @@ public abstract class AbstractHologramHandler<T> implements HologramHandler {
 
     }
 
-    private void sendHologramPackets(@NotNull Player player, int entityID, @NotNull Location location, @NotNull String textLine) {
+    private void sendHologramPackets(@NotNull Player player, int entityID, boolean create, @NotNull Location location, @NotNull String textLine) {
         EntityType type = this.useDisplays ? EntityType.TEXT_DISPLAY : EntityType.ARMOR_STAND;
 
-        this.createHologramPackets(player, entityID, type, location, textLine).forEach(packet -> this.sendPacket(player, packet));
+        this.createHologramPackets(player, entityID, create, type, location, textLine).forEach(packet -> this.sendPacket(player, packet));
     }
 
     protected abstract void sendPacket(@NotNull Player player, @NotNull T packet);
@@ -181,7 +182,7 @@ public abstract class AbstractHologramHandler<T> implements HologramHandler {
     protected abstract void broadcastPacket(@NotNull T packet);
 
     @NotNull
-    protected abstract List<T> createHologramPackets(@NotNull Player player, int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine);
+    protected abstract List<T> createHologramPackets(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine);
 
     @NotNull
     protected abstract T createDestroyPacket(@NotNull Set<Integer> list);

@@ -87,6 +87,8 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         this.menuManager = new MenuManager(this);
         this.menuManager.setup();
 
+        this.dataHandler.update();
+
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.setup(this);
         }

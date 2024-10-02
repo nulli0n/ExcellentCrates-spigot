@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.data.impl.CrateData;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.TimeUtil;
@@ -40,29 +41,28 @@ public class PlaceholderHook {
     static class Expansion extends PlaceholderExpansion {
 
         private final CratesPlugin                                   plugin;
-        private final Map<String, BiFunction<Player, Crate, String>> cratePlaceholders;
+        private final Map<String, BiFunction<Player, Crate, String>> placeholders;
 
         public Expansion(@NotNull CratesPlugin plugin) {
             this.plugin = plugin;
-            this.cratePlaceholders = new LinkedHashMap<>();
+            this.placeholders = new LinkedHashMap<>();
 
-            this.cratePlaceholders.put("keys", (player, crate) -> {
+            this.placeholders.put("keys", (player, crate) -> {
                 int keys = plugin.getKeyManager().getKeysAmount(player, crate);
                 return NumberUtil.format(keys);
             });
 
-            this.cratePlaceholders.put("openings", (player, crate) -> {
+            this.placeholders.put("openings", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getUserData(player);
-                return NumberUtil.format(user.getOpeningsAmount(crate));
+                return NumberUtil.format(user.getCrateData(crate).getOpenings());
             });
 
-            this.cratePlaceholders.put("cooldown", (player, crate) -> {
+            this.placeholders.put("cooldown", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getUserData(player);
+                CrateData data = user.getCrateData(crate);
+                if (!data.hasCooldown()) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
 
-                long left = user.getCrateCooldown(crate);
-                if (left == 0) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
-
-                LocalDateTime time = TimeUtil.getLocalDateTimeOf(left);
+                LocalDateTime time = TimeUtil.getLocalDateTimeOf(data.getOpenCooldown());
                 LocalDateTime now = LocalDateTime.now();
                 Duration duration = Duration.between(now, time);
 
@@ -73,16 +73,16 @@ public class PlaceholderHook {
                     ;
             });
 
-            this.cratePlaceholders.put("next_milestone_openings", (player, crate) -> {
+            this.placeholders.put("next_milestone_openings", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getUserData(player);
-                int milestones = user.getMilestones(crate);
+                int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 return milestone == null ? "-" : NumberUtil.format(milestone.getOpenings() - milestones);
             });
 
-            this.cratePlaceholders.put("next_milestone_reward", (player, crate) -> {
+            this.placeholders.put("next_milestone_reward", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getUserData(player);
-                int milestones = user.getMilestones(crate);
+                int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 Reward reward = milestone == null ? null : milestone.getReward();
 
@@ -117,25 +117,18 @@ public class PlaceholderHook {
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
             if (player == null) return null;
 
-            for (var entry : this.cratePlaceholders.entrySet()) {
+            for (var entry : this.placeholders.entrySet()) {
                 String prefix = entry.getKey() + "_";
                 if (!params.startsWith(prefix)) continue;
 
-                var function = entry.getValue();
+                String id = params.substring(prefix.length());
+                Crate crate = plugin.getCrateManager().getCrateById(id);
+                if (crate == null) return null;
 
-                return this.parse(params, prefix, player, function);
+                return entry.getValue().apply(player, crate);
             }
 
             return null;
-        }
-
-        @Nullable
-        private String parse(@NotNull String params, @NotNull String prefix, @NotNull Player player, @NotNull BiFunction<Player, Crate, String> function) {
-            String id = params.substring(prefix.length());
-            Crate crate = plugin.getCrateManager().getCrateById(id);
-            if (crate == null) return null;
-
-            return function.apply(player, crate);
         }
     }
 }

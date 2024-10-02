@@ -93,7 +93,7 @@ public class CrateMainEditor extends EditorMenu<CratesPlugin, Crate> implements 
                         crate.setOpeningConfig(input.getTextRaw());
                         this.saveSettings(viewer, crate, false);
                         return true;
-                    }).setSuggestions(plugin.getOpeningManager().getMenuMap().keySet(), true);
+                    }).setSuggestions(plugin.getOpeningManager().getProviderMap().keySet(), true);
                 }
             }
         });

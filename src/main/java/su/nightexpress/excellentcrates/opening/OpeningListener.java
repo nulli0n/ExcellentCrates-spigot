@@ -30,7 +30,7 @@ public class OpeningListener extends AbstractListener<CratesPlugin> {
         Player player = event.getPlayer();
         if (!this.openingManager.isOpening(player)) return;
 
-        Opening opening = this.openingManager.getOpeningData(player);
+        Opening opening = this.openingManager.getOpening(player);
 
         if (opening instanceof InventoryOpening inventoryOpening) {
             if (event.getMenu() != inventoryOpening.getMenu()) {

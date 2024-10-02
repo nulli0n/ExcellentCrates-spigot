@@ -1,37 +1,44 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.TimeUtil;
+import su.nightexpress.nightcore.util.placeholder.Placeholder;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class RewardWinLimit {
+public class LimitValues implements Placeholder {
 
     public static final int MIDNIGHT_VALUE = -2;
+
+    private final PlaceholderMap placeholders;
 
     private boolean enabled;
     private int     amount;
     private long    cooldown;
     private int     cooldownStep;
 
-    public RewardWinLimit(boolean enabled, int amount, long cooldown, int cooldownStep) {
+    public LimitValues(boolean enabled, int amount, long cooldown, int cooldownStep) {
         this.setEnabled(enabled);
         this.setAmount(amount);
         this.setCooldown(cooldown);
         this.setCooldownStep(cooldownStep);
+
+        this.placeholders = Placeholders.forLimit(this);
     }
 
     @NotNull
-    public static RewardWinLimit read(@NotNull FileConfig config, @NotNull String path) {
+    public static LimitValues read(@NotNull FileConfig config, @NotNull String path) {
         boolean enabled = ConfigValue.create(path + ".Enabled", false).read(config);
         int amount = ConfigValue.create(path + ".Amount", -1).read(config);
         long cooldown = ConfigValue.create(path + ".Cooldown", 0L).read(config);
         int cooldownStep = ConfigValue.create(path + ".CooldownStep", 1).read(config);
 
-        return new RewardWinLimit(enabled, amount, cooldown, cooldownStep);
+        return new LimitValues(enabled, amount, cooldown, cooldownStep);
     }
 
     public void write(@NotNull FileConfig config, @NotNull String path) {
@@ -39,6 +46,12 @@ public class RewardWinLimit {
         config.set(path + ".Amount", this.getAmount());
         config.set(path + ".Cooldown", this.getCooldown());
         config.set(path + ".CooldownStep", this.getCooldownStep());
+    }
+
+    @NotNull
+    @Override
+    public PlaceholderMap getPlaceholders() {
+        return this.placeholders;
     }
 
     public boolean isMidnight() {

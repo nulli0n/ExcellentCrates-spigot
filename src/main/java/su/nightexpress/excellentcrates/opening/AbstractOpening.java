@@ -8,6 +8,7 @@ import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.api.opening.Spinner;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
+import su.nightexpress.excellentcrates.data.impl.CrateData;
 import su.nightexpress.excellentcrates.data.impl.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.spinner.AnimationSpinner;
@@ -29,7 +30,6 @@ public abstract class AbstractOpening extends Runnable implements Opening {
 
     protected boolean refundable;
     protected boolean hasRewardAttempts;
-    protected boolean saveData;
 
     public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player,
                            @NotNull CrateSource source, @Nullable CrateKey key) {
@@ -100,17 +100,25 @@ public abstract class AbstractOpening extends Runnable implements Opening {
 
         if (this.isCompleted()) {
             this.crate.setLastOpener(player.getName());
-            this.plugin.getCrateManager().setCrateCooldown(player, crate);
-            this.plugin.getCrateManager().addOpenings(player, crate, 1);
-            this.plugin.getCrateManager().proceedMilestones(player, crate);
 
-            if (this.isSaveData() && !this.isEmergency()) {
-                this.plugin.runTaskAsync(task -> {
-                    CrateUser user = this.plugin.getUserManager().getUserData(player);
-                    this.crate.saveRewardWinDatas();
-                    this.plugin.getUserManager().save(user);
-                });
+            CrateUser user = this.plugin.getUserManager().getUserData(player);
+            CrateData data = user.getCrateData(this.crate);
+
+            data.addOpenings(1);
+
+            if (crate.hasOpenCooldown() && !crate.hasCooldownBypassPermission(player)) {
+                data.setOpenCooldown(crate.getOpenCooldown());
             }
+
+            if (crate.hasMilestones()) {
+                data.addMilestones(1);
+                crate.triggerMilestones(player, data.getMilestone());
+                if (data.getMilestone() >= crate.getMaxMilestone() && crate.isMilestonesRepeatable()) {
+                    data.setMilestone(0);
+                }
+            }
+
+            this.plugin.getUserManager().scheduleSave(user);
         }
 
         this.getSpinners().forEach(Spinner::stop);
@@ -151,16 +159,6 @@ public abstract class AbstractOpening extends Runnable implements Opening {
     @Override
     public void setHasRewardAttempts(boolean hasRewardAttempts) {
         this.hasRewardAttempts = hasRewardAttempts;
-    }
-
-    @Override
-    public boolean isSaveData() {
-        return saveData;
-    }
-
-    @Override
-    public void setSaveData(boolean saveData) {
-        this.saveData = saveData;
     }
 
     @Override

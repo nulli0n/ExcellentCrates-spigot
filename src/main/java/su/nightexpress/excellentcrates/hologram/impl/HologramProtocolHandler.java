@@ -55,7 +55,7 @@ public class HologramProtocolHandler extends AbstractHologramHandler<PacketConta
 
     @Override
     @NotNull
-    protected List<PacketContainer> createHologramPackets(@NotNull Player player, int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
+    protected List<PacketContainer> createHologramPackets(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
         List<PacketContainer> list = new ArrayList<>();
 
         Object component = WrappedChatComponent.fromJson(NightMessage.asJson(textLine)).getHandle();
@@ -78,7 +78,7 @@ public class HologramProtocolHandler extends AbstractHologramHandler<PacketConta
             }
         });
 
-        list.add(spawnPacket);
+        if (create) list.add(spawnPacket);
         list.add(dataPacket);
 
         return list;

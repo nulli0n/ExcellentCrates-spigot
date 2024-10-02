@@ -31,7 +31,15 @@ public class Config {
 
     public static final ConfigValue<Boolean> DATABASE_SYNC_REWARDS_DATA = ConfigValue.create("Database.Sync_Reward_Data",
         true,
-        "Sets whether or not reward global data (such as win limit & cooldown) will be syncrhonized along with user data.");
+        "Sets whether or not reward global limit data should be synchronized.",
+        "[*] Useful for MySQL only."
+    );
+
+    public static final ConfigValue<Boolean> DATABASE_PURGE_REWARDS_DATA = ConfigValue.create("Database.Purge_Reward_Data",
+        false,
+        "Sets whether or not reward limits data will be automatically purged for invalid rewards and crates.",
+        "[*] Use with caution on multiple servers connected to the same database, but with different crates."
+    );
 
     public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
         true,

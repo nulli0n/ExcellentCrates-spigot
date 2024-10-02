@@ -1,8 +1,6 @@
-package su.nightexpress.excellentcrates.api.opening;
+package su.nightexpress.excellentcrates.api;
 
 public interface Weighted {
-
-    //boolean checkRollChance();
 
     double getWeight();
 

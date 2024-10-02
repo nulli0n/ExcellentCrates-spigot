@@ -18,16 +18,6 @@ public enum ClickType {
     @NotNull
     public static ClickType from(@NotNull InventoryClickEvent event) {
         return (event.isRightClick() ? RIGHT : LEFT).shifted(event.isShiftClick());
-        /*if (event.isShiftClick()) {
-            if (event.isLeftClick()) {
-                return SHIFT_LEFT;
-            }
-            return SHIFT_RIGHT;
-        }
-        if (event.isRightClick()) {
-            return RIGHT;
-        }
-        return LEFT;*/
     }
 
     @NotNull

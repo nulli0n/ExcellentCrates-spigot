@@ -7,131 +7,124 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Reward;
 import su.nightexpress.nightcore.database.AbstractUser;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class CrateUser extends AbstractUser<CratesPlugin> {
 
-    // TODO CrateData class
-
-    private final Map<String, Integer>                     keys;
-    private final Map<String, Integer>                     keysOnHold;
-    private final Map<String, Long>                        openCooldowns;
-    private final Map<String, Integer>                     openingsAmount;
-    private final Map<String, Integer>                    milestones;
-    private final Map<String, Map<String, RewardWinData>> rewardWinLimits;
+    private final Map<String, Integer>   keys;
+    private final Map<String, Integer>   keysOnHold;
+    private final Map<String, CrateData> crateDataMap;
 
     public CrateUser(@NotNull CratesPlugin plugin, @NotNull UUID uuid, @NotNull String name) {
         this(plugin, uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>(),
             new HashMap<>(),
             new HashMap<>(),
             new HashMap<>()
         );
     }
 
-    public CrateUser(
-        @NotNull CratesPlugin plugin,
-        @NotNull UUID uuid,
-        @NotNull String name,
-        long dateCreated,
-        long lastOnline,
-
-        @NotNull Map<String, Integer> keys,
-        @NotNull Map<String, Integer> keysOnHold,
-        @NotNull Map<String, Long> openCooldowns,
-        @NotNull Map<String, Integer> openingsAmount,
-        @NotNull Map<String, Integer> milestones,
-        @NotNull Map<String, Map<String, RewardWinData>> rewardWinLimits
-    ) {
+    public CrateUser(@NotNull CratesPlugin plugin,
+                     @NotNull UUID uuid,
+                     @NotNull String name,
+                     long dateCreated,
+                     long lastOnline,
+                     @NotNull Map<String, Integer> keys,
+                     @NotNull Map<String, Integer> keysOnHold,
+                     @NotNull Map<String, CrateData> crateDataMap) {
         super(plugin, uuid, name, dateCreated, lastOnline);
         this.keys = keys;
         this.keysOnHold = keysOnHold;
-        this.openCooldowns = openCooldowns;
-        this.openingsAmount = openingsAmount;
-        this.milestones = milestones;
-        this.rewardWinLimits = rewardWinLimits;
+        this.crateDataMap = new HashMap<>(crateDataMap);
     }
 
     @NotNull
-    public Map<String, Long> getCrateCooldowns() {
-        return this.openCooldowns;
+    public Map<String, CrateData> getCrateDataMap() {
+        return crateDataMap;
     }
 
+    @NotNull
+    public CrateData getCrateData(@NotNull Crate crate) {
+        return this.getCrateData(crate.getId());
+    }
+
+    @NotNull
+    public CrateData getCrateData(@NotNull String id) {
+        return this.crateDataMap.computeIfAbsent(id.toLowerCase(), k -> new CrateData());
+    }
+
+    @Deprecated
     public void setCrateCooldown(@NotNull Crate crate, long endDate) {
         this.setCrateCooldown(crate.getId(), endDate);
     }
 
+    @Deprecated
     public void setCrateCooldown(@NotNull String id, long endDate) {
-        if (endDate == 0L) {
-            this.getCrateCooldowns().remove(id.toLowerCase());
-        }
-        else {
-            this.getCrateCooldowns().put(id.toLowerCase(), endDate);
-        }
+        this.getCrateData(id).setOpenCooldown(endDate);
     }
 
+    @Deprecated
     public boolean isCrateOnCooldown(@NotNull Crate crate) {
         return this.isCrateOnCooldown(crate.getId());
     }
 
+    @Deprecated
     public boolean isCrateOnCooldown(@NotNull String id) {
-        return this.getCrateCooldown(id) != 0;
+        return this.getCrateData(id).hasCooldown();
     }
 
+    @Deprecated
     public long getCrateCooldown(@NotNull Crate crate) {
         return this.getCrateCooldown(crate.getId());
     }
 
+    @Deprecated
     public long getCrateCooldown(@NotNull String id) {
-        this.getCrateCooldowns().values().removeIf(endDate -> endDate >= 0 && endDate < System.currentTimeMillis());
-        return this.getCrateCooldowns().getOrDefault(id.toLowerCase(), 0L);
+        return this.getCrateData(id).getOpenCooldown();
     }
 
-    @NotNull
-    public Map<String, Integer> getOpeningsAmountMap() {
-        return openingsAmount;
-    }
 
+
+
+    @Deprecated
     public int getOpeningsAmount(@NotNull Crate crate) {
         return this.getOpeningsAmount(crate.getId());
     }
 
+    @Deprecated
     public int getOpeningsAmount(@NotNull String id) {
-        return this.getOpeningsAmountMap().getOrDefault(id.toLowerCase(), 0);
+        return this.getCrateData(id).getOpenings();
     }
 
+    @Deprecated
     public void setOpeningsAmount(@NotNull Crate crate, int amount) {
         this.setOpeningsAmount(crate.getId(), amount);
     }
 
+    @Deprecated
     public void setOpeningsAmount(@NotNull String id, int amount) {
-        this.getOpeningsAmountMap().put(id.toLowerCase(), amount);
+        this.getCrateData(id).setOpenings(amount);
     }
 
-    @NotNull
-    public Map<String, Integer> getMilestonesMap() {
-        return this.milestones;
-    }
-
+    @Deprecated
     public int getMilestones(@NotNull Crate crate) {
         return this.getMilestones(crate.getId());
     }
 
+    @Deprecated
     public int getMilestones(@NotNull String id) {
-        return this.getMilestonesMap().getOrDefault(id.toLowerCase(), 0);
+        return this.getCrateData(id).getMilestone();
     }
 
+    @Deprecated
     public void setMilestones(@NotNull Crate crate, int amount) {
         this.setMilestones(crate.getId(), amount);
     }
 
+    @Deprecated
     public void setMilestones(@NotNull String id, int amount) {
-        this.getMilestonesMap().put(id.toLowerCase(), amount);
+        this.getCrateData(id).setMilestone(amount);
     }
 
     @NotNull
@@ -172,45 +165,42 @@ public class CrateUser extends AbstractUser<CratesPlugin> {
         this.getKeysOnHold().clear();
     }
 
-    @NotNull
-    public Map<String, Map<String, RewardWinData>> getRewardWinLimits() {
-        return rewardWinLimits;
-    }
 
+    @Deprecated
     @Nullable
-    public RewardWinData getWinData(@NotNull Reward reward) {
+    public LimitData getWinData(@NotNull Reward reward) {
         return this.getWinData(reward.getCrate().getId(), reward.getId());
     }
 
+    @Deprecated
     @NotNull
-    public RewardWinData getRewardDataOrCreate(@NotNull Reward reward) {
-        Crate crate = reward.getCrate();
-
-        return this.rewardWinLimits.computeIfAbsent(crate.getId().toLowerCase(), k -> new HashMap<>())
-            .computeIfAbsent(reward.getId().toLowerCase(), k -> RewardWinData.create());
+    public LimitData getRewardDataOrCreate(@NotNull Reward reward) {
+        return this.getCrateData(reward.getCrate()).getRewardLimitOrCreate(reward);
     }
 
+    @Deprecated
     @Nullable
-    public RewardWinData getWinData(@NotNull String crateId, @NotNull String rewardId) {
-        return this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), Collections.emptyMap())
-            .get(rewardId.toLowerCase());
+    public LimitData getWinData(@NotNull String crateId, @NotNull String rewardId) {
+        return this.getCrateData(crateId).getRewardLimit(rewardId);
     }
 
-    public void setRewardWinLimit(@NotNull Reward reward, @NotNull RewardWinData rewardLimit) {
-        this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
-    }
+//    @Deprecated
+//    public void setRewardWinLimit(@NotNull Reward reward, @NotNull LimitData rewardLimit) {
+//        this.setRewardWinLimit(reward.getCrate().getId(), reward.getId(), rewardLimit);
+//    }
+//
+//    @Deprecated
+//    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull LimitData rewardLimit) {
+//        this.getCrateData(crateId).setRewardLimit(rewardId, rewardLimit);
+//    }
 
-    public void setRewardWinLimit(@NotNull String crateId, @NotNull String rewardId, @NotNull RewardWinData rewardLimit) {
-        this.getRewardWinLimits().computeIfAbsent(crateId.toLowerCase(), k -> new HashMap<>())
-            .put(rewardId.toLowerCase(), rewardLimit);
-    }
-
+    @Deprecated
     public void removeRewardWinLimit(@NotNull String crateId) {
-        this.getRewardWinLimits().remove(crateId.toLowerCase());
+        this.getCrateData(crateId).getRewardDataMap().clear();
     }
 
+    @Deprecated
     public void removeRewardWinLimit(@NotNull String crateId, @NotNull String rewardId) {
-        this.getRewardWinLimits().getOrDefault(crateId.toLowerCase(), new HashMap<>())
-            .remove(rewardId.toLowerCase());
+        this.getCrateData(crateId).removeRewardLimit(rewardId);
     }
 }

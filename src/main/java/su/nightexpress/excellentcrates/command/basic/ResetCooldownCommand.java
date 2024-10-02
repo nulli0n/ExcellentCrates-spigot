@@ -54,8 +54,8 @@ public class ResetCooldownCommand extends AbstractCommand<CratesPlugin> {
             return;
         }
 
-        user.setCrateCooldown(crate, 0L);
-        this.plugin.getUserManager().saveAsync(user);
+        user.getCrateData(crate).setOpenCooldown(0);
+        this.plugin.getUserManager().scheduleSave(user);
 
         Lang.COMMAND_RESET_COOLDOWN_DONE.getMessage()
             .replace(Placeholders.PLAYER_NAME, user.getName())

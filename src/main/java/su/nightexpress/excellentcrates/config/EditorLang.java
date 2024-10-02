@@ -1,7 +1,6 @@
 package su.nightexpress.excellentcrates.config;
 
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.crate.impl.LimitType;
 import su.nightexpress.nightcore.language.entry.LangItem;
 import su.nightexpress.nightcore.util.Plugins;
 
@@ -359,41 +358,68 @@ public class EditorLang {
         .click("toggle")
         .build();
 
-    public static final LangItem REWARD_GLOBAL_WIN_LIMIT = builder(PREFIX + "Reward.GlobalWinLimit")
+    public static final LangItem REWARD_GLOBAL_LIMIT = builder(PREFIX + "Reward.Limit.Global")
         .name("Global Win Limits")
-        .current("Enabled", REWARD_WIN_LIMIT_ENABLED.apply(LimitType.GLOBAL))
-        .current("Amount", REWARD_WIN_LIMIT_AMOUNT.apply(LimitType.GLOBAL))
-        .current("Cooldown", REWARD_WIN_LIMIT_COOLDOWN.apply(LimitType.GLOBAL))
-        .current("Cooldown Step", REWARD_WIN_LIMIT_STEP.apply(LimitType.GLOBAL))
+        .text("Sets reward cooldown and amount", "of possible wins " + LIGHT_ORANGE.enclose("globally") + ".")
         .emptyLine()
-        .text("Sets reward cooldown and amount", "of possible wins for the " + LIGHT_ORANGE.enclose("whole server") + ".")
-        .emptyLine()
-        .text("Read " + LIGHT_ORANGE.enclose("documentation") + " for more details.")
-        .emptyLine()
-        .dropKey("toggle")
-        .leftClick("change amount")
-        .rightClick("change cooldown")
-        .shiftLeft("change cooldown step")
-        .shiftRight("midnight cooldown")
-        .swapKey("reset stored data")
+        .click("navigate")
         .build();
 
-    public static final LangItem REWARD_PLAYER_WIN_LIMIT = builder(PREFIX + "Reward.PlayerWinLimit")
+    public static final LangItem REWARD_PLAYER_LIMIT = builder(PREFIX + "Reward.Limit.Player")
         .name("Player Win Limits")
-        .current("Enabled", REWARD_WIN_LIMIT_ENABLED.apply(LimitType.PLAYER))
-        .current("Amount", REWARD_WIN_LIMIT_AMOUNT.apply(LimitType.PLAYER))
-        .current("Cooldown", REWARD_WIN_LIMIT_COOLDOWN.apply(LimitType.PLAYER))
-        .current("Cooldown Step", REWARD_WIN_LIMIT_STEP.apply(LimitType.PLAYER))
+        .text("Sets reward cooldown and amount", "of possible wins " + LIGHT_ORANGE.enclose("individually") + ".")
         .emptyLine()
-        .text("Sets reward cooldown and amount", "of possible wins for " + LIGHT_ORANGE.enclose("each player") + ".")
+        .click("navigate")
+        .build();
+
+    public static final LangItem REWARD_LIMIT_TOGGLE = builder(PREFIX + "Reward.Limit.Toggle")
+        .name("Enabled")
+        .current("Current", LIMIT_ENABLED)
         .emptyLine()
-        .text("Read " + LIGHT_ORANGE.enclose("documentation") + " for more details.")
+        .text("Controls whether limit is enabled.")
         .emptyLine()
-        .dropKey("toggle")
-        .leftClick("change amount")
-        .rightClick("change cooldown")
-        .shiftLeft("change cooldown step")
-        .shiftRight("midnight cooldown")
+        .click("toggle")
+        .build();
+
+    public static final LangItem REWARD_LIMIT_AMOUNT = builder(PREFIX + "Reward.Limit.Amount")
+        .name("Amount")
+        .current("Current", LIMIT_AMOUNT)
+        .emptyLine()
+        .text("Sets amount of available draws")
+        .text(LIGHT_YELLOW.enclose("globally") + " or " + LIGHT_YELLOW.enclose("per player") + ", depends on")
+        .text("the limit type.")
+        .emptyLine()
+        .leftClick("change")
+        .rightClick("unlimited")
+        .build();
+
+    public static final LangItem REWARD_LIMIT_COOLDOWN = builder(PREFIX + "Reward.Limit.Cooldown")
+        .name("Cooldown")
+        .current("Current", LIMIT_COOLDOWN)
+        .emptyLine()
+        .text("When cooldown is applied, players")
+        .text("can't obtain this reward until")
+        .text("cooldown expired.")
+        .emptyLine()
+        .leftClick("change")
+        .rightClick("at midnight")
+        .dropKey("disable")
+        .build();
+
+    public static final LangItem REWARD_LIMIT_COOLDOWN_STEP = builder(PREFIX + "Reward.Limit.CooldownStep")
+        .name("Cooldown Step")
+        .current("Current", LIMIT_COOLDOWN_STEP)
+        .emptyLine()
+        .text("Sets amount of draws for cooldown to apply.")
+        .emptyLine()
+        .click("change")
+        .build();
+
+    public static final LangItem REWARD_LIMIT_RESET = builder(PREFIX + "Reward.Limit.Reset")
+        .name("Reset")
+        .text("Resets currently stored", "amount and cooldown values.")
+        .emptyLine()
+        .click("reset")
         .build();
 
     public static final LangItem REWARD_IGNORED_PERMISSIONS = builder(PREFIX + "Reward.IgnoredPermissions")
