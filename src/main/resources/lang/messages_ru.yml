@@ -1,0 +1,1324 @@
+Command:
+  Drop:
+    Usage: <кейс> <мир> <x> <y> <z>
+    Desc: Установите контейнер в указанное место в мире.
+    Done: Установлен &6%crate_name%&7 на координатах &6%x%&7, &6%y%&7, &6%z%&7 в &6%world%&7.
+  ForceOpen:
+    Desc: Открыть кейс для игрока.
+    Usage: <crateId> [player]
+    Done: Принудительно открыл &e%crate_name%&f для &e%player_name%&f.
+    Notify: Вас заставили открыть &e%crate_name%&f
+  Give:
+    Usage: <игрок | *> <кейс> [кол-во]
+    Desc: Даёт контейнер(ы) игроку.
+    Done: Выдано &6x%amount% &6%crate_name% &7контейнер(ов) для &6%player_name%&7.
+    Notify: Вы получили &6x%amount% &6%crate_name%&7!
+  Key:
+    Desc: Управление/просмотр ключей от контейнеров у игрока.
+    Error:
+      Player: '&fНе удалось выполнить операцию для неподключенного/недействительного игрока &e%player_name%&f!'
+    Give:
+      Usage: <игрок | *> <IDключа> <кол-во>
+      Desc: Выдать ключ(и) от контейнеров игроку.
+      Done: Выдано &ax%amount% &a%key_name% &7ключ(ей) для &a%player_name%&7.
+      Notify: Вы получили &ax%amount% &a%key_name%&7!
+    Take:
+      Usage: <игрок | *> <IDключа> <кол-во>
+      Desc: Забирает ключ(и) у игрока.
+      Done: Взято &cx%amount% &c%key_name% &7ключ(ей) у &c%player_name%
+      Notify: Ты потерял &cx%amount% &c%key_name%&7!
+    Set:
+      Usage: <игрок | *> <IDключа> <кол-во>
+      Desc: Устанавливает количество ключей кейса(ов) для игрока.
+      Done: Установлено &ex%amount% &e%key_name% &7ключ(ей) для &e%player_name%&7.
+      Notify: Вам было установлено &e%key_name%&7 кол-вом равным &ex%amount%&7!
+    Show:
+      Desc: Показать количество ваших или других ключей у игрока.
+      Usage: '[ник]'
+      Format:
+        List:
+        - <noprefix>
+        - '&6&m              &6&l[ &a%player_name% &e&lКлючи от кейсов &6&l]&6&m              &6'
+        - '&7'
+        - '&6▸ &e%key_name%: &6%amount%'
+        Entry: '<lyellow>▪ <lgray>%key_name%: </lgray>x%amount%</lyellow>'
+    Usage: '[help]'
+    GiveAll:
+      Usage: <ник> <IDключа> <кол-во> [-s]
+      Desc: Дайте ключ всем онлайн-игрокам.
+      Done: '#d4d9d8Выдано #fdf35ex%amount%#d4d9d8 Х #fdf35e%key_name%#d4d9d8 ключей #fdf35eВсем игрокам#d4d9d8.'
+  Preview:
+    Desc: Предпросмотр кейса для игрока.
+    Usage: <IDключа> [ник]
+    Done:
+      Others: Открыт &6%crate_name%&7 в виде предпросмотра для &6%player_name%&7.
+  ResetLimit:
+    Desc: Сбрасывает лимит выигрыша вознаграждения для указанного кейса и награды у игрока.
+    Usage: <игрок> <IDключа> [IDнаграды]
+    Done:
+      Crate: Сбросить лимит выигрыша &6%player_name% &7для всех выйгрышей в контейнере &6%crate_name%&7.
+      Reward: Сбросить лимит выигрыша &6%player_name% &7для &6%reward_name% &7награды в контейнере &6%crate_name%&7.
+  ResetCooldown:
+    Desc: Сброс времени кулдауна у игрока для указанного кейса.
+    Usage: <ник> <IDкейса>
+    Done: Кулдаун для &6%player_name% &7сброшен у кейса &6%crate_name%&7.
+  Menu:
+    Usage: '[IDменю]'
+    Desc: Открывает меню кейса.
+    Done:
+      Others: Открыто меню &6%menu_id%&7 кейса для &6%player_name%&7.
+  Editor:
+    Desc: Откройте редактор кейсов и ключей.
+  DropKey:
+    Usage: <ключ> <x> <y> <z> [мир]
+    Desc: Оставьте ключ в указанном месте.
+    Done: <lgray>Оставлен <lyellow>%key_name%</lyellow> по координатам <lyellow>%location_x%, %location_y%, %location_z%</lyellow> в мире <lyellow>%location_world%</lyellow>.</lgray>
+  Open:
+    Desc: Заставляет [игрока] [силой] открыть кейс.
+    Usage: <кейс> [ник] [-f] [-s]
+    Done: '#d4d9d8Принудить игрока #fdf35e%player_name%#d4d9d8 открыть #fdf35e%crate_name%#d4d9d8.'
+    Notify: '#d4d9d8Вас заставили открыть #fdf35e%crate_name%#d4d9d8.'
+  OpenFor:
+    Desc: Принудительное открытие кейса для игрока.
+    Usage: <кейс> [ник]
+    Done: <lgray>Принудительно открыт кейс <lyellow>%crate_name%</lyellow> для <lyellow>%player_name%</lyellow>.</lgray>
+    Notify: <lgray>Вы были вынуждены открыть <lyellow>%crate_name%</lyellow>.</lgray>
+Crate:
+  Error:
+    Invalid: <lred>Недействительный кейс!</lred>
+    Exists: <lred>Кейс с таким идентификатором уже существует!</lred>
+  Open:
+    Error:
+      InventorySpace:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <lred><b>Упс!</b></lred>
+      - <lgray>Пожалуйста, очистите свой инвентарь, чтобы открыть кейс!</lgray>
+      Cooldown:
+        Temporary:
+        - <output:"titles:20:80:20"><sound:"entity_villager_no">
+        - <lred><b>Crate Cooldown!</b></lred>
+        - <lgray>Вы должны подождать <lred>%time%</lred> прежде чем открыть %crate_name%</lgray>
+        OneTimed:
+        - <output:"titles:20:80:20"><sound:"entity_villager_no">
+        - <lred><b>Упс!</b></lred>
+        - <lgray>Вы уже открыли этот кейс, вы не можете открыть его больше!</lgray>
+      NoKey:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <lred><b>Упс!</b></lred>
+      - <lgray>У вас нет ключа от этого кейса!</lgray>
+      NoRewards:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <red><b>Упс!</b></red>
+      - <lgray>В этом кейсе нет никаких наград для вас!</lgray>
+      Cost:
+        Money: '&fУ вас недостаточно денег, чтобы открыть этот кейс!'
+        Exp: '&fУ вас недостаточно уровней опыта, чтобы открыть этот кейс!'
+      NoHoldKey:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <lred><b>Упс!</b></lred>
+      - <lgray>Чтобы открывать кейс, у вас должен быть ключ!</lgray>
+      CantAfford:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <lred><b>Упс!</b></lred>
+      - <lgray>У вас нет <lred>%amount%</lred> для открытия!</lgray>
+      Already:
+      - <output:"titles:20:80:20"><sound:"entity_villager_no">
+      - <lred><b>Упс!</b></lred>
+      - <lgray>Вы уже открываете кейс!</lgray>
+      TooExpensive:
+      - <output:"titles:20:80:20"><sound:"entity.villager.no">
+      - <lred><b>Whoops!</b></lred>
+      - <lgray>You need <lred>%crate_open_cost%</lred> to open it!</lgray>
+    Reward:
+      Info:
+      - <noprefix>
+      - <lgray>Вы получили награду <lgreen>%reward_name%</lgreen> из кейса <lgreen>%crate_name%</lgreen>!</lgray>
+      Broadcast:
+      - <noprefix><sound:"block_note_block_bell">
+      - ' '
+      - <lgray> Игрок <lgreen>%player_display_name%</lgreen> только что получил <lgreen>%reward_name%</lgreen> награду из кейса <lgreen>%crate_name%</lgreen>!</lgray>
+      - ' '
+      - '<lgray>Хотите? Купите ключи сейчас: <click:open_url:"https://store.examplecraft.com/"><lgreen>[ОТКРЫТЬ МАГАЗИН]</lgreen></click></lgray>'
+      - ' '
+    Milestone:
+      Completed:
+      - <noprefix>
+      - <sound:"entity_player_levelup">
+      - <lgray>Вы завершили этап открытия <lgreen>%milestone_openings% и </lgreen>получили в качестве награды <lgreen>%reward_name%</lgreen>!</lgray>
+  Key:
+    Error:
+      Invalid: <lred>Ошибочный ключ!</lred>
+      Exists: <lred>Ключ с таким идентификатором уже существует!</lred>
+  Placeholder:
+    Cooldown:
+      Blank: Готово к открытию!
+  Preview:
+    Error:
+      Cooldown: <lgray>Вы не сможете повторно просмотреть этот кейс в течении <lred>%time%</lred></lgray>
+Menu:
+  Invalid: <lred>Меню не существует!</lred>
+Editor:
+  Crate:
+    Enter:
+      Id: <lgray>Введите <lgreen>[Идентификатор кейса]</lgreen></lgray>
+      DisplayName: '&7Введите &aимя &7кейса...'
+      Particle:
+        Name: '&7Введите &a[Имя частицы]'
+        Data: '&7Введите &a[данные частицы]'
+        MaterialData: '#d4d9d8Введите #aefd5e[Материал предмета]#d4d9d8 - #aefd5e[Diamond_Block]'
+        RedstoneData: '#d4d9d8Введите #aefd5e[Цвет] [Размер]#d4d9d8 - #aefd5e[255,0,0] [1.5]'
+      KeyId: <lgray>Введите <lgreen>[Идентификатор ключа]</lgreen></lgray>
+      Block:
+        Location: '&7Нажмите на &aблок &7, чтобы назначить кейс...'
+        Hologram:
+          Text: '&7Введите текстовую &7строку...'
+          Offset: '&7Введите &aсмещение &7значение...'
+      Cooldown: '&7Введите &aвремя восстановления &7в секундах...'
+      Citizens: '&7Введите &aCitizens NPC &7ID...'
+      AnimationConfig: <lgray>Введите <lgreen>[Название анимации]</lgreen></lgray>
+      PreviewConfig: <lgray>Введите <lgreen>[Имя предпросмотра]</lgreen></lgray>
+      OpenCost:
+        Money: '&7Введите стоимость в &aденьгах...'
+        Exp: '&7Введите  стоимость в &aуровне exp'
+      BlockLocation: '#d4d9d8Нажмите на #aefd5e[Блок] #d4d9d8, чтобы назначить кейс.'
+      HologramTemplate: '#d4d9d8Введите #aefd5e[Шаблон голограммы]'
+      Open_Cost: '#d4d9d8Введите #aefd5e[Валюту] [Количество]'
+      Seconds: '#d4d9d8Введите #aefd5e>[Количество секунд]'
+    Error:
+      Create:
+        Exists: '&cКейс с таким идентификатором уже существует!'
+  Reward:
+    Enter:
+      Id: <lgray>введите <lgreen>ID для награды</lgreen></lgray>
+      DisplayName: '&7Enter reward &adisplay name&7...'
+      Chance: <lgray>Введите <lgreen>шанс выигрыша</lgreen></lgray>
+      Command: <lgray>Введите <lgreen>комманду</lgreen></lgray>
+      WinLimit:
+        Amount: '&7Введите сумму лимита выигрыша&7...'
+        Cooldown: '&7Введите время восстановления лимита выигрыша&7...'
+      Permissions: '&7Введите a &aразрешение&7...'
+      Rarity: <lgray>Введите <lgreen>[Редкость]</lgreen></lgray>
+    Error:
+      Create:
+        Exist: <lgray>Награда с таким ID уже существует!</lgray>
+  Key:
+    Error:
+      Create:
+        Exist: Ключ с таким идентификатором уже существует!
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: Редактор кейсов
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Создавайте и настраивайте свои кейсы!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fНавигации'
+    EDITOR_KEYS:
+      Name: Редактор клчей
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Создавайте и настраивайте свои ключи!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fНавигации'
+    CRATE_OBJECT:
+      Name: '&e%crate_name% &7(ID: &f%crate_id%&7)'
+      Lore:
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fРедактирования'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fУдаления &7(окончательно)'
+    CRATE_CREATE:
+      Name: Создание кейса
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Создать новый кейс.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fсоздания'
+    CRATE_CHANGE_NAME:
+      Name: Название кейса
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%crate_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает отображаемое имя.'
+      - '&7Это имя используется в сообщениях,'
+      - '&7графических интерфейсах, голограммах и т. д.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки'
+    CRATE_CHANGE_PERMISSION:
+      Name: Требование разрешения
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aВключено: &f%crate_permission_required%'
+      - '&aУзел: &f%crate_permission%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает, требуется ли разрешение'
+      - '&7для открытия этого кейса.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fПереключения'
+    CRATE_CHANGE_COOLDOWN:
+      Name: Перезарядка открытия
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%crate_opening_cooldown%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает время восстановления'
+      - '&7для повторного открытия этого кейса.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Если установлено отрицательное значение,'
+      - '&x&F&F&C&3&0&0кейс можно открыть только один раз.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки'
+      - '&x&8&6&d&e&2&aПравый клик для &fОтключения'
+      - '&x&8&6&d&e&2&a[Q] Ключ к &fодноразовому'
+    CRATE_CHANGE_CONFIG:
+      Name: Макет графического интерфейса
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aПредпросмотр: &f%crate_preview_config%'
+      - '&aОткрытие: &f%crate_animation_config%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает конфигурацию, используемую для кейса'
+      - '&7Предварительный просмотр и открытие графического интерфейса.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Вы можете создавать/редактировать '
+      - '&x&F&F&C&3&0&0превью кейсов в /previews/ папке.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Вы можете создавать/редактировать '
+      - '&x&F&F&C&3&0&0Открытие в кейсов в /openings/ папке.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки Открытия'
+      - '&x&8&6&d&e&2&aПравый клик для &fОтключения Открытия'
+      - '&x&8&6&d&e&2&aШифт-Левый клик для &fУстановки Предпросмотра'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fОтключения Предпросмотра'
+    CRATE_CHANGE_KEYS:
+      Name: Прикрепленные ключи
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%crate_key_ids%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Задает список ключей кейса,'
+      - '&7которые откроют этот кейс.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Если ключи не прикреплены,'
+      - '&x&F&F&C&3&0&0кейс можно открыть без ключа(ей).'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9Обязательно укажите правильные'
+      - '&x&C&7&0&0&3&9идентификаторы ключей!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fAdd Key'
+      - '&x&8&6&d&e&2&aПравый клик для &fОчистить список'
+    CRATE_CHANGE_CITIZENS:
+      Name: Прикрепленные NPC
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aNPC Id:'
+      - '&a%crate_attached_citizens%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Задает список идентификаторов NPC,'
+      - '&7которые будут открывать и просматривать'
+      - '&7этот кейс при клике.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9У вас должен быть'
+      - '&x&C&7&0&0&3&9установлен плагин Citizens!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fДобавить NPC'
+      - '&x&8&6&d&e&2&aПравый клик для &fОчистить список'
+    CRATE_CHANGE_OPEN_COST:
+      Name: Стоимость открытия
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aМонеты: &f$%crate_opening_cost_money%'
+      - '&aУровень опыта: &f%crate_opening_cost_exp%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает, сколько денег/опыта игрок.'
+      - '&7должен будет заплатить, чтобы открыть это'
+      - '&7кейс.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9Для работы денежной стоимости у'
+      - '&x&C&7&0&0&3&9вас должны быть установлены'
+      - '&x&C&7&0&0&3&9плагины Vault + Economy!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки Money'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки Exp'
+      - '&x&8&6&d&e&2&aШифт-Левый клик для &fОтключения Money'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fОтключения Exp'
+    CRATE_CHANGE_ITEM:
+      Name: Предмет кейса
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%crate_item_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает предмет кейса, который'
+      - '&7будет использоваться, когда вы даете'
+      - '&7этот кейс игрокам или добавляете'
+      - '&7его в меню кейсов.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Для достижения наилучшего результата примените'
+      - '&x&F&F&C&3&0&0пользовательское название предмета, историю и другие'
+      - '&x&F&F&C&3&0&0настройки, прежде чем разместить его здесь.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aПеретащите для &fЗамены'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки предмета'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: Расположение блоков и Отталкивание
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%crate_block_locations%'
+      - '&aОтталкивание Включено: &f%crate_block_pushback_enabled%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Задает список мест расположения блоков,'
+      - '&7к которым будет прикреплен этот кейс.'
+      - '&7При нажатии на эти блоки происходит предварительный,'
+      - '&7просмотр или открытие кейса.'
+      - '&7'
+      - '&7Также задает, должен ли кейс отталкивать'
+      - '&7игроков, когда они не могут'
+      - '&7открыть кейс или нет ключа.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fНазначить блок'
+      - '&x&8&6&d&e&2&aПравый клик для &fОчистить список'
+      - '&x&8&6&d&e&2&a[Q] Key для &fПереключения Отталкивания'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: Голограммы
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aВключено: &f%crate_block_hologram_enabled%'
+      - '&aY Сдвиг: &f%crate_block_hologram_offset_y%'
+      - '&aТекст:'
+      - '&a%crate_block_hologram_text%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает отображение текста'
+      - '&7голограммы над блоком(ами) кейса.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9У вас должен быть установлен плагин голограмм:'
+      - '&x&C&7&0&0&3&9- HolographicDisplays'
+      - '&x&C&7&0&0&3&9- DecentHolograms'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fДобавить строку'
+      - '&x&8&6&d&e&2&aПравый клик для &fОчистить текст'
+      - '&x&8&6&d&e&2&aШифт-Левый клик для &fПереключения Голограммы'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fУстановки Y Сдвиг'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: Эффект блока
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aМодель: &f%crate_block_effect_model%'
+      - '&aЧастицы: &f%crate_block_effect_particle_name%'
+      - '&aДата: &f%crate_block_effect_particle_data%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает эффект для бесконечного'
+      - '&7воспроизведения вокруг блоков кейса.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Формат данных для цветных частиц: ''R,G,B'''
+      - '&x&F&F&C&3&0&0(255,0,0)'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Формат данных для частиц элемента/блока: MATERIAL_NAME'
+      - '&x&F&F&C&3&0&0(SAND)'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&a[Q] Key для &fПереключения Модель'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки Частицы'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки Даты'
+    CRATE_CHANGE_REWARDS:
+      Name: Награды кейса
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Здесь вы можете создавать и'
+      - '&7управлять наградами для кейса.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fНавигация'
+    REWARD_OBJECT:
+      Name: '&e%reward_name% &7(ID: &f%reward_id%&7)'
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Шанс: &f%reward_chance%%'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fРедактирования'
+      - '&x&8&6&d&e&2&a[Q] Key для &fУдаления &7(окончательно)'
+      - '&x&8&6&d&e&2&aШифт-Левый клик для &fДвигаться вперед'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fДвигаться назад'
+    REWARD_CREATE:
+      Name: Создать награду
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Создает новую награду'
+      - '&7для кейса.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fСоздания'
+      - '&x&8&6&d&e&2&aПеретащите для &fБыстрое создание'
+    REWARD_SORT:
+      Name: Сортировать награды
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Автоматически сортируйте свои'
+      - '&7награды в определенном порядке.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fСортировать по шансу'
+      - '&x&8&6&d&e&2&aПравый клик для &fСортировать по типу'
+      - '&x&8&6&d&e&2&aШифт-Левый клик для &fСортировать по названию'
+    REWARD_CHANGE_NAME:
+      Name: Отображаемое имя награды
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%reward_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает отображаемое имя'
+      - '&7вознаграждения. Это имя в'
+      - '&7основном используется в сообщениях.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9Это НЕ имя предварительного'
+      - '&x&C&7&0&0&3&9просмотра награды!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки'
+      - '&x&8&6&d&e&2&aПравый клик для &fСинхронизировать с именем пред. просмотра'
+    REWARD_CHANGE_PREVIEW:
+      Name: Предпросмотр предмета
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%reward_preview_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает элемент предварительного'
+      - '&7просмотра для этой награды. Этот'
+      - '&7предмет будет отображаться при'
+      - '&7предварительном просмотре кейса'
+      - '&7и при открытии графического'
+      - '&7интерфейса для отображения наград.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Для достижения наилучшего'
+      - '&x&F&F&C&3&0&0результата примените к элементу'
+      - '&x&F&F&C&3&0&0собственное имя, историю и другие'
+      - '&x&F&F&C&3&0&0настройки, прежде чем размещать'
+      - '&x&F&F&C&3&0&0его здесь.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aПеретащите для &fЗамены'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки предмета'
+    REWARD_CHANGE_CHANCE:
+      Name: Шанс
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%reward_chance%%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает вероятность'
+      - '&7выпадения этой награды.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Шансы на получение вознаграждения,'
+      - '&x&F&F&C&3&0&0на самом деле работают как ''вес'','
+      - '&x&F&F&C&3&0&0поэтому они не должны достигать 100%'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки'
+    REWARD_CHANGE_COMMANDS:
+      Name: Команды вознаграждения
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%reward_commands%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Список команд, которые будут'
+      - '&7выполнены, когда игроку будет'
+      - '&7вручена эта награда.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0При добавлении команды ищите'
+      - '&x&F&F&C&3&0&0префиксы команд в чате.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fДобавить команду'
+      - '&x&8&6&d&e&2&aПравый клик для &fОчистить список'
+    REWARD_CHANGE_ITEMS:
+      Name: Предметы награды
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Список предметов, которые будут'
+      - '&7добавлены в инвентарь игрока'
+      - '&7при получении этой награды.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Просто закройте инвентарь, чтобы'
+      - '&x&F&F&C&3&0&0сохранить и вернуть.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fНавигация'
+    REWARD_CHANGE_BROADCAST:
+      Name: Трансляция сообщений
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aВключено: &f%reward_broadcast%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает, будет ли транслироваться'
+      - '&7сообщение о победе для этой'
+      - '&7награды всем онлайн-игрокам.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fПереключения'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: Лимиты выигрыша
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aКоличество: &f%reward_win_limit_amount%'
+      - '&aЗадержка: &f%reward_win_limit_cooldown%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает, сколько раз и'
+      - '&7как часто эта награда может'
+      - '&7быть выдана игроку.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Установите значение -1 для безлимитного режима.'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Установите время восстановления на -1'
+      - '&x&F&F&C&3&0&0для получения единовременной награды.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9Лимит действует на одного'
+      - '&x&C&7&0&0&3&9игрока, а не на всех.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки Количества'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки Задержки'
+      - '&x&8&6&d&e&2&a[Q] кнопка для &fОтключения'
+    KEY_OBJECT:
+      Name: '&e%key_name% &7(ID: &f%key_id%&7)'
+      Lore:
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Виртуальный: &f%key_virtual%'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fРедактирования'
+      - '&x&8&6&d&e&2&aШифт-Правый клик для &fУдаления &7(окончательно)'
+    KEY_CREATE:
+      Name: Создание ключа
+      Lore:
+      - '&6&l[?] Описание:'
+      - '&7Создание нового ключа от кейса'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fСоздания'
+    KEY_CHANGE_NAME:
+      Name: Название ключа
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%key_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает отображаемое имя ключа.'
+      - '&7Это имя используется в сообщениях.'
+      - ' '
+      - '&c&l[!] Предупреждение:'
+      - '&x&C&7&0&0&3&9Эта опция не влияет на отображаемое'
+      - '&x&C&7&0&0&3&9имя предмета ключа!'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fУстановки'
+    KEY_CHANGE_ITEM:
+      Name: Дредмет для ключа
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&a%key_item_name%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает предмет для ключа,'
+      - '&7который будет использоваться при'
+      - '&7передаче ключа в инвентарь игрока'
+      - ' '
+      - '&e&l[!] Примечание:'
+      - '&x&F&F&C&3&0&0Для достижения наилучшего результата примените'
+      - '&x&F&F&C&3&0&0собственное имя, историю и другие настройки,'
+      - '&x&F&F&C&3&0&0прежде чем помещать сюда элемент.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aПеретащите для &fЗамены'
+      - '&x&8&6&d&e&2&aПравый клик для &fУстановки предмета'
+    KEY_CHANGE_VIRTUAL:
+      Name: Виртуальный ключ
+      Lore:
+      - '&b&l[?] Текущее:'
+      - '&aВиртуальный: &f%key_virtual%'
+      - ' '
+      - '&6&l[?] Описание:'
+      - '&7Устанавливает, является ли этот ключ'
+      - '&7виртуальным ключом. Виртуальные ключи не'
+      - '&7могут быть переданы в качестве инвентарных'
+      - '&7предметов и хранятся в базе данных.'
+      - ' '
+      - '&x&5&5&e&1&3&6&l[>] Действие:'
+      - '&x&8&6&d&e&2&aЛевый клик для &fПереключения'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#fdf35e&lОграничения разрешений'
+      Lore:
+      - '#d4d9d8Игроки, имеющие любое разрешение'
+      - '#d4d9d8из списка, не смогут получить'
+      - '#d4d9d8эту награду.'
+      - ''
+      - '#fdf35e&lТекущее:'
+      - '#d4d9d8%reward_ignored_for_permissions%'
+      - ''
+      - '#aefd5e&lДействие:'
+      - '#aefd5e▪ #d4d9d8Левый клик: #aefd5eДобавить разрешение'
+      - '#aefd5e▪ #d4d9d8Правый клик: #aefd5eОчистить список'
+  Enter:
+    DisplayName: <lgray>Введите <lgreen>[Название]</lgreen></lgray>
+    Amount: <lgray>Введите <lgreen>[Количество]</lgreen></lgray>
+    Value: <lgray>Введите <lgreen>[Значение]</lgreen></lgray>
+  Milestone:
+    Enter:
+      Reward: '#d4d9d8Введите #aefd5e[Id награды]'
+  Item:
+    Crates:
+      Name: <lyellow><b>Кейсы</b></lyellow>
+      Lore:
+      - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>навигации</lyellow>.</lgray>
+    Keys:
+      Name: <lyellow><b>Ключи</b></lyellow>
+      Lore:
+      - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>навигации</lyellow>.</lgray>
+    Crate:
+      Object:
+        Name: '<lyellow><b>%crate_name%<reset><lgray> (ID: <white>%crate_id%</white>)</lgray></reset></b></lyellow>'
+        Lore:
+        - '#aaa8a8%crate_inspect_keys%'
+        - '#aaa8a8%crate_inspect_rewards%'
+        - '#aaa8a8%crate_inspect_opening%'
+        - '#aaa8a8%crate_inspect_preview%'
+        - '#aaa8a8%crate_inspect_hologram%'
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>редактировать</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Шифт-Правый клик для <lyellow>удаления <lred>(окончательно)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Новый кейс</b></lyellow>
+        Lore: []
+      DisplayName:
+        Name: <lyellow><b>Отображаемое имя</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Текущее: </lgray>%crate_name%</lyellow>'
+        - ''
+        - <lgray>Имя кейса для сообщений, заполнителей</lgray>
+        - <lgray>и голограмм.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>изменить</lyellow>.</lgray>
+      Permission:
+        Name: <lyellow><b>Требование разрешения</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%crate_permission_required%</lyellow>'
+        - '<lyellow>● <lgray>Разрешение: </lgray>%crate_permission%</lyellow>'
+        - ''
+        - <lgray>Устанавливает, требуется ли разрешение</lgray>
+        - <lgray>для открытия этого кейса.</lgray>
+        - ''
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>переключить</lyellow>.</lgray>
+      OpenCooldown:
+        Name: <lyellow><b>Задержка открытия</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Задержка: </lgray>%crate_open_cooldown%</lyellow>'
+        - ''
+        - <lgray>Устанавливает, сколько времени игроку</lgray>
+        - <lgray>подождать, чтобы снова открыть кейс.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик чтобы <lyellow>установить задержку</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик чтобы <lyellow>удалить</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] кнопка чтобы <lyellow>сделать одноразовым</lyellow>.</lgray>
+      Template:
+        Name: '#ead931&lПредпросмотр и анимация'
+        Lore:
+        - '#aaa8a8%crate_inspect_preview%'
+        - '#aaa8a8%crate_inspect_opening%'
+        - ''
+        - '#aaa8a8Устанавливает шаблон графического'
+        - '#aaa8a8интерфейса для предварительного просмотра'
+        - '#aaa8a8наград и анимации их просмотра.'
+        - ''
+        - '#aaa8a8Вы можете найти (или создать) их в'
+        - '#aaa8a8#e8f2f2/previews/#aaa8a8 и #e8f2f2/openings/#aaa8a8 папках.'
+        - ''
+        - '#ead931&lТекущее:'
+        - '#ead931▪ #aaa8a8Предпросмотр: #ead931%crate_preview_config%#aaa8a8 (#e8f2f2Лев-Клик#aaa8a8)'
+        - '#ead931▪ #aaa8a8Открытие: #ead931%crate_animation_config%#aaa8a8 (#e8f2f2Прав-Клик#aaa8a8)'
+        - ''
+        - '#aaa8a8(Удержание #e8f2f2Shift#aaa8a8 и клик, чтобы отключить)'
+      Keys:
+        Name: '#ead931&lПрикрепленные ключи'
+        Lore:
+        - '#aaa8a8%crate_inspect_keys%'
+        - ''
+        - '#aaa8a8Устанавливает, какие ключи можно'
+        - '#aaa8a8использовать для открытия этого кейса.'
+        - ''
+        - '#ead931&lТекущее:'
+        - '#aaa8a8%crate_key_ids%'
+        - ''
+        - '#aaa8a8(#e8f2f2Лев-Клик#aaa8a8 добавить)'
+        - '#aaa8a8(#e8f2f2Прав-Клик#aaa8a8 удалить все)'
+      OpenCost:
+        Name: <lyellow><b>Стоимость открытия</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Текущее: </lgray>%crate_open_cost%</lyellow>'
+        - ''
+        - <lgray>Устанавливает, что и сколько</lgray>
+        - <lgray>игрок должен заплатить, чтобы</lgray>
+        - <lgray>открыть этот кейс..</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>добавить цену</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] кнопка, чтобы <lyellow>удалить все</lyellow>.</lgray>
+      InventoryItem:
+        Name: <lyellow><b>Предмет для инвентаря</b></lyellow>
+        Lore:
+        - <lgray>Этот предмет используется для</lgray>
+        - <lgray>отображения кейса в меню кейсов,</lgray>
+        - <lgray>и когда передаете кейс игрокам.</lgray>
+        - ''
+        - <lgray>Вам следует заранее создать название</lgray>
+        - <lgray>предмета и его описание, прежде чем</lgray>
+        - <lgray>переносить его сюда.</lgray>
+        - ''
+        - <lgray><orange>[❗]</orange> <lgray>Теги NBT <orange>не</orange> поддерживаются!</lgray></lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Перетащите и <lyellow>утановите</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>взять предмет</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>получить копию</lyellow>.</lgray>
+      Placement:
+        Info:
+          Name: <lyellow><b>Размещение</b></lyellow>
+          Lore:
+          - <lgray>Размещайте кейс в любом месте</lgray>
+          - <lgray>мира с потрясающими</lgray>
+          - <lgray>эффектами частиц и голограммой</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Клик для <lyellow>навигации</lyellow>.</lgray>
+        Locations:
+          Name: <lyellow><b>Назначенные блоки</b></lyellow>
+          Lore:
+          - <lgray>%crate_locations%</lgray>
+          - ''
+          - <lgray>Игроки могут взаимодействовать с</lgray>
+          - <lgray>блоками из списка ниже, чтобы</lgray>
+          - <lgray>открыть или просмотреть кейс.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>назначить блок</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>удалить все</lyellow>.</lgray>
+        Pushback:
+          Name: <lyellow><b>Отталкивание</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Статус: </lgray>%crate_pushback_enabled%</lyellow>'
+          - ''
+          - <lgray>Устанавливает, будет ли игрок отброшен</lgray>
+          - <lgray>от блока кейса, если</lgray>
+          - <lgray>не сможет его открыть.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Клик чтобы <lyellow>переключить</lyellow>.</lgray>
+        Hologram:
+          Name: <lyellow><b>Голограмма</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Статус: </lgray>%crate_hologram_enabled%</lyellow>'
+          - '<lyellow>● <lgray>Шаблон: </lgray>%crate_hologram_template%</lyellow>'
+          - '<lyellow>● <lgray>Y Сдвиг: </lgray>%crate_hologram_y_offset%</lyellow>'
+          - ''
+          - <lgray>Создает голограмму над блоками кейса</lgray>
+          - <lgray>с определенным текстовым шаблоном.</lgray>
+          - ''
+          - <lgray>Редактировать шаблоны голограмм в <lorange>config.yml</lorange></lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>переключить</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>установить шаблон</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Shift-Левый клик, чтобы <lyellow>установить Y сдвиг</lyellow>.</lgray>
+          - ''
+        Effects:
+          Name: <lyellow><b>Эффекты частиц</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Модель: </lgray>%crate_effect_model%</lyellow>'
+          - '<lyellow>● <lgray>Частичы: </lgray>%crate_effect_particle_name%</lyellow>'
+          - '<lyellow>● <lgray>Данные: </lgray>%crate_effect_particle_data%</lyellow>'
+          - ''
+          - <lgray>Создайте потрясающий эффект частиц кейса!</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] кнопка, чтобы <lyellow>переключить модель</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>установить Частичы</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>установить Данные</lyellow>.</lgray>
+      Rewards:
+        Name: <lyellow><b>Награды</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Количество: </lgray>%crate_rewards_amount%</lyellow>'
+        - ''
+        - <lgray>Все возможные награды в кейсах</lgray>
+        - <lgray>как выигрыши, так и за достижения.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Нажмите для <lyellow>навигации</lyellow>.</lgray>
+      Milestones:
+        Name: <lyellow><b>Основные Достижения</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Достижения: </lgray>%crate_milestones_amount%</lyellow>'
+        - '<lyellow>● <lgray>Повторяемый: </lgray>%crate_milestones_repeatable%</lyellow>'
+        - ''
+        - <lgray>Достижения — это еще один</lgray>
+        - <lgray>способ вознаградить своих игроков</lgray>
+        - <lgray>и мотивировать их открывать</lgray>
+        - <lgray>еще больше куйсов!</lgray>
+        - ''
+        - <lgray>Давайте им уникальные награды</lgray>
+        - <lgray>каждый раз, когда они открывают</lgray>
+        - <lgray>этот куйс X раз.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>навигации</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>переключить повторяемость</lyellow>.</lgray>
+      PreviewAndOpening:
+        Name: <lyellow><b>Предпросмотр и открытие</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Предпросмотр: </lgray>%crate_preview_config%</lyellow>'
+        - '<lyellow>● <lgray>Открытие: </lgray>%crate_animation_config%</lyellow>'
+        - ''
+        - <lgray>Устанавливает конфигурации, используемые для:</lgray>
+        - <lgray><lyellow>● </lyellow>Интерфейс предпросмотра кейса (<lorange>/previews/</lorange>)</lgray>
+        - <lgray><lyellow>● </lyellow>Анимация открытия кейса (<lorange>/openingsv2/</lorange>)</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Лев. клик для <lyellow>изменения предпросмотра</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Прав. клик для <lyellow>изменения открытия</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Лев. клик для <lyellow>отключения предпросмотра</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Прав. клик для <lyellow>отключения открытия</lyellow>.</lgray>
+      KeyRequirement:
+        Name: <lyellow><b>Требования для ключа</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%crate_key_required%</lyellow>'
+        - '<lyellow>● <lgray>Ключи: </lgray></lyellow>'
+        - '%crate_key_ids%'
+        - ''
+        - <lgray>Чтобы открыть этот кейс, у игрока</lgray>
+        - <lgray>должны быть определенные ключи.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Лев. клик для <lyellow>добавления ключа</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Прав. клик для <lyellow>удаления всех</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] кнопка для <lyellow>переключить требования</lyellow>.</lgray>
+      Particle:
+        Data:
+          Red:
+            Name: <lyellow><b>Красный</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <lyellow>применить</lyellow>.</lgray>
+          Green:
+            Name: <lyellow><b>Зеленый</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <lyellow>применить</lyellow>.</lgray>
+          Blue:
+            Name: <lyellow><b>Синий</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <lyellow>применить</lyellow>.</lgray>
+          Size:
+            Name: <lyellow><b>Размер</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <lyellow>применить</lyellow>.</lgray>
+          Material:
+            Name: <lyellow><b>Материал</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Перетащите и отпустите, чтобы <lyellow>применить</lyellow>.</lgray>
+          Number:
+            Name: <lyellow><b>Номер</b></lyellow>
+            Lore:
+            - '<lyellow>● <lgray>Текущий: </lgray>%value%</lyellow>'
+            - ''
+            - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <lyellow>применить</lyellow>.</lgray>
+    Reward:
+      Object:
+        Name: '<lyellow><b>%reward_name%<reset><lgray> (ID: <lorange>%reward_id%</lorange>)</lgray></reset></b></lyellow>'
+        Lore:
+        - '%reward_inspect_content%'
+        - ''
+        - '<lyellow>● <lgray>Вес: </lgray>%reward_wieght%</lyellow>'
+        - '<lyellow>● <lgray>Фактический шанс: </lgray>%reward_roll_chance%%</lyellow>'
+        - '<lyellow>● <lgray>Редкость: </lgray>%reward_rarity_name%</lyellow>'
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>редактировать</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Левый клик, чтобы <lyellow>двигаться вперед</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Правый клик, чтобы <lyellow>двигаться назад</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] , чтобы <lyellow>удалить <lred>(окончательно)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Новая награда</b></lyellow>
+        Lore:
+        - <lgray></lgray>
+        - ''
+        - <lgray><lyellow><b>Легкий режим:</b></lyellow></lgray>
+        - <lgray>Щелкните, наведя курсор на</lgray>
+        - <lgray>предмет, чтобы быстро создать</lgray>
+        - <lgray>награду с физическим предметом.</lgray>
+        - ''
+        - <lgray><lyellow><b>Режим эксперта:</b></lyellow></lgray>
+        - <lgray>Нажмите пустым курсором,</lgray>
+        - <lgray>чтобы создать награду без</lgray>
+        - <lgray>физического предмета.</lgray>
+      Sort:
+        Info:
+          Name: <lyellow><b>Сортировать награды</b></lyellow>
+          Lore:
+          - <lgray>Автоматически сортирует награды</lgray>
+          - <lgray>в указанном порядке.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>навигации</lyellow>.</lgray>
+        ByWeight:
+          Name: <lyellow><b>По весу</b></lyellow>
+          Lore: []
+        ByRarity:
+          Name: <lyellow><b>По редкости</b></lyellow>
+          Lore: []
+        ByChance:
+          Name: <lyellow><b>По шансу</b></lyellow>
+          Lore: []
+        ByName:
+          Name: <lyellow><b>По имени</b></lyellow>
+          Lore: []
+        ByItem:
+          Name: <lyellow><b>По предмету</b></lyellow>
+          Lore: []
+      DisplayName:
+        Name: <lyellow><b>Отображаемое имя</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Текущее: </lgray>%reward_name%</lyellow>'
+        - ''
+        - <lgray>Общее название награды, не связанное с предметом</lgray>
+        - <lgray>награды или предварительным просмотром.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>изменить</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Левый клик, чтобы <lyellow>унаследовать от предпросмотра</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Правый клик, чтобы <lyellow>установить для предпросмотра</lyellow>.</lgray>
+      Preview:
+        Name: <lyellow><b>Предпросмотр предмета</b></lyellow>
+        Lore:
+        - <lgray>Предмет, представляющий эту награду.</lgray>
+        - ''
+        - <lgray>Если вознаграждение состоит из</lgray>
+        - <lgray>нескольких физических предметов или их</lgray>
+        - <lgray>нет, вам, вероятно, захочется указать</lgray>
+        - <lgray>конкретный предмет для идентификации</lgray>
+        - <lgray>вознаграждения.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Перетащите и отпустите, чтобы <lyellow>заменить</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>получить копию</lyellow>.</lgray>
+      Weight:
+        Name: <lyellow><b>Редкость и вес</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Редкость: </lgray>%reward_rarity_name%</lyellow>'
+        - '<lyellow>● <lgray>Вес: </lgray>%reward_wieght%</lyellow>'
+        - '<lyellow>● <lgray>Вероятный шанс: </lgray>%reward_roll_chance%%</lyellow>'
+        - ''
+        - <lgray>Шанс выйгрыша зависит от веса</lgray>
+        - <lgray>награды и редкости. Чем больше вес,</lgray>
+        - <lgray>тем больше шанс.</lgray>
+        - ''
+        - <lgray>Прочтите <lorange>документацию</lorange> для</lgray>
+        - <lgray>получения подробностей. Она очень</lgray>
+        - <lgray>хорошо все объясняет.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик, чтобы <lyellow>установить редкость</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик, чтобы <lyellow>установить вес</lyellow>.</lgray>
+      Commands:
+        Name: <lyellow><b>Команды выйгрышей</b></lyellow>
+        Lore:
+        - '%reward_editor_commands%'
+        - ''
+        - <lgray>Все команды, перечисленные ниже,</lgray>
+        - <lgray>будут выполняться от <lorange>консоли</lorange> при</lgray>
+        - <lgray>получении этой награды.</lgray>
+        - ''
+        - <lgray>Вы можете использовать все заполнители <lorange>PlaceholderAPI</lorange>.</lgray>
+        - <lgray>Используйте <lorange>%player_name%</lorange> для имени игрока.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>добавить команды</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик <lyellow>удалить всеl</lyellow>.</lgray>
+      Items:
+        Name: <lyellow><b>Предметы выигрыша</b></lyellow>
+        Lore:
+        - '%reward_editor_items%'
+        - ''
+        - <lgray>Все предметы, перечисленные ниже,</lgray>
+        - <lgray>будут добавлены в  <lorange>инвентарь игрока</lorange></lgray>
+        - <lgray>при получении этой награды.</lgray>
+        - ''
+        - <lgray>Вы можете использовать заполнители <lorange>PlaceholderAPI</lorange>.</lgray>
+        - <lgray>Используйте <lorange>%player_name%</lorange> для имени игрока.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>навигации</lyellow>.</lgray>
+      Broadcast:
+        Name: <lyellow><b>Трансляция</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%reward_broadcast%</lyellow>'
+        - ''
+        - <lgray>Устанавливает, будет ли плагин</lgray>
+        - <lgray>транслировать сообщение, когда</lgray>
+        - <lgray>кто-то выиграет эту награду.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>переключить</lyellow>.</lgray>
+      WinLimits:
+        Name: '#ead931&lЛимиты выигрыша'
+        Lore:
+        - '#aaa8a8Устанавливает, как часто и сколько'
+        - '#aaa8a8раз каждый игрок может снова '
+        - '#aaa8a8выиграть эту награду.'
+        - ''
+        - '#ead931&lТекущее:'
+        - '#ead931▪ #aaa8a8Количество: #ead931%reward_win_limit_amount%#aaa8a8 (#e8f2f2Left-Click#aaa8a8)'
+        - '#ead931▪ #aaa8a8Задержка: #ead931%reward_win_limit_cooldown%#aaa8a8 (#e8f2f2Right-Click#aaa8a8)'
+        - ''
+        - '#aaa8a8(#e8f2f2Shift-Лев клик#aaa8a8 сделать одноразовым)'
+        - '#aaa8a8(#e8f2f2Shift-Прав клик#aaa8a8 отключить)'
+      IgnoredPermissions:
+        Name: <lyellow><b>Ограничения разрешений</b></lyellow>
+        Lore:
+        - '%reward_ignored_for_permissions%'
+        - ''
+        - <lgray>Игроки, имеющие любое из перечисленных</lgray>
+        - <lgray>разрешений, не смогут получить награду.</lgray>
+        - ''
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>добавить</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик <lyellow>удалить все</lyellow>.</lgray>
+      SetPlaceholders:
+        Name: <lyellow><b>Применить заполнители</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%reward_placeholder_apply%</lyellow>'
+        - ''
+        - <lgray>Применяет заполнители кейсов, наград и игроков</lgray>
+        - <lgray>ко всем предметам наград при победе.</lgray>
+        - ''
+        - <lgray>Эта опция <lred>может испортить</lred> пользовательские предметы.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <yellow>переключить</lyellow>.</lgray>
+      GlobalWinLimit:
+        Name: <lyellow><b>Глобальные Лимиты выигрыша</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%reward_global_win_limit_enabled%</lyellow>'
+        - '<lyellow>● <lgray>Количество: </lgray>%reward_global_win_limit_amount%</lyellow>'
+        - '<lyellow>● <lgray>Задержка: </lgray>%reward_global_win_limit_cooldown%</lyellow>'
+        - '<lyellow>● <lgray>Шаг задержки: </lgray>%reward_global_win_limit_step%</lyellow>'
+        - ''
+        - <lgray>Устанавливает время восстановления и сумму награды</lgray>
+        - <lgray>Устанавливает время восстановления награды</lgray>
+        - <lgray>и количество возможных побед для всего сервера.</lgray>
+        - ''
+        - <lgray>Более подробную информацию читайте в <lorange>документации</lorange>.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] копка для <lyellow>переключения</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>установки кол-ва</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик для <lyellow>установки задержки</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Левый клик для <lyellow>установки шага задержки</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Правый клик для <lyellow>установки задержки в полночь</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>[F / Swap] копка для <lyellow>сброса сохраненных данных</lyellow>.</lgray>
+      PlayerWinLimit:
+        Name: <lyellow><b>Лимиты выигрыша игрока</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%reward_player_win_limit_enabled%</lyellow>'
+        - '<lyellow>● <lgray>Количество: </lgray>%reward_player_win_limit_amount%</lyellow>'
+        - '<lyellow>● <lgray>Задержка: </lgray>%reward_player_win_limit_cooldown%</lyellow>'
+        - '<lyellow>● <lgray>Шаг задержки: </lgray>%reward_player_win_limit_step%</lyellow>'
+        - ''
+        - <lgray>Устанавливает задержку и сумму награды</lgray>
+        - <lgray>возможных побед для <lorange>каждого игрока</lorange>.</lgray>
+        - ''
+        - <lgray>Более подробную информацию читайте в <lorange>документации</lorange>.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] копка для <lyellow>переключения</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик для <lyellow>установки кол-ва</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик для <lyellow>установки задержки</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Левый клик для <lyellow>установки шага задержки</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Правый клик для <lyellow>установки задержки в полночь</lyellow>.</lgray>
+      Limit:
+        Global:
+          Name: <lyellow><b>Глобальные лимиты выигрыша</b></lyellow>
+          Lore:
+          - <lgray>Устанавливает время восстановления</lgray>
+          - <lgray>награды и количество возможных побед <lorange>глобально</lorange>.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Нажмите для <lyellow>навигации</lyellow>.</lgray>
+        Player:
+          Name: <lyellow><b>Лимиты выигрыша игрока</b></lyellow>
+          Lore:
+          - <lgray>Устанавливает время восстановления награды и</lgray>
+          - <lgray>количество возможных побед <lorange>индивидуально</lorange>.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Нажмите для <lyellow>навигации</lyellow>.</lgray>
+        Toggle:
+          Name: <lyellow><b>Включено</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Текущее: </lgray>%limit_enabled%</lyellow>'
+          - ''
+          - <lgray>Определяет, включен ли лимит.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Нажмите, чтобы <yellow>переключить</lyellow>.</lgray>
+        Amount:
+          Name: <lyellow><b>Количество</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Текущее: </lgray>%limit_amount%</lyellow>'
+          - ''
+          - <lgray>Устанавливает количество доступных розыгрышей</lgray>
+          - <lgray><lyellow>глобально</yellow> или <yellow>для каждого игрока</yellow>, зависит от</gray> - <lgray>типа лимита.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Лев-Клик <lyellow>изменить</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Прав-Клик <lyellow>безлимитно</lyellow>.</lgray>
+        Cooldown:
+          Name: <lyellow><b>Задержка</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Текущее: </lgray>%limit_cooldown%</lyellow>'
+          - ''
+          - <lgray>При применении задержки игроки не</lgray>
+          - <lgray>смогут получить эту награду, пока</lgray>
+          - <lgray>не истечет время перезарядки.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Лев-Клик <lyellow>изменить</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>Прав-Клик <lyellow>в полночь</lyellow>.</lgray>
+          - <lyellow>[▶]</lyellow> <lgray>[Q / Drop] кнопка <lyellow>отключить</lyellow>.</lgray>
+        CooldownStep:
+          Name: <lyellow><b>Шаг перезарядки</b></lyellow>
+          Lore:
+          - '<lyellow>● <lgray>Текущее: </lgray>%limit_cooldown_step%</lyellow>'
+          - ''
+          - <lgray>Устанавливает количество розыгрышей</lgray>
+          - <lgray>для применения перезарядки.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>изменить</lyellow>.</lgray>
+        Reset:
+          Name: <lyellow><b>Сброс</b></lyellow>
+          Lore:
+          - <lgray>Сбрасывает текущие сохраненные</lgray>
+          - <lgray>значения количества и</lgray>
+          - <lgray>времени восстановления.</lgray>
+          - ''
+          - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>сбросить</lyellow>.</lgray>
+    Milestone:
+      Create:
+        Name: <lyellow><b>Новый Этап</b></lyellow>
+        Lore: []
+      Object:
+        Name: '<lyellow><b>Этап: %milestone_openings%</b></lyellow>'
+        Lore:
+        - '%milestone_inspect_reward%'
+        - ''
+        - '<lyellow>● <lgray>Открытия: </lgray>%milestone_openings%</lyellow>'
+        - '<lyellow>● <lgray>Идентификатор награды: </lgray>%milestone_reward_id%</lyellow>'
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>изменить</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик <lyellow>изменить вознаграждение</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Shift-Правый клик <lyellow>удалить <lred>(окончательно)</lred></lyellow>.</lgray>
+    Key:
+      Object:
+        Name: '<lyellow><b>%key_name%<reset><lgray> (ID: <white>%key_id%</white>)</lgray></reset></b></lyellow>'
+        Lore:
+        - '<lyellow>● <lgray>Виртуальный: </lgray>%key_virtual%</lyellow>'
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>редактировать</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик <lyellow>удалить <lred>(окончательно)</lred></lyellow>.</lgray>
+      Create:
+        Name: <lyellow><b>Новый ключ</b></lyellow>
+        Lore: []
+      DisplayName:
+        Name: <lyellow><b>Отображаемое имя</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Текущее: </lgray>%key_name%</lyellow>'
+        - ''
+        - <lgray>Имя ключа для сообщений,</lgray>
+        - <lgray>заполнителей и голограмм.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>изменить</lyellow>.</lgray>
+      Item:
+        Name: <lyellow><b>Предмет ключа</b></lyellow>
+        Lore:
+        - <lgray>Установить предмет для </lgray>
+        - <lgray>физического ключа.</lgray>
+        - ''
+        - <lgray>Вам следует заранее создать название предмета</lgray>
+        - <lgray>и его описание, прежде чем переносить его сюда.</lgray>
+        - ''
+        - <lgray><orange>[❗]</orange> <lgray>Теги NBT <orange>не</orange> поддерживаются!</lgray></lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Перетащите и отпустите, чтобы <lyellow>заменить </lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Левый клик <lyellow>получить предмет ключа</lyellow>.</lgray>
+        - <lyellow>[▶]</lyellow> <lgray>Правый клик <lyellow>получить копию</lyellow>.</lgray>
+      Virtual:
+        Name: <lyellow><b>Виртуальный</b></lyellow>
+        Lore:
+        - '<lyellow>● <lgray>Включено: </lgray>%key_virtual%</lyellow>'
+        - ''
+        - <lgray>Устанавливает, является ли ключ виртуальным.</lgray>
+        - ''
+        - <lyellow>[▶]</lyellow> <lgray>Клик, чтобы <lyellow>переключить</lyellow>.</lgray>
+  Error:
+    BadName: <lred>Разрешены только латинские буквы и цифры.</lred>
+  Title:
+    Main: <black>Редактор ExcellentCrates</black>
+    Crates: <black>Редактор Кейсов</black>
+    Crate:
+      Settings: <black>Параметры кейса</black>
+      Milestones: <black>Этапы создания кейса</black>
+      Effect: <black>Эффект кейса</black>
+      Placement: <black>Размещение кейсов</black>
+    Reward:
+      List: <black>Награды из кейсов</black>
+      Settings: <black>Настройки наград</black>
+      Sort: <black>Сортировка наград</black>
+      Limits: <black>Reward Limits</black>
+    Keys: <black>Редактор Ключей</black>
+    Key:
+      Settings: <black>Настройки ключа</black>
+# Here you can create your own custom placeholders to use it in language config.
+# Key = Placeholder, Value = Replacer.
+Placeholders:
+  '%green%': '#aefd5e'
+  '%red%': '#fd5e5e'
+  '%gray%': '#d4d9d8'
+Other:
+  Midnight: Полночь
+  Free: Бесплатно
