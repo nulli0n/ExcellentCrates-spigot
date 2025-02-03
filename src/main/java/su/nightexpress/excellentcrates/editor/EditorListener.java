@@ -10,8 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.CrateUtils;
-import su.nightexpress.nightcore.dialog.Dialog;
 import su.nightexpress.nightcore.manager.AbstractListener;
+import su.nightexpress.nightcore.ui.dialog.Dialog;
+import su.nightexpress.nightcore.ui.dialog.DialogManager;
 
 public class EditorListener extends AbstractListener<CratesPlugin> {
 
@@ -22,7 +23,7 @@ public class EditorListener extends AbstractListener<CratesPlugin> {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCrateBlockAssign(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        Dialog editor = Dialog.get(player);
+        Dialog editor = DialogManager.getDialog(player);
         if (editor == null) return;
 
         Block block = event.getClickedBlock();
@@ -37,8 +38,9 @@ public class EditorListener extends AbstractListener<CratesPlugin> {
         if (crate == null) return;
 
         crate.addBlockPosition(block.getLocation());
-        crate.updateHologram();
         crate.saveSettings();
-        Dialog.stop(player);
+        crate.recreateHologram();
+
+        DialogManager.stopDialog(player);
     }
 }

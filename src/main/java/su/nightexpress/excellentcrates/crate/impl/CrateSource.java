@@ -4,21 +4,26 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
 public class CrateSource {
 
     private final Crate     crate;
     private final ItemStack item;
-    private final Block     block;
+    private final WorldPos  blockPos;
 
     public CrateSource(@NotNull Crate crate) {
-        this(crate, null, null);
+        this(crate, null, (WorldPos) null);
     }
 
     public CrateSource(@NotNull Crate crate, @Nullable ItemStack item, @Nullable Block block) {
+        this(crate, item, block == null ? null : WorldPos.from(block));
+    }
+
+    public CrateSource(@NotNull Crate crate, @Nullable ItemStack item, @Nullable WorldPos blockPos) {
         this.crate = crate;
         this.item = item;
-        this.block = block;
+        this.blockPos = blockPos;
     }
 
     public boolean hasItem() {
@@ -26,21 +31,35 @@ public class CrateSource {
     }
 
     public boolean hasBlock() {
-        return this.block != null;
+        return this.blockPos != null;
     }
 
     @NotNull
     public Crate getCrate() {
-        return crate;
+        return this.crate;
     }
 
     @Nullable
     public ItemStack getItem() {
-        return item;
+        return this.item;
+    }
+
+    @Nullable
+    public WorldPos getBlockPos() {
+        return this.blockPos;
     }
 
     @Nullable
     public Block getBlock() {
-        return block;
+        return this.blockPos == null ? null : this.blockPos.toBlock();
+    }
+
+    @Override
+    public String toString() {
+        return "CrateSource{" +
+            "crate=" + crate +
+            ", item=" + item +
+            ", block=" + blockPos +
+            '}';
     }
 }

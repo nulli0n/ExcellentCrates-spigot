@@ -3,42 +3,68 @@ package su.nightexpress.excellentcrates.opening;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.opening.inventory.InventoryOpening;
-import su.nightexpress.nightcore.api.event.PlayerOpenMenuEvent;
 import su.nightexpress.nightcore.manager.AbstractListener;
 
 public class OpeningListener extends AbstractListener<CratesPlugin> {
 
-    private final OpeningManager openingManager;
+    private final OpeningManager manager;
 
-    public OpeningListener(@NotNull CratesPlugin plugin, @NotNull OpeningManager openingManager) {
+    public OpeningListener(@NotNull CratesPlugin plugin, @NotNull OpeningManager manager) {
         super(plugin);
-        this.openingManager = openingManager;
+        this.manager = manager;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onQuit(PlayerQuitEvent event) {
-        this.openingManager.stopOpening(event.getPlayer());
+        this.manager.stopOpening(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onMenuOpen(PlayerOpenMenuEvent event) {
-        Player player = event.getPlayer();
-        if (!this.openingManager.isOpening(player)) return;
+    public void onInvOpeningClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Opening opening = this.manager.getOpening(player);
+        if (!(opening instanceof InventoryOpening inventoryOpening)) return;
 
-        Opening opening = this.openingManager.getOpening(player);
+        inventoryOpening.onClick(event);
+    }
 
-        if (opening instanceof InventoryOpening inventoryOpening) {
-            if (event.getMenu() != inventoryOpening.getMenu()) {
-                event.setCancelled(true);
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInvOpeningClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        Opening opening = this.manager.getOpening(player);
+        if (!(opening instanceof InventoryOpening inventoryOpening)) return;
+
+        if (inventoryOpening.isLaunched() && !opening.isCompleted()) {
+            if (inventoryOpening.canSkip()) {
+                opening.instaRoll();
             }
-            return;
+//            else  {
+//                inventoryOpening.setPopupNextTick(true);
+//            }
         }
+        else {
+            inventoryOpening.setCloseTicks(0);
+            opening.stop();
+        }
+    }
 
-        event.setCancelled(true);
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInvOpeningOpen(InventoryOpenEvent event) {
+        Player player = (Player) event.getPlayer();
+        Opening opening = this.manager.getOpening(player);
+        if (!(opening instanceof InventoryOpening inventoryOpening)) return;
+        if (!inventoryOpening.isLaunched()) return;
+
+        if (inventoryOpening.getView() != event.getView()) {
+            event.setCancelled(true);
+        }
     }
 }

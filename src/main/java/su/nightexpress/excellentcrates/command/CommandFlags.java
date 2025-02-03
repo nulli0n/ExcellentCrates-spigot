@@ -1,11 +1,22 @@
 package su.nightexpress.excellentcrates.command;
 
 
-import su.nightexpress.nightcore.command.CommandFlag;
+import org.jetbrains.annotations.NotNull;
+import su.nightexpress.nightcore.command.experimental.builder.SimpleFlagBuilder;
+import su.nightexpress.nightcore.command.experimental.flag.FlagTypes;
 
 public class CommandFlags {
 
-    public static final CommandFlag<Boolean> SILENT  = CommandFlag.booleanFlag("s");
-    public static final CommandFlag<Boolean> NO_SAVE = CommandFlag.booleanFlag("nosave");
-    public static final CommandFlag<Boolean> FORCE   = CommandFlag.booleanFlag("f");
+    public static final String SILENT = "s";
+    public static final String FORCE  = "f";
+
+    @NotNull
+    public static SimpleFlagBuilder silent() {
+        return FlagTypes.simple(SILENT);
+    }
+
+    @NotNull
+    public static SimpleFlagBuilder force() {
+        return FlagTypes.simple(FORCE);
+    }
 }

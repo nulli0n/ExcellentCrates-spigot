@@ -2,7 +2,25 @@ package su.nightexpress.excellentcrates.api.opening;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Spinner extends Tickable {
+public interface Spinner {
+
+    void start();
+
+    void stop();
+
+    void tick();
+
+    void tickAll();
+
+    boolean isRunning();
+
+    boolean isCompleted();
+
+    long getTickInterval();
+
+    long getTickCount();
+
+    boolean isTickTime();
 
     @NotNull String getId();
 
@@ -16,7 +34,5 @@ public interface Spinner extends Tickable {
 
     void setCurrentSpins(long spins);
 
-    default boolean hasSpin() {
-        return this.getCurrentSpins() > 0L;
-    }
+    boolean hasSpin();
 }

@@ -3,25 +3,22 @@ package su.nightexpress.excellentcrates.crate.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.util.placeholder.Placeholder;
-import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
 
-public class Milestone implements Placeholder {
+import java.util.function.UnaryOperator;
+
+public class Milestone {
 
     private final Crate crate;
-    private final PlaceholderMap placeholderMap;
 
     private String rewardId;
-    private int    priority;
     private int    openings;
 
-    public Milestone(@NotNull Crate crate, @NotNull String rewardId, int priority, int openings) {
+    public Milestone(@NotNull Crate crate, @NotNull String rewardId, int openings) {
         this.crate = crate;
-        this.placeholderMap = Placeholders.forMilestone(this);
 
         this.setRewardId(rewardId);
-        this.setPriority(priority);
         this.setOpenings(openings);
     }
 
@@ -30,49 +27,40 @@ public class Milestone implements Placeholder {
         String rewardId = config.getString(path + ".Reward_Id", "null");
         int openings = config.getInt(path + ".Openings");
 
-        return new Milestone(crate, rewardId, 0, openings);
+        return new Milestone(crate, rewardId, openings);
     }
 
     public void write(@NotNull FileConfig config, @NotNull String path) {
-        config.set(path + ".Reward_Id", this.getRewardId());
-        config.set(path + ".Openings", this.getOpenings());
+        config.set(path + ".Reward_Id", this.rewardId);
+        config.set(path + ".Openings", this.openings);
     }
 
-    @Override
     @NotNull
-    public PlaceholderMap getPlaceholders() {
-        return this.placeholderMap;
+    public UnaryOperator<String> replacePlaceholders() {
+        return Placeholders.MILESTONE.replacer(this);
     }
 
     @Nullable
     public Reward getReward() {
-        return this.crate.getReward(this.getRewardId());
+        return this.crate.getReward(this.rewardId);
     }
 
     @NotNull
     public Crate getCrate() {
-        return crate;
+        return this.crate;
     }
 
     @NotNull
     public String getRewardId() {
-        return rewardId;
+        return this.rewardId;
     }
 
     public void setRewardId(@NotNull String rewardId) {
         this.rewardId = rewardId;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
     public int getOpenings() {
-        return openings;
+        return this.openings;
     }
 
     public void setOpenings(int openings) {

@@ -3,13 +3,16 @@ package su.nightexpress.excellentcrates.menu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.menu.impl.CratesMenu;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractManager;
 
+import java.io.File;
 import java.util.*;
 
+@Deprecated
 public class MenuManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, CratesMenu> menuMap;
@@ -21,6 +24,21 @@ public class MenuManager extends AbstractManager<CratesPlugin> {
 
     @Override
     protected void onLoad() {
+        this.loadMenus();
+    }
+
+    @Override
+    protected void onShutdown() {
+        this.getMenus().forEach(CratesMenu::clear);
+        this.menuMap.clear();
+    }
+
+    public void loadMenus() {
+        File dirMenus = new File(plugin.getDataFolder().getAbsolutePath(), Config.DIR_MENUS);
+        if (!dirMenus.exists() && dirMenus.mkdirs()) {
+            new CratesMenu(this.plugin, FileConfig.loadOrExtract(this.plugin, Config.DIR_MENUS, Placeholders.DEFAULT + ".yml"));
+        }
+
         for (FileConfig config : FileConfig.loadAll(plugin.getDataFolder() + Config.DIR_MENUS, false)) {
             CratesMenu menu = new CratesMenu(plugin, config);
             String id = FileConfig.getName(config.getFile());
@@ -29,12 +47,6 @@ public class MenuManager extends AbstractManager<CratesPlugin> {
         }
 
         this.plugin.info("Loaded " + this.menuMap.size() + " crate menus.");
-    }
-
-    @Override
-    protected void onShutdown() {
-        this.getMenus().forEach(CratesMenu::clear);
-        this.menuMap.clear();
     }
 
     @NotNull

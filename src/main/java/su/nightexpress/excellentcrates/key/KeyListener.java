@@ -19,23 +19,23 @@ import java.util.stream.Stream;
 
 public class KeyListener extends AbstractListener<CratesPlugin> {
 
-    private final KeyManager keyManager;
+    private final KeyManager manager;
 
-    public KeyListener(@NotNull CratesPlugin plugin, @NotNull KeyManager keyManager) {
+    public KeyListener(@NotNull CratesPlugin plugin, @NotNull KeyManager manager) {
         super(plugin);
-        this.keyManager = keyManager;
+        this.manager = manager;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        this.keyManager.giveKeysOnHold(player);
+        this.manager.giveKeysOnHold(player);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onKeyPlace(BlockPlaceEvent event) {
         ItemStack item = event.getItemInHand();
-        if (this.keyManager.isKey(item)) {
+        if (this.manager.isKey(item)) {
             event.setCancelled(true);
         }
     }
@@ -46,7 +46,7 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         if (event.useInteractedBlock() == Event.Result.DENY) return;
 
         ItemStack item = event.getItem();
-        if (item != null && this.keyManager.isKey(item)) {
+        if (item != null && this.manager.isKey(item)) {
             Player player = event.getPlayer();
             Block clickedBlock = event.getClickedBlock();
             if (clickedBlock != null && clickedBlock.getType().isInteractable() && !player.isSneaking()) {
@@ -64,7 +64,7 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         ItemStack first = inventory.getItem(0);
         ItemStack second = inventory.getItem(1);
 
-        if ((first != null && this.keyManager.isKey(first)) || (second != null && this.keyManager.isKey(second))) {
+        if ((first != null && this.manager.isKey(first)) || (second != null && this.manager.isKey(second))) {
             event.setResult(null);
         }
     }
@@ -83,7 +83,7 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
         return choices.filter(RecipeChoice.ExactChoice.class::isInstance)
             .map(RecipeChoice.ExactChoice.class::cast)
             .flatMap(choice -> choice.getChoices().stream())
-            .anyMatch(this.keyManager::isKey);
+            .anyMatch(this.manager::isKey);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -93,7 +93,7 @@ public class KeyListener extends AbstractListener<CratesPlugin> {
             return;
         }
         CraftingInventory inventory = event.getInventory();
-        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.keyManager.isKey(item))) {
+        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.manager.isKey(item))) {
             event.setCancelled(true);
         }
     }

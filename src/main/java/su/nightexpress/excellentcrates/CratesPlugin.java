@@ -2,43 +2,45 @@ package su.nightexpress.excellentcrates;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.command.basic.*;
-import su.nightexpress.excellentcrates.command.key.KeyCommand;
+import su.nightexpress.excellentcrates.command.basic.BaseCommands;
 import su.nightexpress.excellentcrates.config.*;
 import su.nightexpress.excellentcrates.crate.CrateManager;
-import su.nightexpress.excellentcrates.currency.CurrencyManager;
+import su.nightexpress.excellentcrates.crate.effect.EffectRegistry;
 import su.nightexpress.excellentcrates.data.DataHandler;
-import su.nightexpress.excellentcrates.data.UserManager;
-import su.nightexpress.excellentcrates.data.impl.CrateUser;
+import su.nightexpress.excellentcrates.data.DataManager;
 import su.nightexpress.excellentcrates.editor.EditorManager;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
-import su.nightexpress.excellentcrates.hologram.impl.HologramPacketsHandler;
-import su.nightexpress.excellentcrates.hologram.impl.HologramProtocolHandler;
+import su.nightexpress.excellentcrates.hologram.HologramManager;
+import su.nightexpress.excellentcrates.hologram.handler.HologramPacketsHandler;
+import su.nightexpress.excellentcrates.hologram.handler.HologramProtocolHandler;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
-import su.nightexpress.excellentcrates.menu.MenuManager;
 import su.nightexpress.excellentcrates.opening.OpeningManager;
-import su.nightexpress.excellentcrates.util.Creator;
-import su.nightexpress.nightcore.NightDataPlugin;
-import su.nightexpress.nightcore.command.api.NightPluginCommand;
-import su.nightexpress.nightcore.command.base.ReloadSubCommand;
+import su.nightexpress.excellentcrates.ui.UIManager;
+import su.nightexpress.excellentcrates.user.UserManager;
+import su.nightexpress.excellentcrates.util.CrateUtils;
+import su.nightexpress.nightcore.NightPlugin;
+import su.nightexpress.nightcore.command.experimental.ImprovedCommands;
 import su.nightexpress.nightcore.config.PluginDetails;
 import su.nightexpress.nightcore.util.Plugins;
 
-public class CratesPlugin extends NightDataPlugin<CrateUser> {
+import java.util.function.Consumer;
+
+public class CratesPlugin extends NightPlugin implements ImprovedCommands {
 
     private DataHandler dataHandler;
+    private DataManager dataManager;
     private UserManager userManager;
 
-    private EditorManager   editorManager;
-    private CurrencyManager currencyManager;
+    private HologramManager hologramManager;
     private OpeningManager  openingManager;
     private KeyManager      keyManager;
     private CrateManager    crateManager;
-    private MenuManager     menuManager;
+    //private MenuManager     menuManager;
+    private EditorManager   editorManager;
+    private UIManager       uiManager;
 
-    private HologramHandler hologramHandler;
     private CrateLogger     crateLogger;
 
     @Override
@@ -52,31 +54,34 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
 
     @Override
     public void enable() {
-        Keys.load(this);
+        this.loadAPI();
+
+        if (!CrateUtils.hasEconomyBridge()) {
+            this.warn("*".repeat(25));
+            this.warn("You don't have " + HookId.ECONOMY_BRIDGE + " installed.");
+            this.warn("The following features will be unavailable:");
+            this.warn("- Crate open cost.");
+            this.warn("- Custom item plugin support.");
+            this.warn("*".repeat(25));
+        }
 
         this.getLangManager().loadEntries(EditorLang.class);
         this.loadCommands();
-        this.loadHologramHandler();
+        this.loadHolograms();
 
         this.crateLogger = new CrateLogger(this);
-
-        Creator creator = new Creator(this);
-        creator.createDefaults();
 
         this.dataHandler = new DataHandler(this);
         this.dataHandler.setup();
 
-        this.userManager = new UserManager(this);
-        this.userManager.setup();
+        this.dataManager = new DataManager(this);
+        this.dataManager.setup();
 
-        this.currencyManager = new CurrencyManager(this);
-        this.currencyManager.setup();
+        this.userManager = new UserManager(this, this.dataHandler);
+        this.userManager.setup();
 
         this.openingManager = new OpeningManager(this);
         this.openingManager.setup();
-
-        this.editorManager = new EditorManager(this);
-        this.editorManager.setup();
 
         this.keyManager = new KeyManager(this);
         this.keyManager.setup();
@@ -84,103 +89,123 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         this.crateManager = new CrateManager(this);
         this.crateManager.setup();
 
-        this.menuManager = new MenuManager(this);
-        this.menuManager.setup();
+//        this.menuManager = new MenuManager(this);
+//        this.menuManager.setup();
 
-        this.dataHandler.update();
+        this.uiManager = new UIManager(this);
+        this.uiManager.setup();
+
+        this.editorManager = new EditorManager(this);
+        this.editorManager.setup();
+
+        this.dataHandler.updateRewardLimits();
 
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.setup(this);
         }
     }
 
-    private void loadHologramHandler() {
+    private void loadHolograms() {
+        HologramHandler handler;
+
         if (Plugins.isInstalled(HookId.PACKET_EVENTS)) {
-            this.hologramHandler = new HologramPacketsHandler(this);
+            handler = new HologramPacketsHandler();
         }
         else if (Plugins.isInstalled(HookId.PROTOCOL_LIB)) {
-            this.hologramHandler = new HologramProtocolHandler(this);
-        }
-
-        if (this.hasHolograms()) {
-            this.hologramHandler.setup();
+            handler = new HologramProtocolHandler();
         }
         else {
+            this.warn("*".repeat(25));
             this.warn("You have no packet library plugins installed for the Holograms feature to work.");
             this.warn("Please install one of the following plugins to enable crate holograms: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB);
+            this.warn("*".repeat(25));
+            return;
         }
+
+        this.hologramManager = new HologramManager(this, handler);
+        this.hologramManager.setup();
     }
 
     @Override
     public void disable() {
         if (this.editorManager != null) this.editorManager.shutdown();
+        if (this.uiManager != null) this.uiManager.shutdown();
         if (this.openingManager != null) this.openingManager.shutdown();
         if (this.keyManager != null) this.keyManager.shutdown();
         if (this.crateManager != null) this.crateManager.shutdown();
-        if (this.menuManager != null) this.menuManager.shutdown();
-        if (this.hologramHandler != null) this.hologramHandler.shutdown();
-        if (this.currencyManager != null) this.currencyManager.shutdown();
+        //if (this.menuManager != null) this.menuManager.shutdown();
+        if (this.hologramManager != null) this.hologramManager.shutdown();
+        if (this.userManager != null) this.userManager.shutdown();
+        if (this.dataManager != null) this.dataManager.shutdown();
+        if (this.dataHandler != null) this.dataHandler.shutdown();
 
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.shutdown();
         }
+
+        EffectRegistry.clear();
+        Keys.clear();
+        CratesAPI.clear();
+    }
+
+    private void loadAPI() {
+        CratesAPI.load(this);
+        Keys.load(this);
+        EffectRegistry.load();
     }
 
     private void loadCommands() {
-        NightPluginCommand baseCommand = this.getBaseCommand();
-        baseCommand.addChildren(new EditorCommand(this));
-        baseCommand.addChildren(new DropCommand(this));
-        baseCommand.addChildren(new DropKeyCommand(this));
-        baseCommand.addChildren(new OpenCommand(this));
-        baseCommand.addChildren(new OpenForCommand(this));
-        baseCommand.addChildren(new GiveCommand(this));
-        baseCommand.addChildren(new KeyCommand(this));
-        baseCommand.addChildren(new MenuCommand(this));
-        baseCommand.addChildren(new PreviewCommand(this));
-        baseCommand.addChildren(new ResetCooldownCommand(this));
-        baseCommand.addChildren(new ResetLimitCommand(this));
-        baseCommand.addChildren(new ReloadSubCommand(this, Perms.COMMAND_RELOAD));
+        BaseCommands.load(this);
     }
 
     public boolean hasHolograms() {
-        return this.hologramHandler != null;
+        return this.hologramManager != null;
+    }
+
+    public void manageHolograms(@NotNull Consumer<HologramManager> consumer) {
+        if (this.hologramManager != null) {
+            consumer.accept(this.hologramManager);
+        }
     }
 
     @NotNull
     public CrateLogger getCrateLogger() {
-        return crateLogger;
+        return this.crateLogger;
     }
 
-    @Override
     @NotNull
-    public DataHandler getData() {
+    public DataHandler getDataHandler() {
         return this.dataHandler;
     }
 
     @NotNull
-    @Override
-    public UserManager getUserManager() {
-        return userManager;
+    public DataManager getDataManager() {
+        return this.dataManager;
     }
 
     @NotNull
-    public CurrencyManager getCurrencyManager() {
-        return currencyManager;
+    public UserManager getUserManager() {
+        return this.userManager;
     }
 
     @NotNull
     public OpeningManager getOpeningManager() {
-        return openingManager;
+        return this.openingManager;
+    }
+
+    @NotNull
+    public UIManager getUIManager() {
+        return this.uiManager;
     }
 
     @NotNull
     public EditorManager getEditorManager() {
-        return editorManager;
+        return this.editorManager;
     }
 
     @NotNull
     public KeyManager getKeyManager() {
-        return keyManager;
+        return this.keyManager;
     }
 
     @NotNull
@@ -188,13 +213,13 @@ public class CratesPlugin extends NightDataPlugin<CrateUser> {
         return this.crateManager;
     }
 
-    @NotNull
-    public MenuManager getMenuManager() {
-        return menuManager;
-    }
+//    @NotNull
+//    public MenuManager getMenuManager() {
+//        return this.menuManager;
+//    }
 
     @Nullable
-    public HologramHandler getHologramHandler() {
-        return hologramHandler;
+    public HologramManager getHologramManager() {
+        return this.hologramManager;
     }
 }

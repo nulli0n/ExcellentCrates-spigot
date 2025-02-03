@@ -5,140 +5,128 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Opening;
-import su.nightexpress.excellentcrates.api.opening.Spinner;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.data.impl.CrateData;
-import su.nightexpress.excellentcrates.data.impl.CrateUser;
+import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
+import su.nightexpress.excellentcrates.data.crate.UserCrateData;
+import su.nightexpress.excellentcrates.user.CrateUser;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.opening.spinner.AnimationSpinner;
-import su.nightexpress.excellentcrates.opening.spinner.RewardSpinner;
 import su.nightexpress.nightcore.util.Players;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+public abstract class AbstractOpening implements Opening {
 
-public abstract class AbstractOpening extends Runnable implements Opening {
+    protected final CratesPlugin plugin;
+    protected final Player       player;
+    protected final CrateSource  source;
+    protected final Crate        crate;
+    protected final CrateKey     key;
 
-    protected final CratesPlugin         plugin;
-    protected final Map<String, Spinner> spinnerMap;
-    protected final Player               player;
-    protected final CrateSource          source;
-    protected final Crate                crate;
-    protected final CrateKey             key;
-
+    protected long    tickCount;
+    protected boolean running;
     protected boolean refundable;
-    protected boolean hasRewardAttempts;
 
-    public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player,
-                           @NotNull CrateSource source, @Nullable CrateKey key) {
+    public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
         this.plugin = plugin;
         this.player = player;
         this.source = source;
         this.crate = source.getCrate();
         this.key = key;
-        this.spinnerMap = new LinkedHashMap<>();
         this.setRefundable(true);
     }
 
-    @Nullable
-    public Spinner getSpinner(@NotNull String id) {
-        return this.spinnerMap.get(id.toLowerCase());
-    }
+    @Override
+    public void run() {
+        if (this.isRunning()) return;
 
-    public void addSpinner(@NotNull Spinner spinner, @NotNull String name/*, int delay*/) {
-        this.spinnerMap.put(name.toLowerCase(), spinner);
-        //spinner.setStartDelay(delay);
-        spinner.run();
-    }
-
-    public void stopAnimation(@NotNull String name) {
-        Spinner spinner = this.getSpinner(name);
-        if (!(spinner instanceof AnimationSpinner)) return;
-
-        this.stopSpinner(spinner);
-    }
-
-    public void stopReward(@NotNull String name) {
-        Spinner spinner = this.getSpinner(name);
-        if (!(spinner instanceof RewardSpinner)) return;
-
-        this.stopSpinner(spinner);
-    }
-
-    private void stopSpinner(@NotNull Spinner spinner) {
-        if (spinner.isCompleted() || !spinner.isRunning()) return;
-
-        spinner.stop();
+        this.running = true;
+        this.onStart();
     }
 
     @Override
-    protected void onTick() {
-        if (!this.isValidPlayer()) {
+    public void stop() {
+        if (!this.isRunning()) return;
+
+        this.running = false;
+        this.onStop();
+    }
+
+    @Override
+    public void tick() {
+        if (!this.isRunning()) return;
+
+        if (this.isCompleted()) {
             this.stop();
             return;
         }
-        this.getSpinners().forEach(Spinner::tick);
+
+        if (this.isTickTime()) {
+            this.onTick();
+            //this.tickCount = 0L;
+        }
+
+        this.tickCount = Math.max(0L, this.tickCount + 1L);
     }
 
     @Override
-    protected final void onStop() {
+    public boolean isRunning() {
+        return this.running;
+    }
+
+    @Override
+    public long getTickCount() {
+        return this.tickCount;
+    }
+
+    @Override
+    public boolean isTickTime() {
+        return this.tickCount == 0 || this.tickCount % this.getInterval() == 0L;
+    }
+
+    protected abstract void onStart();
+
+    protected abstract void onTick();
+
+    protected abstract void onComplete();
+
+    protected void onStop() {
         if (this.isRefundable()) {
-            if ((this.isEmergency() && !this.hasRewardRolled()) || !this.hasRewardAttempts()) {
-                if (this.key != null) {
-                    this.plugin.getKeyManager().giveKey(this.player, this.key, 1);
-                }
-                if (this.source.getItem() != null) {
-                    Players.addItem(this.player, this.crate.getItem());
-                }
-                this.crate.getOpenCostMap().forEach((currency, amount) -> {
-                    currency.getHandler().give(this.player, amount);
-                });
+            if (this.key != null) {
+                this.plugin.getKeyManager().giveKey(this.player, this.key, 1);
             }
+            if (this.source.getItem() != null) {
+                Players.addItem(this.player, this.crate.getItem());
+            }
+
+            this.crate.refundForOpen(this.player);
         }
 
         if (this.isCompleted()) {
-            this.crate.setLastOpener(player.getName());
+            this.onComplete();
 
-            CrateUser user = this.plugin.getUserManager().getUserData(player);
-            CrateData data = user.getCrateData(this.crate);
+            CrateUser user = plugin.getUserManager().getOrFetch(player);
+            UserCrateData userData = user.getCrateData(this.crate);
+            GlobalCrateData globalData = plugin.getDataManager().getCrateDataOrCreate(this.crate);
 
-            data.addOpenings(1);
+            userData.addOpenings(1);
+            globalData.setLatestOpener(this.player);
+            globalData.setSaveRequired(true);
 
             if (crate.hasOpenCooldown() && !crate.hasCooldownBypassPermission(player)) {
-                data.setOpenCooldown(crate.getOpenCooldown());
+                userData.setCooldown(crate.getOpenCooldown());
             }
 
             if (crate.hasMilestones()) {
-                data.addMilestones(1);
-                crate.triggerMilestones(player, data.getMilestone());
-                if (data.getMilestone() >= crate.getMaxMilestone() && crate.isMilestonesRepeatable()) {
-                    data.setMilestone(0);
+                userData.addMilestones(1);
+                plugin.getCrateManager().triggerMilestones(player, crate, userData.getMilestone());
+                if (userData.getMilestone() >= crate.getMaxMilestone() && crate.isMilestonesRepeatable()) {
+                    userData.setMilestone(0);
                 }
             }
 
-            this.plugin.getUserManager().scheduleSave(user);
+            this.plugin.getUserManager().save(user);
         }
 
-        this.getSpinners().forEach(Spinner::stop);
-        this.finalizeStop();
-    }
-
-    protected void finalizeStop() {
-        this.removeOpening();
-    }
-
-    public void removeOpening() {
         this.plugin.getOpeningManager().removeOpening(this.getPlayer());
-    }
-
-    public boolean isValidPlayer() {
-        return this.getPlayer().isOnline();
-    }
-
-    public boolean hasRewardRolled() {
-        return this.getSpinners().stream().anyMatch(spinner -> spinner instanceof RewardSpinner && spinner.isCompleted());
     }
 
     @Override
@@ -152,42 +140,26 @@ public abstract class AbstractOpening extends Runnable implements Opening {
     }
 
     @Override
-    public boolean hasRewardAttempts() {
-        return hasRewardAttempts;
-    }
-
-    @Override
-    public void setHasRewardAttempts(boolean hasRewardAttempts) {
-        this.hasRewardAttempts = hasRewardAttempts;
-    }
-
-    @Override
     @NotNull
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
     @NotNull
     public CrateSource getSource() {
-        return source;
+        return this.source;
     }
 
     @Override
     @NotNull
     public Crate getCrate() {
-        return crate;
+        return this.crate;
     }
 
     @Override
     @Nullable
     public CrateKey getKey() {
-        return key;
-    }
-
-    @Override
-    @NotNull
-    public Collection<Spinner> getSpinners() {
-        return this.spinnerMap.values();
+        return this.key;
     }
 }

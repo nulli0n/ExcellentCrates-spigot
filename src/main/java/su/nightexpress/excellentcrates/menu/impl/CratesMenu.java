@@ -28,6 +28,7 @@ import java.util.Map;
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
+@Deprecated
 public class CratesMenu extends ConfigMenu<CratesPlugin> {
 
     private String               crateName;
@@ -105,8 +106,10 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
         ).read(cfg);
 
         this.crateLore = ConfigValue.create("Crate.Lore", Lists.newList(
+            CRATE_DESCRIPTION,
+            EMPTY_IF_ABOVE,
             LIGHT_GRAY.enclose("You have " + LIGHT_YELLOW.enclose(GENERIC_KEYS) + " keys."),
-            "",
+            " ",
             LIGHT_GRAY.enclose(LIGHT_YELLOW.enclose("[▶]") + " Left-Click to " + LIGHT_YELLOW.enclose("preview") + "."),
             LIGHT_GRAY.enclose(LIGHT_YELLOW.enclose("[▶]") + " Right-Click to " + LIGHT_YELLOW.enclose("open") + ".")
         )).read(cfg);

@@ -1,52 +1,51 @@
 package su.nightexpress.excellentcrates;
 
-import org.bukkit.Color;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.api.currency.Currency;
+import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.api.item.ItemProvider;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.crate.impl.*;
+import su.nightexpress.excellentcrates.crate.impl.Cost;
+import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.excellentcrates.crate.impl.Milestone;
+import su.nightexpress.excellentcrates.crate.impl.Rarity;
+import su.nightexpress.excellentcrates.crate.limit.LimitValues;
+import su.nightexpress.excellentcrates.crate.reward.impl.CommandReward;
+import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.util.CrateUtils;
-import su.nightexpress.nightcore.core.CoreLang;
+import su.nightexpress.excellentcrates.util.inspect.Inspection;
+import su.nightexpress.excellentcrates.util.inspect.Inspectors;
 import su.nightexpress.nightcore.language.LangAssets;
 import su.nightexpress.nightcore.util.*;
-import su.nightexpress.nightcore.util.placeholder.PlaceholderMap;
+import su.nightexpress.nightcore.util.placeholder.PlaceholderList;
 import su.nightexpress.nightcore.util.text.tag.Tags;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
-    public static final String WIKI_URL          = "https://nightexpress.gitbook.io/excellentcrates/";
-    public static final String WIKI_PLACEHOLDERS = WIKI_URL + "utility/placeholders";
+    public static final String WIKI_URL          = "https://nightexpressdev.com/excellentcrates/";
+    public static final String WIKI_PLACEHOLDERS = WIKI_URL + "placeholders";
 
-    public static final String CHECK_MARK = Tags.GREEN.enclose("✔");
-    public static final String WARN_MARK  = Tags.ORANGE.enclose("[❗]");
-    public static final String CROSS_MARK = Tags.RED.enclose("✘");
+    public static final String  SKULL_CRATE  = "1ff041976a09dd053e3d1d4e611aac09594d74fc71a0ec4da0110416d317dba8";
+    public static final String SKULL_DELETE = "94f90c7bd60bfd0dfc31808d0484d8c2db9959f68df91fbf29423a3da62429a6";
 
-    public static final String SKIN_NEW_CRATE  = "7a3c8c6d3aaa96363d4bef2578f1024781ea14e9d85a9dcfc0935847a6fb5c8d";
-    public static final String SKIN_NEW_REWARD = "2705fd94a0c431927fb4e639b0fcfb49717e412285a02b439e0112da22b2e2ec";
+    public static final String SELECTED_SLOTS   = "%selected_slots%";
+    public static final String UNSELECTED_SLOTS = "%unselected_slots%";
 
     public static final String GENERIC_NAME   = "%name%";
     public static final String GENERIC_AMOUNT = "%amount%";
+    public static final String GENERIC_ID     = "%id%";
+    public static final String GENERIC_MAX    = "%max%";
     public static final String GENERIC_TIME   = "%time%";
     public static final String GENERIC_KEYS   = "%keys%";
 
-    public static final String CURRENCY_NAME = "%currency_name%";
-    public static final String CURRENCY_ID   = "%currency_id%";
-
-    public static final  String RARITY_ID          = "%rarity_id%";
-    public static final  String RARITY_NAME        = "%rarity_name%";
-    public static final  String RARITY_WEIGHT      = "%rarity_weight%";
-    public static final  String RARITY_ROLL_CHANCE = "%rarity_roll_chance%";
+    public static final String RARITY_ID          = "%rarity_id%";
+    public static final String RARITY_NAME        = "%rarity_name%";
+    public static final String RARITY_WEIGHT      = "%rarity_weight%";
+    public static final String RARITY_ROLL_CHANCE = "%rarity_roll_chance%";
 
     public static final String MILESTONE_OPENINGS       = "%milestone_openings%";
     public static final String MILESTONE_REWARD_ID      = "%milestone_reward_id%";
@@ -54,14 +53,17 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
     public static final String CRATE_ID            = "%crate_id%";
     public static final String CRATE_NAME          = "%crate_name%";
+    public static final String CRATE_DESCRIPTION   = "%crate_description%";
     public static final String CRATE_PERMISSION    = "%crate_permission%";
     public static final String CRATE_OPEN_COOLDOWN = "%crate_open_cooldown%";
     public static final String CRATE_OPEN_COST     = "%crate_open_cost%";
     public static final String CRATE_LAST_OPENER   = "%crate_last_opener%";
     public static final String CRATE_LAST_REWARD   = "%crate_last_reward%";
 
-    public static final String CRATE_ANIMATION_CONFIG      = "%crate_animation_config%";
-    public static final String CRATE_PREVIEW_CONFIG        = "%crate_preview_config%";
+    public static final String CRATE_ANIMATION_ENABLED     = "%crate_animation_enabled%";
+    public static final String CRATE_ANIMATION_ID          = "%crate_animation_id%";
+    public static final String CRATE_PREVIEW_ENABLED       = "%crate_preview_enabled%";
+    public static final String CRATE_PREVIEW_ID            = "%crate_preview_id%";
     public static final String CRATE_PERMISSION_REQUIRED   = "%crate_permission_required%";
     public static final String CRATE_KEY_REQUIRED          = "%crate_key_required%";
     public static final String CRATE_KEYS                  = "%crate_key_ids%";
@@ -72,135 +74,86 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String CRATE_LOCATIONS             = "%crate_locations%";
     public static final String CRATE_EFFECT_MODEL          = "%crate_effect_model%";
     public static final String CRATE_EFFECT_PARTICLE_NAME  = "%crate_effect_particle_name%";
-    public static final String CRATE_EFFECT_PARTICLE_DATA  = "%crate_effect_particle_data%";
     public static final String CRATE_REWARDS_AMOUNT        = "%crate_rewards_amount%";
     public static final String CRATE_MILESTONES_AMOUNT     = "%crate_milestones_amount%";
     public static final String CRATE_MILESTONES_REPEATABLE = "%crate_milestones_repeatable%";
-
-    public static final String CRATE_INSPECT = "%crate_inspect%";
 
     public static final String KEY_ID        = "%key_id%";
     public static final String KEY_NAME      = "%key_name%";
     public static final String KEY_VIRTUAL   = "%key_virtual%";
     public static final String KEY_ITEM_NAME = "%key_item_name%";
 
-    public static final  String REWARD_ID                 = "%reward_id%";
-    public static final  String REWARD_NAME               = "%reward_name%";
-    public static final  String REWARD_WEIGHT             = "%reward_weight%";
-    public static final  String REWARD_ROLL_CHANCE        = "%reward_roll_chance%";
-    public static final  String REWARD_RARITY_NAME        = "%reward_rarity_name%";
-    public static final  String REWARD_RARITY_WEIGHT      = "%reward_rarity_weight%";
-    public static final  String REWARD_RARITY_ROLL_CHANCE = "%reward_rarity_roll_chance%";
-    public static final  String REWARD_PREVIEW_NAME       = "%reward_preview_name%";
-    public static final  String REWARD_PREVIEW_LORE       = "%reward_preview_lore%";
-    public static final  String REWARD_BROADCAST          = "%reward_broadcast%";
-    public static final  String REWARD_PLACEHOLDER_APPLY  = "%reward_placeholder_apply%";
+    public static final String REWARD_ID                 = "%reward_id%";
+    public static final String REWARD_NAME               = "%reward_name%";
+    public static final String REWARD_DESCRIPTION        = "%reward_description%";
+    public static final String REWARD_WEIGHT             = "%reward_weight%";
+    public static final String REWARD_ROLL_CHANCE        = "%reward_roll_chance%";
+    public static final String REWARD_RARITY_NAME        = "%reward_rarity_name%";
+    public static final String REWARD_RARITY_WEIGHT      = "%reward_rarity_weight%";
+    public static final String REWARD_RARITY_ROLL_CHANCE = "%reward_rarity_roll_chance%";
+    public static final String REWARD_BROADCAST          = "%reward_broadcast%";
+    public static final String REWARD_PLACEHOLDER_APPLY  = "%reward_placeholder_apply%";
 
+    public static final String LIMIT_ENABLED         = "%limit_enabled%";
+    public static final String LIMIT_AMOUNT          = "%limit_amount%";
+    public static final String LIMIT_RESET_TIME      = "%limit_cooldown%";
+    public static final String LIMIT_RESET_TIME_STEP = "%limit_cooldown_step%";
 
-//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_ENABLED  = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_enabled%";
-//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_AMOUNT   = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_amount%";
-//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_COOLDOWN = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_cooldown%";
-//    @Deprecated public static final Function<LimitType, String> REWARD_WIN_LIMIT_STEP     = limitType -> "%reward_" + limitType.name().toLowerCase() + "_win_limit_step%";
+    public static final String REWARD_IGNORED_PERMISSIONS  = "%reward_ignored_for_permissions%";
+    public static final String REWARD_REQUIRED_PERMISSIONS = "%reward_required_permissions%";
+    public static final String REWARD_COMMANDS_CONTENT     = "%reward_editor_commands%";
+    public static final String REWARD_ITEMS_CONTENT        = "%reward_editor_items%";
+    public static final String REWARD_INSPECT_CONTENT      = "%reward_inspect_content%";
 
-    public static final String LIMIT_ENABLED       = "%limit_enabled%";
-    public static final String LIMIT_AMOUNT        = "%limit_amount%";
-    public static final String LIMIT_COOLDOWN      = "%limit_cooldown%";
-    public static final String LIMIT_COOLDOWN_STEP = "%limit_cooldown_step%";
+    public static final Function<Inspection<?>, String> INSPECTION_TYPE     = type -> "%inspection_" + type.name().toLowerCase() + "%";
+    public static final String                          INSPECTION_PROBLEMS = "%inspection_problems%";
 
-    public static final String REWARD_IGNORED_FOR_PERMISSIONS = "%reward_ignored_for_permissions%";
-    public static final String REWARD_EDITOR_COMMANDS         = "%reward_editor_commands%";
-    public static final String REWARD_EDITOR_ITEMS            = "%reward_editor_items%";
-    public static final String REWARD_INSPECT_CONTENT         = "%reward_inspect_content%";
-
-    @NotNull
-    public static String problem(@NotNull String text) {
-        return CROSS_MARK + " " + Tags.LIGHT_GRAY.enclose(text);
-    }
-
-    @NotNull
-    public static String good(@NotNull String text) {
-        return CHECK_MARK + " " + Tags.LIGHT_GRAY.enclose(text);
-    }
-
-    @NotNull
-    public static String warning(@NotNull String text) {
-        return WARN_MARK + " " + Tags.LIGHT_GRAY.enclose(text);
-    }
-
-    /*@NotNull
-    public static String toggled(boolean b, @NotNull String textA, @NotNull String textB) {
-        if (b) {
-            return Tags.LIGHT_GREEN.enclose("☑") + " " + Tags.LIGHT_GRAY.enclose(textA);
-        }
-        return Tags.LIGHT_RED.enclose("❎") + " " + Tags.LIGHT_GRAY.enclose(textB);
-    }
-
-    @NotNull
-    public static String enabledOrDisabled(boolean b) {
-        String prefix = b ? Tags.LIGHT_GREEN.enclose("☑") : Tags.LIGHT_RED.enclose("❎");
-
-        return prefix + Tags.LIGHT_GRAY.enclose(CoreLang.getEnabledOrDisabled(b));
-    }*/
-
-    @NotNull
-    public static PlaceholderMap forCrateAll(@NotNull Crate crate) {
-        return PlaceholderMap.fusion(crate.getPlaceholders(), forCrateEditor(crate));
-    }
-
-    @NotNull
-    public static PlaceholderMap forCrate(@NotNull Crate crate) {
-        return new PlaceholderMap()
-            .add(CRATE_ID, crate.getId())
-            .add(CRATE_NAME, crate::getName)
-            .add(CRATE_PERMISSION, crate::getPermission)
-            .add(CRATE_OPEN_COST, () -> {
-                if (!crate.hasOpenCost()) {
-                    return Lang.OTHER_FREE.getString();
-                }
-
-                return crate.getOpenCostMap().entrySet().stream().map(entry -> entry.getKey().format(entry.getValue()))
-                    .collect(Collectors.joining(", "));
+    public static final PlaceholderList<Crate> CRATE = PlaceholderList.create(list -> {
+        list
+            .add(CRATE_ID, Crate::getId)
+            .add(CRATE_NAME, Crate::getName)
+            .add(CRATE_DESCRIPTION, crate -> String.join("\n", crate.getDescription()))
+            .add(CRATE_PERMISSION, Crate::getPermission)
+            .add(CRATE_OPEN_COST, crate -> {
+                return crate.getOpenCosts().stream().filter(Cost::isValid).map(Cost::format).collect(Collectors.joining(", "));
             })
-            .add(CRATE_OPEN_COOLDOWN, () -> {
+            .add(CRATE_OPEN_COOLDOWN, crate -> {
                 if (crate.getOpenCooldown() == 0L) return Lang.OTHER_DISABLED.getString();
                 if (crate.getOpenCooldown() < 0L) return Lang.OTHER_ONE_TIMED.getString();
 
                 return TimeUtil.formatTime(crate.getOpenCooldown() * 1000L);
             })
-            .add(CRATE_LAST_OPENER, () -> {
-                String last = crate.getLastOpener();
-                if (last == null) return "-";
-
-                Player player = Players.getPlayer(last);
-                return player == null ? last : player.getDisplayName();
+            .add(CRATE_LAST_OPENER, crate -> {
+                String last = crate.getLatestOpener();
+                return last == null ? "-" : last; // TODO Customizable
             })
-            .add(CRATE_LAST_REWARD, () -> {
-                String last = crate.getLastReward();
+            .add(CRATE_LAST_REWARD, crate -> {
+                String last = crate.getLatestReward();
                 return last == null ? "-" : last;
-            })
-            ;
-    }
+            });
 
-    @NotNull
-    public static PlaceholderMap forCrateEditor(@NotNull Crate crate) {
-        return new PlaceholderMap()
-            .add(CRATE_PERMISSION_REQUIRED, () -> CoreLang.getYesOrNo(crate.isPermissionRequired()))
-            .add(CRATE_KEY_REQUIRED, () -> CoreLang.getYesOrNo(crate.isKeyRequired()))
-            .add(CRATE_KEYS, () -> {
-                return crate.getKeys().stream().map(key -> good(key.getName())).collect(Collectors.joining("\n"));
-            })
-            .add(CRATE_PUSHBACK_ENABLED, () -> CoreLang.getEnabledOrDisabled(crate.isPushbackEnabled()))
-            .add(CRATE_HOLOGRAM_ENABLED, () -> CoreLang.getEnabledOrDisabled(crate.isHologramEnabled()))
-            .add(CRATE_HOLOGRAM_TEMPLATE, () -> {
-                if (!crate.hasValidHologram()) return problem(crate.getHologramTemplate());
+        Inspectors.CRATE.addPlaceholders(list);
+    });
 
-                return good(crate.getHologramTemplate());
+    public static final PlaceholderList<Crate> CRATE_EDITOR = PlaceholderList.create(list -> {
+        list.add(CRATE);
+        list
+            .add(CRATE_PERMISSION_REQUIRED, crate -> Lang.getYesOrNo(crate.isPermissionRequired()))
+            .add(CRATE_KEY_REQUIRED, crate -> Lang.getYesOrNo(crate.isKeyRequired()))
+            .add(CRATE_KEYS, crate -> {
+                return crate.getKeyIds().stream().map(id -> {
+                    CrateKey key = CratesAPI.getKeyManager().getKeyById(id);
+                    return key == null ? Lang.badEntry(id) : Lang.goodEntry(key.getName());
+                }).collect(Collectors.joining("\n"));
             })
-            .add(CRATE_HOLOGRAM_Y_OFFSET, () -> NumberUtil.format(crate.getHologramYOffset()))
-            .add(CRATE_LOCATIONS, () -> {
+            .add(CRATE_PUSHBACK_ENABLED, crate -> Lang.getEnabledOrDisabled(crate.isPushbackEnabled()))
+            .add(CRATE_HOLOGRAM_ENABLED, crate -> Lang.getEnabledOrDisabled(crate.isHologramEnabled()))
+            .add(CRATE_HOLOGRAM_TEMPLATE, Crate::getHologramTemplateId)
+            .add(CRATE_HOLOGRAM_Y_OFFSET, crate -> NumberUtil.format(crate.getHologramYOffset()))
+            .add(CRATE_LOCATIONS, crate -> {
                 return crate.getBlockPositions().stream().map(worldPos -> {
                     Block block = worldPos.toBlock();
-                    if (block == null) return problem("null");
+                    if (block == null) return Lang.badEntry("null");
 
                     String name = Tags.LIGHT_ORANGE.enclose(LangAssets.get(block.getType()));
 
@@ -211,182 +164,105 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
                     String coords = x + ", " + y + ", " + z + " in " + world;
                     String line = coords + " (" + name + ")";
 
-                    return block.isEmpty() ? problem(line) : good(line);
+                    return block.isEmpty() && !Config.isCrateInAirBlocksAllowed() ? Lang.badEntry(line) : Lang.goodEntry(line);
                 }).collect(Collectors.joining("\n"));
             })
-            .add(CRATE_EFFECT_MODEL, () -> StringUtil.capitalizeUnderscored(crate.getEffectModel().name().toLowerCase()))
-            .add(CRATE_EFFECT_PARTICLE_NAME, () -> {
-                UniParticle particle = crate.getEffectParticle();
-                if (particle.getParticle() == null) return problem("Undefined");
-
-                return good(StringUtil.capitalizeUnderscored(particle.getParticle().name().toLowerCase()));
+            .add(CRATE_EFFECT_MODEL, crate -> StringUtil.capitalizeUnderscored(crate.getEffectType()))
+            .add(CRATE_EFFECT_PARTICLE_NAME, crate -> {
+                UniParticle wrapped = crate.getEffectParticle();
+                return wrapped.isEmpty() ? "null" : BukkitThing.toString(wrapped.getParticle());
             })
-            .add(CRATE_EFFECT_PARTICLE_DATA, () -> {
-                UniParticle particle = crate.getEffectParticle();
-                if (!CrateUtils.isSupportedParticleData(particle)) return problem("Not supported");
+            .add(CRATE_REWARDS_AMOUNT, crate -> NumberUtil.format(crate.getRewards().size()))
+            .add(CRATE_MILESTONES_AMOUNT, crate -> NumberUtil.format(crate.getMilestones().size()))
+            .add(CRATE_MILESTONES_REPEATABLE, crate -> Lang.getYesOrNo(crate.isMilestonesRepeatable()))
+            .add(CRATE_ANIMATION_ENABLED, crate -> Lang.getYesOrNo(crate.isAnimationEnabled()))
+            .add(CRATE_ANIMATION_ID, Crate::getAnimationId)
+            .add(CRATE_PREVIEW_ENABLED, crate -> Lang.getYesOrNo(crate.isPreviewEnabled()))
+            .add(CRATE_PREVIEW_ID, Crate::getPreviewId);
+    });
 
-                Object data = particle.getData();
-                if (data instanceof BlockData blockData) {
-                    return good(LangAssets.get(blockData.getMaterial()));
-                }
-                else if (data instanceof ItemStack itemStack) {
-                    return good(LangAssets.get(itemStack.getType()));
-                }
-                else if (data instanceof Particle.DustOptions dustOptions) {
-                    Color color = dustOptions.getColor();
-                    return good("Red: " + color.getRed() + ", Green: " + color.getGreen() + ", Blue: " + color.getBlue() + ", Size: " + dustOptions.getSize());
-                }
-                else if (data instanceof Float f) {
-                    return good(String.valueOf(f));
-                }
-                else if (data instanceof Integer i) {
-                    return good(String.valueOf(i));
-                }
+    public static final PlaceholderList<Reward> REWARD = PlaceholderList.create(list -> {
+        list
+            .add(REWARD_ID, Reward::getId)
+            .add(REWARD_NAME, Reward::getName)
+            .add(REWARD_DESCRIPTION, reward -> String.join("\n", reward.getDescription()))
+            .add(REWARD_WEIGHT, reward -> NumberUtil.format(reward.getWeight()))
+            .add(REWARD_ROLL_CHANCE, reward -> NumberUtil.format(reward.getRollChance()))
+            .add("%reward_chance%", reward -> NumberUtil.format(reward.getWeight()))
+            .add("%reward_real_chance%", reward -> NumberUtil.format(reward.getRollChance()))
+            .add(REWARD_RARITY_NAME, reward -> reward.getRarity().getName())
+            .add("%reward_rarity_chance%", reward -> NumberUtil.format(reward.getRarity().getWeight()))
+            .add(REWARD_RARITY_WEIGHT, reward -> NumberUtil.format(reward.getRarity().getWeight()))
+            .add(REWARD_RARITY_ROLL_CHANCE, reward -> NumberUtil.format(reward.getRarity().getRollChance(reward.getCrate())))
+            .add("%reward_preview_name%", Reward::getName)
+            .add("%reward_preview_lore%", reward -> String.join("\n", reward.getDescription()));
+    });
 
-                return problem("Not set");
+    public static final PlaceholderList<Reward> REWARD_EDITOR = PlaceholderList.create(list -> {
+        list.add(REWARD);
+        list
+            .add(REWARD_BROADCAST, reward -> Lang.getYesOrNo(reward.isBroadcast()))
+            .add(REWARD_PLACEHOLDER_APPLY, reward -> Lang.getYesOrNo(reward.isPlaceholderApply()))
+            .add(REWARD_IGNORED_PERMISSIONS, reward -> {
+                return String.join("\n", Lists.modify(reward.getIgnoredPermissions(), Lang::goodEntry));
             })
-            .add(CRATE_REWARDS_AMOUNT, () -> NumberUtil.format(crate.getRewards().size()))
-            .add(CRATE_MILESTONES_AMOUNT, () -> NumberUtil.format(crate.getMilestones().size()))
-            .add(CRATE_MILESTONES_REPEATABLE, () -> CoreLang.getYesOrNo(crate.isMilestonesRepeatable()))
-            .add(CRATE_INSPECT, () -> {
-                List<String> list = new ArrayList<>();
-
-                if (!crate.hasRewards()) list.add(problem("No rewards added!"));
-
-                if (crate.isKeyRequired() && crate.getKeys().isEmpty()) {
-                    list.add(problem("No keys assigned!"));
-                }
-
-                if (!crate.hasValidPreview()) list.add(warning("No preview config!"));
-                if (!crate.hasValidOpening()) list.add(warning("No opening config!"));
-                if (crate.isHologramEnabled() && !crate.hasValidHologram()) list.add(warning("Invalid hologram template!"));
-
-                return String.join("\n", list);
+            .add(REWARD_REQUIRED_PERMISSIONS, reward -> {
+                return String.join("\n", Lists.modify(reward.getRequiredPermissions(), Lang::goodEntry));
             })
-            .add(CRATE_ANIMATION_CONFIG, () -> {
-                if (crate.getOpeningConfig() == null) return Lang.OTHER_DISABLED.getString();
-                if (!crate.hasValidOpening()) return problem(crate.getOpeningConfig());
+            .add("%reward_inspect_content%", reward -> "");
 
-                return good(String.valueOf(crate.getOpeningConfig()));
-            })
-            .add(CRATE_PREVIEW_CONFIG, () -> {
-                if (crate.getPreviewConfig() == null) return Lang.OTHER_DISABLED.getString();
-                if (!crate.hasValidPreview()) return problem(crate.getPreviewConfig());
+        Inspectors.REWARD.addPlaceholders(list);
+    });
 
-                return good(String.valueOf(crate.getPreviewConfig()));
-            })
-            ;
-    }
+    public static final PlaceholderList<ItemReward> ITEM_REWARD_EDITOR = PlaceholderList.create(list -> {
+        list.add(REWARD_EDITOR);
+        list.add(REWARD_ITEMS_CONTENT, reward -> {
+            return reward.getItems().stream().map(ItemProvider::getItemStack)
+                .map(item -> Lang.goodEntry(ItemUtil.getSerializedName(item) + " x" + item.getAmount())).collect(Collectors.joining("\n"));
+        });
+    });
 
-    @NotNull
-    public static PlaceholderMap forRewardAll(@NotNull Reward reward) {
-        return PlaceholderMap.fusion(reward.getPlaceholders(), forRewardEditor(reward));
-    }
+    public static final PlaceholderList<CommandReward> COMMAND_REWARD_EDITOR = PlaceholderList.create(list -> {
+        list.add(REWARD_EDITOR);
+        list.add(REWARD_COMMANDS_CONTENT, reward -> {
+            return reward.getCommands().stream().map(Lang::goodEntry).collect(Collectors.joining("\n"));
+        });
+    });
 
-    @NotNull
-    public static PlaceholderMap forReward(@NotNull Reward reward) {
-        PlaceholderMap placeholderMap = new PlaceholderMap()
-            .add(REWARD_ID, reward::getId)
-            .add(REWARD_NAME, reward::getName)
-            .add(REWARD_WEIGHT, () -> NumberUtil.format(reward.getWeight()))
-            .add(REWARD_ROLL_CHANCE, () -> NumberUtil.format(reward.getRollChance()))
-            .add("%reward_chance%", () -> NumberUtil.format(reward.getWeight()))
-            .add("%reward_real_chance%", () -> NumberUtil.format(reward.getRollChance()))
-            .add(REWARD_RARITY_NAME, () -> reward.getRarity().getName())
-            .add("%reward_rarity_chance%", () -> NumberUtil.format(reward.getRarity().getWeight())) // legacy
-            .add(REWARD_RARITY_WEIGHT, () -> NumberUtil.format(reward.getRarity().getWeight()))
-            .add(REWARD_RARITY_ROLL_CHANCE, () -> NumberUtil.format(reward.getRarity().getRollChance(reward.getCrate())))
-            .add(REWARD_PREVIEW_NAME, () -> ItemUtil.getItemName(reward.getPreview()))
-            .add(REWARD_PREVIEW_LORE, () -> String.join("\n", ItemUtil.getLore(reward.getPreview())));
-        placeholderMap.add(reward.getRarity().getPlaceholders());
+    public static final PlaceholderList<LimitValues> LIMIT_VALUES = PlaceholderList.create(list -> list
+        .add(LIMIT_ENABLED, values -> Lang.getYesOrNo(values.isEnabled()))
+        .add(LIMIT_AMOUNT, values -> values.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(values.getAmount()))
+        .add(LIMIT_RESET_TIME_STEP, values -> String.valueOf(values.getResetStep()))
+        .add(LIMIT_RESET_TIME, values -> {
+            if (values.isMidnight()) return Lang.OTHER_MIDNIGHT.getString();
+            if (values.isNeverReset()) return Lang.OTHER_NEVER.getString();
 
-        return placeholderMap;
-    }
+            return TimeUtil.formatTime(values.getResetTime() * 1000L);
+        })
+    );
 
-    @NotNull
-    public static PlaceholderMap forLimit(@NotNull LimitValues values) {
-        return new PlaceholderMap()
-            .add(LIMIT_ENABLED, () -> Lang.getYesOrNo(values.isEnabled()))
-            .add(LIMIT_AMOUNT, () -> values.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(values.getAmount()))
-            .add(LIMIT_COOLDOWN_STEP, () -> String.valueOf(values.getCooldownStep()))
-            .add(LIMIT_COOLDOWN, () -> {
-                if (!values.hasCooldown()) return Lang.OTHER_DISABLED.getString();
-                return values.isMidnight() ? Lang.OTHER_MIDNIGHT.getString() : TimeUtil.formatTime(values.getCooldown() * 1000L);
-            });
-    }
+    public static final PlaceholderList<Milestone> MILESTONE = PlaceholderList.create(list -> list
+        .add(MILESTONE_OPENINGS, milestone -> NumberUtil.format(milestone.getOpenings()))
+        .add(MILESTONE_REWARD_ID, Milestone::getRewardId)
+        .add(MILESTONE_INSPECT_REWARD, milestone -> {
+            return milestone.getReward() == null ? Lang.badEntry("Invalid reward!") : Lang.goodEntry("Reward is correct.");
+        })
+    );
 
-    @NotNull
-    public static PlaceholderMap forRewardEditor(@NotNull Reward reward) {
-        PlaceholderMap map = new PlaceholderMap();
+    public static final PlaceholderList<Rarity> RARITY = PlaceholderList.create(list -> list
+        .add(RARITY_ID, Rarity::getId)
+        .add(RARITY_NAME, Rarity::getName)
+        .add(RARITY_WEIGHT, rarity -> NumberUtil.format(rarity.getWeight()))
+        .add("%rarity_chance%", rarity -> NumberUtil.format(rarity.getWeight()))
+        .add(RARITY_ROLL_CHANCE, rarity -> NumberUtil.format(rarity.getRollChance()))
+    );
 
-//        for (LimitType limitType : LimitType.values()) {
-//            LimitValues winLimit = reward.getWinLimit(limitType);
-//            map
-//                .add(REWARD_WIN_LIMIT_ENABLED.apply(limitType), () -> Lang.getYesOrNo(winLimit.isEnabled()))
-//                .add(REWARD_WIN_LIMIT_AMOUNT.apply(limitType), () -> winLimit.isUnlimitedAmount() ? Lang.OTHER_INFINITY.getString() : String.valueOf(winLimit.getAmount()))
-//                .add(REWARD_WIN_LIMIT_STEP.apply(limitType), () -> String.valueOf(winLimit.getCooldownStep()))
-//                .add(REWARD_WIN_LIMIT_COOLDOWN.apply(limitType), () -> {
-//                    if (!winLimit.hasCooldown()) return Lang.OTHER_DISABLED.getString();
-//                    return winLimit.isMidnight() ? Lang.OTHER_MIDNIGHT.getString() : TimeUtil.formatTime(winLimit.getCooldown() * 1000L);
-//                });
-//        }
+    public static final PlaceholderList<CrateKey> KEY = PlaceholderList.create(list -> {
+        list
+            .add(KEY_ID, CrateKey::getId)
+            .add(KEY_NAME, CrateKey::getName)
+            .add(KEY_VIRTUAL, key -> Lang.getYesOrNo(key.isVirtual()));
 
-        map
-            .add(REWARD_BROADCAST, () -> CoreLang.getYesOrNo(reward.isBroadcast()))
-            .add(REWARD_PLACEHOLDER_APPLY, () -> CoreLang.getYesOrNo(reward.isPlaceholderApply()))
-            .add(REWARD_IGNORED_FOR_PERMISSIONS, () -> {
-                return String.join("\n", reward.getIgnoredForPermissions().stream().map(Placeholders::good).toList());
-            })
-            .add(REWARD_EDITOR_ITEMS, () -> {
-                return reward.getItems().stream()
-                    .filter(item -> !item.getType().isAir())
-                    .map(item -> good(ItemUtil.getItemName(item) + " x" + item.getAmount())).collect(Collectors.joining("\n"));
-            })
-            .add(REWARD_EDITOR_COMMANDS, () -> {
-                return reward.getCommands().stream().map(Placeholders::good).collect(Collectors.joining("\n"));
-            })
-            .add(REWARD_INSPECT_CONTENT, () -> {
-                if (!reward.hasContent()) return problem("Reward gives nothing!");
-                return good("Reward content is present.");
-            })
-            ;
-
-        return map;
-    }
-
-    @NotNull
-    public static PlaceholderMap forMilestone(@NotNull Milestone milestone) {
-        return new PlaceholderMap()
-            .add(MILESTONE_OPENINGS, () -> NumberUtil.format(milestone.getOpenings()))
-            .add(MILESTONE_REWARD_ID, milestone::getRewardId)
-            .add(MILESTONE_INSPECT_REWARD, () -> {
-                return milestone.getReward() == null ? problem("Invalid reward!") : good("Reward is correct.");
-            });
-    }
-
-    @NotNull
-    public static PlaceholderMap forRarity(@NotNull Rarity rarity) {
-        return new PlaceholderMap()
-            .add(RARITY_ID, rarity::getId)
-            .add(RARITY_NAME, rarity::getName)
-            .add(RARITY_WEIGHT, () -> NumberUtil.format(rarity.getWeight()))
-            .add("%rarity_chance%", () -> NumberUtil.format(rarity.getWeight()))
-            .add(RARITY_ROLL_CHANCE, () -> NumberUtil.format(rarity.getRollChance()));
-    }
-
-    @NotNull
-    public static PlaceholderMap forKey(@NotNull CrateKey key) {
-        return new PlaceholderMap()
-            .add(KEY_ID, key::getId)
-            .add(KEY_NAME, key::getName)
-            .add(KEY_VIRTUAL, () -> CoreLang.getYesOrNo(key.isVirtual()))
-            ;
-    }
-
-    @NotNull
-    public static PlaceholderMap forCurrency(@NotNull Currency currency) {
-        return new PlaceholderMap()
-            .add(Placeholders.CURRENCY_ID, currency::getId)
-            .add(Placeholders.CURRENCY_NAME, currency::getName);
-    }
+        Inspectors.KEY.addPlaceholders(list);
+    });
 }

@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.Reward;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.util.Colorizer;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
@@ -12,13 +12,16 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CrateLogger {
 
     private final CratesPlugin plugin;
+    private final DateTimeFormatter formatter;
 
     public CrateLogger(@NotNull CratesPlugin plugin) {
         this.plugin = plugin;
+        this.formatter = DateTimeFormatter.ofPattern(Config.LOGS_DATE_FORMAT.get());
     }
 
     public void logReward(@NotNull Player player, @NotNull Reward reward) {
@@ -40,7 +43,7 @@ public class CrateLogger {
             this.plugin.info(text);
         }
         if (Config.LOGS_TO_FILE.get()) {
-            String date = LocalDateTime.now().format(Config.LOGS_DATE_FORMAT.get());
+            String date = LocalDateTime.now().format(this.formatter);
             String path = this.plugin.getDataFolder() + "/" + Config.FILE_LOGS;
             BufferedWriter output;
             try {

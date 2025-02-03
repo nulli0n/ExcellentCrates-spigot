@@ -1,29 +1,17 @@
 package su.nightexpress.excellentcrates.hologram;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.impl.Reward;
+
+import java.util.Set;
 
 public interface HologramHandler {
 
-    void setup();
+    void displayHolograms(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine);
 
-    void shutdown();
+    void destroyEntity(@NotNull Player player, @NotNull Set<Integer> idList);
 
-    void refresh(@NotNull Crate crate);
-
-    void create(@NotNull Crate crate);
-
-    void remove(@NotNull Crate crate);
-
-//    default void update(@NotNull Crate crate) {
-//        this.remove(crate);
-//        this.create(crate);
-//    }
-
-    void createReward(@NotNull Player player, @NotNull Reward reward, @NotNull Location location);
-
-    void removeReward(@NotNull Player player);
+    void destroyEntity(@NotNull Set<Integer> idList);
 }

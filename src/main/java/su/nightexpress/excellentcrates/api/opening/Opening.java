@@ -7,9 +7,23 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
 
-import java.util.Collection;
+public interface Opening {
 
-public interface Opening extends Tickable {
+    void run();
+
+    void stop();
+
+    void tick();
+
+    boolean isCompleted();
+
+    long getInterval();
+
+    long getTickCount();
+
+    boolean isTickTime();
+
+    boolean isRunning();
 
     @NotNull Player getPlayer();
 
@@ -19,15 +33,9 @@ public interface Opening extends Tickable {
 
     @Nullable CrateKey getKey();
 
-    @NotNull Collection<Spinner> getSpinners();
-
     void instaRoll();
 
     boolean isRefundable();
 
     void setRefundable(boolean refundable);
-
-    boolean hasRewardAttempts();
-
-    void setHasRewardAttempts(boolean hadRewardAttempts);
 }

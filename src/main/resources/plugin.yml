@@ -2,13 +2,12 @@ main: su.nightexpress.excellentcrates.CratesPlugin
 version: '${project.version}'
 name: ExcellentCrates
 author: NightExpress
-desciption: Fully customizable crates with rewards. Enjoy.
+desciption: Lightweight, powerful, feature-rich and highly customizable crates plugin.
 depend:
   - nightcore
 softdepend:
-  - CoinsEngine
-  - Vault
+  - EconomyBridge
   - PlaceholderAPI
   - ProtocolLib
   - packetevents
-api-version: 1.19
+api-version: 1.21

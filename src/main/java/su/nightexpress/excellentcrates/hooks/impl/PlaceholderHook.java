@@ -8,9 +8,9 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
-import su.nightexpress.excellentcrates.crate.impl.Reward;
-import su.nightexpress.excellentcrates.data.impl.CrateData;
-import su.nightexpress.excellentcrates.data.impl.CrateUser;
+import su.nightexpress.excellentcrates.data.crate.UserCrateData;
+import su.nightexpress.excellentcrates.user.CrateUser;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.TimeUtil;
 
@@ -53,13 +53,13 @@ public class PlaceholderHook {
             });
 
             this.placeholders.put("openings", (player, crate) -> {
-                CrateUser user = plugin.getUserManager().getUserData(player);
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
                 return NumberUtil.format(user.getCrateData(crate).getOpenings());
             });
 
             this.placeholders.put("cooldown", (player, crate) -> {
-                CrateUser user = plugin.getUserManager().getUserData(player);
-                CrateData data = user.getCrateData(crate);
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
+                UserCrateData data = user.getCrateData(crate);
                 if (!data.hasCooldown()) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
 
                 LocalDateTime time = TimeUtil.getLocalDateTimeOf(data.getOpenCooldown());
@@ -69,24 +69,33 @@ public class PlaceholderHook {
                 return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
                     .replace("hh", String.valueOf(duration.toHours()))
                     .replace("mm", String.valueOf(duration.toMinutesPart()))
-                    .replace("ss", String.valueOf(duration.toSecondsPart()))
-                    ;
+                    .replace("ss", String.valueOf(duration.toSecondsPart()));
             });
 
             this.placeholders.put("next_milestone_openings", (player, crate) -> {
-                CrateUser user = plugin.getUserManager().getUserData(player);
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 return milestone == null ? "-" : NumberUtil.format(milestone.getOpenings() - milestones);
             });
 
             this.placeholders.put("next_milestone_reward", (player, crate) -> {
-                CrateUser user = plugin.getUserManager().getUserData(player);
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 Reward reward = milestone == null ? null : milestone.getReward();
 
                 return reward == null ? "-" : reward.getName();
+            });
+
+            this.placeholders.put("latest_opener", (player, crate) -> {
+                String latest = crate.getLatestOpener();
+                return latest == null ? "-" : latest;
+            });
+
+            this.placeholders.put("latest_rolled_reward", (player, crate) -> {
+                String latest = crate.getLatestReward();
+                return latest == null ? "-" : latest;
             });
         }
 
@@ -99,7 +108,7 @@ public class PlaceholderHook {
         @Override
         @NotNull
         public String getAuthor() {
-            return this.plugin.getDescription().getAuthors().get(0);
+            return this.plugin.getDescription().getAuthors().getFirst();
         }
 
         @Override

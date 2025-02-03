@@ -31,16 +31,18 @@ import java.util.stream.Stream;
 
 public class CrateListener extends AbstractListener<CratesPlugin> {
 
-    private final CrateManager crateManager;
+    private final CrateManager manager;
 
-    public CrateListener(@NotNull CratesPlugin plugin, @NotNull CrateManager crateManager) {
+    public CrateListener(@NotNull CratesPlugin plugin, @NotNull CrateManager manager) {
         super(plugin);
-        this.crateManager = crateManager;
+        this.manager = manager;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onQuit(PlayerQuitEvent event) {
-        this.crateManager.removePreviewCooldown(event.getPlayer());
+        Player player = event.getPlayer();
+
+        this.manager.removePreviewCooldown(player);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -51,14 +53,14 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         Crate crate = null;
 
         if (item != null && !item.getType().isAir()) {
-            crate = this.crateManager.getCrateByItem(item);
+            crate = this.manager.getCrateByItem(item);
         }
         if (crate == null) {
             item = null;
             block = event.getClickedBlock();
             if (block == null) return;
 
-            crate = this.crateManager.getCrateByBlock(block);
+            crate = this.manager.getCrateByBlock(block);
         }
         if (crate == null) {
             return;
@@ -75,23 +77,23 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         if (clickAction == null) return;
 
         // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
-        if (clickAction == InteractType.CRATE_PREVIEW) {
-            if (this.crateManager.hasPreviewCooldown(player)) {
-                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage()
-                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.crateManager.getPreviewCooldown(player)))
-                    .send(player);
+        if (clickAction == InteractType.CRATE_PREVIEW && crate.isPreviewEnabled()) {
+            if (this.manager.hasPreviewCooldown(player)) {
+                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer -> replacer
+                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.manager.getPreviewCooldown(player)))
+                );
                 return;
             }
-            this.crateManager.setPreviewCooldown(player);
+            this.manager.setPreviewCooldown(player);
         }
 
-        this.crateManager.interactCrate(player, crate, clickAction, item, block);
+        this.manager.interactCrate(player, crate, clickAction, item, block);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCratePlace(BlockPlaceEvent event) {
         ItemStack item = event.getItemInHand();
-        if (this.crateManager.isCrate(item)) {
+        if (this.manager.isCrate(item)) {
             event.setCancelled(true);
         }
     }
@@ -102,7 +104,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         ItemStack first = inventory.getItem(0);
         ItemStack second = inventory.getItem(1);
 
-        if ((first != null && this.crateManager.isCrate(first)) || (second != null && this.crateManager.isCrate(second))) {
+        if ((first != null && this.manager.isCrate(first)) || (second != null && this.manager.isCrate(second))) {
             event.setResult(null);
         }
     }
@@ -110,7 +112,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onCrateCraftStop(CraftItemEvent event) {
         CraftingInventory inventory = event.getInventory();
-        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.crateManager.isCrate(item))) {
+        if (Stream.of(inventory.getMatrix()).anyMatch(item -> item != null && this.manager.isCrate(item))) {
             event.setCancelled(true);
         }
     }
