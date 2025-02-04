@@ -55,8 +55,8 @@
 
 # Downloads
 - [SpigotMC](https://spigotmc.org/resources/48732/)
-- [Hangar](https://spigotmc.org/resources/48732/) Soon!
-- [Modrinth](https://spigotmc.org/resources/48732/) Soon!
+- [Hangar](https://hangar.papermc.io/NightExpress/ExcellentCrates)
+- [Modrinth](https://modrinth.com/plugin/excellentcrates)
 
 # Donate
 If you like my work or enjoy using my plugins, feel free to [Buy me a coffee](https://ko-fi.com/nightexpress) :) Thank you! 🧡
