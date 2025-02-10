@@ -323,7 +323,7 @@ public class BaseCommands {
     }
 
     private static boolean inspectKeys(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER), user -> {
+        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER, context.getSender().getName()), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
