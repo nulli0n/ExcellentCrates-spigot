@@ -69,7 +69,9 @@
         <dependency>
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>nightcore</artifactId>
-            <version>2.7.3.2</version>
+            <version>2.7.3.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/nightcore-2.7.3.3.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -97,6 +99,13 @@
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Anon8281</groupId>
+            <artifactId>UniversalScheduler</artifactId>
+            <version>0.1.6</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
