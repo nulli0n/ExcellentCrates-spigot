@@ -111,9 +111,9 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
         if (Plugins.isInstalled(HookId.PACKET_EVENTS)) {
             handler = new HologramPacketsHandler();
         }
-        else if (Plugins.isInstalled(HookId.PROTOCOL_LIB)) {
-            handler = new HologramProtocolHandler();
-        }
+        //else if (Plugins.isInstalled(HookId.PROTOCOL_LIB)) {
+        //    handler = new HologramProtocolHandler();
+        //}
         else {
             this.warn("*".repeat(25));
             this.warn("You have no packet library plugins installed for the Holograms feature to work.");
