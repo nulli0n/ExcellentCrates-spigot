@@ -24,12 +24,5 @@ public class HologramData {
     public Set<Integer> getEntityIDs() {
         return this.entities.stream().map(HologramEntity::entityID).collect(Collectors.toSet());
 
-//        Set<Integer> idList = new HashSet<>();
-//        this.entities.forEach(entity -> idList.add(entity.entityID()));
-//        return idList;
     }
-
-//    public void clear() {
-//        this.entities.clear();
-//    }
 }
