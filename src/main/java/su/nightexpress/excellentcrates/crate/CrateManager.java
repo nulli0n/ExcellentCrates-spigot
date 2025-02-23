@@ -72,7 +72,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadPreviews();
         this.loadCrates();
         this.loadUI();
-        this.plugin.runTask(task -> this.runInspections()); // After everything is loaded.
+        this.plugin.runTask(this::runInspections); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
