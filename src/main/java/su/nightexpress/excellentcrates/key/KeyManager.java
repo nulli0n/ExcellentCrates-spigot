@@ -35,7 +35,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     @Override
     protected void onLoad() {
         this.loadKeys();
-        this.plugin.runTask(task -> this.runInspections()); // When everything is loaded.
+        this.plugin.runTask(this::runInspections); // When everything is loaded.
 
         this.addListener(new KeyListener(this.plugin, this));
     }

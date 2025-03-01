@@ -14,7 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class HologramProtocolHandler implements HologramHandler {
@@ -32,23 +37,6 @@ public class HologramProtocolHandler implements HologramHandler {
     private void broadcastPacket(@NotNull PacketContainer packet) {
         this.protocolManager.broadcastServerPacket(packet);
     }
-
-
-//    @NotNull
-//    private List<PacketWrapper<?>> getItemPackets(int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull ItemStack item) {
-//        List<PacketWrapper<?>> list = new ArrayList<>();
-//
-//        PacketWrapper<?> spawnPacket = this.createSpawnPacket(type, location, entityID);
-//        PacketWrapper<?> dataPacket = this.createMetadataPacket(entityID, dataList -> {
-//            dataList.add(new EntityData(5, EntityDataTypes.BOOLEAN, true)); // no gravity
-//            dataList.add(new EntityData(8, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(item))); // item
-//        });
-//
-//        list.add(spawnPacket);
-//        list.add(dataPacket);
-//
-//        return list;
-//    }
 
     @Override
     public void displayHolograms(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
