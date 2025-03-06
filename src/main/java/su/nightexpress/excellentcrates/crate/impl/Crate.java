@@ -148,19 +148,17 @@ public class Crate extends AbstractFileData<CratesPlugin> {
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
         if (!Config.isCrateInAirBlocksAllowed()) {
-            List<WorldPos> blockPositionsTemp = new ArrayList<>(blockPositions);
-            for (WorldPos pos : blockPositionsTemp) {
-                Block block = pos.toBlock();
-                if (block != null) {
-                    new FoliaScheduler(plugin).runTask(Objects.requireNonNull(pos.toBlock()).getLocation(), () -> {
-                        if (block.isEmpty()) {
+            new FoliaScheduler(plugin).runTask(() -> {
+                List<WorldPos> blockPositionsTemp = new ArrayList<>(blockPositions);
+                for (WorldPos pos : blockPositionsTemp) {
+                    new FoliaScheduler(plugin).runTask(pos.toLocation(), () -> {
+                        Block block = pos.toBlock();
+
+                        if (block == null || block.isEmpty())
                             this.blockPositions.remove(pos);
-                        }
                     });
-                } else {
-                    this.blockPositions.remove(pos);
                 }
-            }
+            });
         }
 
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
