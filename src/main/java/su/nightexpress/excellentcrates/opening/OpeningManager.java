@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.opening;
 
-import com.github.Anon8281.universalScheduler.foliaScheduler.FoliaScheduler;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +15,7 @@ import su.nightexpress.excellentcrates.opening.world.WorldOpeningProvider;
 import su.nightexpress.excellentcrates.opening.world.provider.DummyProvider;
 import su.nightexpress.excellentcrates.opening.world.provider.SimpleRollProvider;
 import su.nightexpress.nightcore.manager.AbstractManager;
+import su.nightexpress.nightcore.universalscheduler.foliaScheduler.FoliaScheduler;
 import su.nightexpress.nightcore.util.FileUtil;
 import su.nightexpress.nightcore.util.StringUtil;
 

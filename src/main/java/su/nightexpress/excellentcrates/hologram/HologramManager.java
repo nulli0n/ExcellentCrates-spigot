@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.hologram;
 
-import com.github.Anon8281.universalScheduler.foliaScheduler.FoliaScheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,6 +15,7 @@ import su.nightexpress.excellentcrates.hologram.listener.HologramListener;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 import su.nightexpress.nightcore.manager.AbstractManager;
+import su.nightexpress.nightcore.universalscheduler.foliaScheduler.FoliaScheduler;
 import su.nightexpress.nightcore.util.EntityUtil;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.LocationUtil;
