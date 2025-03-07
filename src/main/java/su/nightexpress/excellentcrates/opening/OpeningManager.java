@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.opening;
 
+import com.github.Anon8281.universalScheduler.foliaScheduler.FoliaScheduler;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -194,7 +195,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void tickOpenings() {
-        this.getOpenings().forEach(Opening::tick);
+        this.getOpenings().forEach(opening -> new FoliaScheduler(plugin).runTask(opening.getPlayer(), opening::tick));
     }
 
     public boolean isOpening(@NotNull Player player) {
