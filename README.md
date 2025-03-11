@@ -4,7 +4,7 @@
   
   <a href="https://discord.gg/EwNFGsnGaW"><img src="https://i.imgur.com/h45m0s6.png"></a>
   <a href="https://ko-fi.com/nightexpress"><img src="https://i.imgur.com/AzBMWfk.png"></a>
-  <a href="https://nightexpressdev.com/coinsengine/"><img src="https://i.imgur.com/3sH9F74.png"></a>
+  <a href="https://nightexpressdev.com/excellentcrates/"><img src="https://i.imgur.com/3sH9F74.png"></a>
   
   ![](https://repo.nightexpressdev.com/api/badge/latest/releases/su/nightexpress/excellentcrates/ExcellentCrates?color=40c14a&name=ExcellentCrates&prefix=v)
 
