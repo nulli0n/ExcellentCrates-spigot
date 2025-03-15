@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
@@ -145,13 +146,33 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     }
 
     @Nullable
-    public CrateKey getFirstKey(@NotNull Player player, @NotNull Crate crate) {
-        Predicate<ItemStack> predicate = itemStack -> this.isKey(itemStack, crate);
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && !item.getType().isAir() && predicate.test(item)) {
-                return this.getKeyByItem(item);
+    public CrateKey getOpenKey(@NotNull Player player, @NotNull Crate crate) {
+        // Check out physical keys first.
+        PlayerInventory inventory = player.getInventory();
+        List<ItemStack> content = new ArrayList<>();
+        if (!crate.isAllVirtualKeys()) {
+            content.add(inventory.getItemInMainHand());
+            content.add(inventory.getItemInOffHand());
+            if (!Config.CRATE_HOLD_KEY_TO_OPEN.get()) {
+                content.addAll(Arrays.asList(inventory.getContents()));
             }
         }
+
+        for (ItemStack itemStack : content) {
+            CrateKey key = itemStack == null ? null : this.getKeyByItem(itemStack);
+            if (key != null && crate.isGoodKey(key)) {
+                return key;
+            }
+        }
+
+        // Check out virtual keys if no physical ones present.
+        CrateUser user = plugin.getUserManager().getOrFetch(player);
+        for (CrateKey key : crate.getRequiredKeys()) {
+            if (key.isVirtual() && user.hasKeys(key)) {
+                return key;
+            }
+        }
+
         return null;
     }
 
@@ -175,7 +196,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     public int getKeysAmount(@NotNull Player player, @NotNull CrateKey key) {
         if (key.isVirtual()) {
             CrateUser user = plugin.getUserManager().getOrFetch(player);
-            return user.getKeys(key.getId());
+            return user.countKeys(key);
         }
         return Players.countItem(player, this.getItemStackPredicate(key));
     }

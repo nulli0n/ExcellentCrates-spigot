@@ -49,25 +49,26 @@ public class SimpleRollOpening extends WorldOpening {
 
     private void onFirstTick() {
         Block block = this.source.getBlock();
-        double yAdd = this.crate.getHologramYOffset();
 
         Location center;
         if (block == null) {
             Location playerLoc = this.player.getEyeLocation().clone();
             Vector direction = playerLoc.getDirection();
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 playerLoc.add(direction);
             }
 
-            center = playerLoc;
+            center = LocationUtil.setCenter3D(playerLoc);
         }
         else {
-            yAdd += block.getBoundingBox().getHeight() / 2D;
-            center = block.getLocation();
+            double offset = Math.max(0, this.crate.getHologramYOffset());
+            double height = block.getBoundingBox().getHeight() + offset;
+
+            center = LocationUtil.setCenter2D(block.getLocation()).add(0, height, 0);
         }
 
-        this.displayLocation = LocationUtil.setCenter3D(center).add(0, yAdd, 0);
+        this.displayLocation = center;
 
         this.hideHologram();
     }

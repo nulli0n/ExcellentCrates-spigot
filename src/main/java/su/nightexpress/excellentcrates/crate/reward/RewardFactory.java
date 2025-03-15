@@ -92,6 +92,7 @@ public class RewardFactory {
         else if (reward instanceof CommandReward commandReward) {
             commandReward.setPreview(provider);
             commandReward.setName(ItemUtil.getSerializedName(source));
+            commandReward.setDescription(ItemUtil.getSerializedLore(source));
         }
 
         return reward;

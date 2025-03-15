@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.config;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
 import su.nightexpress.excellentcrates.util.inspect.Inspections;
 import su.nightexpress.nightcore.language.entry.LangItem;
+import su.nightexpress.nightcore.language.entry.LangUIButton;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.Plugins;
 
@@ -22,10 +23,9 @@ public class EditorLang {
         .name("Keys")
         .click("navigate").build();
 
-    public static final LangItem CRATE_OBJECT = builder(PREFIX + "Crate.Object")
-        .name(CRATE_NAME + RESET.getBracketsName() + LIGHT_GRAY.enclose(" (ID: " + WHITE.enclose(CRATE_ID) + ")"))
-        .textRaw(INSPECTION_PROBLEMS)
-        .emptyLine()
+    public static final LangUIButton CRATE_OBJECT = LangUIButton.builder(PREFIX + "Crate.Object", CRATE_NAME)
+        .current("ID", CRATE_ID)
+        .description(INSPECTION_PROBLEMS)
         .click("navigate")
         .build();
 

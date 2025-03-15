@@ -6,6 +6,7 @@ import su.nightexpress.nightcore.core.CoreLang;
 import su.nightexpress.nightcore.language.entry.LangItem;
 import su.nightexpress.nightcore.language.entry.LangString;
 import su.nightexpress.nightcore.language.entry.LangText;
+import su.nightexpress.nightcore.language.entry.LangUIButton;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.language.tag.MessageTags.OUTPUT;
@@ -280,4 +281,16 @@ public class Lang extends CoreLang {
 
     public static final LangString EDITOR_ENTER_PERMISSION = LangString.of("Editor.Reward.Enter.Permissions",
         LIGHT_GRAY.enclose("Enter " + LIGHT_GREEN.enclose("[Permission Node]")));
+
+    public static final LangUIButton EDITOR_BUTTON_CRATE_ITEM_STACKABLE = LangUIButton.builder("Editor.Button.Crate.ItemStackable", "Item Stackable")
+        .current(CRATE_ITEM_STACKABLE)
+        .description("Controls whether crate item is stackable.")
+        .leftClick("toggle")
+        .build();
+
+    public static final LangUIButton EDITOR_BUTTON_KEY_ITEM_STACKABLE = LangUIButton.builder("Editor.Button.Key.ItemStackable", "Item Stackable")
+        .current(KEY_ITEM_STACKABLE)
+        .description("Controls whether key item is stackable.")
+        .leftClick("toggle")
+        .build();
 }

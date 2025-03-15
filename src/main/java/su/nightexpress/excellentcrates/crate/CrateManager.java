@@ -40,6 +40,8 @@ import su.nightexpress.nightcore.manager.AbstractManager;
 import su.nightexpress.nightcore.util.*;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.text.tag.Tags;
+import su.nightexpress.nightcore.util.time.TimeFormatType;
+import su.nightexpress.nightcore.util.time.TimeFormats;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.io.File;
@@ -416,28 +418,24 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             return false;
         }
 
+        CrateKey key = null;
         CrateUser user = plugin.getUserManager().getOrFetch(player);
         UserCrateData crateData = user.getCrateData(crate);
 
         if (!settings.isForce() && crate.hasOpenCooldown() && crateData.hasCooldown()) {
             (crateData.isCooldownPermanent() ? Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED : Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY).getMessage().send(player, replacer -> replacer
-                .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(crateData.getOpenCooldown()))
+                .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(crateData.getOpenCooldown(), TimeFormatType.LITERAL))
                 .replace(crate.replacePlaceholders())
             );
             return false;
         }
 
         if (!settings.isForce() && crate.isKeyRequired()) {
-            if (!this.plugin.getKeyManager().hasKey(player, crate)) {
-                Lang.CRATE_OPEN_ERROR_NO_KEY.getMessage().send(player, replacer -> replacer.replace(crate.replacePlaceholders()));
+            key = this.plugin.getKeyManager().getOpenKey(player, crate);
+            if (key == null) {
+                boolean holdRequired = Config.isKeyHoldRequired() && !crate.isAllVirtualKeys();
+                (holdRequired ? Lang.CRATE_OPEN_ERROR_NO_HOLD_KEY : Lang.CRATE_OPEN_ERROR_NO_KEY).getMessage().send(player, replacer -> replacer.replace(crate.replacePlaceholders()));
                 return false;
-            }
-            if (Config.CRATE_HOLD_KEY_TO_OPEN.get() && crate.isAllPhysicalKeys()) {
-                ItemStack main = player.getInventory().getItemInMainHand();
-                if (!this.plugin.getKeyManager().isKey(main, crate)) {
-                    Lang.CRATE_OPEN_ERROR_NO_HOLD_KEY.getMessage().send(player, replacer -> replacer.replace(crate.replacePlaceholders()));
-                    return false;
-                }
             }
         }
 
@@ -455,8 +453,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         plugin.getPluginManager().callEvent(openEvent);
         if (openEvent.isCancelled()) return false;
 
-        CrateKey key = crate.isKeyRequired() ? this.plugin.getKeyManager().getFirstKey(player, crate) : null;
-
         Opening opening = this.plugin.getOpeningManager().createOpening(player, source, key);
         opening.setRefundable(!settings.isForce());
 
@@ -467,8 +463,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             crate.payForOpen(player);
 
             // Take key
-            if (crate.isKeyRequired()) {
-                this.plugin.getKeyManager().takeKey(player, crate);
+            if (crate.isKeyRequired() && key != null) {
+                this.plugin.getKeyManager().takeKey(player, key, 1);
+                //this.plugin.getKeyManager().takeKey(player, crate);
             }
 
             // Take crate item stack
