@@ -465,7 +465,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             // Take key
             if (crate.isKeyRequired() && key != null) {
                 this.plugin.getKeyManager().takeKey(player, key, 1);
-                //this.plugin.getKeyManager().takeKey(player, crate);
             }
 
             // Take crate item stack
