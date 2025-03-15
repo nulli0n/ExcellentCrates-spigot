@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.user;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
+import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.db.AbstractUser;
 
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class CrateUser extends AbstractUser {
     }
 
     public void addKeys(@NotNull String id, int amount) {
-        this.setKeys(id, this.getKeys(id) + amount);
+        this.setKeys(id, this.countKeys(id) + amount);
     }
 
     public void takeKeys(@NotNull String id, int amount) {
@@ -73,7 +74,24 @@ public class CrateUser extends AbstractUser {
         this.keys.put(id.toLowerCase(), Math.max(0, amount));
     }
 
+    @Deprecated
     public int getKeys(@NotNull String id) {
+        return this.countKeys(id);
+    }
+
+    public boolean hasKeys(@NotNull CrateKey key) {
+        return this.hasKeys(key.getId());
+    }
+
+    public boolean hasKeys(@NotNull String id) {
+        return this.countKeys(id) > 0;
+    }
+
+    public int countKeys(@NotNull CrateKey key) {
+        return this.countKeys(key.getId());
+    }
+
+    public int countKeys(@NotNull String id) {
         return this.keys.getOrDefault(id.toLowerCase(), 0);
     }
 

@@ -57,6 +57,7 @@ public class Crate extends AbstractFileData<CratesPlugin> {
     private String      name;
     private List<String> description;
     private ItemProvider itemProvider;
+    private boolean itemStackable;
 
     private boolean previewEnabled;
     private String  previewId;
@@ -124,6 +125,7 @@ public class Crate extends AbstractFileData<CratesPlugin> {
         this.setName(config.getString("Name", this.getId()));
         this.setDescription(config.getStringList("Description"));
         this.setItemProvider(ItemTypes.read(config, "ItemProvider"));
+        this.setItemStackable(config.getBoolean("ItemStackable", true));
 
         this.setPreviewEnabled(config.getBoolean("Preview.Enabled"));
         this.setPreviewId(config.getString("Preview.Id", Placeholders.DEFAULT));
@@ -188,6 +190,7 @@ public class Crate extends AbstractFileData<CratesPlugin> {
         config.set("Name", this.name);
         config.set("Description", this.description);
         config.set("ItemProvider", this.itemProvider);
+        config.set("ItemStackable", this.itemStackable);
         config.set("Permission_Required", this.permissionRequired);
 
         config.set("Preview.Enabled", this.previewEnabled);
@@ -529,11 +532,22 @@ public class Crate extends AbstractFileData<CratesPlugin> {
     @NotNull
     public ItemStack getItem() {
         ItemStack item = this.getRawItem();
-        PDCUtil.set(item, Keys.crateId, this.getId());
+
+        ItemUtil.editMeta(item, meta -> {
+            if (!this.isItemStackable()) meta.setMaxStackSize(1);
+            PDCUtil.set(meta, Keys.crateId, this.getId());
+        });
+
         return item;
     }
 
+    public boolean isItemStackable() {
+        return this.itemStackable;
+    }
 
+    public void setItemStackable(boolean itemStackable) {
+        this.itemStackable = itemStackable;
+    }
 
     @NotNull
     public String getPreviewId() {

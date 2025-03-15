@@ -30,6 +30,8 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 @SuppressWarnings("UnstableApiUsage")
 public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
 
+    private static final String SKULL_STACK = "e2e7ac70bf77ba3dd33f4cb78d88ac149ac6036cef2eac8e7a6fd3676fbaf1aa";
+
     public KeyOptionsMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_KEY_LIST.getString());
 
@@ -51,7 +53,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
             )));
         });
 
-        this.addItem(Material.NAME_TAG, EditorLang.KEY_EDIT_NAME, 20, (viewer, event, key) -> {
+        this.addItem(Material.NAME_TAG, EditorLang.KEY_EDIT_NAME, 19, (viewer, event, key) -> {
             this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_DISPLAY_NAME, input -> {
                 key.setName(input.getText());
                 key.save();
@@ -59,7 +61,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
             }));
         });
 
-        this.addItem(Material.TRIPWIRE_HOOK, EditorLang.KEY_EDIT_ITEM, 22, (viewer, event, key) -> {
+        this.addItem(Material.TRIPWIRE_HOOK, EditorLang.KEY_EDIT_ITEM, 21, (viewer, event, key) -> {
             ItemStack cursor = event.getCursor();
             if (cursor == null || cursor.getType().isAir()) {
                 if (event.isLeftClick()) {
@@ -79,7 +81,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
 
             key.setProvider(provider);
             event.getView().setCursor(null);
-            this.save(viewer);
+            this.saveAndFlush(viewer);
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
             CrateKey crateKey = this.getLink(viewer);
             item.inherit(NightItem.fromItemStack(crateKey.getItem()));
@@ -87,13 +89,18 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
             item.setHideComponents(true);
         }).setVisibilityPolicy(viewer -> !this.getLink(viewer).isVirtual()).build());
 
-        this.addItem(Material.ENDER_PEARL, EditorLang.KEY_EDIT_VIRTUAL, 24, (viewer, event, key) -> {
+        this.addItem(NightItem.asCustomHead(SKULL_STACK), Lang.EDITOR_BUTTON_KEY_ITEM_STACKABLE, 23, (viewer, event, key) -> {
+            key.setItemStackable(!key.isItemStackable());
+            this.saveAndFlush(viewer);
+        }, ItemOptions.builder().setVisibilityPolicy(viewer -> !this.getLink(viewer).isVirtual()).build());
+
+        this.addItem(Material.ENDER_PEARL, EditorLang.KEY_EDIT_VIRTUAL, 25, (viewer, event, key) -> {
             key.setVirtual(!key.isVirtual());
-            this.save(viewer);
+            this.saveAndFlush(viewer);
         });
     }
 
-    private void save(@NotNull MenuViewer viewer) {
+    private void saveAndFlush(@NotNull MenuViewer viewer) {
         this.getLink(viewer).save();
         this.runNextTick(() -> this.flush(viewer));
     }

@@ -336,7 +336,7 @@ public class BaseCommands {
                         if (!key.isVirtual()) return;
 
                         list.add(key.replacePlaceholders().apply(Lang.COMMAND_KEY_INSPECT_ENTRY.getString()
-                            .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(user.getKeys(key.getId())))
+                            .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(user.countKeys(key.getId())))
                         ));
                     });
                 })

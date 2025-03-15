@@ -212,6 +212,10 @@ public class Config {
         return CRATE_ALLOW_CRATES_IN_AIR_BLOCKS.get();
     }
 
+    public static boolean isKeyHoldRequired() {
+        return CRATE_HOLD_KEY_TO_OPEN.get();
+    }
+
 //    @NotNull
 //    public static HologramType getHologramType() {
 //        return CRATE_HOLOGRAM_HANDLER.get();

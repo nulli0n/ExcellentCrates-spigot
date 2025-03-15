@@ -60,6 +60,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String CRATE_LAST_OPENER   = "%crate_last_opener%";
     public static final String CRATE_LAST_REWARD   = "%crate_last_reward%";
 
+    public static final String CRATE_ITEM_STACKABLE        = "%crate_item_stackable%";
     public static final String CRATE_ANIMATION_ENABLED     = "%crate_animation_enabled%";
     public static final String CRATE_ANIMATION_ID          = "%crate_animation_id%";
     public static final String CRATE_PREVIEW_ENABLED       = "%crate_preview_enabled%";
@@ -78,10 +79,10 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String CRATE_MILESTONES_AMOUNT     = "%crate_milestones_amount%";
     public static final String CRATE_MILESTONES_REPEATABLE = "%crate_milestones_repeatable%";
 
-    public static final String KEY_ID        = "%key_id%";
-    public static final String KEY_NAME      = "%key_name%";
-    public static final String KEY_VIRTUAL   = "%key_virtual%";
-    public static final String KEY_ITEM_NAME = "%key_item_name%";
+    public static final String KEY_ID             = "%key_id%";
+    public static final String KEY_NAME           = "%key_name%";
+    public static final String KEY_VIRTUAL        = "%key_virtual%";
+    public static final String KEY_ITEM_STACKABLE = "%key_item_stackable%";
 
     public static final String REWARD_ID                 = "%reward_id%";
     public static final String REWARD_NAME               = "%reward_name%";
@@ -138,6 +139,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final PlaceholderList<Crate> CRATE_EDITOR = PlaceholderList.create(list -> {
         list.add(CRATE);
         list
+            .add(CRATE_ITEM_STACKABLE, crate -> Lang.getYesOrNo(crate.isItemStackable()))
             .add(CRATE_PERMISSION_REQUIRED, crate -> Lang.getYesOrNo(crate.isPermissionRequired()))
             .add(CRATE_KEY_REQUIRED, crate -> Lang.getYesOrNo(crate.isKeyRequired()))
             .add(CRATE_KEYS, crate -> {
@@ -261,7 +263,8 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
         list
             .add(KEY_ID, CrateKey::getId)
             .add(KEY_NAME, CrateKey::getName)
-            .add(KEY_VIRTUAL, key -> Lang.getYesOrNo(key.isVirtual()));
+            .add(KEY_VIRTUAL, key -> Lang.getYesOrNo(key.isVirtual()))
+            .add(KEY_ITEM_STACKABLE, key -> Lang.getYesOrNo(key.isItemStackable()));
 
         Inspectors.KEY.addPlaceholders(list);
     });

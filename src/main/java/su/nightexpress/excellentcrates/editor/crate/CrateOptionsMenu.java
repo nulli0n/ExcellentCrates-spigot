@@ -40,6 +40,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
     private static final String TEXTURE_REWARDS    = "663029cc8167897e6535a3c5734bbabaff188d0905f9d9353afac62a06dadf86";
     private static final String TEXTURE_PLACEMENT  = "181e124a2765c4b320d754f04e1807ad7b3c26ff95376d0b4263c4e1ae84e758";
     private static final String TEXTURE_MILESTONES = "d194a22345d9cdde75168299ad61873bc105e3ae73cd6c9ac02a285291ad0f1b";
+    private static final String SKULL_STACK = "e2e7ac70bf77ba3dd33f4cb78d88ac149ac6036cef2eac8e7a6fd3676fbaf1aa";
 
     public CrateOptionsMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_CRATE_SETTINGS.getString());
@@ -112,6 +113,11 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             item.localized(EditorLang.CRATE_EDIT_ITEM);
             item.setHideComponents(true);
         }).build());
+
+        this.addItem(NightItem.asCustomHead(SKULL_STACK), Lang.EDITOR_BUTTON_CRATE_ITEM_STACKABLE, 0, (viewer, event, crate) -> {
+            crate.setItemStackable(!crate.isItemStackable());
+            this.saveAndFlush(viewer, crate);
+        });
 
 
         this.addItem(Material.PAINTING, EditorLang.CRATE_EDIT_PREVIEW, 6, (viewer, event, crate) -> {

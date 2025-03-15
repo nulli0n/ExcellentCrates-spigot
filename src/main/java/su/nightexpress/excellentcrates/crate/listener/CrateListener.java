@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.crate.listener;
 
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -25,17 +26,23 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.manager.AbstractListener;
-import su.nightexpress.nightcore.util.TimeUtil;
+import su.nightexpress.nightcore.util.time.TimeFormatType;
+import su.nightexpress.nightcore.util.time.TimeFormats;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class CrateListener extends AbstractListener<CratesPlugin> {
 
     private final CrateManager manager;
+    private final Set<UUID> adventureFix;
 
     public CrateListener(@NotNull CratesPlugin plugin, @NotNull CrateManager manager) {
         super(plugin);
         this.manager = manager;
+        this.adventureFix = new HashSet<>();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -49,6 +56,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
     public void onCrateUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
+        Action action = event.getAction();
         Block block = null;
         Crate crate = null;
 
@@ -67,20 +75,33 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         }
 
         event.setUseItemInHand(Event.Result.DENY);
-        event.setUseInteractedBlock(Event.Result.DENY);
+
+        // Do not deny left click interactions for adventure gamemode to prevent interaction spam when key is held.
+        if (player.getGameMode() != GameMode.ADVENTURE || action == Action.RIGHT_CLICK_BLOCK) {
+            event.setUseInteractedBlock(Event.Result.DENY);
+        }
 
         if (event.getHand() != EquipmentSlot.HAND) return;
 
-        Action action = event.getAction();
         ClickType clickType = ClickType.from(action, player.isSneaking());
         InteractType clickAction = Config.getCrateClickAction(clickType);
         if (clickAction == null) return;
+
+        // Uh, adventure gamemode triggers LEFT_CLICK interaction on interactable blocks together with RIGHT_CLICK interaction.
+        if (player.getGameMode() == GameMode.ADVENTURE && block != null && block.getType().isInteractable()) {
+            if (action == Action.RIGHT_CLICK_BLOCK) {
+                this.adventureFix.add(player.getUniqueId());
+            }
+            else if (action == Action.LEFT_CLICK_BLOCK && this.adventureFix.remove(player.getUniqueId())) {
+                return;
+            }
+        }
 
         // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
         if (clickAction == InteractType.CRATE_PREVIEW && crate.isPreviewEnabled()) {
             if (this.manager.hasPreviewCooldown(player)) {
                 Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer -> replacer
-                    .replace(Placeholders.GENERIC_TIME, TimeUtil.formatDuration(this.manager.getPreviewCooldown(player)))
+                    .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(this.manager.getPreviewCooldown(player), TimeFormatType.LITERAL))
                 );
                 return;
             }

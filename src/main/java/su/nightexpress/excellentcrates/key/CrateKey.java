@@ -22,6 +22,7 @@ public class CrateKey extends AbstractFileData<CratesPlugin> {
     private String       name;
     private boolean      virtual;
     private ItemProvider provider;
+    private boolean itemStackable;
 
     public CrateKey(@NotNull CratesPlugin plugin, @NotNull File file) {
         super(plugin, file);
@@ -41,6 +42,7 @@ public class CrateKey extends AbstractFileData<CratesPlugin> {
         }
 
         this.setProvider(ItemTypes.read(config, "ItemData"));
+        this.setItemStackable(config.getBoolean("ItemStackable", true));
         return true;
     }
 
@@ -49,6 +51,7 @@ public class CrateKey extends AbstractFileData<CratesPlugin> {
         config.set("Name", this.name);
         config.set("Virtual", this.virtual);
         config.set("ItemData", this.provider);
+        config.set("ItemStackable", this.itemStackable);
     }
 
     @NotNull
@@ -92,8 +95,19 @@ public class CrateKey extends AbstractFileData<CratesPlugin> {
     @NotNull
     public ItemStack getItem() {
         ItemStack item = this.getRawItem();
-        PDCUtil.set(item, Keys.keyId, this.getId());
+        ItemUtil.editMeta(item, meta -> {
+            if (!this.isItemStackable()) meta.setMaxStackSize(1);
+            PDCUtil.set(meta, Keys.keyId, this.getId());
+        });
         return item;
+    }
+
+    public boolean isItemStackable() {
+        return this.itemStackable;
+    }
+
+    public void setItemStackable(boolean itemStackable) {
+        this.itemStackable = itemStackable;
     }
 
     @NotNull
