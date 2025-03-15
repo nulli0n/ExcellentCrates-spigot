@@ -119,7 +119,6 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             this.saveAndFlush(viewer, crate);
         });
 
-
         this.addItem(Material.PAINTING, EditorLang.CRATE_EDIT_PREVIEW, 6, (viewer, event, crate) -> {
             if (event.isRightClick()) {
                 crate.setPreviewEnabled(!crate.isPreviewEnabled());

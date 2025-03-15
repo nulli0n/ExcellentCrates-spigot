@@ -17,7 +17,11 @@ import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class HologramPacketsHandler implements HologramHandler {
@@ -35,23 +39,6 @@ public class HologramPacketsHandler implements HologramHandler {
     private void broadcastPacket(@NotNull PacketWrapper<?> packet) {
         Players.getOnline().forEach(player -> this.playerManager.sendPacket(player, packet));
     }
-
-
-//    @NotNull
-//    private List<PacketWrapper<?>> getItemPackets(int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull ItemStack item) {
-//        List<PacketWrapper<?>> list = new ArrayList<>();
-//
-//        PacketWrapper<?> spawnPacket = this.createSpawnPacket(type, location, entityID);
-//        PacketWrapper<?> dataPacket = this.createMetadataPacket(entityID, dataList -> {
-//            dataList.add(new EntityData(5, EntityDataTypes.BOOLEAN, true)); // no gravity
-//            dataList.add(new EntityData(8, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(item))); // item
-//        });
-//
-//        list.add(spawnPacket);
-//        list.add(dataPacket);
-//
-//        return list;
-//    }
 
     @SuppressWarnings("deprecation")
     @Override

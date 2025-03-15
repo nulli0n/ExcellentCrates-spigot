@@ -27,6 +27,7 @@ import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractFileData;
+import su.nightexpress.nightcore.universalscheduler.foliaScheduler.FoliaScheduler;
 import su.nightexpress.nightcore.util.FileUtil;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Lists;
@@ -149,9 +150,16 @@ public class Crate extends AbstractFileData<CratesPlugin> {
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
         if (!Config.isCrateInAirBlocksAllowed()) {
-            this.blockPositions.removeIf(pos -> {
-                Block block = pos.toBlock();
-                return block != null && block.isEmpty();
+            new FoliaScheduler(plugin).runTask(() -> {
+                List<WorldPos> blockPositionsTemp = new ArrayList<>(blockPositions);
+                for (WorldPos pos : blockPositionsTemp) {
+                    new FoliaScheduler(plugin).runTask(pos.toLocation(), () -> {
+                        Block block = pos.toBlock();
+
+                        if (block == null || block.isEmpty())
+                            this.blockPositions.remove(pos);
+                    });
+                }
             });
         }
 
