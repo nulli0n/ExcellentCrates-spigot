@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 public abstract class AbstractItemProvider implements ItemProvider {
 
@@ -30,8 +31,7 @@ public abstract class AbstractItemProvider implements ItemProvider {
 
     @NotNull
     protected ItemStack getDummyItem() {
-        ItemStack itemStack = new ItemStack(Material.BARRIER);
-        Lang.OTHER_BROKEN_ITEM.apply(itemStack);
+        ItemStack itemStack = NightItem.fromType(Material.BARRIER).localized(Lang.OTHER_BROKEN_ITEM).getItemStack();
         PDCUtil.set(itemStack, Keys.dummyItem, true);
         return itemStack;
     }

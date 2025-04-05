@@ -2,13 +2,16 @@
 <div align="center">
   <img src="https://nightexpressdev.com/excellentcrates/header.png">
   
-  <a href="https://discord.gg/EwNFGsnGaW"><img src="https://i.imgur.com/h45m0s6.png"></a>
-  <a href="https://ko-fi.com/nightexpress"><img src="https://i.imgur.com/AzBMWfk.png"></a>
-  <a href="https://nightexpressdev.com/excellentcrates/"><img src="https://i.imgur.com/3sH9F74.png"></a>
+  <a href="https://discord.gg/EwNFGsnGaW"><img src="https://nightexpressdev.com/img/generic/btn_discord.png"></a>
+  <a href="https://ko-fi.com/nightexpress"><img src="https://nightexpressdev.com/img/generic/btn_donate.png"></a>
+  <a href="https://nightexpressdev.com/excellentcrates/"><img src="https://nightexpressdev.com/img/generic/btn_wiki.png"></a>
   
   ![](https://repo.nightexpressdev.com/api/badge/latest/releases/su/nightexpress/excellentcrates/ExcellentCrates?color=40c14a&name=ExcellentCrates&prefix=v)
 
-**ExcellentCrates** is a lightweight, powerful, feature-rich and highly customizable crates plugin.
+**ExcellentCrates** is a lightweight, feature rich and highly customizable crates plugin.
+
+<img src="https://i.imgur.com/FF5CkZs.gif"><img src="https://i.imgur.com/bq9cUiU.gif">
+<img src="https://i.imgur.com/Ow50NvS.gif"><img src="https://nightexpressdev.com/img/excellentcrates/promo_crate_preview.gif">
 </div>
 
 # Features
@@ -43,20 +46,22 @@
 # Compatibility
 - **Java Version:** 21 or higher.
 - **Server Software:** Spigot / Paper / Purpur
-- **Server Version:** 1.21.3 or higher.
+- **Server Version:** 1.21.4 or higher.
 
 # Dependencies
 **REQUIRED:**
-- [nightcore](https://nightexpressdev.com/nightcore/) 2.7.3.2 or newer.
+- [nightcore](https://nightexpressdev.com/nightcore/) 2.7.5 or newer.
 
 **OPTIONAL:**
 - [EconomyBridge](https://nightexpressdev.com/economy-bridge/) - For custom item and open cost support.
 - [ProtocolLib](https://ci.dmulloy2.net/job/ProtocolLib/) or [PacketEvents](https://spigotmc.org/resources/80279/) - For crate holograms.
 
-# Downloads
+# Downloads & Documentation
 - [SpigotMC](https://spigotmc.org/resources/48732/)
 - [Hangar](https://hangar.papermc.io/NightExpress/ExcellentCrates)
 - [Modrinth](https://modrinth.com/plugin/excellentcrates)
+- [Documentation](https://nightexpressdev.com/excellentcrates/)
+- [Developer API](https://nightexpressdev.com/excellentcrates/developer-api/)
 
 # Donate
 If you like my work or enjoy using my plugins, feel free to [Buy me a coffee](https://ko-fi.com/nightexpress) :) Thank you! 🧡

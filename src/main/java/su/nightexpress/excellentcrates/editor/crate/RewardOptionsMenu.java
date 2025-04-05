@@ -77,6 +77,34 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         // Universal Options
         // ---------------------
 
+        this.addItem(Material.ITEM_FRAME, EditorLang.REWARD_EDIT_ICON, 4, (viewer, event, reward) -> {
+            if (event.isRightClick()) {
+                Players.addItem(viewer.getPlayer(), reward.getPreviewItem());
+                return;
+            }
+
+            ItemStack cursor = event.getCursor();
+            if (cursor == null || cursor.getType().isAir()) return;
+
+            ItemProvider provider = ItemTypes.fromItem(cursor);
+            if (!provider.canProduceItem()) return;
+
+            reward.setPreview(provider);
+            event.getView().setCursor(null);
+            this.saveAndFlush(viewer, reward);
+
+        }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
+                item.inherit(NightItem.fromItemStack(this.getLink(viewer).getPreviewItem()))
+                    .localized(EditorLang.REWARD_EDIT_ICON)
+                    .setHideComponents(true);
+            }).setVisibilityPolicy(viewer -> {
+                Reward reward = this.getLink(viewer);
+                if (reward instanceof CommandReward) return true;
+
+                return reward instanceof ItemReward itemReward && itemReward.isCustomPreview();
+            }).build()
+        );
+
         this.addItem(ItemUtil.getSkinHead(TEXTURE_RARITY), EditorLang.REWARD_EDIT_RARITY, 10, (viewer, event, reward) -> {
             this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_RARITY, wrapper -> {
                 Rarity rarity = this.plugin.getCrateManager().getRarity(wrapper.getTextRaw());
@@ -170,33 +198,6 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof CommandReward).build());
 
 
-        this.addItem(Material.ITEM_FRAME, EditorLang.REWARD_EDIT_ICON, 4, (viewer, event, reward) -> {
-            if (!(reward instanceof CommandReward commandReward)) return;
-
-            if (event.isRightClick()) {
-                Players.addItem(viewer.getPlayer(), reward.getPreviewItem());
-                return;
-            }
-
-            ItemStack cursor = event.getCursor();
-            if (cursor == null || cursor.getType().isAir()) return;
-
-            ItemProvider provider = ItemTypes.fromItem(cursor);
-            if (!provider.canProduceItem()) return;
-
-            commandReward.setPreview(provider);
-            event.getView().setCursor(null);
-            this.saveAndFlush(viewer, commandReward);
-
-        }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
-            item.inherit(NightItem.fromItemStack(this.getLink(viewer).getPreviewItem()))
-                .localized(EditorLang.REWARD_EDIT_ICON)
-                .setHideComponents(true);
-        })
-           .setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof CommandReward)
-           .build()
-        );
-
 
         this.addItem(Material.WRITABLE_BOOK, EditorLang.REWARD_EDIT_DESCRIPTION, 6, (viewer, event, reward) -> {
             if (!(reward instanceof CommandReward commandReward)) return;
@@ -234,6 +235,13 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         // ---------------------
         // Item Options
         // ---------------------
+
+        this.addItem(Material.GLOWSTONE_DUST, EditorLang.REWARD_EDIT_CUSTOM_ICON, 2, (viewer, event, reward) -> {
+            if (!(reward instanceof ItemReward itemReward)) return;
+
+            itemReward.setCustomPreview(!itemReward.isCustomPreview());
+            this.saveAndFlush(viewer, reward);
+        }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof ItemReward).build());
 
         this.addItem(ItemUtil.getSkinHead(TEXTURE_ITEMS), EditorLang.REWARD_EDIT_ITEMS, 13, (viewer, event, reward) -> {
             if (!(reward instanceof ItemReward itemReward)) return;

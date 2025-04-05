@@ -406,6 +406,12 @@ public class EditorLang {
         .rightClick("remove all")
         .build();
 
+    public static final LangUIButton REWARD_EDIT_CUSTOM_ICON = LangUIButton.builder(PREFIX + "Reward.CustomPreview", "Custom Icon")
+        .current("Enabled", REWARD_CUSTOM_PREVIEW)
+        .description("Controls whether reward", "should have a custom icon.")
+        .click("toggle")
+        .build();
+
     public static final LangItem REWARD_EDIT_ICON = builder(PREFIX + "Reward.Icon")
         .name("Icon")
         .textRaw(INSPECTION_TYPE.apply(Inspections.REWARD_PREVIEW))

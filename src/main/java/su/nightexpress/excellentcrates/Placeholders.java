@@ -102,6 +102,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
     public static final String REWARD_IGNORED_PERMISSIONS  = "%reward_ignored_for_permissions%";
     public static final String REWARD_REQUIRED_PERMISSIONS = "%reward_required_permissions%";
+    public static final String REWARD_CUSTOM_PREVIEW = "%reward_editor_custom_preview%";
     public static final String REWARD_COMMANDS_CONTENT     = "%reward_editor_commands%";
     public static final String REWARD_ITEMS_CONTENT        = "%reward_editor_items%";
     public static final String REWARD_INSPECT_CONTENT      = "%reward_inspect_content%";
@@ -218,6 +219,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
     public static final PlaceholderList<ItemReward> ITEM_REWARD_EDITOR = PlaceholderList.create(list -> {
         list.add(REWARD_EDITOR);
+        list.add(REWARD_CUSTOM_PREVIEW, reward -> Lang.getYesOrNo(reward.isCustomPreview()));
         list.add(REWARD_ITEMS_CONTENT, reward -> {
             return reward.getItems().stream().map(ItemProvider::getItemStack)
                 .map(item -> Lang.goodEntry(ItemUtil.getSerializedName(item) + " x" + item.getAmount())).collect(Collectors.joining("\n"));

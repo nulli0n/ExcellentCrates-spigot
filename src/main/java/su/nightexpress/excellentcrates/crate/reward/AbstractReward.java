@@ -6,9 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
+import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.util.inspect.Inspectors;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
@@ -25,7 +27,8 @@ public abstract class AbstractReward implements Reward {
     protected final Crate        crate;
     protected final String       id;
 
-    protected double      weight;
+    protected ItemProvider preview;
+    protected double       weight;
     protected Rarity      rarity;
     protected boolean     broadcast;
     protected boolean     placeholderApply;
@@ -52,6 +55,7 @@ public abstract class AbstractReward implements Reward {
 
     @Override
     public void load(@NotNull FileConfig config, @NotNull String path) {
+        this.setPreview(ItemTypes.read(config, path + ".PreviewData"));
         this.setWeight(config.getDouble(path + ".Weight", -1D));
         this.setBroadcast(config.getBoolean(path + ".Broadcast"));
         this.setPlaceholderApply(config.getBoolean(path + ".Placeholder_Apply"));
@@ -67,6 +71,9 @@ public abstract class AbstractReward implements Reward {
     @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Type", this.getType().name());
+        if (!this.preview.isDummy()) {
+            config.set(path + ".PreviewData", this.preview);
+        }
         config.set(path + ".Weight", this.weight);
         config.set(path + ".Rarity", this.rarity.getId());
         config.set(path + ".Broadcast", this.broadcast);
@@ -198,6 +205,15 @@ public abstract class AbstractReward implements Reward {
     @Override
     public void setWeight(double weight) {
         this.weight = Math.max(0, weight);
+    }
+
+    @NotNull
+    public ItemProvider getPreview() {
+        return this.preview;
+    }
+
+    public void setPreview(@NotNull ItemProvider provider) {
+        this.preview = provider;
     }
 
     @Override
