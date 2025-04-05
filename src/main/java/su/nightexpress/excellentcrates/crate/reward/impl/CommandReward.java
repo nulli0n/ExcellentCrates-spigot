@@ -7,11 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.RewardType;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
-import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
+import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.Players;
@@ -24,7 +23,7 @@ import java.util.function.UnaryOperator;
 
 public class CommandReward extends AbstractReward {
 
-    private ItemProvider preview;
+    //private ItemProvider preview;
     private String       name;
     private List<String> description;
     private List<String> commands;
@@ -41,7 +40,7 @@ public class CommandReward extends AbstractReward {
     protected void loadAdditional(@NotNull FileConfig config, @NotNull String path) {
         this.setName(config.getString(path + ".Name", StringUtil.capitalizeUnderscored(this.getId())));
         this.setDescription(config.getStringList(path + ".Description"));
-        this.setPreview(ItemTypes.read(config, path + ".PreviewData"));
+//        this.setPreview(ItemTypes.read(config, path + ".PreviewData"));
         this.setCommands(config.getStringList(path + ".Commands"));
     }
 
@@ -49,7 +48,7 @@ public class CommandReward extends AbstractReward {
     protected void writeAdditional(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Name", this.name);
         config.set(path + ".Description", this.description);
-        config.set(path + ".PreviewData", this.preview);
+//        config.set(path + ".PreviewData", this.preview);
         config.set(path + ".Commands", this.commands);
     }
 
@@ -102,14 +101,14 @@ public class CommandReward extends AbstractReward {
         this.description = description;
     }
 
-    @NotNull
-    public ItemProvider getPreview() {
-        return this.preview;
-    }
-
-    public void setPreview(@NotNull ItemProvider provider) {
-        this.preview = provider;
-    }
+//    @NotNull
+//    public ItemProvider getPreview() {
+//        return this.preview;
+//    }
+//
+//    public void setPreview(@NotNull ItemProvider provider) {
+//        this.preview = provider;
+//    }
 
     @NotNull
     public List<String> getCommands() {

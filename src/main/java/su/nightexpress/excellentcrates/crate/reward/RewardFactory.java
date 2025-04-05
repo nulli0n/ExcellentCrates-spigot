@@ -56,7 +56,7 @@ public class RewardFactory {
             else {
                 config.set(path + ".Type", RewardType.ITEM.name());
                 config.remove(path + ".Commands");
-                config.remove(path + ".PreviewData");
+                //config.remove(path + ".PreviewData");
             }
         }
         // ------- CONVERT TYPE - END -------

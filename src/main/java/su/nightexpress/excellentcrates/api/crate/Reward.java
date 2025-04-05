@@ -96,6 +96,8 @@ public interface Reward extends Writeable {
 
     @NotNull ItemProvider getPreview();
 
+    void setPreview(@NotNull ItemProvider preview);
+
     @NotNull Set<String> getIgnoredPermissions();
 
     void setIgnoredPermissions(@NotNull Set<String> ignoredPermissions);
