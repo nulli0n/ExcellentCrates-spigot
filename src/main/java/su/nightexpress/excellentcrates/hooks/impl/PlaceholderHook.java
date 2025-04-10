@@ -5,17 +5,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.user.CrateUser;
-import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.util.NumberUtil;
-import su.nightexpress.nightcore.util.TimeUtil;
+import su.nightexpress.nightcore.util.time.TimeFormats;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -52,6 +51,11 @@ public class PlaceholderHook {
                 return NumberUtil.format(keys);
             });
 
+            this.placeholders.put("openings_raw", (player, crate) -> {
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
+                return String.valueOf(user.getCrateData(crate).getOpenings());
+            });
+
             this.placeholders.put("openings", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 return NumberUtil.format(user.getCrateData(crate).getOpenings());
@@ -60,23 +64,18 @@ public class PlaceholderHook {
             this.placeholders.put("cooldown", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 UserCrateData data = user.getCrateData(crate);
-                if (!data.hasCooldown()) return Config.CRATE_COOLDOWN_FORMATTER_READY.get();
+                if (!data.hasCooldown()) return Lang.OTHER_COOLDOWN_READY.getString();
 
-                LocalDateTime time = TimeUtil.getLocalDateTimeOf(data.getOpenCooldown());
-                LocalDateTime now = LocalDateTime.now();
-                Duration duration = Duration.between(now, time);
-
-                return Config.CRATE_COOLDOWN_FORMATTER_TIME.get()
-                    .replace("hh", String.valueOf(duration.toHours()))
-                    .replace("mm", String.valueOf(duration.toMinutesPart()))
-                    .replace("ss", String.valueOf(duration.toSecondsPart()));
+                return TimeFormats.formatDuration(data.getOpenCooldown(), Config.CRATE_COOLDOWN_FORMAT_TYPE.get());
             });
 
             this.placeholders.put("next_milestone_openings", (player, crate) -> {
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
-                return milestone == null ? "-" : NumberUtil.format(milestone.getOpenings() - milestones);
+                if (milestone == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.getString();
+
+                return NumberUtil.format(milestone.getOpenings() - milestones);
             });
 
             this.placeholders.put("next_milestone_reward", (player, crate) -> {
@@ -84,19 +83,13 @@ public class PlaceholderHook {
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 Reward reward = milestone == null ? null : milestone.getReward();
+                if (reward == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.getString();
 
-                return reward == null ? "-" : reward.getName();
+                return reward.getName();
             });
 
-            this.placeholders.put("latest_opener", (player, crate) -> {
-                String latest = crate.getLatestOpener();
-                return latest == null ? "-" : latest;
-            });
-
-            this.placeholders.put("latest_rolled_reward", (player, crate) -> {
-                String latest = crate.getLatestReward();
-                return latest == null ? "-" : latest;
-            });
+            this.placeholders.put("latest_opener", (player, crate) -> crate.getLastOpenerName());
+            this.placeholders.put("latest_rolled_reward", (player, crate) -> crate.getLastRewardName());
         }
 
         @Override

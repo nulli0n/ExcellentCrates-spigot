@@ -14,9 +14,10 @@ import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.ui.Confirmation;
+import su.nightexpress.nightcore.ui.UIUtils;
 import su.nightexpress.nightcore.ui.dialog.Dialog;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
+import su.nightexpress.nightcore.ui.menu.confirmation.Confirmation;
 import su.nightexpress.nightcore.ui.menu.data.Filled;
 import su.nightexpress.nightcore.ui.menu.data.MenuFiller;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
@@ -81,16 +82,16 @@ public class CrateCostsMenu extends LinkedMenu<CratesPlugin, Crate> implements F
         });
         autoFill.setItemClick(cost -> (viewer1, event) -> {
             if (event.isRightClick()) {
-                this.runNextTick(() -> plugin.getUIManager().openConfirm(player, Confirmation.create(
-                    (viewer2, event1) -> {
+                UIUtils.openConfirmation(player, Confirmation.builder()
+                    .onAccept((viewer2, event1) -> {
                         crate.removeOpenCost(cost);
                         crate.saveSettings();
-                        plugin.getEditorManager().openCostsMenu(player, crate);
-                    },
-                    (viewer2, event1) -> {
-                        plugin.getEditorManager().openCostsMenu(player, crate);
-                    }
-                )));
+                    })
+                    .onReturn((viewer2, event1) -> {
+                        plugin.runTask(task -> plugin.getEditorManager().openCostsMenu(player, crate));
+                    })
+                    .returnOnAccept(true)
+                    .build());
                 return;
             }
 

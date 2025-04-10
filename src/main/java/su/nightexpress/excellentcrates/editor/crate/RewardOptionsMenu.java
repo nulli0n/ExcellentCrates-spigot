@@ -20,10 +20,11 @@ import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.reward.impl.CommandReward;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
 import su.nightexpress.excellentcrates.item.ItemTypes;
-import su.nightexpress.excellentcrates.ui.Confirmation;
+import su.nightexpress.nightcore.ui.UIUtils;
 import su.nightexpress.nightcore.ui.dialog.Dialog;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.click.ClickResult;
+import su.nightexpress.nightcore.ui.menu.confirmation.Confirmation;
 import su.nightexpress.nightcore.ui.menu.item.ItemOptions;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
@@ -61,16 +62,16 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             Player player = viewer.getPlayer();
             Crate crate = reward.getCrate();
 
-            this.runNextTick(() -> plugin.getUIManager().openConfirm(player, Confirmation.create(
-                (viewer1, event1) -> {
+            UIUtils.openConfirmation(player, Confirmation.builder()
+                .onAccept((viewer1, event1) -> {
                     crate.removeReward(reward);
                     crate.saveRewards();
-                    this.runNextTick(() -> plugin.getEditorManager().openRewardList(player, crate));
-                },
-                (viewer1, event1) -> {
-                    this.runNextTick(() -> plugin.getEditorManager().openRewardOptions(player, reward));
-                }
-            )));
+                    plugin.runTask(task -> plugin.getEditorManager().openRewardList(player, crate));
+                })
+                .onReturn((viewer1, event1) -> {
+                    plugin.runTask(task -> plugin.getEditorManager().openRewardOptions(player, reward));
+                })
+                .build());
         });
 
         // ---------------------

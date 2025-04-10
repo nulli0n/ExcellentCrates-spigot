@@ -19,6 +19,7 @@ import su.nightexpress.nightcore.language.LangAssets;
 import su.nightexpress.nightcore.util.*;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderList;
 import su.nightexpress.nightcore.util.text.tag.Tags;
+import su.nightexpress.nightcore.util.time.TimeFormats;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.util.function.Function;
@@ -41,6 +42,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String GENERIC_MAX    = "%max%";
     public static final String GENERIC_TIME   = "%time%";
     public static final String GENERIC_KEYS   = "%keys%";
+    public static final String GENERIC_MODE = "%mode%";
 
     public static final String RARITY_ID          = "%rarity_id%";
     public static final String RARITY_NAME        = "%rarity_name%";
@@ -123,16 +125,10 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
                 if (crate.getOpenCooldown() == 0L) return Lang.OTHER_DISABLED.getString();
                 if (crate.getOpenCooldown() < 0L) return Lang.OTHER_ONE_TIMED.getString();
 
-                return TimeUtil.formatTime(crate.getOpenCooldown() * 1000L);
+                return TimeFormats.toLiteral(crate.getOpenCooldown() * 1000L);
             })
-            .add(CRATE_LAST_OPENER, crate -> {
-                String last = crate.getLatestOpener();
-                return last == null ? "-" : last; // TODO Customizable
-            })
-            .add(CRATE_LAST_REWARD, crate -> {
-                String last = crate.getLatestReward();
-                return last == null ? "-" : last;
-            });
+            .add(CRATE_LAST_OPENER, Crate::getLastOpenerName)
+            .add(CRATE_LAST_REWARD, Crate::getLastRewardName);
 
         Inspectors.CRATE.addPlaceholders(list);
     });
@@ -158,12 +154,12 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
                     Block block = worldPos.toBlock();
                     if (block == null) return Lang.badEntry("null");
 
-                    String name = Tags.LIGHT_ORANGE.enclose(LangAssets.get(block.getType()));
+                    String name = Tags.LIGHT_ORANGE.wrap(LangAssets.get(block.getType()));
 
-                    String x = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getX()));
-                    String y = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getY()));
-                    String z = Tags.LIGHT_ORANGE.enclose(NumberUtil.format(worldPos.getZ()));
-                    String world = Tags.LIGHT_ORANGE.enclose(worldPos.getWorldName());
+                    String x = Tags.LIGHT_ORANGE.wrap(NumberUtil.format(worldPos.getX()));
+                    String y = Tags.LIGHT_ORANGE.wrap(NumberUtil.format(worldPos.getY()));
+                    String z = Tags.LIGHT_ORANGE.wrap(NumberUtil.format(worldPos.getZ()));
+                    String world = Tags.LIGHT_ORANGE.wrap(worldPos.getWorldName());
                     String coords = x + ", " + y + ", " + z + " in " + world;
                     String line = coords + " (" + name + ")";
 
@@ -241,7 +237,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
             if (values.isMidnight()) return Lang.OTHER_MIDNIGHT.getString();
             if (values.isNeverReset()) return Lang.OTHER_NEVER.getString();
 
-            return TimeUtil.formatTime(values.getResetTime() * 1000L);
+            return TimeFormats.toLiteral(values.getResetTime() * 1000L);
         })
     );
 

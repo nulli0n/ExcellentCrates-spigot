@@ -1,20 +1,23 @@
 package su.nightexpress.excellentcrates.config;
 
 import org.bukkit.Sound;
+import su.nightexpress.excellentcrates.editor.crate.RewardSortMenu;
 import su.nightexpress.nightcore.core.CoreLang;
+import su.nightexpress.nightcore.language.entry.LangEnum;
 import su.nightexpress.nightcore.language.entry.LangString;
 import su.nightexpress.nightcore.language.entry.LangText;
 import su.nightexpress.nightcore.language.entry.LangUIButton;
 import su.nightexpress.nightcore.util.bridge.wrapper.ClickEventType;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
-import static su.nightexpress.nightcore.language.tag.MessageTags.OUTPUT;
-import static su.nightexpress.nightcore.language.tag.MessageTags.SOUND;
+import static su.nightexpress.nightcore.language.tag.MessageTags.*;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class Lang extends CoreLang {
 
     //public static final LangKeyed<Particle> PARTICLE = LangKeyed.of("Particles", Registry.PARTICLE_TYPE);
+
+    public static final LangEnum<RewardSortMenu.SortMode> REWARD_SORT_MODE = LangEnum.of("RewardSortMode", RewardSortMenu.SortMode.class);
 
     public static final LangString COMMAND_ARGUMENT_NAME_CRATE = LangString.of("Command.Argument.Name.Crate", "crate");
     public static final LangString COMMAND_ARGUMENT_NAME_KEY   = LangString.of("Command.Argument.Name.Key", "key");
@@ -197,6 +200,10 @@ public class Lang extends CoreLang {
         LIGHT_RED.wrap("Key with such ID already exists!")
     );
 
+    public static final LangString OTHER_COOLDOWN_READY       = LangString.of("Other.Cooldown.Ready", LIGHT_GREEN.wrap("Ready to Open!"));
+    public static final LangString OTHER_LAST_OPENER_EMPTY    = LangString.of("Other.LastOpener.Empty", "-");
+    public static final LangString OTHER_LAST_REWARD_EMPTY    = LangString.of("Other.LastReward.Empty", "-");
+    public static final LangString OTHER_NEXT_MILESTONE_EMPTY = LangString.of("Other.NextMilestone.Empty", "-");
 
     public static final LangString OTHER_MIDNIGHT = LangString.of("Other.Midnight", "Midnight");
     public static final LangString OTHER_FREE     = LangString.of("Other.Free", "Free");
@@ -291,5 +298,11 @@ public class Lang extends CoreLang {
         .current(KEY_ITEM_STACKABLE)
         .description("Controls whether key item is stackable.")
         .leftClick("toggle")
+        .build();
+
+    public static final LangUIButton EDITOR_BUTTON_SORT_REWARDS = LangUIButton.builder("Editor.Button.Reward.SortMode", GENERIC_MODE)
+        .description("Sort reward by their " + LIGHT_YELLOW.wrap(GENERIC_MODE) + ".")
+        .leftClick("ascending")
+        .rightClick("descending")
         .build();
 }

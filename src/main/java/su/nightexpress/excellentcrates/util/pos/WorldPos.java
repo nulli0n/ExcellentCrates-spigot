@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.NumberUtil;
+import su.nightexpress.nightcore.util.geodata.pos.BlockPos;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;

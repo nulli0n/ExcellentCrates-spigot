@@ -29,7 +29,6 @@ public abstract class InventoryOpening extends AbstractOpening {
     private boolean launched;
     private long    closeTicks;
     private long    launchTicks;
-    //private boolean popupNextTick;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
                             @NotNull InvOpeningProvider config,
@@ -42,7 +41,6 @@ public abstract class InventoryOpening extends AbstractOpening {
         this.config = config;
         this.spinners = new ArrayList<>();
         this.closeTicks = config.getCompletionPauseTicks();
-        //this.popupNextTick = false;
         this.launchTicks = 0L;
     }
 
@@ -93,7 +91,6 @@ public abstract class InventoryOpening extends AbstractOpening {
         else {
             if (this.player.getOpenInventory() != this.view) {
                 this.player.openInventory(this.view);
-                //this.setPopupNextTick(false);
             }
         }
 
@@ -195,14 +192,6 @@ public abstract class InventoryOpening extends AbstractOpening {
     public List<Spinner> getSpinners() {
         return this.spinners;
     }
-
-//    public boolean isPopupNextTick() {
-//        return this.popupNextTick;
-//    }
-//
-//    public void setPopupNextTick(boolean popupNextTick) {
-//        this.popupNextTick = popupNextTick;
-//    }
 
     public void setCloseTicks(long closeTicks) {
         this.closeTicks = closeTicks;

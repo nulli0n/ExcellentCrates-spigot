@@ -360,26 +360,6 @@ public class EditorLang {
         .leftClick("navigate")
         .build();
 
-    public static final LangItem REWARD_SORT_BY_WEIGHT = builder(PREFIX + "Reward.Sort.ByWeight")
-        .name("By Weight")
-        .build();
-
-    public static final LangItem REWARD_SORT_BY_RARITY = builder(PREFIX + "Reward.Sort.ByRarity")
-        .name("By Rarity")
-        .build();
-
-    public static final LangItem REWARD_SORT_BY_CHANCE = builder(PREFIX + "Reward.Sort.ByChance")
-        .name("By Chance")
-        .build();
-
-    public static final LangItem REWARD_SORT_BY_NAME = builder(PREFIX + "Reward.Sort.ByName")
-        .name("By Name")
-        .build();
-
-    public static final LangItem REWARD_SORT_BY_ITEM = builder(PREFIX + "Reward.Sort.ByItem")
-        .name("By Item")
-        .build();
-
     public static final LangItem REWARD_EDIT_DELETE = builder(PREFIX + "Reward.Delete")
         .name(LIGHT_RED.enclose("Delete Reward"))
         .text("Permanently deletes the reward.")

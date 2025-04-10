@@ -8,6 +8,7 @@ import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.time.TimeFormatType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ public class Config {
     public static final String DIR_MENUS          = "/menu/";
     public static final String DIR_OPENINGS_GUI   = "/openings/inventory/";
     public static final String DIR_OPENINGS_WORLD = "/openings/world/";
-    public static final String DIR_UI             = "/ui/";
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
@@ -83,8 +83,7 @@ public class Config {
 
     public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
         true,
-        "Controls whether Milestones feature is enabled."
-    );
+        "Controls whether Milestones feature is enabled.");
 
     public static final ConfigValue<Boolean> CRATE_ALLOW_CRATES_IN_AIR_BLOCKS = ConfigValue.create("Crate.Allow_Crates_In_Air_Blocks",
         false,
@@ -120,14 +119,11 @@ public class Config {
         "Sets how often (in seconds) crate holograms will update."
     );
 
-    public static final ConfigValue<String> CRATE_COOLDOWN_FORMATTER_TIME = ConfigValue.create("Crate.Cooldown_Formatter.Time",
-        "hh:mm:ss",
-        "Sets time formatter for crate opening cooldown.", "'hh' - hours, 'mm' - minutes, 'ss' - seconds."
-    );
-
-    public static final ConfigValue<String> CRATE_COOLDOWN_FORMATTER_READY = ConfigValue.create("Crate.Cooldown_Formatter.Ready",
-        LIGHT_GREEN.enclose("Ready to Open!"),
-        "Sets the custom message instead of empty counter when there is no cooldown for a crate."
+    public static final ConfigValue<TimeFormatType> CRATE_COOLDOWN_FORMAT_TYPE = ConfigValue.create("Crate.Cooldown_Format_Type",
+        TimeFormatType.class,
+        TimeFormatType.DIGITAL,
+        "Sets crate cooldown format type.",
+        "Available values: [" + StringUtil.inlineEnum(TimeFormatType.class, ", " + "]")
     );
 
     public static final ConfigValue<Boolean> CRATE_HOLD_KEY_TO_OPEN = ConfigValue.create("Crate.Hold_Key_To_Open",
@@ -215,9 +211,4 @@ public class Config {
     public static boolean isKeyHoldRequired() {
         return CRATE_HOLD_KEY_TO_OPEN.get();
     }
-
-//    @NotNull
-//    public static HologramType getHologramType() {
-//        return CRATE_HOLOGRAM_HANDLER.get();
-//    }
 }

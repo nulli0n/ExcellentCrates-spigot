@@ -3,14 +3,10 @@ package su.nightexpress.excellentcrates.item.provider.impl;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.CratesAPI;
 import su.nightexpress.excellentcrates.api.item.ItemType;
 import su.nightexpress.excellentcrates.item.provider.AbstractItemProvider;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.util.BukkitThing;
-import su.nightexpress.nightcore.util.ItemNbt;
-import su.nightexpress.nightcore.util.ItemUtil;
-import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.*;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
 public class VanillaItemProvider extends AbstractItemProvider {
@@ -29,10 +25,18 @@ public class VanillaItemProvider extends AbstractItemProvider {
 
     @Nullable
     public static VanillaItemProvider read(@NotNull FileConfig config, @NotNull String path) {
-        String itemTag = config.getString(path + ".ItemTag", "{}");
-        ItemStack itemStack = ItemNbt.fromTagString(itemTag);
+        String itemTag = config.getString(path + ".ItemTag");
+        if (itemTag != null) {
+            ItemTag tag = new ItemTag(itemTag, Version.MC_1_21_4.getDataVersion());
+            config.set(path + ".Tag", tag);
+            config.remove(path + ".ItemTag");
+        }
+
+        ItemTag tag = ItemTag.read(config, path + ".Tag");
+
+        ItemStack itemStack = ItemNbt.fromTag(tag);//.fromTagString(itemTag);
         if (itemStack == null) {
-            CratesAPI.error("Could not parse item tag string '" + itemTag + "'. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
+            //CratesAPI.error("Could not parse item tag string '" + itemTag + "'. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
             return null;
         }
 
@@ -41,7 +45,7 @@ public class VanillaItemProvider extends AbstractItemProvider {
 
     @Override
     public void writeAdditional(@NotNull FileConfig config, @NotNull String path) {
-        config.set(path + ".ItemTag", ItemNbt.getTagString(this.itemStack));
+        config.set(path + ".Tag", ItemNbt.getTag(this.itemStack));
     }
 
     @Override
@@ -58,7 +62,7 @@ public class VanillaItemProvider extends AbstractItemProvider {
     @Override
     @NotNull
     public String getItemType() {
-        String display = StringUtil.transformForID(NightMessage.stripAll(ItemUtil.getItemName(this.itemStack)));
+        String display = StringUtil.transformForID(NightMessage.stripTags(ItemUtil.getSerializedName(this.itemStack)));
         if (!display.isBlank()) return display;
 
         return BukkitThing.toString(this.itemStack.getType());
