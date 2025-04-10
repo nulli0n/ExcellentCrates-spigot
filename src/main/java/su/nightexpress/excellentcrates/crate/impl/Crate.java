@@ -13,6 +13,7 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 import su.nightexpress.excellentcrates.crate.effect.EffectId;
@@ -293,12 +294,24 @@ public class Crate extends AbstractFileData<CratesPlugin> {
     }
 
     @Nullable
+    public String getLastOpenerName() {
+        String last = this.getLatestOpener();
+        return last == null ? Lang.OTHER_LAST_OPENER_EMPTY.getString() : last;
+    }
+
+    @Nullable
     public String getLatestReward() {
         GlobalCrateData data = this.getData();
         if (data == null || data.getLatestRewardId() == null) return null;
 
         Reward reward = this.getReward(data.getLatestRewardId());
         return reward == null ? null : reward.getNameTranslated();
+    }
+
+    @Nullable
+    public String getLastRewardName() {
+        String last = this.getLatestReward();
+        return last == null ? Lang.OTHER_LAST_REWARD_EMPTY.getString() : last;
     }
 
     public void createHologram() {

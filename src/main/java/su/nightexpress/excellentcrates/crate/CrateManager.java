@@ -122,9 +122,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 oldFile.delete();
             }
             if (rarities.isEmpty()) {
-                rarities.add(new Rarity(this.plugin, "common", Tags.WHITE.enclose("Common"), 70));
-                rarities.add(new Rarity(this.plugin, "rare", Tags.LIGHT_GREEN.enclose("Rare"), 25));
-                rarities.add(new Rarity(this.plugin, "mythic", Tags.LIGHT_PURPLE.enclose("Mythic"), 5));
+                rarities.add(new Rarity(this.plugin, "common", Tags.WHITE.wrap("Common"), 70));
+                rarities.add(new Rarity(this.plugin, "rare", Tags.LIGHT_GREEN.wrap("Rare"), 25));
+                rarities.add(new Rarity(this.plugin, "mythic", Tags.LIGHT_PURPLE.wrap("Mythic"), 5));
             }
 
             rarities.forEach(rarity -> {
@@ -279,8 +279,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     public Crate getCrateByLocation(@NotNull Location location) {
         WorldPos pos = WorldPos.from(location);
         return this.crateByPosMap.get(pos);
-
-        //return this.getCrates().stream().filter(crate -> crate.getBlockPositions().contains(pos)).findFirst().orElse(null);
     }
 
     public void removeCratePositions(@NotNull Crate crate) {

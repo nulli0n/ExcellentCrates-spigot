@@ -15,11 +15,12 @@ import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.ui.Confirmation;
 import su.nightexpress.excellentcrates.util.CrateUtils;
+import su.nightexpress.nightcore.ui.UIUtils;
 import su.nightexpress.nightcore.ui.dialog.Dialog;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.click.ClickResult;
+import su.nightexpress.nightcore.ui.menu.confirmation.Confirmation;
 import su.nightexpress.nightcore.ui.menu.item.ItemOptions;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
@@ -42,15 +43,15 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
         this.addItem(ItemUtil.getSkinHead(Placeholders.SKULL_DELETE), EditorLang.KEY_EDIT_DELETE, 8, (viewer, event, key) -> {
             Player player = viewer.getPlayer();
 
-            this.runNextTick(() -> plugin.getUIManager().openConfirm(player, Confirmation.create(
-                (viewer1, event1) -> {
+            UIUtils.openConfirmation(player, Confirmation.builder()
+                .onAccept((viewer1, event1) -> {
                     plugin.getKeyManager().delete(key);
-                    this.runNextTick(() -> plugin.getEditorManager().openKeyList(player));
-                },
-                (viewer1, event1) -> {
-                    this.runNextTick(() -> plugin.getEditorManager().openKeyOptions(player, key));
-                }
-            )));
+                    plugin.runTask(task -> plugin.getEditorManager().openKeyList(player));
+                })
+                .onReturn((viewer1, event1) -> {
+                    plugin.runTask(task -> plugin.getEditorManager().openKeyOptions(player, key));
+                })
+                .build());
         });
 
         this.addItem(Material.NAME_TAG, EditorLang.KEY_EDIT_NAME, 19, (viewer, event, key) -> {

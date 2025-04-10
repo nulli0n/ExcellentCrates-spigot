@@ -39,15 +39,6 @@ public class CustomItemProvider extends AbstractItemProvider {
         String itemId = config.getString(path + ".ItemId", "null");
         int amount = config.getInt(path + ".Amount");
 
-        // May cause errors if item's plugin was not yet loaded.
-//        ItemHandler handler = ItemBridge.getHandler(handlerName);
-//        if (handler == null) {
-//            CratesAPI.error("Invalid custom item handler '" + handlerName + "'. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
-//        }
-//        else if (!handler.isValidId(itemId)) {
-//            CratesAPI.error("Invalid custom item id '" + itemId + "'. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
-//        }
-
         return new CustomItemProvider(handlerName, itemId, amount);
     }
 

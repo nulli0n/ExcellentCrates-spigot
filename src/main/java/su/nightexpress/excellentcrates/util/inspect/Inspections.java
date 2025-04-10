@@ -124,9 +124,10 @@ public class Inspections {
     });
 
     public static final Inspection<Reward> REWARD_PREVIEW = named("reward_preview", reward -> {
-        if (reward instanceof CommandReward commandReward) {
-            ItemProvider provider = commandReward.getPreview();
-            if (!provider.canProduceItem()) return InspectionInfo.bad("Invalid preview data!");
+        ItemProvider provider = reward.getPreview();
+        boolean customPreview = !(reward instanceof ItemReward itemReward) || itemReward.isCustomPreview();
+        if (!provider.canProduceItem() && customPreview) {
+            return InspectionInfo.bad("Invalid preview data!");
         }
 
         return InspectionInfo.good("Preview data is alright.");

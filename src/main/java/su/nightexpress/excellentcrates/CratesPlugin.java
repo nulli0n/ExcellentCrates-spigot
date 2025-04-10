@@ -17,7 +17,6 @@ import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.excellentcrates.opening.OpeningManager;
-import su.nightexpress.excellentcrates.ui.UIManager;
 import su.nightexpress.excellentcrates.user.UserManager;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.NightPlugin;
@@ -39,7 +38,6 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
     private CrateManager    crateManager;
     //private MenuManager     menuManager;
     private EditorManager   editorManager;
-    private UIManager       uiManager;
 
     private CrateLogger     crateLogger;
 
@@ -92,9 +90,6 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
 //        this.menuManager = new MenuManager(this);
 //        this.menuManager.setup();
 
-        this.uiManager = new UIManager(this);
-        this.uiManager.setup();
-
         this.editorManager = new EditorManager(this);
         this.editorManager.setup();
 
@@ -129,7 +124,6 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
     @Override
     public void disable() {
         if (this.editorManager != null) this.editorManager.shutdown();
-        if (this.uiManager != null) this.uiManager.shutdown();
         if (this.openingManager != null) this.openingManager.shutdown();
         if (this.keyManager != null) this.keyManager.shutdown();
         if (this.crateManager != null) this.crateManager.shutdown();
@@ -191,11 +185,6 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
     @NotNull
     public OpeningManager getOpeningManager() {
         return this.openingManager;
-    }
-
-    @NotNull
-    public UIManager getUIManager() {
-        return this.uiManager;
     }
 
     @NotNull

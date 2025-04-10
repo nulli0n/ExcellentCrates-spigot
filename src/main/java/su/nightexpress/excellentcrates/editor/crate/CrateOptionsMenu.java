@@ -18,11 +18,12 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.ui.Confirmation;
 import su.nightexpress.excellentcrates.util.CrateUtils;
+import su.nightexpress.nightcore.ui.UIUtils;
 import su.nightexpress.nightcore.ui.dialog.Dialog;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.click.ClickResult;
+import su.nightexpress.nightcore.ui.menu.confirmation.Confirmation;
 import su.nightexpress.nightcore.ui.menu.item.ItemOptions;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
@@ -54,15 +55,15 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
         this.addItem(ItemUtil.getSkinHead(Placeholders.SKULL_DELETE), EditorLang.CRATE_EDIT_DELETE, 8, (viewer, event, crate) -> {
             Player player = viewer.getPlayer();
 
-            this.runNextTick(() -> plugin.getUIManager().openConfirm(player, Confirmation.create(
-                (viewer1, event1) -> {
+            UIUtils.openConfirmation(player, Confirmation.builder()
+                .onAccept((viewer1, event1) -> {
                     plugin.getCrateManager().delete(crate);
-                    this.runNextTick(() -> plugin.getEditorManager().openCrateList(player));
-                },
-                (viewer1, event1) -> {
-                    this.runNextTick(() -> plugin.getEditorManager().openOptionsMenu(player, crate));
-                }
-            )));
+                    plugin.runTask(task -> plugin.getEditorManager().openCrateList(player));
+                })
+                .onReturn((viewer1, event1) -> {
+                    plugin.runTask(task -> plugin.getEditorManager().openOptionsMenu(player, crate));
+                })
+                .build());
         });
 
 
