@@ -28,11 +28,10 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CrateCostsMenu extends LinkedMenu<CratesPlugin, Crate> implements Filled<Cost> {
 
     public CrateCostsMenu(@NotNull CratesPlugin plugin) {
-        super(plugin, MenuType.GENERIC_9X5, "Open Costs");
+        super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_CRATE_OPEN_COSTS.getString());
 
         this.addItem(MenuItem.buildReturn(this, 39, (viewer, event) -> {
             this.runNextTick(() -> plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));

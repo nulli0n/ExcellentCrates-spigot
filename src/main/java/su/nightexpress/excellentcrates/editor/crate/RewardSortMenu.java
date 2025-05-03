@@ -18,7 +18,6 @@ import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.Comparator;
 
-@SuppressWarnings("UnstableApiUsage")
 public class RewardSortMenu extends LinkedMenu<CratesPlugin, Crate> {
 
     private static final String[] TEXTURES = {

@@ -11,7 +11,6 @@ import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.type.NormalMenu;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
-@SuppressWarnings("UnstableApiUsage")
 public class EditorMenu extends NormalMenu<CratesPlugin> {
 
     private static final String TEXTURE_CRATE = "322d4be1abcf3832c916191d24f9607bf194eff8dfbf3b9520bd97240e7c8";

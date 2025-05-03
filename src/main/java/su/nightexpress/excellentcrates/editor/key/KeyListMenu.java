@@ -21,7 +21,6 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class KeyListMenu extends LinkedMenu<CratesPlugin, KeyManager> implements Filled<CrateKey> {
 
     public KeyListMenu(@NotNull CratesPlugin plugin) {

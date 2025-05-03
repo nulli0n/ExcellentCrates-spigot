@@ -22,6 +22,11 @@ public class ItemTypes {
         return PDCUtil.getBoolean(itemStack, Keys.dummyItem).isPresent();
     }
 
+    public static boolean isCustom(@NotNull ItemStack itemStack) {
+        ItemProvider provider = fromItem(itemStack);
+        return !provider.isDummy() && !(provider instanceof VanillaItemProvider);
+    }
+
     @NotNull
     public static ItemProvider read(@NotNull FileConfig config, @NotNull String path) {
         ItemType type = config.getEnum(path + ".Type", ItemType.class, ItemType.VANILLA);

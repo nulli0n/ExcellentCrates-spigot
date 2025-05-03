@@ -37,7 +37,7 @@ public class PlaceholderHook {
         }
     }
 
-    static class Expansion extends PlaceholderExpansion {
+    private static class Expansion extends PlaceholderExpansion {
 
         private final CratesPlugin                                   plugin;
         private final Map<String, BiFunction<Player, Crate, String>> placeholders;

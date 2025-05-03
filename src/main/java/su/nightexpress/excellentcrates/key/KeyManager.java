@@ -80,7 +80,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
             meta.setDisplayName(key.getName());
         });
 
-        key.setProvider(ItemTypes.fromItem(item));
+        key.setProvider(ItemTypes.vanilla(item));
         key.save();
 
         this.loadKey(key);

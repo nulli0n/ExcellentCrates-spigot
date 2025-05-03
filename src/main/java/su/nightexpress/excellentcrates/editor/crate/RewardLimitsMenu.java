@@ -19,7 +19,6 @@ import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
-@SuppressWarnings("UnstableApiUsage")
 public class RewardLimitsMenu extends LinkedMenu<CratesPlugin, RewardLimitsMenu.Data> {
 
     private static final String AMOUNT     = "8426f715b80dd90eb1e1929f6ec4bc3583de8f821bdd4f4c1722e69c98b50506";

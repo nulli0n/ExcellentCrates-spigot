@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements Filled<Reward> {
 
     private static final String SKULL_SORT   = "5cce7359a25de6da56308e6a369c6372e2c30906c62647040da137a32addc9";

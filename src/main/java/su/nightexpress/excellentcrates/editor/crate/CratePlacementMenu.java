@@ -25,7 +25,6 @@ import su.nightexpress.nightcore.util.BukkitThing;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CratePlacementMenu extends LinkedMenu<CratesPlugin, Crate> {
 
     public CratePlacementMenu(@NotNull CratesPlugin plugin) {

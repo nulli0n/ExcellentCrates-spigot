@@ -24,7 +24,6 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> implements Filled<Milestone> {
 
     public CrateMilestonesMenu(@NotNull CratesPlugin plugin) {
