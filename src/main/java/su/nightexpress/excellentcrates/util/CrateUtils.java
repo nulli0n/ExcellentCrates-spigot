@@ -12,6 +12,7 @@ import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.PDCUtil;
 import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.StringUtil;
@@ -20,6 +21,8 @@ import su.nightexpress.nightcore.util.wrapper.UniParticle;
 import java.util.*;
 
 public class CrateUtils {
+
+    public static final int REWARD_ITEMS_LIMIT = 27;
 
     private static final Map<Player, Crate> ASSIGN_BLOCK_MAP = new WeakHashMap<>();
 
@@ -58,8 +61,10 @@ public class CrateUtils {
 
     @NotNull
     public static ItemStack removeCrateTags(@NotNull ItemStack itemStack) {
-        PDCUtil.remove(itemStack, Keys.crateId);
-        PDCUtil.remove(itemStack, Keys.keyId);
+        ItemUtil.editMeta(itemStack, meta -> {
+            PDCUtil.remove(meta, Keys.crateId);
+            PDCUtil.remove(meta, Keys.keyId);
+        });
         return itemStack;
     }
 

@@ -8,13 +8,16 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.crate.RewardType;
+import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.RewardFactory;
+import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.click.ClickResult;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
@@ -23,10 +26,11 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 import java.util.stream.IntStream;
 
-@SuppressWarnings("UnstableApiUsage")
-public class RewardCreationMenu extends LinkedMenu<CratesPlugin, Crate> {
+public class RewardCreationMenu extends LinkedMenu<CratesPlugin, RewardCreationMenu.Data> {
 
     private static final int ITEM_SLOT = 22;
+
+    public record Data(@NotNull Crate crate, @Nullable ItemProvider provider){}
 
     public RewardCreationMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_REWARD_CREATION.getString());
@@ -38,7 +42,7 @@ public class RewardCreationMenu extends LinkedMenu<CratesPlugin, Crate> {
         this.addItem(NightItem.fromType(Material.MAGENTA_STAINED_GLASS_PANE).toMenuItem().setPriority(1).setSlots(14,15,16,23,25,32,33,34));
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer)));
+            this.runNextTick(() -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer).crate));
         }));
 
         this.addItem(NightItem.fromType(Material.OAK_SIGN).localized(EditorLang.REWARD_CREATION_INFO).toMenuItem().setSlots(4));
@@ -47,19 +51,23 @@ public class RewardCreationMenu extends LinkedMenu<CratesPlugin, Crate> {
         this.addItem(Material.DIAMOND, EditorLang.REWARD_CREATION_ITEM, 20, (viewer, event, obj) -> this.tryCreate(viewer, RewardType.ITEM));
     }
 
+    public void open(@NotNull Player player, @NotNull Crate crate, @Nullable ItemProvider provider) {
+        this.open(player, new Data(crate, provider));
+    }
+
     private void tryCreate(@NotNull MenuViewer viewer, @NotNull RewardType type) {
         Inventory inventory = viewer.getInventory();
         if (inventory == null) return;
 
-        ItemStack source = inventory.getItem(ITEM_SLOT);
-        if (source == null || source.getType().isAir()) return;
-
         Player player = viewer.getPlayer();
-        Crate crate = this.getLink(player);
+        Data data = this.getLink(player);
+        ItemProvider provider = data.provider;
+        if (provider == null || !provider.canProduceItem()) return;
 
-        Reward reward = RewardFactory.wizardCreation(this.plugin, crate, source, type);
-        if (reward == null) return;
+        ItemStack source = data.provider.getItemStack();
+        Crate crate = data.crate;
 
+        Reward reward = RewardFactory.wizardCreation(this.plugin, crate, source, type, data.provider);
         crate.addReward(reward);
         crate.saveRewards();
 
@@ -73,7 +81,15 @@ public class RewardCreationMenu extends LinkedMenu<CratesPlugin, Crate> {
 
     @Override
     protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
-        inventory.setItem(ITEM_SLOT, null);
+        Data data = this.getLink(viewer);
+        ItemProvider provider = data.provider;
+        ItemStack itemStack = null;
+
+        if (provider != null) {
+            itemStack = provider.getItemStack();
+        }
+
+        inventory.setItem(ITEM_SLOT, itemStack);
     }
 
     @Override
@@ -85,7 +101,17 @@ public class RewardCreationMenu extends LinkedMenu<CratesPlugin, Crate> {
         ItemStack clicked = result.getItemStack();
         if (clicked == null || clicked.getType().isAir()) return;
 
-        Inventory inventory = event.getInventory();
-        inventory.setItem(ITEM_SLOT, new ItemStack(clicked));
+        Player player = viewer.getPlayer();
+        Data data = this.getLink(player);
+        Crate crate = data.crate;
+
+        if (!ItemTypes.isCustom(clicked)) {
+            this.runNextTick(() -> this.open(player, crate, ItemTypes.vanilla(clicked)));
+            return;
+        }
+
+        this.runNextTick(() -> this.plugin.getEditorManager().openItemTypeMenu(player, clicked,
+            newProvider -> this.runNextTick(() -> this.open(player, crate, newProvider)))
+        );
     }
 }

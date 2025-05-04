@@ -10,7 +10,6 @@ import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.item.ItemTypes;
@@ -28,7 +27,6 @@ import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
-@SuppressWarnings("UnstableApiUsage")
 public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
 
     private static final String SKULL_STACK = "e2e7ac70bf77ba3dd33f4cb78d88ac149ac6036cef2eac8e7a6fd3676fbaf1aa";
@@ -74,15 +72,25 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
                 return;
             }
 
+            event.getView().setCursor(null);
+
             // Remove key tags to avoid infinite recursion in ItemProvider.
             ItemStack clean = CrateUtils.removeCrateTags(new ItemStack(cursor));
 
-            ItemProvider provider = ItemTypes.fromItem(clean);
-            if (!provider.canProduceItem()) return;
+            if (!ItemTypes.isCustom(clean)) {
+                key.setProvider(ItemTypes.vanilla(clean));
+                this.saveAndFlush(viewer);
+            }
+            else {
+                this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), clean, provider -> {
+                    key.setProvider(provider);
+                    key.save();
+                    this.runNextTick(() -> this.open(viewer.getPlayer(), key));
+                }));
+            }
 
-            key.setProvider(provider);
             event.getView().setCursor(null);
-            this.saveAndFlush(viewer);
+
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
             CrateKey crateKey = this.getLink(viewer);
             item.inherit(NightItem.fromItemStack(crateKey.getItem()));

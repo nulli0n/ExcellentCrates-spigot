@@ -11,7 +11,6 @@ import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -34,14 +33,13 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
 
     private static final String TEXTURE_KEYS       = "311790e8005c7f972c469b7b875eab218e0713afe5f2edfd468659910ed622e3";
     private static final String TEXTURE_REWARDS    = "663029cc8167897e6535a3c5734bbabaff188d0905f9d9353afac62a06dadf86";
     private static final String TEXTURE_PLACEMENT  = "181e124a2765c4b320d754f04e1807ad7b3c26ff95376d0b4263c4e1ae84e758";
     private static final String TEXTURE_MILESTONES = "d194a22345d9cdde75168299ad61873bc105e3ae73cd6c9ac02a285291ad0f1b";
-    private static final String SKULL_STACK = "e2e7ac70bf77ba3dd33f4cb78d88ac149ac6036cef2eac8e7a6fd3676fbaf1aa";
+    private static final String SKULL_STACK        = "e2e7ac70bf77ba3dd33f4cb78d88ac149ac6036cef2eac8e7a6fd3676fbaf1aa";
 
     public CrateOptionsMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_CRATE_SETTINGS.getString());
@@ -102,12 +100,20 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             // Remove crate tags to avoid infinite recursion in ItemProvider.
             ItemStack clean = CrateUtils.removeCrateTags(new ItemStack(cursor));
 
-            ItemProvider provider = ItemTypes.fromItem(clean);
-            if (!provider.canProduceItem()) return;
+            if (!ItemTypes.isCustom(clean)) {
+                crate.setItemProvider(ItemTypes.vanilla(clean));
+                this.saveAndFlush(viewer, crate);
+            }
+            else {
+                this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), clean, provider -> {
+                    crate.setItemProvider(provider);
+                    crate.saveSettings();
+                    this.runNextTick(() -> this.open(viewer.getPlayer(), crate));
+                }));
+            }
 
-            crate.setItemProvider(provider);
             event.getView().setCursor(null);
-            this.saveAndFlush(viewer, crate);
+
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
             Crate crate = this.getLink(viewer);
             item.inherit(NightItem.fromItemStack(crate.getItem()).ignoreNameAndLore());

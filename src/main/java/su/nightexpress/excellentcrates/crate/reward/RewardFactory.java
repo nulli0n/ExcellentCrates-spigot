@@ -3,17 +3,16 @@ package su.nightexpress.excellentcrates.crate.reward;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.crate.RewardType;
 import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.crate.limit.LimitValues;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
-import su.nightexpress.excellentcrates.item.ItemTypes;
+import su.nightexpress.excellentcrates.crate.limit.LimitValues;
 import su.nightexpress.excellentcrates.crate.reward.impl.CommandReward;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
+import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.ItemUtil;
@@ -76,10 +75,10 @@ public class RewardFactory {
         return reward;
     }
 
-    @Nullable
-    public static Reward wizardCreation(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull ItemStack source, @NotNull RewardType type) {
-        ItemProvider provider = ItemTypes.fromItem(source);
-        if (!provider.canProduceItem()) return null;
+    @NotNull
+    public static Reward wizardCreation(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull ItemStack source, @NotNull RewardType type, @NotNull ItemProvider provider) {
+//        ItemProvider provider = pureNbt ? ItemTypes.vanilla(source) : ItemTypes.fromItem(source);
+//        if (!provider.canProduceItem()) return null;
 
         Rarity rarity = plugin.getCrateManager().getMostCommonRarity();
         String id = CrateUtils.generateRewardID(crate, provider);

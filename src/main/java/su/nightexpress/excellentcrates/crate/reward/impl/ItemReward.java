@@ -11,6 +11,7 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
+import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.ItemNbt;
@@ -139,7 +140,13 @@ public class ItemReward extends AbstractReward {
     }
 
     public void setItems(@NotNull List<ItemProvider> items) {
-        this.items = new ArrayList<>(items.stream().limit(27).toList());
-        this.items.removeIf(provider -> !provider.isValid());
+        this.items = new ArrayList<>(items.stream().filter(ItemProvider::isValid).limit(CrateUtils.REWARD_ITEMS_LIMIT).toList());
+    }
+
+    public void addItem(@NotNull ItemProvider provider) {
+        if (this.items.size() >= CrateUtils.REWARD_ITEMS_LIMIT) return;
+        if (!provider.isValid()) return;
+
+        this.items.add(provider);
     }
 }

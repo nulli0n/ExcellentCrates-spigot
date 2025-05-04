@@ -305,7 +305,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         Crate crate = new Crate(this.plugin, file);
         crate.setName(name);
         crate.setDescription(new ArrayList<>());
-        crate.setItemProvider(ItemTypes.fromItem(item));
+        crate.setItemProvider(ItemTypes.vanilla(item));
         crate.setAnimationEnabled(true);
         crate.setAnimationId(Placeholders.DEFAULT);
         crate.setPreviewEnabled(true);

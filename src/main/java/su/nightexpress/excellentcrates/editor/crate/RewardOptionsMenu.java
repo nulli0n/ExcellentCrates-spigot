@@ -3,7 +3,6 @@ package su.nightexpress.excellentcrates.editor.crate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.EditorLang;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -28,16 +26,12 @@ import su.nightexpress.nightcore.ui.menu.confirmation.Confirmation;
 import su.nightexpress.nightcore.ui.menu.item.ItemOptions;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
-import su.nightexpress.nightcore.ui.menu.type.NormalMenu;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 import java.util.ArrayList;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
 
     private static final String TEXTURE_COMMAND      = "c2af9b072d19455809dc9d09d9da8bb32f63ad16b015ac772acd9a9f22c77098";
@@ -87,12 +81,21 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             ItemStack cursor = event.getCursor();
             if (cursor == null || cursor.getType().isAir()) return;
 
-            ItemProvider provider = ItemTypes.fromItem(cursor);
-            if (!provider.canProduceItem()) return;
+            ItemStack copy = new ItemStack(cursor);
 
-            reward.setPreview(provider);
+            if (!ItemTypes.isCustom(copy)) {
+                reward.setPreview(ItemTypes.vanilla(copy));
+                this.saveAndFlush(viewer, reward);
+            }
+            else {
+                this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), copy, provider -> {
+                    reward.setPreview(provider);
+                    reward.save();
+                    this.runNextTick(() -> this.open(viewer.getPlayer(), reward));
+                }));
+            }
+
             event.getView().setCursor(null);
-            this.saveAndFlush(viewer, reward);
 
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
                 item.inherit(NightItem.fromItemStack(this.getLink(viewer).getPreviewItem()))
@@ -100,9 +103,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
                     .setHideComponents(true);
             }).setVisibilityPolicy(viewer -> {
                 Reward reward = this.getLink(viewer);
-                if (reward instanceof CommandReward) return true;
-
-                return reward instanceof ItemReward itemReward && itemReward.isCustomPreview();
+                return reward instanceof CommandReward || (reward instanceof ItemReward itemReward && itemReward.isCustomPreview());
             }).build()
         );
 
@@ -247,7 +248,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         this.addItem(ItemUtil.getSkinHead(TEXTURE_ITEMS), EditorLang.REWARD_EDIT_ITEMS, 13, (viewer, event, reward) -> {
             if (!(reward instanceof ItemReward itemReward)) return;
 
-            new ContentMenu(plugin, itemReward).open(viewer.getPlayer());
+            this.runNextTick(() -> plugin.getEditorManager().openRewardContent(viewer.getPlayer(), itemReward));
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof ItemReward).build());
     }
 
@@ -278,46 +279,6 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         super.onClick(viewer, result, event);
         if (result.isInventory()) {
             event.setCancelled(false);
-        }
-    }
-
-    private static class ContentMenu extends NormalMenu<CratesPlugin> {
-
-        private final ItemReward reward;
-
-        public ContentMenu(@NotNull CratesPlugin plugin, @NotNull ItemReward reward) {
-            super(plugin, MenuType.GENERIC_9X3, reward.getName());
-            this.reward = reward;
-        }
-
-        @Override
-        public boolean isPersistent() {
-            return false;
-        }
-
-        @Override
-        public void onClick(@NotNull MenuViewer viewer, @NotNull ClickResult result, @NotNull InventoryClickEvent event) {
-            super.onClick(viewer, result, event);
-            event.setCancelled(false);
-        }
-
-        @Override
-        protected void onPrepare(@NotNull MenuViewer viewer, @NotNull InventoryView view) {
-
-        }
-
-        @Override
-        public void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
-            inventory.setContents(this.reward.getItems().stream().map(ItemProvider::getItemStack).filter(Predicate.not(ItemTypes::isDummy)).toList().toArray(new ItemStack[0]));
-        }
-
-        @Override
-        public void onClose(@NotNull MenuViewer viewer, @NotNull InventoryCloseEvent event) {
-            Inventory inventory = event.getInventory();
-            this.reward.setItems(Stream.of(inventory.getContents()).filter(stack -> stack != null && !stack.getType().isAir()).map(ItemTypes::fromItem).toList());
-            this.reward.getCrate().saveReward(this.reward);
-            this.runNextTick(() -> this.plugin.getEditorManager().openRewardOptions(viewer.getPlayer(), this.reward));
-            super.onClose(viewer, event);
         }
     }
 }

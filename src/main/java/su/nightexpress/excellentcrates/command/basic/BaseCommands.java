@@ -62,6 +62,7 @@ public class BaseCommands {
                 .withArgument(CommandArguments.forKey(plugin).required())
                 .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
                 .withFlag(CommandFlags.silent())
+                .withFlag(CommandFlags.silentFeedback())
                 .executes((context, arguments) -> giveKeyAll(plugin, context, arguments))
             )
             .addDirect("give", builder -> buildKeyManage(plugin, builder)
@@ -106,6 +107,7 @@ public class BaseCommands {
             .withArgument(CommandArguments.forCrate(plugin).required())
             .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
             .withFlag(CommandFlags.silent())
+            .withFlag(CommandFlags.silentFeedback())
             .executes((context, arguments) -> giveCrate(plugin, context, arguments))
         );
 
@@ -159,7 +161,8 @@ public class BaseCommands {
             .withArgument(ArgumentTypes.playerName(CommandArguments.PLAYER).required())
             .withArgument(CommandArguments.forKey(plugin).required())
             .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
-            .withFlag(CommandFlags.silent());
+            .withFlag(CommandFlags.silent())
+            .withFlag(CommandFlags.silentFeedback());
     }
 
     private static boolean dropCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
@@ -199,7 +202,7 @@ public class BaseCommands {
                 .replace(crate.replacePlaceholders())
             );
         }
-        if (context.getSender() != player) {
+        if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK) && context.getSender() != player) {
             Lang.COMMAND_GIVE_DONE.getMessage().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.forPlayer(player))
                 .replace(Placeholders.GENERIC_AMOUNT, amount)
@@ -315,10 +318,11 @@ public class BaseCommands {
             }
         });
 
-        Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage().send(context.getSender(), replacer -> replacer
-            .replace(Placeholders.GENERIC_AMOUNT, amount)
-            .replace(key.replacePlaceholders())
-        );
+        if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+            Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage().send(context.getSender(), replacer -> replacer
+                .replace(Placeholders.GENERIC_AMOUNT, amount)
+                .replace(key.replacePlaceholders()));
+        }
         return true;
     }
 
@@ -367,11 +371,12 @@ public class BaseCommands {
                 );
             }
 
-            Lang.COMMAND_KEY_GIVE_DONE.getMessage().send(context.getSender(), replacer -> replacer
-                .replace(Placeholders.PLAYER_NAME, user.getName())
-                .replace(Placeholders.GENERIC_AMOUNT, amount)
-                .replace(key.replacePlaceholders())
-            );
+            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_GIVE_DONE.getMessage().send(context.getSender(), replacer -> replacer
+                    .replace(Placeholders.PLAYER_NAME, user.getName())
+                    .replace(Placeholders.GENERIC_AMOUNT, amount)
+                    .replace(key.replacePlaceholders()));
+            }
         });
         return true;
     }
@@ -398,11 +403,12 @@ public class BaseCommands {
                 );
             }
 
-            Lang.COMMAND_KEY_SET_DONE.getMessage().send(context.getSender(), replacer -> replacer
-                .replace(Placeholders.PLAYER_NAME, user.getName())
-                .replace(Placeholders.GENERIC_AMOUNT, amount)
-                .replace(key.replacePlaceholders())
-            );
+            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_SET_DONE.getMessage().send(context.getSender(), replacer -> replacer
+                    .replace(Placeholders.PLAYER_NAME, user.getName())
+                    .replace(Placeholders.GENERIC_AMOUNT, amount)
+                    .replace(key.replacePlaceholders()));
+            }
         });
         return true;
     }
@@ -429,11 +435,12 @@ public class BaseCommands {
                 );
             }
 
-            Lang.COMMAND_KEY_TAKE_DONE.getMessage().send(context.getSender(), replacer -> replacer
-                .replace(Placeholders.PLAYER_NAME, user.getName())
-                .replace(Placeholders.GENERIC_AMOUNT, amount)
-                .replace(key.replacePlaceholders())
-            );
+            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_TAKE_DONE.getMessage().send(context.getSender(), replacer -> replacer
+                    .replace(Placeholders.PLAYER_NAME, user.getName())
+                    .replace(Placeholders.GENERIC_AMOUNT, amount)
+                    .replace(key.replacePlaceholders()));
+            }
         });
         return true;
     }

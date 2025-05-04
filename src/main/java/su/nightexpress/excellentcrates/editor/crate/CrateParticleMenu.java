@@ -29,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CrateParticleMenu extends LinkedMenu<CratesPlugin, Crate> {
 
     public CrateParticleMenu(@NotNull CratesPlugin plugin) {

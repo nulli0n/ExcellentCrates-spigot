@@ -218,13 +218,16 @@ public class Lang extends CoreLang {
     public static final LangString INSPECTION_NO_PROBLEMS = LangString.of("Inspection.NoProblems", "No problems found");
 
     public static final LangString EDITOR_TITLE_MAIN             = LangString.of("Editor.Title.Main", BLACK.wrap("ExcellentCrates Editor"));
+    public static final LangString EDITOR_TITLE_ITEM_TYPE        = LangString.of("Editor.Title.ItemSave", BLACK.wrap("Item Save Method"));
     public static final LangString EDITOR_TITLE_CRATE_LIST       = LangString.of("Editor.Title.Crates", BLACK.wrap("Crates Editor"));
     public static final LangString EDITOR_TITLE_CRATE_SETTINGS   = LangString.of("Editor.Title.Crate.Settings", BLACK.wrap("Crate Settings"));
+    public static final LangString EDITOR_TITLE_CRATE_OPEN_COSTS = LangString.of("Editor.Title.Crate.OpenCosts", BLACK.wrap("Crate Open Costs"));
     public static final LangString EDITOR_TITLE_CRATE_MILESTONES = LangString.of("Editor.Title.Crate.Milestones", BLACK.wrap("Crate Milestones"));
     public static final LangString EDITOR_TITLE_CRATE_EFFECT     = LangString.of("Editor.Title.Crate.Effect", BLACK.wrap("Crate Effect"));
     public static final LangString EDITOR_TITLE_CRATE_PLACEMENT  = LangString.of("Editor.Title.Crate.Placement", BLACK.wrap("Crate Placement"));
     public static final LangString EDITOR_TITLE_REWARD_LIST      = LangString.of("Editor.Title.Reward.List", BLACK.wrap("Crate Rewards"));
     public static final LangString EDITOR_TITLE_REWARD_CREATION  = LangString.of("Editor.Title.Reward.Creation", BLACK.wrap("Reward Creator"));
+    public static final LangString EDITOR_TITLE_REWARD_CONTENT  = LangString.of("Editor.Title.Reward.Content", BLACK.wrap("Reward Items"));
     public static final LangString EDITOR_TITLE_REWARD_SETTINGS  = LangString.of("Editor.Title.Reward.Settings", BLACK.wrap("Reward Settings"));
     public static final LangString EDITOR_TITLE_REWARD_LIMITS    = LangString.of("Editor.Title.Reward.Limits", BLACK.wrap("Reward Limits"));
     public static final LangString EDITOR_TITLE_REWARD_SORT      = LangString.of("Editor.Title.Reward.Sort", BLACK.wrap("Reward Sorting"));
@@ -304,5 +307,31 @@ public class Lang extends CoreLang {
         .description("Sort reward by their " + LIGHT_YELLOW.wrap(GENERIC_MODE) + ".")
         .leftClick("ascending")
         .rightClick("descending")
+        .build();
+
+    public static final LangUIButton EDITOR_BUTTON_ITEM_TYPE_BY_NBT = LangUIButton.builder("Editor.Button.ItemType.ByNBT", "By Pure NBT")
+        .description(
+            "Saves item by its NBT data.",
+            "",
+            GRAY.wrap(GREEN.wrap("✔") + " Saves the whole item NBT data"),
+            GRAY.wrap("compatible with newer MC versions."),
+            "",
+            GRAY.wrap(RED.wrap("✘") + " Does " + RED.wrap("not") + " reflect any changes made"),
+            GRAY.wrap("in its original plugin's configuration.")
+        )
+        .click("select")
+        .build();
+
+    public static final LangUIButton EDITOR_BUTTON_ITEM_TYPE_BY_ID = LangUIButton.builder("Editor.Button.ItemType.ByID", "By Item ID")
+        .description(
+            "Saves item by its unique ID.",
+            "",
+            GRAY.wrap(GREEN.wrap("✔") + " Always reflects all changes made"),
+            GRAY.wrap("in its original plugin's configuration."),
+            "",
+            GRAY.wrap(RED.wrap("✘") + " Does " + RED.wrap("not") + " saves any NBT data"),
+            GRAY.wrap("added outside of the item configuration.")
+        )
+        .click("select")
         .build();
 }

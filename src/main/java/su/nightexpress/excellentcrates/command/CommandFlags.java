@@ -7,12 +7,18 @@ import su.nightexpress.nightcore.command.experimental.flag.FlagTypes;
 
 public class CommandFlags {
 
-    public static final String SILENT = "s";
-    public static final String FORCE  = "f";
+    public static final String SILENT          = "s";
+    public static final String SILENT_FEEDBACK = "sf";
+    public static final String FORCE           = "f";
 
     @NotNull
     public static SimpleFlagBuilder silent() {
         return FlagTypes.simple(SILENT);
+    }
+
+    @NotNull
+    public static SimpleFlagBuilder silentFeedback() {
+        return FlagTypes.simple(SILENT_FEEDBACK);
     }
 
     @NotNull

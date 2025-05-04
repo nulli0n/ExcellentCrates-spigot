@@ -1,20 +1,27 @@
 package su.nightexpress.excellentcrates.editor;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
+import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
 import su.nightexpress.excellentcrates.editor.crate.*;
+import su.nightexpress.excellentcrates.editor.generic.ItemTypeMenu;
 import su.nightexpress.excellentcrates.editor.key.KeyListMenu;
 import su.nightexpress.excellentcrates.editor.key.KeyOptionsMenu;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.manager.AbstractManager;
 
+import java.util.function.Consumer;
+
 public class EditorManager extends AbstractManager<CratesPlugin> {
 
     private EditorMenu editorMenu;
+    private ItemTypeMenu itemTypeMenu;
 
     private CrateListMenu       crateListMenu;
     private CrateOptionsMenu    crateOptionsMenu;
@@ -25,6 +32,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
     private RewardListMenu      rewardListMenu;
     private RewardCreationMenu  rewardCreationMenu;
     private RewardOptionsMenu   rewardOptionsMenu;
+    private RewardContentMenu rewardContentMenu;
     private RewardLimitsMenu    rewardLimitsMenu;
     private RewardSortMenu      rewardSortMenu;
 
@@ -38,6 +46,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
     @Override
     protected void onLoad() {
         this.editorMenu = new EditorMenu(this.plugin);
+        this.itemTypeMenu = new ItemTypeMenu(this.plugin);
 
         this.crateListMenu = new CrateListMenu(this.plugin);
         this.crateOptionsMenu = new CrateOptionsMenu(this.plugin);
@@ -48,6 +57,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
         this.rewardListMenu = new RewardListMenu(this.plugin);
         this.rewardCreationMenu = new RewardCreationMenu(this.plugin);
         this.rewardOptionsMenu = new RewardOptionsMenu(this.plugin);
+        this.rewardContentMenu = new RewardContentMenu(this.plugin);
         this.rewardLimitsMenu = new RewardLimitsMenu(this.plugin);
         this.rewardSortMenu = new RewardSortMenu(this.plugin);
 
@@ -59,6 +69,8 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
 
     @Override
     protected void onShutdown() {
+        if (this.itemTypeMenu != null) this.itemTypeMenu.clear();
+
         if (this.crateListMenu != null) this.crateListMenu.clear();
         if (this.crateOptionsMenu != null) this.crateOptionsMenu.clear();
         if (this.crateParticleMenu != null) this.crateParticleMenu.clear();
@@ -68,6 +80,7 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
         if (this.rewardCreationMenu != null) this.rewardCreationMenu.clear();
         if (this.rewardListMenu != null) this.rewardListMenu.clear();
         if (this.rewardOptionsMenu != null) this.rewardOptionsMenu.clear();
+        if (this.rewardContentMenu != null) this.rewardContentMenu.clear();
         if (this.rewardLimitsMenu != null) this.rewardLimitsMenu.clear();
         if (this.rewardSortMenu != null) this.rewardSortMenu.clear();
 
@@ -79,6 +92,10 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
 
     public void openEditor(@NotNull Player player) {
         this.editorMenu.open(player);
+    }
+
+    public void openItemTypeMenu(@NotNull Player player, @NotNull ItemStack itemStack, @NotNull Consumer<ItemProvider> result) {
+        this.itemTypeMenu.open(player, itemStack, result);
     }
 
 
@@ -112,7 +129,11 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
     }
 
     public void openRewardCreation(@NotNull Player player, @NotNull Crate crate) {
-        this.rewardCreationMenu.open(player, crate);
+        this.rewardCreationMenu.open(player, crate, null);
+    }
+
+    public void openRewardContent(@NotNull Player player, @NotNull ItemReward reward) {
+        this.rewardContentMenu.open(player, reward);
     }
 
     public void openRewardSort(@NotNull Player player, @NotNull Crate crate) {

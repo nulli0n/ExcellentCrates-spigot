@@ -72,6 +72,7 @@ public abstract class AbstractReward implements Reward {
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Type", this.getType().name());
         if (!this.preview.isDummy()) {
+            config.remove(path + ".PreviewData"); // Remove leftovers from diffrent ItemProvider settings.
             config.set(path + ".PreviewData", this.preview);
         }
         config.set(path + ".Weight", this.weight);
