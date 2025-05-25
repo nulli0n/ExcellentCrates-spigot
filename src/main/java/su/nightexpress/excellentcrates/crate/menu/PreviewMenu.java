@@ -60,8 +60,11 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
     @NotNull
     protected String getTitle(@NotNull MenuViewer viewer) {
         CrateSource source = this.getLink(viewer);
+        Replacer replacer = Replacer.create().replace(source.getCrate().replacePlaceholders());
+        if (this.applyPlaceholderAPI)
+            replacer.replacePlaceholderAPI(viewer.getPlayer());
 
-        return source.getCrate().replacePlaceholders().apply(this.title);
+        return replacer.apply(this.title);
     }
 
     @Override
