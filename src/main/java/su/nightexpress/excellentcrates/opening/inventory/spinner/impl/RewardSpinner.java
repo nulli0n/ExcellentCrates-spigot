@@ -4,16 +4,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.opening.inventory.InventoryOpening;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.AbstractSpinner;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
-import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.random.Rnd;
 
 import java.util.HashMap;
@@ -48,7 +49,12 @@ public class RewardSpinner extends AbstractSpinner {
         Rarity rarity = Rnd.getByWeight(rarityMap);
         Reward reward = this.opening.getCrate().rollReward(this.opening.getPlayer(), rarity);
 
-        ItemStack item = reward.getPreviewItem();
+        ItemStack item = NightItem.fromItemStack(reward.getPreviewItem())
+                .replacement(replacer -> replacer
+                        .replace(reward.replacePlaceholders())
+                        .replace(crate.replacePlaceholders())
+                        .replacePlaceholderAPI(player)
+                ).getItemStack();
         PDCUtil.set(item, Keys.rewardId, reward.getId());
 
         return item;
