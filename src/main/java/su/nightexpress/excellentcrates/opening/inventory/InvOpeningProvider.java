@@ -22,6 +22,7 @@ import su.nightexpress.nightcore.manager.AbstractFileData;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.util.BukkitThing;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
+import su.nightexpress.nightcore.util.placeholder.Replacer;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.io.File;
@@ -126,7 +127,10 @@ public class InvOpeningProvider extends AbstractFileData<CratesPlugin> implement
     @Override
     @NotNull
     public InventoryOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
-        InventoryView view = this.invType.typed().create(player, NightMessage.asLegacy(source.getCrate().replacePlaceholders().apply(this.invTitle)));
+        InventoryView view = this.invType.typed().create(player, NightMessage.asLegacy(Replacer.create()
+                .replace(source.getCrate().replacePlaceholders())
+                .replacePlaceholderAPI(player)
+                .apply(this.invTitle)));
 
         return switch (this.mode) {
             case SELECTION -> new SelectionInvOpening(this.plugin, this, view, player, source, key);
