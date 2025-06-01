@@ -362,6 +362,7 @@ public class BaseCommands {
             }
 
             plugin.getKeyManager().giveKey(user, key, amount);
+            plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
             if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {
@@ -394,6 +395,7 @@ public class BaseCommands {
             }
 
             plugin.getKeyManager().setKey(user, key, amount);
+            plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
             if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {
@@ -426,6 +428,7 @@ public class BaseCommands {
             }
 
             plugin.getKeyManager().takeKey(user, key, amount);
+            plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
             if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {

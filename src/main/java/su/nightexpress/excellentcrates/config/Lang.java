@@ -212,7 +212,7 @@ public class Lang extends CoreLang {
         .description(
             LIGHT_GRAY.wrap("This item wasn't parsed properly."),
             LIGHT_GRAY.wrap("Check console logs for details.")
-        ).build();
+        ).formatted(false).build();
 
     public static final LangString INSPECTION_PROBLEMS    = LangString.of("Inspection.Problems", GENERIC_AMOUNT + " problem(s)");
     public static final LangString INSPECTION_NO_PROBLEMS = LangString.of("Inspection.NoProblems", "No problems found");

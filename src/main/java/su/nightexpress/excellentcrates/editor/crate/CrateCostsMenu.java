@@ -70,7 +70,7 @@ public class CrateCostsMenu extends LinkedMenu<CratesPlugin, Crate> implements F
             String amountStr = NumberUtil.format(cost.getAmount());
 
             item.localized(EditorLang.CRATE_EDIT_OPEN_COST_OBJECT);
-            item.setHideComponents(true);
+            item.hideAllComponents();
             item.replacement(replacer -> replacer
                 .replace(Placeholders.GENERIC_NAME, cost.format())
                 .replace(Placeholders.GENERIC_ID, currency == null ? Lang.badEntry(currencyId) : Lang.goodEntry(currencyId))

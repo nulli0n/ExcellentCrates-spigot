@@ -18,7 +18,6 @@ import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.excellentcrates.opening.OpeningManager;
 import su.nightexpress.excellentcrates.user.UserManager;
-import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.NightPlugin;
 import su.nightexpress.nightcore.command.experimental.ImprovedCommands;
 import su.nightexpress.nightcore.config.PluginDetails;
@@ -54,7 +53,7 @@ public class CratesPlugin extends NightPlugin implements ImprovedCommands {
     public void enable() {
         this.loadAPI();
 
-        if (!CrateUtils.hasEconomyBridge()) {
+        if (!Plugins.hasEconomyBridge()) {
             this.warn("*".repeat(25));
             this.warn("You don't have " + HookId.ECONOMY_BRIDGE + " installed.");
             this.warn("The following features will be unavailable:");

@@ -27,7 +27,6 @@ import su.nightexpress.nightcore.util.text.NightMessage;
 import java.io.File;
 import java.util.*;
 
-@SuppressWarnings("UnstableApiUsage")
 public class InvOpeningProvider extends AbstractFileData<CratesPlugin> implements OpeningProvider {
 
     private MenuType invType;
@@ -57,7 +56,7 @@ public class InvOpeningProvider extends AbstractFileData<CratesPlugin> implement
 
     @Override
     protected boolean onLoad(@NotNull FileConfig config) {
-        this.invType = BukkitThing.getMenuType(ConfigValue.create("Settings.Menu_Type", BukkitThing.toString(MenuType.GENERIC_9X3)).read(config));
+        this.invType = BukkitThing.getMenuType(ConfigValue.create("Settings.Menu_Type", BukkitThing.getValue(MenuType.GENERIC_9X3)).read(config));
 
         this.invTitle = ConfigValue.create("Settings.Title", "Opening " + Placeholders.CRATE_NAME).read(config);
 
@@ -136,7 +135,7 @@ public class InvOpeningProvider extends AbstractFileData<CratesPlugin> implement
 
     @Override
     protected void onSave(@NotNull FileConfig config) {
-        config.set("Settings.Menu_Type", BukkitThing.toString(this.invType));
+        config.set("Settings.Menu_Type", BukkitThing.getValue(this.invType));
         config.set("Settings.Title", this.invTitle);
         config.set("Settings.Mode", this.mode.name());
         config.setIntArray("Settings.WinSlots", this.winSlots);

@@ -33,7 +33,6 @@ import java.util.List;
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
-@SuppressWarnings("UnstableApiUsage")
 public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implements Filled<Reward>, ConfigBased {
 
     private static final String NO_PERMISSION = "%no_permission%";
@@ -51,7 +50,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
     private boolean      hideUnavailable;
 
     public PreviewMenu(@NotNull CratesPlugin plugin, @NotNull FileConfig config) {
-        super(plugin, MenuType.GENERIC_9X5, BLACK.enclose(CRATE_NAME));
+        super(plugin, MenuType.GENERIC_9X5, BLACK.wrap(CRATE_NAME));
         this.setApplyPlaceholderAPI(true);
         this.load(config);
     }
@@ -163,25 +162,25 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             LIMITS,
             NO_PERMISSION,
             EMPTY_IF_ABOVE,
-            DARK_GRAY.enclose(WHITE.enclose(REWARD_RARITY_NAME) + " ┃┃ " + GREEN.enclose(REWARD_ROLL_CHANCE + "%"))
+            DARK_GRAY.wrap(WHITE.wrap(REWARD_RARITY_NAME) + " ┃┃ " + GREEN.wrap(REWARD_ROLL_CHANCE + "%"))
         )).read(config);
 
         this.noPermissionLore = ConfigValue.create("Reward.Lore.No_Permission", Lists.newList(
-            GRAY.enclose(RED.enclose("✘") + " You don't have access to this reward.")
+            GRAY.wrap(RED.wrap("✘") + " You don't have access to this reward.")
         )).read(config);
 
         this.limitsLore = ConfigValue.create("Reward.Lore.Limits.Info", Lists.newList(
-            RED.enclose(BOLD.enclose("Limits:")),
+            RED.wrap(BOLD.wrap("Limits:")),
             PERSONAL_LIMITS,
             SERVER_LIMITS
         )).read(config);
 
         this.personalLimitsLore = ConfigValue.create("Reward.Lore.Limits.Personal", Lists.newList(
-            GRAY.enclose(RED.enclose("→") + " Your limit: " + RED.enclose(GENERIC_AMOUNT) + "/" + RED.enclose(GENERIC_MAX))
+            GRAY.wrap(RED.wrap("→") + " Your limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
         )).read(config);
 
         this.serverLimitsLore = ConfigValue.create("Reward.Lore.Limits.Server", Lists.newList(
-            GRAY.enclose(RED.enclose("→") + " Server limit: " + RED.enclose(GENERIC_AMOUNT) + "/" + RED.enclose(GENERIC_MAX))
+            GRAY.wrap(RED.wrap("→") + " Server limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
         )).read(config);
 
         loader.addHandler(new ItemHandler("open", (viewer, event) -> {
@@ -206,7 +205,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             .setSlots(0,4,8,36,44));
 
         loader.addDefaultItem(NightItem.asCustomHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0")
-            .setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("Milestones")))
+            .setDisplayName(LIGHT_YELLOW.wrap(BOLD.wrap("Milestones")))
             .toMenuItem()
             .setPriority(10)
             .setSlots(4)

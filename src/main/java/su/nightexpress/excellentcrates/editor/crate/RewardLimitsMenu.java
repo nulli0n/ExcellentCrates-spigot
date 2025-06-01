@@ -45,7 +45,7 @@ public class RewardLimitsMenu extends LinkedMenu<CratesPlugin, RewardLimitsMenu.
             if (!this.getLink(viewer).values.isEnabled()) itemStack.setMaterial(Material.GRAY_DYE);
         }).build());
 
-        this.addItem(ItemUtil.getSkinHead(AMOUNT), EditorLang.REWARD_EDIT_LIMIT_AMOUNT, 21, (viewer, event, data) -> {
+        this.addItem(ItemUtil.getCustomHead(AMOUNT), EditorLang.REWARD_EDIT_LIMIT_AMOUNT, 21, (viewer, event, data) -> {
             if (event.isRightClick()) {
                 data.values.setAmount(-1);
                 data.reward.save();
@@ -60,7 +60,7 @@ public class RewardLimitsMenu extends LinkedMenu<CratesPlugin, RewardLimitsMenu.
             }));
         });
 
-        this.addItem(ItemUtil.getSkinHead(RESET_TIME), EditorLang.REWARD_EDIT_LIMIT_RESET_TIME, 23, (viewer, event, data) -> {
+        this.addItem(ItemUtil.getCustomHead(RESET_TIME), EditorLang.REWARD_EDIT_LIMIT_RESET_TIME, 23, (viewer, event, data) -> {
             this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_SECONDS, input -> {
                 data.values.setResetTime(input.asInt(0));
                 data.reward.save();
@@ -68,7 +68,7 @@ public class RewardLimitsMenu extends LinkedMenu<CratesPlugin, RewardLimitsMenu.
             }));
         });
 
-        this.addItem(ItemUtil.getSkinHead(STEP), EditorLang.REWARD_EDIT_LIMIT_RESET_TIME_STEP, 25, (viewer, event, data) -> {
+        this.addItem(ItemUtil.getCustomHead(STEP), EditorLang.REWARD_EDIT_LIMIT_RESET_TIME_STEP, 25, (viewer, event, data) -> {
             this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_AMOUNT, input -> {
                 data.values.setResetStep(input.asInt(1));
                 data.reward.save();
@@ -76,7 +76,7 @@ public class RewardLimitsMenu extends LinkedMenu<CratesPlugin, RewardLimitsMenu.
             }));
         });
 
-        this.addItem(ItemUtil.getSkinHead(CLEAR), EditorLang.REWARD_EDIT_LIMIT_RESET, 4, (viewer, event, data) -> {
+        this.addItem(ItemUtil.getCustomHead(CLEAR), EditorLang.REWARD_EDIT_LIMIT_RESET, 4, (viewer, event, data) -> {
             plugin.getDataManager().deleteRewardLimits(data.reward);
         });
     }

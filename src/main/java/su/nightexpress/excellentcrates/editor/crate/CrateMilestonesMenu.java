@@ -53,9 +53,9 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         autoFill.setItems(this.getLink(viewer).getMilestones().stream().sorted(Comparator.comparing(Milestone::getOpenings)).toList());
         autoFill.setItemCreator(milestone -> {
             Reward reward = milestone.getReward();
-            return NightItem.fromItemStack(reward == null ? ItemUtil.getSkinHead(Placeholders.SKIN_QUESTION_MARK) : reward.getPreviewItem())
+            return NightItem.fromItemStack(reward == null ? ItemUtil.getCustomHead(Placeholders.SKIN_QUESTION_MARK) : reward.getPreviewItem())
                 .localized(EditorLang.MILESTONE_OBJECT)
-                .setHideComponents(true)
+                .hideAllComponents()
                 .replacement(replacer -> replacer.replace(milestone.replacePlaceholders()));
         });
         autoFill.setItemClick(milestone -> (viewer1, event) -> {

@@ -6,8 +6,8 @@ import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.util.Enums;
 import su.nightexpress.nightcore.util.Plugins;
-import su.nightexpress.nightcore.util.StringUtil;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static su.nightexpress.excellentcrates.Placeholders.WIKI_PLACEHOLDERS;
-import static su.nightexpress.nightcore.util.text.tag.Tags.LIGHT_GREEN;
 
 public class Config {
 
@@ -123,7 +122,7 @@ public class Config {
         TimeFormatType.class,
         TimeFormatType.DIGITAL,
         "Sets crate cooldown format type.",
-        "Available values: [" + StringUtil.inlineEnum(TimeFormatType.class, ", " + "]")
+        "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
     );
 
     public static final ConfigValue<Boolean> CRATE_HOLD_KEY_TO_OPEN = ConfigValue.create("Crate.Hold_Key_To_Open",
@@ -174,8 +173,8 @@ public class Config {
             ClickType.SHIFT_RIGHT, InteractType.CRATE_MASS_OPEN
         ),
         "Defines the crate behavior on certain clicks.",
-        "Allowed click types: " + StringUtil.inlineEnum(ClickType.class, ", "),
-        "Allowed crate actions: " + StringUtil.inlineEnum(InteractType.class, ", "));
+        "Allowed click types: " + Enums.inline(ClickType.class),
+        "Allowed crate actions: " + Enums.inline(InteractType.class));
 
     @Nullable
     public static InteractType getCrateClickAction(@NotNull ClickType clickType) {

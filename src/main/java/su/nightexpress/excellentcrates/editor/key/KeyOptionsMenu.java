@@ -38,7 +38,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
             this.runNextTick(() -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
         }));
 
-        this.addItem(ItemUtil.getSkinHead(Placeholders.SKULL_DELETE), EditorLang.KEY_EDIT_DELETE, 8, (viewer, event, key) -> {
+        this.addItem(ItemUtil.getCustomHead(Placeholders.SKULL_DELETE), EditorLang.KEY_EDIT_DELETE, 8, (viewer, event, key) -> {
             Player player = viewer.getPlayer();
 
             UIUtils.openConfirmation(player, Confirmation.builder()
@@ -79,11 +79,13 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
 
             if (!ItemTypes.isCustom(clean)) {
                 key.setProvider(ItemTypes.vanilla(clean));
+                key.setName(ItemUtil.getNameSerialized(clean));
                 this.saveAndFlush(viewer);
             }
             else {
                 this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), clean, provider -> {
                     key.setProvider(provider);
+                    key.setName(ItemUtil.getNameSerialized(clean));
                     key.save();
                     this.runNextTick(() -> this.open(viewer.getPlayer(), key));
                 }));
@@ -91,12 +93,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> {
 
             event.getView().setCursor(null);
 
-        }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
-            CrateKey crateKey = this.getLink(viewer);
-            item.inherit(NightItem.fromItemStack(crateKey.getItem()));
-            item.localized(EditorLang.KEY_EDIT_ITEM);
-            item.setHideComponents(true);
-        }).setVisibilityPolicy(viewer -> !this.getLink(viewer).isVirtual()).build());
+        }, ItemOptions.builder().setVisibilityPolicy(viewer -> !this.getLink(viewer).isVirtual()).build());
 
         this.addItem(NightItem.asCustomHead(SKULL_STACK), Lang.EDITOR_BUTTON_KEY_ITEM_STACKABLE, 23, (viewer, event, key) -> {
             key.setItemStackable(!key.isItemStackable());

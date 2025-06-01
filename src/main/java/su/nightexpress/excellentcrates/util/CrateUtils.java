@@ -5,16 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.hooks.HookId;
-import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.PDCUtil;
-import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.StringUtil;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
@@ -33,10 +31,6 @@ public class CrateUtils {
     @Nullable
     public static Crate getAssignBlockCrate(@NotNull Player player) {
         return ASSIGN_BLOCK_MAP.remove(player);
-    }
-
-    public static boolean hasEconomyBridge() {
-        return Plugins.isInstalled(HookId.ECONOMY_BRIDGE);
     }
 
     public static void callRewardObtainEvent(@NotNull Player player, @NotNull Reward reward) {

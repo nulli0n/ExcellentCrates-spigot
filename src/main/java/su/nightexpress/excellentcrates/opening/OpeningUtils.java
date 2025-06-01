@@ -28,15 +28,14 @@ import java.util.Set;
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
-@SuppressWarnings("UnstableApiUsage")
 public class OpeningUtils {
 
-    private static final String      TITLE         = BLACK.enclose("Opening " + CRATE_NAME + "...");
+    private static final String      TITLE         = BLACK.wrap("Opening " + CRATE_NAME + "...");
 
     private static final int TICKS_TO_SKIP          = 40;
     private static final int COMPLETION_PAUSE_TICKS = 40;
 
-    private static final String      SOUND         = BukkitThing.toString(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE);
+    private static final String      SOUND         = BukkitThing.getAsString(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE);
     private static final Set<String> RARITIES      = Lists.newSet(WILDCARD);
 
     @Nullable
@@ -84,13 +83,13 @@ public class OpeningUtils {
             51, 1, 0, 5, 1, SOUND));
 
         config.getDefaultItems().put("arrow_up", NightItem.asCustomHead("77334cddfab45d75ad28e1a47bf8cf5017d2f0982f6737da22d4972952510661")
-            .setDisplayName(CYAN.enclose(BOLD.enclose("↑ Your Reward ↑")))
+            .setDisplayName(CYAN.wrap(BOLD.wrap("↑ Your Reward ↑")))
             .toMenuItem()
             .setSlots(22)
             .build());
 
         config.getDefaultItems().put("arrow_down", NightItem.asCustomHead("e7742034f59db890c8004156b727c77ca695c4399d8e0da5ce9227cf836bb8e2")
-            .setDisplayName(CYAN.enclose(BOLD.enclose("↓ Your Reward ↓")))
+            .setDisplayName(CYAN.wrap(BOLD.wrap("↓ Your Reward ↓")))
             .toMenuItem()
             .setSlots(4)
             .build());
@@ -142,13 +141,13 @@ public class OpeningUtils {
             .build());
 
         config.getDefaultItems().put("arrow_right", NightItem.asCustomHead("a6af217aeddf0f40064969ebb2042f7aeafbc7d0f175a27624133a3befd10281")
-            .setDisplayName(LIGHT_RED.enclose(BOLD.enclose("YOUR PRIZE →")))
+            .setDisplayName(LIGHT_RED.wrap(BOLD.wrap("YOUR PRIZE →")))
             .toMenuItem()
             .setSlots(19)
             .build());
 
         config.getDefaultItems().put("arrow_left", NightItem.asCustomHead("1c5a8aa8a4c03600a2b5a4eb6beb51d590260b095ee1cdaa976b09bdfe5661c6")
-            .setDisplayName(LIGHT_RED.enclose(BOLD.enclose("← YOUR PRIZE")))
+            .setDisplayName(LIGHT_RED.wrap(BOLD.wrap("← YOUR PRIZE")))
             .toMenuItem()
             .setSlots(21)
             .build());
@@ -156,7 +155,7 @@ public class OpeningUtils {
         var rewardDataMap = config.getSpinnerDataMap().computeIfAbsent(SpinnerType.REWARD, k -> new HashMap<>());
 
         rewardDataMap.put("main", new SpinnerData(DEFAULT, SpinMode.SEQUENTAL, "39,40,41,33,24,15,5,4,3,11,20,29",
-            75, 1, 0, 10, 1, BukkitThing.toString(Sound.BLOCK_NOTE_BLOCK_BANJO)));
+            75, 1, 0, 10, 1, BukkitThing.getAsString(Sound.BLOCK_NOTE_BLOCK_BANJO)));
 
         config.getSpinnerProviderMap().computeIfAbsent(SpinnerType.REWARD, k -> new HashMap<>())
             .put(DEFAULT, new RewardProvider(RARITIES));
@@ -173,12 +172,12 @@ public class OpeningUtils {
         config.setSelectionAmount(3);
         config.setSelectionSlots(config.getWinSlots());
         config.setSelectionOriginIcon(NightItem.asCustomHead("f98bc63f05f6378bf29ef10e3d82acb3ceb73a720bf80f30bc576d0ad8c40cfb")
-            .setDisplayName(LIGHT_YELLOW.enclose(BOLD.enclose("Click to select!")))
-            .setLore(Lists.newList(LIGHT_GRAY.enclose("You can select and open " + LIGHT_YELLOW.enclose("3 chests") + ".")))
+            .setDisplayName(LIGHT_YELLOW.wrap(BOLD.wrap("Click to select!")))
+            .setLore(Lists.newList(LIGHT_GRAY.wrap("You can select and open " + LIGHT_YELLOW.wrap("3 chests") + ".")))
         );
         config.setSelectionClickedIcon(NightItem.asCustomHead("6ed2d4a43d5556d676a53a53851a63ea19ab597668b18d0800fa0fbeacec58f3")
-            .setDisplayName(LIGHT_GREEN.enclose(BOLD.enclose("Selected Chest")))
-            .setLore(Lists.newList(LIGHT_GRAY.enclose("Click to " + LIGHT_GREEN.enclose("deselect") + ".")))
+            .setDisplayName(LIGHT_GREEN.wrap(BOLD.wrap("Selected Chest")))
+            .setLore(Lists.newList(LIGHT_GRAY.wrap("Click to " + LIGHT_GREEN.wrap("deselect") + ".")))
         );
 
         String colorsId = "colors";
@@ -214,7 +213,7 @@ public class OpeningUtils {
         String fillBlackId = "fill_black";
         String fillGrayId = "fill_gray";
         String fillWhiteId = "fill_white";
-        String pistonSound = BukkitThing.toString(Sound.BLOCK_PISTON_EXTEND);
+        String pistonSound = BukkitThing.getAsString(Sound.BLOCK_PISTON_EXTEND);
 
         var animationDataMap = config.getSpinnerDataMap().computeIfAbsent(SpinnerType.ANIMATION, k -> new HashMap<>());
         var rewardDataMap = config.getSpinnerDataMap().computeIfAbsent(SpinnerType.REWARD, k -> new HashMap<>());
@@ -244,7 +243,7 @@ public class OpeningUtils {
 
         rewardDataMap.put("real", new SpinnerData(DEFAULT, SpinMode.INDEPENDENT, "22",
             25, 2, 0, 0, 0,
-            BukkitThing.toString(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE))
+            BukkitThing.getAsString(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE))
         );
 
         rewardDataMap.put("dummy_1", new SpinnerData(DEFAULT, SpinMode.INDEPENDENT, "0,9,18,27,36,8,17,26,35,44",
@@ -328,13 +327,13 @@ public class OpeningUtils {
             1, 1, 30, 0, 0, null));
 
         animationDataMap.put("rain_sound", new SpinnerData(animClear, SpinMode.INDEPENDENT, "-1",
-            1, 5, 30, 0, 0, BukkitThing.toString(Sound.WEATHER_RAIN_ABOVE)));
+            1, 5, 30, 0, 0, BukkitThing.getAsString(Sound.WEATHER_RAIN_ABOVE)));
 
         animationDataMap.put("thunder_1", new SpinnerData(animThunder, SpinMode.SEQUENTAL, "19,29,38,48",
             4, 4, 52, 0, 0, null));
 
         animationDataMap.put("thunder_1_sound", new SpinnerData(animClear, SpinMode.INDEPENDENT, "-1",
-            1, 1, 66, 0, 0, BukkitThing.toString(Sound.ENTITY_LIGHTNING_BOLT_IMPACT)));
+            1, 1, 66, 0, 0, BukkitThing.getAsString(Sound.ENTITY_LIGHTNING_BOLT_IMPACT)));
 
         animationDataMap.put("thunder_1_clear", new SpinnerData(animClear, SpinMode.INDEPENDENT, "19,29,38,48",
             1, 1, 71, 0, 0, null));
@@ -343,7 +342,7 @@ public class OpeningUtils {
             4, 4, 68, 0, 0, null));
 
         animationDataMap.put("thunder_2_sound", new SpinnerData(animClear, SpinMode.INDEPENDENT, "-1",
-            1, 1, 82, 0, 0, BukkitThing.toString(Sound.ENTITY_LIGHTNING_BOLT_IMPACT)));
+            1, 1, 82, 0, 0, BukkitThing.getAsString(Sound.ENTITY_LIGHTNING_BOLT_IMPACT)));
 
         animationDataMap.put("thunder_2_clear", new SpinnerData(animClear, SpinMode.INDEPENDENT, "24,33,41,50",
             1, 1, 87, 0, 0, null));
@@ -351,7 +350,7 @@ public class OpeningUtils {
 
         rewardDataMap.put("real", new SpinnerData(DEFAULT, SpinMode.INDEPENDENT, "49",
             1, 1, 83, 0, 0,
-            BukkitThing.toString(Sound.BLOCK_AMETHYST_BLOCK_RESONATE))
+            BukkitThing.getAsString(Sound.BLOCK_AMETHYST_BLOCK_RESONATE))
         );
 
 
