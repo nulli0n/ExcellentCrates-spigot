@@ -28,6 +28,7 @@ import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Players;
+import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
         }));
 
 
-        this.addItem(ItemUtil.getSkinHead(Placeholders.SKULL_DELETE), EditorLang.CRATE_EDIT_DELETE, 8, (viewer, event, crate) -> {
+        this.addItem(ItemUtil.getCustomHead(Placeholders.SKULL_DELETE), EditorLang.CRATE_EDIT_DELETE, 8, (viewer, event, crate) -> {
             Player player = viewer.getPlayer();
 
             UIUtils.openConfirmation(player, Confirmation.builder()
@@ -102,11 +103,13 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
 
             if (!ItemTypes.isCustom(clean)) {
                 crate.setItemProvider(ItemTypes.vanilla(clean));
+                crate.setName(ItemUtil.getNameSerialized(clean));
                 this.saveAndFlush(viewer, crate);
             }
             else {
                 this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), clean, provider -> {
                     crate.setItemProvider(provider);
+                    crate.setName(ItemUtil.getNameSerialized(clean));
                     crate.saveSettings();
                     this.runNextTick(() -> this.open(viewer.getPlayer(), crate));
                 }));
@@ -114,12 +117,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
 
             event.getView().setCursor(null);
 
-        }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
-            Crate crate = this.getLink(viewer);
-            item.inherit(NightItem.fromItemStack(crate.getItem()).ignoreNameAndLore());
-            item.localized(EditorLang.CRATE_EDIT_ITEM);
-            item.setHideComponents(true);
-        }).build());
+        });
 
         this.addItem(NightItem.asCustomHead(SKULL_STACK), Lang.EDITOR_BUTTON_CRATE_ITEM_STACKABLE, 0, (viewer, event, crate) -> {
             crate.setItemStackable(!crate.isItemStackable());
@@ -207,7 +205,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
 
         this.addItem(Material.GOLD_INGOT, EditorLang.CRATE_EDIT_OPEN_COST, 25, (viewer, event, crate) -> {
             this.runNextTick(() -> plugin.getEditorManager().openCostsMenu(viewer.getPlayer(), crate));
-        }, ItemOptions.builder().setVisibilityPolicy(viewer -> CrateUtils.hasEconomyBridge()).build());
+        }, ItemOptions.builder().setVisibilityPolicy(viewer -> Plugins.hasEconomyBridge()).build());
 
 
         this.addItem(NightItem.asCustomHead(TEXTURE_PLACEMENT), EditorLang.CRATE_EDIT_PLACEMENT, 38, (viewer, event, crate) -> {

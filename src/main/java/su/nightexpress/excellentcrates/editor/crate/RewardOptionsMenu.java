@@ -52,7 +52,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             this.runNextTick(() -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer).getCrate()));
         }));
 
-        this.addItem(ItemUtil.getSkinHead(Placeholders.SKULL_DELETE), EditorLang.REWARD_EDIT_DELETE, 8, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(Placeholders.SKULL_DELETE), EditorLang.REWARD_EDIT_DELETE, 8, (viewer, event, reward) -> {
             Player player = viewer.getPlayer();
             Crate crate = reward.getCrate();
 
@@ -97,17 +97,13 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
 
             event.getView().setCursor(null);
 
-        }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
-                item.inherit(NightItem.fromItemStack(this.getLink(viewer).getPreviewItem()))
-                    .localized(EditorLang.REWARD_EDIT_ICON)
-                    .setHideComponents(true);
-            }).setVisibilityPolicy(viewer -> {
+        }, ItemOptions.builder().setVisibilityPolicy(viewer -> {
                 Reward reward = this.getLink(viewer);
                 return reward instanceof CommandReward || (reward instanceof ItemReward itemReward && itemReward.isCustomPreview());
             }).build()
         );
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_RARITY), EditorLang.REWARD_EDIT_RARITY, 10, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_RARITY), EditorLang.REWARD_EDIT_RARITY, 10, (viewer, event, reward) -> {
             this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_RARITY, wrapper -> {
                 Rarity rarity = this.plugin.getCrateManager().getRarity(wrapper.getTextRaw());
                 if (rarity == null) return true;
@@ -118,7 +114,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             }).setSuggestions(plugin.getCrateManager().getRarityIds(), true));
         });
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_WEIGHT), EditorLang.REWARD_EDIT_WEIGHT, 11, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_WEIGHT), EditorLang.REWARD_EDIT_WEIGHT, 11, (viewer, event, reward) -> {
             if (event.isLeftClick()) {
                 this.handleInput(Dialog.builder(viewer, Lang.EDITOR_ENTER_WEIGHT, input -> {
                     reward.setWeight(input.asDouble(-1D));
@@ -133,7 +129,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         });
 
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_PERMS_RED), EditorLang.REWARD_EDIT_IGNORED_PERMISSIONS, 16, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_PERMS_RED), EditorLang.REWARD_EDIT_IGNORED_PERMISSIONS, 16, (viewer, event, reward) -> {
             if (event.isRightClick()) {
                 reward.getIgnoredPermissions().clear();
                 this.saveAndFlush(viewer, reward);
@@ -146,7 +142,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             }));
         });
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_PERMS_GREEN), EditorLang.REWARD_EDIT_REQUIRED_PERMISSIONS, 15, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_PERMS_GREEN), EditorLang.REWARD_EDIT_REQUIRED_PERMISSIONS, 15, (viewer, event, reward) -> {
             if (event.isRightClick()) {
                 reward.getRequiredPermissions().clear();
                 this.saveAndFlush(viewer, reward);
@@ -160,25 +156,25 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         });
 
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_BROADCAST), EditorLang.REWARD_EDIT_BROADCAST, 28, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_BROADCAST), EditorLang.REWARD_EDIT_BROADCAST, 28, (viewer, event, reward) -> {
             reward.setBroadcast(!reward.isBroadcast());
             this.saveAndFlush(viewer, reward);
         });
 
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_PLACEHOLDERS), EditorLang.REWARD_EDIT_PLACEHOLDERS, 30, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_PLACEHOLDERS), EditorLang.REWARD_EDIT_PLACEHOLDERS, 30, (viewer, event, reward) -> {
             reward.setPlaceholderApply(!reward.isPlaceholderApply());
             this.saveAndFlush(viewer, reward);
         });
 
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_LIMIT_OFF), EditorLang.REWARD_EDIT_PLAYER_LIMIT, 32, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_LIMIT_OFF), EditorLang.REWARD_EDIT_PLAYER_LIMIT, 32, (viewer, event, reward) -> {
             this.runNextTick(() -> plugin.getEditorManager().openRewardLimits(viewer.getPlayer(), reward, reward.getPlayerLimits()));
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
             if (this.getLink(viewer).getPlayerLimits().isEnabled()) item.setSkinURL(TEXTURE_LIMIT_ON);
         }).build());
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_LIMIT_OFF), EditorLang.REWARD_EDIT_GLOBAL_LIMIT, 34, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_LIMIT_OFF), EditorLang.REWARD_EDIT_GLOBAL_LIMIT, 34, (viewer, event, reward) -> {
             this.runNextTick(() -> plugin.getEditorManager().openRewardLimits(viewer.getPlayer(), reward, reward.getGlobalLimits()));
         }, ItemOptions.builder().setDisplayModifier((viewer, item) -> {
             if (this.getLink(viewer).getGlobalLimits().isEnabled()) item.setSkinURL(TEXTURE_LIMIT_ON);
@@ -218,7 +214,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof CommandReward).build());
 
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_COMMAND), EditorLang.REWARD_EDIT_COMMANDS, 13, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_COMMAND), EditorLang.REWARD_EDIT_COMMANDS, 13, (viewer, event, reward) -> {
             if (!(reward instanceof CommandReward commandReward)) return;
 
             if (event.isRightClick()) {
@@ -245,7 +241,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
             this.saveAndFlush(viewer, reward);
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer) instanceof ItemReward).build());
 
-        this.addItem(ItemUtil.getSkinHead(TEXTURE_ITEMS), EditorLang.REWARD_EDIT_ITEMS, 13, (viewer, event, reward) -> {
+        this.addItem(ItemUtil.getCustomHead(TEXTURE_ITEMS), EditorLang.REWARD_EDIT_ITEMS, 13, (viewer, event, reward) -> {
             if (!(reward instanceof ItemReward itemReward)) return;
 
             this.runNextTick(() -> plugin.getEditorManager().openRewardContent(viewer.getPlayer(), itemReward));

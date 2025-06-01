@@ -116,13 +116,13 @@ public class ItemReward extends AbstractReward {
 
     @NotNull
     public String getName() {
-        return ItemUtil.getSerializedName(this.getPreviewItem());
+        return ItemUtil.getNameSerialized(this.getPreviewItem());
     }
 
     @Override
     @NotNull
     public List<String> getDescription() {
-        return ItemUtil.getSerializedLore(this.getPreviewItem());
+        return ItemUtil.getLoreSerialized(this.getPreviewItem());
     }
 
     @NotNull

@@ -36,15 +36,15 @@ public class HologramTemplate implements Writeable {
         Map<String, HologramTemplate> map = new HashMap<>();
 
         HologramTemplate template1 = new HologramTemplate(Placeholders.DEFAULT, Lists.newList(
-            LIGHT_YELLOW.enclose(BOLD.enclose(CRATE_NAME)),
-            LIGHT_GRAY.enclose("You have " + LIGHT_YELLOW.enclose("%excellentcrates_keys_" + CRATE_ID + "%") + " keys"),
-            LIGHT_GRAY.enclose("Edit templates in " + LIGHT_YELLOW.enclose("config.yml")))
+            LIGHT_YELLOW.wrap(BOLD.wrap(CRATE_NAME)),
+            LIGHT_GRAY.wrap("You have " + LIGHT_YELLOW.wrap("%excellentcrates_keys_" + CRATE_ID + "%") + " keys"),
+            LIGHT_GRAY.wrap("Edit templates in " + LIGHT_YELLOW.wrap("config.yml")))
         );
 
         HologramTemplate template2 = new HologramTemplate("example", Lists.newList(
-            LIGHT_BLUE.enclose(BOLD.enclose(CRATE_NAME)),
-            LIGHT_GRAY.enclose("Another hologram template."),
-            LIGHT_GRAY.enclose("Edit templates in " + LIGHT_BLUE.enclose("config.yml")))
+            LIGHT_BLUE.wrap(BOLD.wrap(CRATE_NAME)),
+            LIGHT_GRAY.wrap("Another hologram template."),
+            LIGHT_GRAY.wrap("Edit templates in " + LIGHT_BLUE.wrap("config.yml")))
         );
 
         map.put(template1.getId(), template1);

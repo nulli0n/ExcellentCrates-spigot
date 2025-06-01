@@ -36,11 +36,11 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
         this.addItem(MenuItem.buildNextPage(this, 44));
         this.addItem(MenuItem.buildPreviousPage(this, 36));
 
-        this.addItem(ItemUtil.getSkinHead(SKULL_CREATE), EditorLang.REWARD_CREATE, 42, (viewer, event, crate) -> {
+        this.addItem(ItemUtil.getCustomHead(SKULL_CREATE), EditorLang.REWARD_CREATE, 42, (viewer, event, crate) -> {
             this.runNextTick(() -> plugin.getEditorManager().openRewardCreation(viewer.getPlayer(), crate));
         });
 
-        this.addItem(ItemUtil.getSkinHead(SKULL_SORT), EditorLang.REWARD_SORT, 38, (viewer, event, crate) -> {
+        this.addItem(ItemUtil.getCustomHead(SKULL_SORT), EditorLang.REWARD_SORT, 38, (viewer, event, crate) -> {
             this.runNextTick(() -> this.plugin.getEditorManager().openRewardSort(viewer.getPlayer(), crate));
         });
     }
@@ -54,7 +54,7 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
         autoFill.setItems(this.getLink(viewer).getRewards());
         autoFill.setItemCreator(reward -> {
             return NightItem.fromItemStack(reward.getPreviewItem())
-                .setHideComponents(true)
+                .hideAllComponents()
                 .localized(EditorLang.REWARD_OBJECT)
                 .replacement(replacer -> replacer.replace(reward.replaceAllPlaceholders()));
         });

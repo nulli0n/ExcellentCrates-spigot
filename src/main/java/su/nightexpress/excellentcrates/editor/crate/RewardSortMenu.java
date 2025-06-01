@@ -41,7 +41,7 @@ public class RewardSortMenu extends LinkedMenu<CratesPlugin, Crate> {
             int slot = 2 + index;
             String texture = TEXTURES[index];
             NightItem item = NightItem.asCustomHead(texture)
-                .setHideComponents(true)
+                .hideAllComponents()
                 .localized(Lang.EDITOR_BUTTON_SORT_REWARDS)
                 .replacement(replacer -> replacer
                     .replace(Placeholders.GENERIC_MODE, Lang.REWARD_SORT_MODE.getLocalized(mode))
@@ -75,7 +75,7 @@ public class RewardSortMenu extends LinkedMenu<CratesPlugin, Crate> {
         RARITY(Comparator.comparingDouble((Reward reward) -> reward.getRarity().getWeight())),
         CHANCE(Comparator.comparingDouble(Reward::getRollChance)),
         NAME(Comparator.comparing(reward -> NightMessage.stripTags(reward.getName()))),
-        ITEM(Comparator.comparing(reward -> BukkitThing.toString(reward.getPreviewItem().getType())));
+        ITEM(Comparator.comparing(reward -> BukkitThing.getValue(reward.getPreviewItem().getType())));
 
         private final Comparator<Reward> comparator;
 

@@ -299,7 +299,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         String name = StringUtil.capitalizeUnderscored(id) + " Crate";
         ItemStack item = NightItem.asCustomHead(Placeholders.SKULL_CRATE)
             .setDisplayName(name)
-            .setHideComponents(true)
+            .hideAllComponents()
             .getItemStack();
 
         Crate crate = new Crate(this.plugin, file);
@@ -450,6 +450,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         CrateOpenEvent openEvent = new CrateOpenEvent(crate, player);
         plugin.getPluginManager().callEvent(openEvent);
         if (openEvent.isCancelled()) return false;
+
+        player.closeInventory(); // Cheat clients must die
 
         Opening opening = this.plugin.getOpeningManager().createOpening(player, source, key);
         opening.setRefundable(!settings.isForce());

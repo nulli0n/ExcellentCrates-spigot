@@ -10,9 +10,9 @@ import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.item.provider.impl.CustomItemProvider;
 import su.nightexpress.excellentcrates.item.provider.impl.DummyItemProvider;
 import su.nightexpress.excellentcrates.item.provider.impl.VanillaItemProvider;
-import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.Plugins;
 
 public class ItemTypes {
 
@@ -31,7 +31,7 @@ public class ItemTypes {
     public static ItemProvider read(@NotNull FileConfig config, @NotNull String path) {
         ItemType type = config.getEnum(path + ".Type", ItemType.class, ItemType.VANILLA);
 
-        if (type == ItemType.CUSTOM && !CrateUtils.hasEconomyBridge()) {
+        if (type == ItemType.CUSTOM && !Plugins.hasEconomyBridge()) {
             CratesAPI.error("Could not load custom item due to missing " + HookId.ECONOMY_BRIDGE + " dependency. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
             return DUMMY;
         }
@@ -53,7 +53,7 @@ public class ItemTypes {
     public static ItemProvider fromItem(@NotNull ItemStack itemStack) {
         ItemProvider provider = null;
 
-        if (CrateUtils.hasEconomyBridge()) {
+        if (Plugins.hasEconomyBridge()) {
             provider = CustomItemProvider.fromItem(itemStack);
         }
         if (provider == null) {

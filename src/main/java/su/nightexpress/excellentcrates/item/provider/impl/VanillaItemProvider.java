@@ -15,7 +15,7 @@ public class VanillaItemProvider extends AbstractItemProvider {
 
     public VanillaItemProvider(@NotNull ItemStack itemStack) {
         super(ItemType.VANILLA);
-        this.itemStack = itemStack;
+        this.itemStack = new ItemStack(itemStack);
     }
 
     @NotNull

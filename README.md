@@ -1,11 +1,11 @@
 # About
 <div align="center">
   <img src="https://nightexpressdev.com/excellentcrates/header.png">
-  
-  <a href="https://discord.gg/EwNFGsnGaW"><img src="https://nightexpressdev.com/img/generic/btn_discord.png"></a>
-  <a href="https://ko-fi.com/nightexpress"><img src="https://nightexpressdev.com/img/generic/btn_donate.png"></a>
-  <a href="https://nightexpressdev.com/excellentcrates/"><img src="https://nightexpressdev.com/img/generic/btn_wiki.png"></a>
-  
+
+<a href="https://discord.gg/EwNFGsnGaW"><img src="https://img.shields.io/discord/903053383475277844?style=for-the-badge&label=Discord&color=%2333a8ff"></a>
+<a href="https://ko-fi.com/nightexpress"><img src="https://img.shields.io/badge/donate-%E2%9D%A4%EF%B8%8F_to_support-dff33?style=for-the-badge"></a>
+<a href="https://nightexpressdev.com/excellentcrates/"><img src="https://img.shields.io/badge/wiki-documentation-ff9c33?style=for-the-badge"></a>
+
   ![](https://repo.nightexpressdev.com/api/badge/latest/releases/su/nightexpress/excellentcrates/ExcellentCrates?color=40c14a&name=ExcellentCrates&prefix=v)
 
 **ExcellentCrates** is a lightweight, feature rich and highly customizable crates plugin.
