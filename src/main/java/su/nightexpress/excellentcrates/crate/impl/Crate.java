@@ -29,10 +29,7 @@ import su.nightexpress.excellentcrates.util.pos.WorldPos;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractFileData;
 import su.nightexpress.nightcore.universalscheduler.foliaScheduler.FoliaScheduler;
-import su.nightexpress.nightcore.util.FileUtil;
-import su.nightexpress.nightcore.util.ItemUtil;
-import su.nightexpress.nightcore.util.Lists;
-import su.nightexpress.nightcore.util.PDCUtil;
+import su.nightexpress.nightcore.util.*;
 import su.nightexpress.nightcore.util.random.Rnd;
 import su.nightexpress.nightcore.util.text.NightMessage;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
@@ -138,7 +135,7 @@ public class Crate extends AbstractFileData<CratesPlugin> {
         this.setOpenCooldown(config.getInt("Opening.Cooldown"));
 
         // Load costs only if EconomyBridge is installed.
-        if (CrateUtils.hasEconomyBridge()) {
+        if (Plugins.hasEconomyBridge()) {
             for (String curId : config.getSection("Opening.Cost")) {
                 double amount = config.getDouble("Opening.Cost." + curId);
                 Cost cost = new Cost(curId, amount);
@@ -210,7 +207,7 @@ public class Crate extends AbstractFileData<CratesPlugin> {
         config.set("Opening.Cooldown", this.openCooldown);
 
         // Write costs only if EconomyBridge is installed.
-        if (CrateUtils.hasEconomyBridge()) {
+        if (Plugins.hasEconomyBridge()) {
             config.remove("Opening.Cost");
             this.getOpenCosts().forEach(cost -> config.set("Opening.Cost." + cost.getCurrencyId(), cost.getAmount()));
         }
