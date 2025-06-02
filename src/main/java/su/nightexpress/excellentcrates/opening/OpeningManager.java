@@ -15,6 +15,7 @@ import su.nightexpress.excellentcrates.opening.world.WorldOpeningProvider;
 import su.nightexpress.excellentcrates.opening.world.provider.DummyProvider;
 import su.nightexpress.excellentcrates.opening.world.provider.SimpleRollProvider;
 import su.nightexpress.nightcore.manager.AbstractManager;
+import su.nightexpress.nightcore.universalscheduler.foliaScheduler.FoliaScheduler;
 import su.nightexpress.nightcore.util.FileUtil;
 import su.nightexpress.nightcore.util.StringUtil;
 
@@ -194,7 +195,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void tickOpenings() {
-        this.getOpenings().forEach(Opening::tick);
+        this.getOpenings().forEach(opening -> new FoliaScheduler(plugin).runTask(opening.getPlayer(), opening::tick));
     }
 
     public boolean isOpening(@NotNull Player player) {
