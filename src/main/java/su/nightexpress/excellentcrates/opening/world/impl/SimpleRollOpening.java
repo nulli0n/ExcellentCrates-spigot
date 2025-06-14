@@ -149,7 +149,7 @@ public class SimpleRollOpening extends WorldOpening {
         if (this.rewardDisplay != null) {
             ItemStack itemStack = this.reward.getPreviewItem();
             this.rewardDisplay.setItemStack(itemStack);
-            this.rewardDisplay.setCustomName(this.reward.getNameTranslated());
+            //this.rewardDisplay.setCustomName(this.reward.getNameTranslated());
         }
 
         NightSound.of(Sound.UI_BUTTON_CLICK, 0.5f).play(this.displayLocation);

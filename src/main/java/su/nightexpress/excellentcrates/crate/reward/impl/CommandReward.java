@@ -12,6 +12,7 @@ import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
 import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.StringUtil;
@@ -80,6 +81,17 @@ public class CommandReward extends AbstractReward {
 
             Players.dispatchCommand(player, command);
         });
+    }
+
+    @Override
+    @NotNull
+    public ItemStack getPreviewItem() {
+        ItemStack itemStack = this.getPreview().getItemStack();
+        ItemUtil.editMeta(itemStack, meta -> {
+            ItemUtil.setCustomName(meta, this.name);
+            ItemUtil.setLore(meta, this.description);
+        });
+        return itemStack;
     }
 
     @NotNull
