@@ -1,7 +1,6 @@
 package su.nightexpress.excellentcrates.crate.reward;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
@@ -279,12 +278,6 @@ public abstract class AbstractReward implements Reward {
     @Override
     public void setGlobalLimits(@NotNull LimitValues globalLimits) {
         this.globalLimits = globalLimits;
-    }
-
-    @Override
-    @NotNull
-    public ItemStack getPreviewItem() {
-        return this.getPreview().getItemStack();
     }
 
     @Override

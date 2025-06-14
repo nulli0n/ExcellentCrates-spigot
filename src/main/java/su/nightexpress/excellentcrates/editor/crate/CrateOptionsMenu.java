@@ -104,12 +104,14 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             if (!ItemTypes.isCustom(clean)) {
                 crate.setItemProvider(ItemTypes.vanilla(clean));
                 crate.setName(ItemUtil.getNameSerialized(clean));
+                crate.setDescription(ItemUtil.getLoreSerialized(clean));
                 this.saveAndFlush(viewer, crate);
             }
             else {
                 this.runNextTick(() -> plugin.getEditorManager().openItemTypeMenu(viewer.getPlayer(), clean, provider -> {
                     crate.setItemProvider(provider);
                     crate.setName(ItemUtil.getNameSerialized(clean));
+                    crate.setDescription(ItemUtil.getLoreSerialized(clean));
                     crate.saveSettings();
                     this.runNextTick(() -> this.open(viewer.getPlayer(), crate));
                 }));

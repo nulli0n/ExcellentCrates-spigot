@@ -9,8 +9,8 @@ import su.nightexpress.excellentcrates.api.crate.RewardType;
 import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
-import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
+import su.nightexpress.excellentcrates.item.ItemTypes;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -123,6 +123,12 @@ public class ItemReward extends AbstractReward {
     @NotNull
     public List<String> getDescription() {
         return ItemUtil.getLoreSerialized(this.getPreviewItem());
+    }
+
+    @Override
+    @NotNull
+    public ItemStack getPreviewItem() {
+        return this.getPreview().getItemStack();
     }
 
     @NotNull
