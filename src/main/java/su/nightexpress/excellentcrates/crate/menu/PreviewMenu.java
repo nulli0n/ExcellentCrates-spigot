@@ -198,7 +198,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             return source.hasItem() || source.hasBlock();
         }).build()));
 
-        // NOWA FUNKCJONALNOŚĆ
+
         loader.addHandler(new ItemHandler("mass_open", (viewer, event) -> {
             CrateSource source = this.getLink(viewer);
             Player player = viewer.getPlayer();
@@ -208,7 +208,6 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
                 plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_MASS_OPEN, source.getItem(), source.getBlock());
             });
         }, ItemOptions.builder().build()));
-        // KONIEC NOWEJ FUNKCJONALNOŚCI
 
         loader.addDefaultItem(new NightItem(Material.BLACK_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem()
             .setSlots(1,2,3,5,6,7,9,18,27,17,26,35,37,38,39,40,41,42,43));
