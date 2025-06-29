@@ -185,7 +185,6 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
         loader.addHandler(new ItemHandler("open", (viewer, event) -> {
             CrateSource source = this.getLink(viewer);
-            if (!source.hasItem() || !source.hasBlock()) return;
 
             Player player = viewer.getPlayer();
 
@@ -194,10 +193,8 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
                 plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
             });
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> {
-            CrateSource source = this.getLink(viewer);
-            return source.hasItem() || source.hasBlock();
+            return true;
         }).build()));
-
 
         loader.addHandler(new ItemHandler("mass_open", (viewer, event) -> {
             CrateSource source = this.getLink(viewer);
