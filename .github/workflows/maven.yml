@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ExcellentCrates
-        path: target/ExcellentCrates-${{ github.event.repository.name }}.jar
+        path: target/ExcellentCrates-6.2.2.jar
