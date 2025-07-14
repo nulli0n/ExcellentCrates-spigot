@@ -150,56 +150,47 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         FakeDisplay display = this.getDisplay(crate);
         if (display == null) return;
 
-        List<String> rawText = crate.getHologramText().reversed();
-        if (rawText.isEmpty()) return;
-
-        List<String> placeholderResolved = Replacer.create().replace(crate.replacePlaceholders()).apply(rawText);
-        if (placeholderResolved.isEmpty()) return;
+        List<String> text = Replacer.create().replace(crate.replacePlaceholders()).apply(crate.getHologramText().reversed());
+        if (text.isEmpty()) return;
 
         for (FakeEntityGroup group : display.getGroups()) {
             if (group.isDisabled()) continue;
 
-            WorldPos position = group.getBlockPosition();
-            Location positionLocation = position.toLocation();
-            if (positionLocation == null) continue;
+            WorldPos blockPosition = group.getBlockPosition();
+            Location location = blockPosition.toLocation();
+            if (location == null) continue;
 
-            new FoliaScheduler(plugin).runTask(positionLocation, () -> {
-                if (!position.isChunkLoaded()) {
-                    this.discard(group);
-                    return;
-                }
-
-                World world = position.getWorld();
-                Block block = position.toBlock();
-                if (world == null || block == null) {
-                    this.discard(group);
+            new FoliaScheduler(this.plugin).runTask(location, () -> {
+                World world = blockPosition.getWorld();
+                if (!blockPosition.isChunkLoaded() || world == null) {
+                    this.discard(group); // Remove all viewers and send entity destroy packet.
                     return;
                 }
 
                 List<Player> players = new ArrayList<>(world.getPlayers());
                 players.removeIf(player -> {
-                    if (CrateUtils.isInEffectRange(player, positionLocation)) return false;
+                    if (CrateUtils.isInEffectRange(player, location)) return false;
 
                     this.removeForViewer(player, group);
                     return true;
                 });
 
                 if (players.isEmpty()) {
-                    this.discard(group);
+                    this.discard(group); // Remove all viewers and send entity destroy packet.
                     return;
                 }
 
                 players.forEach(player -> {
                     boolean needSpawn = !group.isViewer(player);
-                    List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(placeholderResolved);
 
+                    List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
                     List<FakeEntity> holograms = group.getEntities();
                     for (int index = 0; index < hologramText.size(); index++) {
                         if (index >= holograms.size()) break;
 
                         String line = hologramText.get(index);
-                        FakeEntity hologramEntity = holograms.get(index);
-                        this.handler.sendHologramPackets(player, hologramEntity, needSpawn, line);
+                        FakeEntity entity = holograms.get(index);
+                        this.handler.sendHologramPackets(player, entity, needSpawn, line);
                     }
 
                     group.addViewer(player);
