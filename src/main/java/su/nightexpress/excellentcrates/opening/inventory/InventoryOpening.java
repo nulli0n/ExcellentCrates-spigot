@@ -12,18 +12,17 @@ import su.nightexpress.excellentcrates.api.opening.Spinner;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
-import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
-import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerProvider;
+import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerHolder;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerType;
 import su.nightexpress.nightcore.util.NumberUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class InventoryOpening extends AbstractOpening {
+public class InventoryOpening extends AbstractOpening {
 
-    protected final InvOpeningProvider config;
-    protected final InventoryView      view;
+    protected final InventoryProvider config;
+    protected final InventoryView     view;
     protected final List<Spinner>    spinners;
 
     private boolean launched;
@@ -31,7 +30,7 @@ public abstract class InventoryOpening extends AbstractOpening {
     private long    launchTicks;
 
     public InventoryOpening(@NotNull CratesPlugin plugin,
-                            @NotNull InvOpeningProvider config,
+                            @NotNull InventoryProvider config,
                             @NotNull InventoryView view,
                             @NotNull Player player,
                             @NotNull CrateSource source,
@@ -44,6 +43,7 @@ public abstract class InventoryOpening extends AbstractOpening {
         this.launchTicks = 0L;
     }
 
+    @Deprecated
     public int[] parseSlots(@NotNull String str) {
         return NumberUtil.getIntArray(str);
     }
@@ -54,12 +54,7 @@ public abstract class InventoryOpening extends AbstractOpening {
     }
 
     public void launch() {
-        this.launched = true;
-        this.launchTicks = 0L;
 
-        for (SpinnerType type : SpinnerType.values()) {
-            this.config.getSpinnersToRun(type).forEach(data -> this.runSpinner(data, type));
-        }
     }
 
     public void onClick(@NotNull InventoryClickEvent event) {
@@ -79,6 +74,11 @@ public abstract class InventoryOpening extends AbstractOpening {
         });
 
         //this.player.openInventory(this.view);
+
+        this.launched = true;
+        this.launchTicks = 0L;
+
+        this.config.getSpinners().forEach(this::runSpinner);
     }
 
     @Override
@@ -130,14 +130,10 @@ public abstract class InventoryOpening extends AbstractOpening {
         return this.launchTicks <= maxTicks;
     }
 
-    protected abstract void onInstaRoll();
-
     @Override
     public void instaRoll() {
         this.closeTicks = 0L; // Do not schedule inventory closing.
         this.setRefundable(false); // Do not return keys.
-
-        this.onInstaRoll();
 
         if (!this.isLaunched()) {
             this.launch();
@@ -156,15 +152,12 @@ public abstract class InventoryOpening extends AbstractOpening {
     }
 
 
-    public void runSpinner(@NotNull SpinnerData data, @NotNull SpinnerType type) {
-        SpinnerProvider provider = this.config.getSpinnerProvider(type, data.getSpinnerId());
-        if (provider == null) return;
-
-        if (type == SpinnerType.REWARD) {
+    public void runSpinner(@NotNull SpinnerHolder holder) {
+        if (holder.getType() == SpinnerType.REWARD) {
             this.setRefundable(false);
         }
 
-        Spinner spinner = provider.createSpinner(this.plugin, data, this);
+        Spinner spinner = holder.createSpinner(this.plugin, this);
         this.addSpinner(spinner);
     }
 
@@ -174,7 +167,7 @@ public abstract class InventoryOpening extends AbstractOpening {
     }
 
     @NotNull
-    public InvOpeningProvider getConfig() {
+    public InventoryProvider getConfig() {
         return this.config;
     }
 

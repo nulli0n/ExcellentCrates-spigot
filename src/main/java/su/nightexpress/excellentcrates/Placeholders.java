@@ -30,20 +30,21 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String WIKI_URL          = "https://nightexpressdev.com/excellentcrates/";
     public static final String WIKI_PLACEHOLDERS = WIKI_URL + "placeholders";
 
-    public static final String  SKULL_CRATE  = "1ff041976a09dd053e3d1d4e611aac09594d74fc71a0ec4da0110416d317dba8";
+    @Deprecated
+    public static final String SKULL_CRATE  = "1ff041976a09dd053e3d1d4e611aac09594d74fc71a0ec4da0110416d317dba8";
+    @Deprecated
     public static final String SKULL_DELETE = "94f90c7bd60bfd0dfc31808d0484d8c2db9959f68df91fbf29423a3da62429a6";
 
-    public static final String SELECTED_SLOTS   = "%selected_slots%";
-    public static final String UNSELECTED_SLOTS = "%unselected_slots%";
-
-    public static final String GENERIC_NAME   = "%name%";
-    public static final String GENERIC_AMOUNT = "%amount%";
-    public static final String GENERIC_ID     = "%id%";
-    public static final String GENERIC_MAX    = "%max%";
-    public static final String GENERIC_TIME   = "%time%";
-    public static final String GENERIC_KEYS   = "%keys%";
-    public static final String GENERIC_MODE = "%mode%";
-    public static final String GENERIC_TYPE = "%type%";
+    public static final String GENERIC_NAME    = "%name%";
+    public static final String GENERIC_AMOUNT  = "%amount%";
+    public static final String GENERIC_ID      = "%id%";
+    public static final String GENERIC_CURRENT = "%current%";
+    public static final String GENERIC_MAX     = "%max%";
+    public static final String GENERIC_TIME    = "%time%";
+    public static final String GENERIC_KEYS    = "%keys%";
+    public static final String GENERIC_MODE    = "%mode%";
+    public static final String GENERIC_TYPE    = "%type%";
+    public static final String GENERIC_REWARDS = "%rewards%";
 
     public static final String RARITY_ID          = "%rarity_id%";
     public static final String RARITY_NAME        = "%rarity_name%";

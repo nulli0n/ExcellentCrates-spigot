@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.opening.Spinner;
 import su.nightexpress.excellentcrates.opening.inventory.InventoryOpening;
-import su.nightexpress.nightcore.util.bukkit.NightSound;
+import su.nightexpress.nightcore.bridge.wrap.NightSound;
 import su.nightexpress.nightcore.util.random.Rnd;
 
 import java.util.ArrayList;
@@ -16,38 +16,65 @@ public abstract class AbstractSpinner implements Spinner {
 
     protected final SpinnerData      data;
     protected final InventoryOpening opening;
+    protected final Inventory        inventory;
     protected final int[]            slots;
-    protected final NightSound       sound;
-    protected final Inventory inventory;
+    protected final int[]            winSlots;
 
     protected boolean silent;
-    protected long    spinCount;
-    protected long    tickInterval;
-
-    protected long    ticksToSkip;
-    protected long    tickCount;
     protected boolean running;
+    protected long    tickInterval;
+    protected long    tickCount;
+
+    protected List<SpinStep> steps;
+    protected SpinStep       currentStep;
+    protected long           stepCount;
+
+    protected int  requiredSpins;
+    protected long spinCount;
+    protected long spinDelay;
 
     public AbstractSpinner(@NotNull SpinnerData data, @NotNull InventoryOpening opening) {
         this.data = data;
         this.opening = opening;
-        this.slots = opening.parseSlots(data.getSlots());
-        this.ticksToSkip = data.getTicksToSkip();
-        this.sound = data.getSound() == null ? null : new NightSound(data.getSound(), null, 0.7F, 1F);
         this.inventory = opening.getInventory();
+
+        this.slots = data.getSlots();
+        this.winSlots = opening.getConfig().getWinSlots();
+
+        this.steps = new ArrayList<>(data.getSpinSteps());
+        this.requiredSpins = this.steps.stream().mapToInt(SpinStep::getSpinsAmount).sum();
+
+        this.spinCount = 0;
+        this.spinDelay = data.getSpinDelay();
+    }
+
+    private void nextStep() {
+        if (this.steps.isEmpty()) {
+            this.currentStep = null;
+            return;
+        }
+
+        this.currentStep = this.steps.removeFirst();
+        this.tickInterval = this.currentStep.getTickInterval();
+        this.stepCount = 0L;
+        this.tickCount = 0L;
+    }
+
+    private boolean isStepDone() {
+        return this.stepCount >= this.currentStep.getSpinsAmount();
     }
 
     @Override
     public void start() {
-        if (this.isRunning()) return;
+        if (this.running) return;
 
         this.running = true;
-        this.tickInterval = this.data.getTickInterval();
+        this.nextStep();
     }
 
     @Override
     public void stop() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         this.running = false;
         this.onStop();
@@ -55,82 +82,75 @@ public abstract class AbstractSpinner implements Spinner {
 
     @Override
     public void tick() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         if (this.isCompleted()) {
             this.stop();
             return;
         }
 
-        if (this.isTickTime()) {
-            this.onTick();
-            this.tickCount = 0L;
+        if (this.isSpinTime()) {
+            this.onSpin();
         }
-        this.tickCount++;
+
+        this.tickCount = Math.max(0L, this.tickCount + 1L);
     }
 
     @Override
     public void tickAll() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         long total = Math.max(0L, this.getTotalSpins());
 
         for (int count = 0; count < total; count++) {
             if (this.isCompleted()) break;
 
-            this.onTick();
+            this.onSpin();
         }
     }
 
     @Override
-    public boolean isTickTime() {
-        if (this.ticksToSkip > 0) {
-            this.ticksToSkip--;
+    public boolean isSpinTime() {
+        if (this.spinDelay > 0) {
+            this.spinDelay--;
             return false;
         }
 
-        return this.tickCount == 0 || this.tickCount % this.getTickInterval() == 0L;
+        return this.tickCount == 0 || this.tickCount % this.tickInterval == 0L;
     }
 
     protected abstract void onStop();
 
     protected void onSpin() {
+        if (!this.isSilent()) {
+            NightSound sound = this.data.getSound();
+            if (sound != null) sound.play(this.opening.getPlayer());
+        }
+
         switch (this.data.getMode()) {
             case SEQUENTAL -> this.spinSequental();
             case INDEPENDENT -> this.spinIndependent();
             case SYNCRHONIZED -> this.spinSynchronized();
             case RANDOM -> this.spinRandom();
         }
-    }
 
-    protected void onTick() {
-        //System.out.println("SpSd/TiCt/SpCt: " + this.spinSpeedTicks + " / " + this.tickCount + " / " + this.spinCount);
-
-        if (!this.isSilent() && this.sound != null) {
-            this.sound.play(this.opening.getPlayer());
-        }
-
-        this.onSpin();
+        this.stepCount++;
         this.spinCount++;
 
-        // Slowdown Spinner
-        if (this.data.getSlowdownStep() > 0 && this.spinCount > 0) {
-            if (this.spinCount % this.data.getSlowdownStep() == 0) {
-                this.tickInterval += this.data.getSlowdownAmount();
-            }
+        if (this.isStepDone()) {
+            this.nextStep();
         }
     }
 
     @NotNull
-    public abstract ItemStack createItem();
+    public abstract ItemStack createItem(int slot);
 
     private boolean isOutOfBounds(int slot) {
         return slot < 0 || slot >= this.inventory.getSize();
     }
 
-    private void spinSequental() {
-        ItemStack item = this.createItem();
-        //if (item.getType().isAir()) return;
+    protected void spinSequental() {
+        ItemStack item = this.createItem(-1);
 
         for (int index = this.slots.length - 1; index > -1; index--) {
             int slot = slots[index];
@@ -146,18 +166,18 @@ public abstract class AbstractSpinner implements Spinner {
         }
     }
 
-    private void spinIndependent() {
+    protected void spinIndependent() {
         for (int slot : this.slots) {
             if (this.isOutOfBounds(slot)) continue;
 
-            ItemStack item = this.createItem();
+            ItemStack item = this.createItem(slot);
 
             this.inventory.setItem(slot, item);
         }
     }
 
-    private void spinSynchronized() {
-        ItemStack item = this.createItem();
+    protected void spinSynchronized() {
+        ItemStack item = this.createItem(-1);
 
         for (int slot : this.slots) {
             if (this.isOutOfBounds(slot)) continue;
@@ -166,7 +186,7 @@ public abstract class AbstractSpinner implements Spinner {
         }
     }
 
-    private void spinRandom() {
+    protected void spinRandom() {
         List<Integer> slots = new ArrayList<>(IntStream.of(this.slots).boxed().toList());
         int roll = Rnd.get(slots.size() + 1);
         if (roll <= 0) return;
@@ -175,7 +195,7 @@ public abstract class AbstractSpinner implements Spinner {
             int slot = slots.remove(Rnd.get(slots.size()));
 
             if (!this.isOutOfBounds(slot)) {
-                ItemStack item = this.createItem();
+                ItemStack item = this.createItem(slot);
                 this.inventory.setItem(slot, item);
             }
 
@@ -190,7 +210,7 @@ public abstract class AbstractSpinner implements Spinner {
 
     @Override
     public boolean isCompleted() {
-        return this.getTotalSpins() >= 0 && this.spinCount >= this.getTotalSpins();
+        return this.currentStep == null;
     }
 
     @Override
@@ -226,17 +246,17 @@ public abstract class AbstractSpinner implements Spinner {
 
     @Override
     public int getTotalSpins() {
-        return this.data.getSpins();
+        return this.requiredSpins;
     }
 
     @Override
-    public long getCurrentSpins() {
-        return this.spinCount;
+    public long getStepCount() {
+        return this.stepCount;
     }
 
     @Override
-    public void setCurrentSpins(long spins) {
-        this.spinCount = Math.max(0, spins);
+    public void setStepCount(long spins) {
+        this.stepCount = Math.max(0, spins);
     }
 
     @Override
