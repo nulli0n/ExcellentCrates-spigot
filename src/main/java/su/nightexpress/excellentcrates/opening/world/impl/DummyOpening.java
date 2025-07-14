@@ -8,7 +8,6 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
-import su.nightexpress.excellentcrates.util.CrateUtils;
 
 public class DummyOpening extends AbstractOpening {
 
@@ -54,8 +53,6 @@ public class DummyOpening extends AbstractOpening {
 
         Reward reward = this.getCrate().rollReward(this.player);
         reward.give(this.player);
-
-        CrateUtils.callRewardObtainEvent(this.player, reward);
 
         this.rolled = true;
     }

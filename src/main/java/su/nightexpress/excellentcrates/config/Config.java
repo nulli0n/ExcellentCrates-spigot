@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.hologram.HologramTemplate;
+import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
@@ -19,12 +20,15 @@ import static su.nightexpress.excellentcrates.Placeholders.WIKI_PLACEHOLDERS;
 
 public class Config {
 
-    public static final String DIR_CRATES         = "/crates/";
-    public static final String DIR_PREVIEWS       = "/previews/";
-    public static final String DIR_KEYS           = "/keys/";
-    public static final String DIR_MENUS          = "/menu/";
-    public static final String DIR_OPENINGS_GUI   = "/openings/inventory/";
-    public static final String DIR_OPENINGS_WORLD = "/openings/world/";
+    public static final String DIR_CRATES   = "/crates/";
+    public static final String DIR_PREVIEWS = "/previews/";
+    public static final String DIR_KEYS     = "/keys/";
+    public static final String DIR_MENUS    = "/menu/";
+
+    public static final String DIR_OPENINGS             = "/openings/";
+    public static final String DIR_OPENINGS_INVENTORY   = DIR_OPENINGS + "inventory/";
+    public static final String DIR_OPENINGS_SELECTABLE  = DIR_OPENINGS + "selectable/";
+    public static final String DIR_OPENINGS_SIMPLE_ROLL = DIR_OPENINGS + "simple_roll/";
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
@@ -84,6 +88,8 @@ public class Config {
         true,
         "Controls whether Milestones feature is enabled.");
 
+
+
     public static final ConfigValue<Boolean> CRATE_ALLOW_CRATES_IN_AIR_BLOCKS = ConfigValue.create("Crate.Allow_Crates_In_Air_Blocks",
         false,
         "When enabled allows crates to be assigned to 'air' blocks and disables block validation on crate load."
@@ -92,11 +98,6 @@ public class Config {
     public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
         24,
         "Sets max. distance where players can see crate particles and holograms."
-    );
-
-    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_USE_DISPLAYS = ConfigValue.create("Crate.Holograms.DisplayEntities",
-        true,
-        "When enabled, uses Display Entities for holograms instead of Armor Stands."
     );
 
     public static final ConfigValue<Map<String, HologramTemplate>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMapById("Crate.Holograms.TemplateList",
@@ -175,6 +176,30 @@ public class Config {
         "Defines the crate behavior on certain clicks.",
         "Allowed click types: " + Enums.inline(ClickType.class),
         "Allowed crate actions: " + Enums.inline(InteractType.class));
+
+    public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
+        true,
+        "Controls whether the Holograms feature is available.",
+        "[*] One of the following plugins is required for holograms to work: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
+    );
+
+    public static final ConfigValue<Boolean> OPENINGS_GUI_SIMULATE_REAL_CHANCES = ConfigValue.create("Openings.GUI.Simulate_Real_Chances",
+        false,
+        "[ THIS SETTING DOES NOT AFFECT THE FINAL REWARD, IT IS PREDICTED WHEN PLAYER OPENED A CRATE ]",
+        "Controls whether reward's weight and rarity should be respected when displaying rewards during GUI opening animation.",
+        "When disabled, rewards choosen by a blind random.",
+        "[Default is false]"
+    );
+
+    public static final ConfigValue<Boolean> EDITOR_CRATE_INHERITANCE_ITEM_NAME = ConfigValue.create("Editor.Crate.Inheritance.ItemName",
+        true,
+        "Controls whether crate will inherit display name of the item used to replace current crate's item."
+    );
+
+    public static final ConfigValue<Boolean> EDITOR_CRATE_INHERITANCE_ITEM_LORE = ConfigValue.create("Editor.Crate.Inheritance.ItemLore",
+        true,
+        "Controls whether crate will inherit lore (as description) of the item used to replace current crate's item."
+    );
 
     @Nullable
     public static InteractType getCrateClickAction(@NotNull ClickType clickType) {

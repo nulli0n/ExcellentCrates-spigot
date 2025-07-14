@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.api.event.CrateOpenEvent;
 import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.config.Config;
@@ -524,6 +525,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         this.addRollCount(player, reward);
         this.plugin.getCrateLogger().logReward(player, reward);
+
+        CrateObtainRewardEvent event = new CrateObtainRewardEvent(reward, player);
+        this.plugin.getPluginManager().callEvent(event);
     }
 
     public int getGlobalRollsLeft(@NotNull Reward reward) {

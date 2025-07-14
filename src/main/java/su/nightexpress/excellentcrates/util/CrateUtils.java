@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.api.crate.Reward;
-import su.nightexpress.excellentcrates.api.event.CrateObtainRewardEvent;
 import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
@@ -31,11 +29,6 @@ public class CrateUtils {
     @Nullable
     public static Crate getAssignBlockCrate(@NotNull Player player) {
         return ASSIGN_BLOCK_MAP.remove(player);
-    }
-
-    public static void callRewardObtainEvent(@NotNull Player player, @NotNull Reward reward) {
-        CrateObtainRewardEvent event = new CrateObtainRewardEvent(reward, player);
-        Bukkit.getPluginManager().callEvent(event);
     }
 
     @NotNull
@@ -86,7 +79,6 @@ public class CrateUtils {
         return count <= 0 ? str : str + "_" + count;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     public static boolean isSupportedParticle(@NotNull Particle particle) {
         return particle != Particle.VIBRATION && particle != Particle.DUST_COLOR_TRANSITION && particle != Particle.TRAIL;
     }
@@ -95,7 +87,6 @@ public class CrateUtils {
         return particle.getParticle() != null && isSupportedParticleData(particle.getParticle().getDataType());
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     public static boolean isSupportedParticleData(@NotNull Class<?> clazz) {
         return clazz != Void.class && clazz != Vibration.class && clazz != Particle.DustTransition.class && clazz != Particle.Trail.class;
     }

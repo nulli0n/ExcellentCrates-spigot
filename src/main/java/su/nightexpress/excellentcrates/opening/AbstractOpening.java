@@ -35,8 +35,8 @@ public abstract class AbstractOpening implements Opening {
     }
 
     @Override
-    public void run() {
-        if (this.isRunning()) return;
+    public void start() {
+        if (this.running) return;
 
         this.running = true;
         this.onStart();
@@ -44,7 +44,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void stop() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         this.running = false;
         this.onStop();
@@ -52,7 +52,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void tick() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         if (this.isCompleted()) {
             this.stop();
@@ -61,14 +61,13 @@ public abstract class AbstractOpening implements Opening {
 
         if (this.isTickTime()) {
             this.onTick();
-            //this.tickCount = 0L;
         }
 
         this.tickCount = Math.max(0L, this.tickCount + 1L);
     }
 
     @Override
-    public boolean isRunning() {
+    public final boolean isRunning() {
         return this.running;
     }
 
@@ -131,7 +130,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public boolean isRefundable() {
-        return refundable;
+        return this.refundable;
     }
 
     @Override

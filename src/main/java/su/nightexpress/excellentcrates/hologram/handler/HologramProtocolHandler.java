@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
+import su.nightexpress.excellentcrates.hologram.entity.FakeEntity;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.ArrayList;
@@ -39,39 +40,30 @@ public class HologramProtocolHandler implements HologramHandler {
     }
 
     @Override
-    public void displayHolograms(@NotNull Player player, int entityID, boolean create, @NotNull EntityType type, @NotNull Location location, @NotNull String textLine) {
+    public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
         Object component = WrappedChatComponent.fromJson(NightMessage.asJson(textLine)).getHandle();
 
-        PacketContainer spawnPacket = this.createSpawnPacket(type, location, entityID);
-        PacketContainer dataPacket = this.createMetadataPacket(entityID, metadata -> {
-            // Armor Stands (legacy)
-            if (type == EntityType.ARMOR_STAND) {
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20); //invis
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(component)); //display name
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true); //custom name visible
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true); //no gravity
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01 | 0x08 | 0x10)); //isSmall, noBasePlate, set Marker
-            }
-            // Displays (modern)
-            else {
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 1); // billboard
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), Integer.MAX_VALUE); // line width
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(23, WrappedDataWatcher.Registry.getChatComponentSerializer()), component);
-                metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(27, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x1); // shadow
-            }
+        PacketContainer dataPacket = this.createMetadataPacket(entity.getId(), metadata -> {
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 1); // billboard
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), Integer.MAX_VALUE); // line width
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(23, WrappedDataWatcher.Registry.getChatComponentSerializer()), component);
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(27, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x1); // shadow
         });
 
-        if (create) this.sendPacket(player, spawnPacket);
+        if (needSpawn) {
+            this.sendPacket(player, this.createSpawnPacket(entity));
+        }
+
         this.sendPacket(player, dataPacket);
     }
 
     @Override
-    public void destroyEntity(@NotNull Player player, @NotNull Set<Integer> idList) {
+    public void sendDestroyEntityPacket(@NotNull Player player, @NotNull Set<Integer> idList) {
         this.sendPacket(player, this.createDestroyPacket(idList));
     }
 
     @Override
-    public void destroyEntity(@NotNull Set<Integer> idList) {
+    public void sendDestroyEntityPacket(@NotNull Set<Integer> idList) {
         this.broadcastPacket(this.createDestroyPacket(idList));
     }
 
@@ -84,11 +76,13 @@ public class HologramProtocolHandler implements HologramHandler {
     }
 
     @NotNull
-    private PacketContainer createSpawnPacket(@NotNull EntityType entityType, @NotNull Location location, int entityID) {
+    private PacketContainer createSpawnPacket(@NotNull FakeEntity entity) {
+        Location location = entity.getLocation();
+
         PacketContainer container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        container.getIntegers().write(0, entityID);
+        container.getIntegers().write(0, entity.getId());
         container.getUUIDs().write(0, UUID.randomUUID());
-        container.getEntityTypeModifier().write(0, entityType);
+        container.getEntityTypeModifier().write(0, EntityType.TEXT_DISPLAY);
         container.getDoubles().write(0, location.getX());
         container.getDoubles().write(1, location.getY());
         container.getDoubles().write(2, location.getZ());

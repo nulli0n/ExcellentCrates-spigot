@@ -294,13 +294,13 @@ public class Lang extends CoreLang {
     public static final LangUIButton EDITOR_BUTTON_CRATE_ITEM_STACKABLE = LangUIButton.builder("Editor.Button.Crate.ItemStackable", "Item Stackable")
         .current(CRATE_ITEM_STACKABLE)
         .description("Controls whether crate item is stackable.")
-        .leftClick("toggle")
+        .click("toggle")
         .build();
 
     public static final LangUIButton EDITOR_BUTTON_KEY_ITEM_STACKABLE = LangUIButton.builder("Editor.Button.Key.ItemStackable", "Item Stackable")
         .current(KEY_ITEM_STACKABLE)
         .description("Controls whether key item is stackable.")
-        .leftClick("toggle")
+        .click("toggle")
         .build();
 
     public static final LangUIButton EDITOR_BUTTON_SORT_REWARDS = LangUIButton.builder("Editor.Button.Reward.SortMode", GENERIC_MODE)

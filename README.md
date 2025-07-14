@@ -10,8 +10,9 @@
 
 **ExcellentCrates** is a lightweight, feature rich and highly customizable crates plugin.
 
-<img src="https://i.imgur.com/FF5CkZs.gif"><img src="https://i.imgur.com/bq9cUiU.gif">
-<img src="https://i.imgur.com/Ow50NvS.gif"><img src="https://nightexpressdev.com/img/excellentcrates/promo_crate_preview.gif">
+<img src="https://nightexpressdev.com/img/excellentcrates/crate_editor.gif"><img src="https://nightexpressdev.com/img/excellentcrates/gui_opening.gif">
+<img src="https://nightexpressdev.com/img/excellentcrates/block_opening.gif"><img src="https://nightexpressdev.com/img/excellentcrates/promo_crate_preview.gif">
+<img src="https://nightexpressdev.com/img/excellentcrates/selective_opening.gif">
 </div>
 
 # Features
