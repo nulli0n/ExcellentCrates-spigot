@@ -81,6 +81,7 @@ public class SimpleRollOpening extends WorldOpening {
 
     @Override
     public void instaRoll() {
+        this.setRefundable(false);
         this.spinCount = this.spinsRequired - 1;
         this.finishDelay = 0L;
 
