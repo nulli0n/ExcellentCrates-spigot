@@ -35,6 +35,7 @@
 - Pushback. Push players away from a crate block if they don't met the requirements!
 - [Rarities](https://nightexpressdev.com/excellentcrates/rewards/rarity-weights/). Split your rewards by rarity affecting their roll chance!
 - [Weights](https://nightexpressdev.com/excellentcrates/rewards/rarity-weights/). Balance your reward's and rarity's chances with auto-scalable weight system!
+- Selectable Rewards. Select rewards from a crate with no gambling!
 - [Reward Types](https://nightexpressdev.com/excellentcrates/rewards/setup/). Create Item or Command rewards!
 - [Reward Items](https://nightexpressdev.com/excellentcrates/rewards/setup#setup-item-reward). Bundle up to 27 custom items per Item Reward!
 - [Reward Commands](https://nightexpressdev.com/excellentcrates/rewards/setup#setup-command-reward). Bundle unlimited amount of commands per Command Reward!

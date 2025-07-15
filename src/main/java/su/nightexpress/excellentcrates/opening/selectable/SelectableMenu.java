@@ -133,10 +133,11 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
     @Override
     protected void onClose(@NotNull MenuViewer viewer) {
         SelectableOpening opening = this.getLink(viewer);
+        boolean hasAnchor = this.cache.hasAnchor(viewer.getPlayer());
 
         super.onClose(viewer);
 
-        if (!opening.isCompleted()) {
+        if (!hasAnchor && !opening.isCompleted()) {
             opening.stop();
         }
     }
