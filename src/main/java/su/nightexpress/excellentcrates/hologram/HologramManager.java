@@ -211,23 +211,27 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         double yOffset = crate.getHologramYOffset() + 0.2;
         double lineGap = Config.CRATE_HOLOGRAM_LINE_GAP.get();
 
-        crate.getBlockPositions().forEach(blockPos -> {
-            Block block = blockPos.toBlock();
-            if (block == null) return;
+        for (WorldPos blockPos : crate.getBlockPositions()) {
+            Location loc = blockPos.toLocation();
+            if (loc == null) continue;
 
-            double height = block.getBoundingBox().getHeight() / 2D + yOffset;
+            new FoliaScheduler(this.plugin).runTask(loc, () -> {
+                Block block = blockPos.toBlock();
+                if (block == null) return;
 
-            // Allocate ID values for our fake entities, so there is no clash with new server entities.
+                double height = block.getBoundingBox().getHeight() / 2D + yOffset;
 
-            FakeEntityGroup group = display.getGroupOrCreate(blockPos);
+                // Allocate ID values for our fake entities, so there is no clash with new server entities.
 
-            for (int index = 0; index < originText.size(); index++) {
-                double gap = lineGap * index;
+                FakeEntityGroup group = display.getGroupOrCreate(blockPos);
 
-                Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
-                group.addEntity(FakeEntity.create(location));
-            }
-        });
+                for (int index = 0; index < originText.size(); index++) {
+                    double gap = lineGap * index;
+                    Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
+                    group.addEntity(FakeEntity.create(location));
+                }
+            });
+        }
 
         this.displayMap.put(crate.getId(), display);
     }
