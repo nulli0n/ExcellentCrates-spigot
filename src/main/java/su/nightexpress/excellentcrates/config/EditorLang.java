@@ -32,100 +32,73 @@ public class EditorLang {
     public static final LangItem CRATE_CREATE = builder(PREFIX + "Crate.Create")
         .name("New Crate").build();
 
-    public static final LangItem CRATE_EDIT_DELETE = builder(PREFIX + "Crate.Delete")
-        .name(LIGHT_RED.enclose("Delete Crate"))
-        .text("Permanently deletes the crate.")
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_DELETE = LangUIButton.builder(PREFIX + "Crate.Delete", RED.wrap(BOLD.wrap("Delete Crate")))
+        .description(GRAY.wrap("Permanently deletes the crate."))
         .click("delete")
-        .build();
+        .formatted(false).build();
 
-    public static final LangItem CRATE_EDIT_NAME = builder(PREFIX + "Crate.DisplayName")
-        .name("Name")
+    public static final LangUIButton CRATE_EDIT_NAME = LangUIButton.builder(PREFIX + "Crate.DisplayName", "Name")
         .current("Current", CRATE_NAME)
-        .emptyLine()
-        .text("Sets crate name.")
-        .emptyLine()
+        .description("Sets crate name.")
         .click("change")
         .build();
 
-    public static final LangItem CRATE_EDIT_DESCRIPTION = builder(PREFIX + "Crate.Description")
-        .name("Description")
-        .textRaw(CRATE_DESCRIPTION)
-        .emptyLine()
-        .text("Sets crate description (lore).")
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_DESCRIPTION = LangUIButton.builder(PREFIX + "Crate.Description", "Description")
+        .description(CRATE_DESCRIPTION, "", "Sets crate description (item lore).")
         .leftClick("add line")
         .rightClick("remove all")
         .build();
 
-    public static final LangItem CRATE_EDIT_PERMISSION_REQUIREMENT = builder(PREFIX + "Crate.Permission")
-        .name("Permission Requirement")
+    public static final LangUIButton CRATE_EDIT_ITEM = LangUIButton.builder(PREFIX + "Crate.InventoryStack", "Inventory Item")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_ITEM), "", "Sets item for this crate.")
+        .dragAndDrop("replace")
+        .leftClick("get item")
+        .rightClick("get raw copy")
+        .build();
+
+    public static final LangUIButton CRATE_EDIT_PERMISSION_REQUIREMENT = LangUIButton.builder(PREFIX + "Crate.Permission", "Permission Requirement")
         .current("Enabled", CRATE_PERMISSION_REQUIRED)
         .current("Permission", CRATE_PERMISSION)
-        .emptyLine()
-        .text("Controls whether permission is", "required to open this crate.")
-        .emptyLine()
+        .description("Controls whether permission is", "required to open this crate.")
         .click("toggle")
         .build();
 
-    public static final LangItem CRATE_EDIT_OPEN_COOLDOWN = builder(PREFIX + "Crate.OpenCooldown")
-        .name("Open Cooldown")
+    public static final LangUIButton CRATE_EDIT_OPEN_COOLDOWN = LangUIButton.builder(PREFIX + "Crate.OpenCooldown", "Open Cooldown")
         .current("Cooldown", CRATE_OPEN_COOLDOWN)
-        .emptyLine()
-        .text("Sets per player cooldown", "for crate openings.")
-        .emptyLine()
+        .description("Sets per player cooldown", "for crate openings.")
         .leftClick("set cooldown")
         .rightClick("remove")
         .dropKey("make one-timed")
         .build();
 
-    public static final LangItem CRATE_EDIT_PREVIEW = builder(PREFIX + "Crate.Preview")
-        .name("Preview")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_PREVIEW))
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_PREVIEW = LangUIButton.builder(PREFIX + "Crate.Preview", "Preview")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_PREVIEW), "", "Sets preview GUI for this crate.")
         .current("Enabled", CRATE_PREVIEW_ENABLED)
         .current("Id", CRATE_PREVIEW_ID)
-        .emptyLine()
-        .text("Sets preview GUI for this crate.")
-        .emptyLine()
         .leftClick("change ID")
         .rightClick("toggle")
         .build();
 
-    public static final LangItem CRATE_EDIT_ANIMATION = builder(PREFIX + "Crate.Animation")
-        .name("Animation")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_ANIMATION))
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_ANIMATION = LangUIButton.builder(PREFIX + "Crate.Animation", "Opening")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_ANIMATION), "", "Sets opening animation for this crate.")
         .current("Enabled", CRATE_ANIMATION_ENABLED)
         .current("Id", CRATE_ANIMATION_ID)
-        .emptyLine()
-        .text("Sets opening animation for this crate.")
-        .emptyLine()
         .leftClick("change ID")
         .rightClick("toggle")
         .build();
 
-    public static final LangItem CRATE_KEY_REQUIREMENT = builder(PREFIX + "Crate.KeyRequirement")
-        .name("Key Requirements")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_KEY_REQUIREMENT))
-        .emptyLine()
+    public static final LangUIButton CRATE_KEY_REQUIREMENT = LangUIButton.builder(PREFIX + "Crate.KeyRequirement", "Key Requirements")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_KEY_REQUIREMENT), "", CRATE_KEYS, "", "Player must have certain keys", "to open this crate.")
         .current("Enabled", CRATE_KEY_REQUIRED)
         .current("Keys", "")
-        .textRaw(CRATE_KEYS)
-        .emptyLine()
-        .text("Player must have certain keys", "to open this crate.")
-        .emptyLine()
         .leftClick("add key")
         .rightClick("remove all")
         .dropKey("toggle requirement")
         .build();
 
-    public static final LangItem CRATE_EDIT_OPEN_COST = builder(PREFIX + "Crate.OpenCost")
-        .name("Open Cost")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_OPEN_COST))
-        .emptyLine()
-        .text("Player have to pay certain currencies", "to open this crate.")
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_OPEN_COST = LangUIButton.builder(PREFIX + "Crate.OpenCost", "Open Cost")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_OPEN_COST))
+        .description("Player have to pay certain currencies", "to open this crate.")
         .click("navigate")
         .build();
 
@@ -142,21 +115,10 @@ public class EditorLang {
         .name("Add Cost")
         .build();
 
-    public static final LangItem CRATE_EDIT_ITEM = builder(PREFIX + "Crate.InventoryStack")
-        .name("Inventory Item")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_ITEM))
-        .emptyLine()
-        .text("Sets item for this crate.")
-        .emptyLine()
-        .dragAndDrop("replace")
-        .leftClick("get item")
-        .rightClick("get raw copy")
-        .build();
 
-    public static final LangItem CRATE_EDIT_PLACEMENT = builder(PREFIX + "Crate.Placement.Info")
-        .name("Placement")
-        .text("Place crate anywhere in the world", "with particle effects and hologram!")
-        .emptyLine()
+
+    public static final LangUIButton CRATE_EDIT_PLACEMENT = LangUIButton.builder(PREFIX + "Crate.Placement.Info", "Placement")
+        .description("Place crate anywhere in the world", "with particle effects and hologram!")
         .click("navigate")
         .build();
 
@@ -278,22 +240,16 @@ public class EditorLang {
         .click("change")
         .build();
 
-    public static final LangItem CRATE_EDIT_REWARDS = builder(PREFIX + "Crate.Rewards")
-        .name("Rewards")
-        .textRaw(INSPECTION_TYPE.apply(Inspections.CRATE_REWARDS))
-        .emptyLine()
+    public static final LangUIButton CRATE_EDIT_REWARDS = LangUIButton.builder(PREFIX + "Crate.Rewards", "Rewards")
+        .description(INSPECTION_TYPE.apply(Inspections.CRATE_REWARDS))
         .current("Amount", CRATE_REWARDS_AMOUNT)
-        .emptyLine()
         .click("navigate")
         .build();
 
-    public static final LangItem CRATE_EDIT_MILESTONES = builder(PREFIX + "Crate.Milestones")
-        .name("Milestones")
+    public static final LangUIButton CRATE_EDIT_MILESTONES = LangUIButton.builder(PREFIX + "Crate.Milestones", "Milestones")
         .current("Milestones", CRATE_MILESTONES_AMOUNT)
         .current("Repeatable", CRATE_MILESTONES_REPEATABLE)
-        .emptyLine()
-        .text("Reward players for opening", "certain amount of crates", "in a row!")
-        .emptyLine()
+        .description("Reward players for opening", "certain amount of crates", "in a row!")
         .leftClick("navigate")
         .rightClick("toggle repeatable")
         .build();

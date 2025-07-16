@@ -304,23 +304,23 @@ public class Crate extends AbstractFileData<CratesPlugin> {
     }
 
     public void createHologram() {
-        this.manageHologram(handler -> handler.create(this));
+        this.manageHologram(handler -> handler.render(this));
     }
 
     public void removeHologram() {
-        this.manageHologram(handler -> handler.remove(this));
+        this.manageHologram(handler -> handler.discard(this));
     }
 
     public void recreateHologram() {
         this.manageHologram(handler -> {
-            handler.remove(this);
-            handler.refresh(this);
+            handler.discard(this);
+            handler.render(this);
         });
     }
 
     private void manageHologram(@NotNull Consumer<HologramManager> consumer) {
         if (this.hologramEnabled) {
-            this.plugin.manageHolograms(consumer);
+            this.plugin.getHologramManager().ifPresent(consumer);
         }
     }
 

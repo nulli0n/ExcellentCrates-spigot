@@ -142,7 +142,7 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
     @Override
     public void onSynchronize() {
         for (CrateUser user : this.plugin.getUserManager().getLoaded()) {
-            if (user.isAutoSavePlanned()) return;
+            if (user.isAutoSavePlanned()) continue;
             if (!user.isAutoSyncReady()) continue;
 
             // Do not sync while opening crates.

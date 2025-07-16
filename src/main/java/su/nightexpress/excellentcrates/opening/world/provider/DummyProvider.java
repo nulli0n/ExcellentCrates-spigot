@@ -8,6 +8,7 @@ import su.nightexpress.excellentcrates.api.opening.OpeningProvider;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.world.impl.DummyOpening;
+import su.nightexpress.nightcore.config.FileConfig;
 
 public class DummyProvider implements OpeningProvider {
 
@@ -15,6 +16,17 @@ public class DummyProvider implements OpeningProvider {
 
     public DummyProvider(@NotNull CratesPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    @NotNull
+    public String getId() {
+        return "dummy";
+    }
+
+    @Override
+    public void load(@NotNull FileConfig config) {
+
     }
 
     @Override

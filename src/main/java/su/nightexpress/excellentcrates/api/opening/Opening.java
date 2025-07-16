@@ -9,7 +9,12 @@ import su.nightexpress.excellentcrates.key.CrateKey;
 
 public interface Opening {
 
-    void run();
+    @Deprecated
+    default void run() {
+        this.start();
+    }
+
+    void start();
 
     void stop();
 

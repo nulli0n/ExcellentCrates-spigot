@@ -6,35 +6,32 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Opening;
 import su.nightexpress.excellentcrates.api.opening.OpeningProvider;
+import su.nightexpress.excellentcrates.api.opening.ProviderLoader;
+import su.nightexpress.excellentcrates.api.opening.ProviderSupplier;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.opening.inventory.InvOpeningProvider;
-import su.nightexpress.excellentcrates.opening.world.WorldOpeningProvider;
 import su.nightexpress.excellentcrates.opening.world.provider.DummyProvider;
-import su.nightexpress.excellentcrates.opening.world.provider.SimpleRollProvider;
+import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractManager;
 import su.nightexpress.nightcore.util.FileUtil;
-import su.nightexpress.nightcore.util.StringUtil;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, OpeningProvider> providerByIdMap;
-    private final Map<UUID, Opening>           openingByPlayerId;
+    private final Map<UUID, Opening>           openingByPlayerMap;
 
     private final DummyProvider dummyProvider;
 
     public OpeningManager(@NotNull CratesPlugin plugin) {
         super(plugin);
         this.providerByIdMap = new HashMap<>();
-        this.openingByPlayerId = new ConcurrentHashMap<>();
+        this.openingByPlayerMap = new ConcurrentHashMap<>();
         this.dummyProvider = new DummyProvider(plugin);
     }
 
@@ -52,110 +49,71 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     protected void onShutdown() {
         this.getOpenings().forEach(Opening::stop);
         this.providerByIdMap.clear();
-        this.openingByPlayerId.clear();
-    }
-
-    public void loadDefaults() {
-        for (OpeningType type : OpeningType.values()) {
-            File dir = new File(this.getDirectory(type));
-            if (dir.exists()) return;
-
-            dir.mkdirs();
-
-            switch (type) {
-                case INVENTORY -> {
-                    this.createInventoryProvider("csgo", OpeningUtils::setupCSGO);
-                    this.createInventoryProvider("chests_full", OpeningUtils::setupChests);
-                    this.createInventoryProvider("enclosing", OpeningUtils::setupEnclosing);
-                    this.createInventoryProvider("mystery", OpeningUtils::setupMystery);
-                    this.createInventoryProvider("roulette", OpeningUtils::setupRoulette);
-                    this.createInventoryProvider("storm", OpeningUtils::setupStorm);
-                }
-                case WORLD -> {
-                    this.createWorldProvider(SimpleRollProvider.ID, file -> new SimpleRollProvider(plugin, file), OpeningUtils::setupSimpleRoll);
-                }
-            }
-        }
-    }
-
-    public void loadProviders() {
-        this.loadInventoryProviders();
-        this.loadWorldProviders();
-        this.plugin.info("Loaded " + this.providerByIdMap.size() + " crate openings.");
-    }
-
-    public void loadInventoryProviders() {
-        for (File file : FileUtil.getFiles(this.getDirectory(OpeningType.INVENTORY))) {
-            this.loadInventoryProvider(file);
-        }
-    }
-
-    public void loadWorldProviders() {
-        this.loadWorldProvider(SimpleRollProvider.ID, file -> new SimpleRollProvider(plugin, file));
-    }
-
-    public boolean loadInventoryProvider(@NotNull File file) {
-        InvOpeningProvider provider = new InvOpeningProvider(plugin, file);
-        if (!provider.load()) {
-            this.plugin.error("Inventory opening provider not loaded: '" + file.getName() + "'.");
-            return false;
-        }
-
-        this.loadProvider(provider.getId(), provider);
-        return true;
-    }
-
-    public <T extends WorldOpeningProvider> boolean loadWorldProvider(@NotNull String id, @NotNull Function<File, T> function) {
-        File file = new File(this.getDirectory(OpeningType.WORLD), id + ".yml");
-        T provider = function.apply(file);
-
-        if (!provider.load()) {
-            this.plugin.error("World opening provider not loaded: '" + file.getName() + "'.");
-            return false;
-        }
-
-        this.loadProvider(provider.getId(), provider);
-        return true;
-    }
-
-    public void createInventoryProvider(@NotNull String id, @NotNull Consumer<InvOpeningProvider> consumer) {
-        InvOpeningProvider provider = this.createProvider(id, OpeningType.INVENTORY, file -> new InvOpeningProvider(plugin, file), consumer);
-        if (provider == null) return;
-
-        provider.save();
-    }
-
-    public <T extends WorldOpeningProvider> void createWorldProvider(@NotNull String id, @NotNull Function<File, T> function, @NotNull Consumer<T> consumer) {
-        T provider = this.createProvider(id, OpeningType.WORLD, function, consumer);
-        if (provider == null) return;
-
-        provider.save();
-    }
-
-    @Nullable
-    private <T extends OpeningProvider> T createProvider(@NotNull String id,
-                                                         @NotNull OpeningType type,
-                                                         @NotNull Function<File, T> function,
-                                                         @NotNull Consumer<T> consumer) {
-        id = StringUtil.transformForID(id);
-        if (id.isBlank()) return null;
-
-        File file = new File(this.getDirectory(type), id + ".yml");
-        T provider = function.apply(file);
-        consumer.accept(provider);
-        return provider;
+        this.openingByPlayerMap.clear();
     }
 
     @NotNull
-    public String getDirectory(@NotNull OpeningType type) {
-        return plugin.getDataFolder() + switch (type) {
-            case WORLD -> Config.DIR_OPENINGS_WORLD;
-            case INVENTORY -> Config.DIR_OPENINGS_GUI;
-        };
+    private String getDirectoryPath(@NotNull String dirName) {
+        return this.plugin.getDataFolder() + dirName;
     }
 
-    public void loadProvider(@NotNull String id, @NotNull OpeningProvider provider) {
-        this.providerByIdMap.put(id.toLowerCase(), provider);
+    private void loadDefaults() {
+        File dir = new File(this.getDirectoryPath(Config.DIR_OPENINGS));
+        if (dir.exists()) return;
+
+        this.loadProvider("csgo", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupCSGO);
+        this.loadProvider("enclosing", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupEnclosing);
+        this.loadProvider("mystery", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupMystery);
+        this.loadProvider("roulette", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupRoulette);
+        this.loadProvider("storm", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupStorm);
+
+        this.loadProvider("simple_roll", Config.DIR_OPENINGS_SIMPLE_ROLL, OpeningUtils::createSimpleRoll);
+
+        this.loadProvider("selective_1", Config.DIR_OPENINGS_SELECTABLE, OpeningUtils::createSelectableSingle);
+        this.loadProvider("selective_3", Config.DIR_OPENINGS_SELECTABLE, OpeningUtils::createSelectableTriple);
+    }
+
+    public void loadProviders() {
+        // Load providers stored in the openings directory by native or externally added loaders.
+        for (ProviderLoader loader : ProviderRegistry.getLoaders()) {
+            this.loadProviders(loader);
+        }
+
+        // Load externally added independend opening providers.
+        for (OpeningProvider provider : ProviderRegistry.getProviders()) {
+            this.loadProvider(provider);
+        }
+
+        this.plugin.info("Loaded " + this.providerByIdMap.size() + " crate openings.");
+    }
+
+    public void loadProviders(@NotNull ProviderLoader loader) {
+        String dirName = loader.getDirectory();
+        ProviderSupplier supplier = loader.getSupplier();
+
+        for (File file : FileUtil.getConfigFiles(this.getDirectoryPath(dirName))) {
+            this.loadProvider(file, supplier);
+        }
+    }
+
+    public void loadProvider(@NotNull String id, @NotNull String dirName, @NotNull ProviderSupplier supplier) {
+        File file = new File(this.getDirectoryPath(dirName), FileConfig.withExtension(id));
+        this.loadProvider(file, supplier);
+    }
+
+    public void loadProvider(@NotNull File file, @NotNull ProviderSupplier supplier) {
+        FileConfig config = new FileConfig(file);
+        String name = FileConfig.getName(file);
+
+        OpeningProvider provider = supplier.supply(this.plugin, name);
+        provider.load(config);
+        config.saveChanges();
+
+        this.loadProvider(provider);
+    }
+
+    public void loadProvider(@NotNull OpeningProvider provider) {
+        this.providerByIdMap.put(provider.getId(), provider);
     }
 
     @NotNull
@@ -180,17 +138,17 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     @NotNull
     public Map<UUID, Opening> getOpeningByPlayerIdMap() {
-        return this.openingByPlayerId;
+        return this.openingByPlayerMap;
     }
 
     @NotNull
     public Set<Opening> getOpenings() {
-        return new HashSet<>(this.openingByPlayerId.values());
+        return new HashSet<>(this.openingByPlayerMap.values());
     }
 
     @Nullable
     public Opening getOpening(@NotNull Player player) {
-        return this.openingByPlayerId.get(player.getUniqueId());
+        return this.openingByPlayerMap.get(player.getUniqueId());
     }
 
     public void tickOpenings() {
@@ -210,7 +168,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     @Nullable
     public Opening removeOpening(@NotNull Player player) {
-        return this.openingByPlayerId.remove(player.getUniqueId());
+        return this.openingByPlayerMap.remove(player.getUniqueId());
     }
 
     public boolean isOpeningAvailable(@NotNull Player player, @NotNull CrateSource source) {
@@ -231,9 +189,9 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void startOpening(@NotNull Player player, @NotNull Opening opening, boolean instaRoll) {
-        this.openingByPlayerId.putIfAbsent(player.getUniqueId(), opening);
+        this.openingByPlayerMap.putIfAbsent(player.getUniqueId(), opening);
 
-        opening.run(); // Start ticking
+        opening.start(); // Start ticking
 
         if (instaRoll) opening.instaRoll();
     }
