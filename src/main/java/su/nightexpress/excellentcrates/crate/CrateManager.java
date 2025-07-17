@@ -75,7 +75,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadPreviews();
         this.loadCrates();
         this.loadUI();
-        this.plugin.runTask(task -> this.runInspections()); // After everything is loaded.
+        this.plugin.runTask(this::runInspections); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -466,7 +466,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             // Take key
             if (crate.isKeyRequired() && key != null) {
                 this.plugin.getKeyManager().takeKey(player, key, 1);
-                //this.plugin.getKeyManager().takeKey(player, crate);
             }
 
             // Take crate item stack

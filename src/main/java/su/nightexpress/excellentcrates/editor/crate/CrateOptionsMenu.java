@@ -117,7 +117,6 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             this.saveAndFlush(viewer, crate);
         });
 
-
         this.addItem(Material.PAINTING, EditorLang.CRATE_EDIT_PREVIEW, 14, (viewer, event, crate) -> {
             if (event.isRightClick()) {
                 crate.setPreviewEnabled(!crate.isPreviewEnabled());
@@ -146,8 +145,6 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
                 return true;
             }).setSuggestions(plugin.getOpeningManager().getProviderIds(), true));
         });
-
-
 
 
         this.addItem(Material.TRIAL_KEY, EditorLang.CRATE_KEY_REQUIREMENT, 28, (viewer, event, crate) -> {
@@ -225,7 +222,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> {
             this.runNextTick(() -> this.plugin.getEditorManager().openMilestones(viewer.getPlayer(), crate));
         }, ItemOptions.builder().setVisibilityPolicy(viewer -> Config.isMilestonesEnabled()).build());
 
-        this.addItem(NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem().setPriority(-1).setSlots(IntStream.range(45, 54).toArray()));
+    this.addItem(NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE).setHideTooltip(true).toMenuItem().setPriority(-1).setSlots(IntStream.range(45, 54).toArray()));
         this.addItem(NightItem.fromType(Material.GLASS_PANE).setHideTooltip(true).toMenuItem().setPriority(-1).setSlots(IntStream.range(19, 26).toArray()));
     }
 
