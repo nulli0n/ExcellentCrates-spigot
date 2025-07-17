@@ -41,17 +41,17 @@ public class RewardSpinner extends AbstractSpinner {
     private void prepareRewards() {
         for (int winSlot : this.winSlots) {
             if (Lists.contains(this.slots, winSlot)) {
-                this.rewards.add(this.rollReward());
+                this.rewards.add(this.rollReward(false));
             }
         }
     }
 
     @Nullable
-    private Reward rollReward() {
+    private Reward rollReward(boolean visual) {
         Crate crate = this.opening.getCrate();
         Player player = this.opening.getPlayer();
 
-        if (Config.OPENINGS_GUI_SIMULATE_REAL_CHANCES.get()) {
+        if (!visual || Config.OPENINGS_GUI_SIMULATE_REAL_CHANCES.get()) {
             Map<Rarity, Double> rarityMap = new HashMap<>();
             this.rarities.forEach(rarity -> {
                 if (crate.hasRewards(player, rarity)) {
@@ -74,7 +74,7 @@ public class RewardSpinner extends AbstractSpinner {
     @Override
     @NotNull
     public ItemStack createItem(int slot) {
-        Reward reward = this.shouldUsePredictedReward(slot) ? this.rewards.get(this.rewardIndex++) : this.rollReward();
+        Reward reward = this.shouldUsePredictedReward(slot) ? this.rewards.get(this.rewardIndex++) : this.rollReward(true);
         if (reward == null) return new ItemStack(Material.AIR);
 
         return reward.getPreviewItem();
