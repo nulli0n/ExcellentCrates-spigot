@@ -21,6 +21,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Get project version
+      run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
@@ -28,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ExcellentCrates
-        path: target/ExcellentCrates-6.2.2.jar
+        path: target/ExcellentCrates-${{ env.PROJECT_VERSION }}.jar
