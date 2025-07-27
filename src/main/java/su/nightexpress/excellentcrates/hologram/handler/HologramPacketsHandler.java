@@ -60,10 +60,10 @@ public class HologramPacketsHandler implements HologramHandler {
     @Override
     public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
         PacketWrapper<?> dataPacket = this.createMetadataPacket(entity.getId(), dataList -> {
-            dataList.add(new EntityData(15, EntityDataTypes.BYTE, (byte) 1)); // billboard
-            dataList.add(new EntityData(23, EntityDataTypes.COMPONENT, NightMessage.asJson(textLine))); // text
-            dataList.add(new EntityData(24, EntityDataTypes.INT, Integer.MAX_VALUE)); // line width
-            dataList.add(new EntityData(27, EntityDataTypes.BYTE, (byte) 0x1)); // shadow
+            dataList.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) 1)); // billboard
+            dataList.add(new EntityData<>(23, EntityDataTypes.COMPONENT, NightMessage.asJson(textLine))); // text
+            dataList.add(new EntityData<>(24, EntityDataTypes.INT, Integer.MAX_VALUE)); // line width
+            dataList.add(new EntityData<>(27, EntityDataTypes.BYTE, (byte) 0x1)); // shadow
         });
 
         if (needSpawn) {
@@ -97,8 +97,8 @@ public class HologramPacketsHandler implements HologramHandler {
     }
 
     @NotNull
-    private WrapperPlayServerEntityMetadata createMetadataPacket(int entityID, @NotNull Consumer<List<EntityData>> consumer) {
-        List<EntityData> dataList = new ArrayList<>();
+    private WrapperPlayServerEntityMetadata createMetadataPacket(int entityID, @NotNull Consumer<List<EntityData<?>>> consumer) {
+        List<EntityData<?>> dataList = new ArrayList<>();
 
         consumer.accept(dataList);
 
