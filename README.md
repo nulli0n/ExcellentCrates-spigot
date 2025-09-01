@@ -45,6 +45,9 @@
 - Reward Logs. Log all reward rolls in a dedicated log file!
 - [PlaceholderAPI](https://nightexpressdev.com/excellentcrates/hooks/placeholder_api/) Support!
 
+# Patches:
++ Added <a href="src/main/java/su/nightexpress/excellentcrates/api/event/CrateObtainRewardEvent.java"> CrateObtainRewardEvent</a> - Fired when a player obtains a reward from a crate.
+
 # Compatibility
 - **Java Version:** 21 or higher.
 - **Server Software:** Spigot / Paper / Purpur
