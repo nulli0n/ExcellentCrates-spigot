@@ -503,9 +503,17 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     public void giveReward(@NotNull Player player, @NotNull Reward reward) {
-        final CrateObtainRewardEvent event = new CrateObtainRewardEvent(reward, player);
-        this.plugin.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        this.giveReward(player, reward, true);
+    }
+
+    public void giveReward(@NotNull Player player,
+                           @NotNull Reward reward,
+                           final boolean callEvent) {
+        if (callEvent) {
+            final CrateObtainRewardEvent event = new CrateObtainRewardEvent(reward, player);
+            this.plugin.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return;
+        }
 
         reward.giveContent(player);
 
