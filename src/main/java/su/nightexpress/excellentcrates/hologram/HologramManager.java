@@ -41,7 +41,9 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         if (this.detectHandler()) {
             this.addListener(new HologramListener(this.plugin, this));
 
-            this.addAsyncTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get());
+            // Run on the main thread to avoid asynchronous world access issues.
+            // The interval is in seconds, so we multiply by 20 to get ticks.
+            this.addTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get() * 20L);
         }
     }
 
