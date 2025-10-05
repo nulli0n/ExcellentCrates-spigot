@@ -65,5 +65,9 @@
 - [Documentation](https://nightexpressdev.com/excellentcrates/)
 - [Developer API](https://nightexpressdev.com/excellentcrates/developer-api/)
 
+# Change Log:
+- Added support for `RandomizeSlots: true` variable for Reward in selectable opening animations _ONLY_. This will randomize reward slots when opened to allow hidden rewards.
+- Added support for `Material: minecraft:{material}` variable for Reward in selectable opening animations _ONLY_. Overrides the item shown in the GUI for the reward.
+
 # Donate
 If you like my work or enjoy using my plugins, feel free to [Buy me a coffee](https://ko-fi.com/nightexpress) :) Thank you! 🧡
