@@ -10,6 +10,8 @@ import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
 import su.nightexpress.nightcore.util.random.Rnd;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +24,8 @@ public class SelectableOpening extends AbstractOpening {
 
     protected boolean confirmed;
     protected boolean completed;
+
+    private List<Reward> shuffledRewards;
 
     public SelectableOpening(@NotNull CratesPlugin plugin,
                             @NotNull SelectableProvider provider,
@@ -142,5 +146,17 @@ public class SelectableOpening extends AbstractOpening {
     @NotNull
     public SelectableProvider getProvider() {
         return this.provider;
+    }
+
+    @NotNull
+    public List<Reward> getDisplayRewards(boolean randomizeSlots) {
+        if (!randomizeSlots) {
+            return this.getRewards();
+        }
+        if (this.shuffledRewards == null) {
+            this.shuffledRewards = new ArrayList<>(this.getRewards());
+            Collections.shuffle(this.shuffledRewards);
+        }
+        return this.shuffledRewards;
     }
 }

@@ -38,6 +38,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
     private int[]        rewardSlots;
     private String       rewardName;
+    private Material rewardMaterial;
     private List<String> rewardLore;
 
     private String rewardEntry;
@@ -48,6 +49,8 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
     private NightSound unselectSound;
     private NightSound limitSound;
     private NightSound confirmSound;
+
+    private boolean randomizeSlots; // Shuffles Rewards when enabled, Tried to make it as least invasive as possible.
 
     public SelectableMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X6, BLACK.wrap("Select " + GENERIC_AMOUNT + " reward(s)!"));
@@ -62,10 +65,12 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
         return MenuFiller.builder(this)
             .setSlots(this.rewardSlots)
-            .setItems(opening.getRewards())
+            .setItems(opening.getDisplayRewards(this.randomizeSlots))
             .setItemCreator(reward -> {
+                Material overrideMaterial = this.rewardMaterial != null ? this.rewardMaterial : reward.getPreviewItem().getType();
                 NightItem item = opening.isSelectedReward(reward) ? this.selectedIcon.copy() : NightItem.fromItemStack(reward.getPreviewItem())
                     .setDisplayName(this.rewardName)
+                    .setMaterial(overrideMaterial)
                     .setLore(this.rewardLore);
 
                 return item.replacement(replacer -> replacer.replace(reward.replacePlaceholders()));
@@ -159,6 +164,11 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
         this.rewardName = ConfigValue.create("Reward.Name",
             REWARD_NAME
         ).read(config);
+
+        String mat = ConfigValue.create("Reward.Material", "").read(config);
+        this.rewardMaterial = mat.isEmpty() ? null : Material.matchMaterial(mat);
+
+        this.randomizeSlots = ConfigValue.create("Reward.RandomizeSlots", false).read(config);
 
         this.rewardLore = ConfigValue.create("Reward.Lore", Lists.newList(
             REWARD_DESCRIPTION,
