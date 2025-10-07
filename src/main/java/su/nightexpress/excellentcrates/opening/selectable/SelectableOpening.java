@@ -22,10 +22,17 @@ public class SelectableOpening extends AbstractOpening {
     protected final SelectableMenu     menu;
     protected final Set<Reward>  selectedRewards;
 
+    private final java.util.Set<String> overrideDisabled = new java.util.HashSet<>();
+    private final java.util.Map<String, Integer> redoLeft = new java.util.HashMap<>();
+
     protected boolean confirmed;
     protected boolean completed;
 
     private List<Reward> shuffledRewards;
+
+    private String keyOf(@NotNull Reward reward) {
+        return reward.getId();
+    }
 
     public SelectableOpening(@NotNull CratesPlugin plugin,
                             @NotNull SelectableProvider provider,
@@ -64,6 +71,7 @@ public class SelectableOpening extends AbstractOpening {
 
     public void addSelectedReward(@NotNull Reward reward) {
         this.selectedRewards.add(reward);
+        this.onSelected(reward);
     }
 
     public void removeSelectedReward(@NotNull Reward reward) {
@@ -159,4 +167,46 @@ public class SelectableOpening extends AbstractOpening {
         }
         return this.shuffledRewards;
     }
+
+    // General Logic for locked rewards & materialoverride, gives a "scratchoff" experience.
+    public boolean isOverrideDisabled(@NotNull Reward reward) {
+        return this.overrideDisabled.contains(keyOf(reward));
+    }
+
+    public int getRedoLeft(@NotNull Reward reward) {
+        if (this.redoLeft.isEmpty()) return this.provider.getLockSelectionRedos();
+        int min = Integer.MAX_VALUE;
+        for (Integer v : this.redoLeft.values()) {
+            if (v != null && v < min) min = v;
+        }
+        return min == Integer.MAX_VALUE ? this.provider.getLockSelectionRedos() : min;
+    }
+
+    public void onSelected(@NotNull Reward reward) {
+        if (this.provider.isLockSelection()) {
+            String k = keyOf(reward);
+            this.overrideDisabled.add(k);
+            if (!this.redoLeft.containsKey(k)) {
+                int shared = this.getRedoLeft(reward);
+                this.redoLeft.put(k, shared);
+            }
+        }
+    }
+
+    public boolean tryUnselect(@NotNull Reward reward) {
+        if (!this.isSelectedReward(reward)) return false;
+        if (!this.provider.isLockSelection()) {
+            this.removeSelectedReward(reward);
+            return true;
+        }
+        int left = this.getRedoLeft(reward);
+        if (left <= 0) return false;
+        for (java.util.Map.Entry<String,Integer> e : this.redoLeft.entrySet()) {
+            int cur = e.getValue() == null ? this.provider.getLockSelectionRedos() : e.getValue();
+            e.setValue(Math.max(0, cur - 1));
+        }
+        this.removeSelectedReward(reward);
+        return true;
+    }
+
 }

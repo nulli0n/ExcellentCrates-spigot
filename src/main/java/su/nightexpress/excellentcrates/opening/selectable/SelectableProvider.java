@@ -14,6 +14,10 @@ public class SelectableProvider extends AbstractProvider {
 
     private int selectionAmount = 1;
 
+    private boolean lockSelection;
+
+    private int lockSelectionRedos = 0;
+
     private SelectableMenu menu;
 
     public SelectableProvider(@NotNull CratesPlugin plugin, @NotNull String id) {
@@ -23,6 +27,12 @@ public class SelectableProvider extends AbstractProvider {
     @Override
     public void load(@NotNull FileConfig config) {
         this.selectionAmount = ConfigValue.create("Selection.Amount", this.selectionAmount).read(config);
+
+        // Locks selection & displays reward immediately. (Overriding the selected icon & overrides)
+        this.lockSelection = ConfigValue.create("Selection.LockSelection", this.lockSelection).read(config);
+
+        // How many times can a player redo their selection if lock is enabled. (This allows for "rerolling" certain rewards for a better player experience)
+        this.lockSelectionRedos = ConfigValue.create("Selection.LockSelectionRedos", this.lockSelectionRedos).read(config);
 
         this.menu = new SelectableMenu(this.plugin);
         this.menu.load(config);
@@ -40,5 +50,13 @@ public class SelectableProvider extends AbstractProvider {
 
     public void setSelectionAmount(int selectionAmount) {
         this.selectionAmount = selectionAmount;
+    }
+
+    public boolean isLockSelection() {
+        return this.lockSelection;
+    }
+
+    public int getLockSelectionRedos() {
+        return this.lockSelectionRedos;
     }
 }
