@@ -34,11 +34,17 @@ import java.util.stream.IntStream;
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
+/*TODO: Added LockSelection: true/false, LockSelectionRedos: int & Unselect_count lore /w Placeholders.
+  - Modify crate refund logic & reward system that if LockSelection is enabled and any reward is selected and they close it gives the rewards.
+  - Item Name Needs to display actual reward name if selected when LockSelection is enabled.
+*/
 public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> implements ConfigBased, Filled<Reward> {
 
     private int[]        rewardSlots;
     private String       rewardName;
+    private Material rewardMaterialOverride;
     private List<String> rewardLore;
+    private List<String> selectedRedosCountLore; // Extends Lore when LockSelection is enabled. (There's probably a better way to do this)
 
     private String rewardEntry;
 
@@ -48,6 +54,8 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
     private NightSound unselectSound;
     private NightSound limitSound;
     private NightSound confirmSound;
+
+    private boolean randomizeSlots; // Shuffles Reward order when enabled, Tried to make it as least invasive as possible.
 
     public SelectableMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X6, BLACK.wrap("Select " + GENERIC_AMOUNT + " reward(s)!"));
@@ -62,29 +70,68 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
         return MenuFiller.builder(this)
             .setSlots(this.rewardSlots)
-            .setItems(opening.getRewards())
-            .setItemCreator(reward -> {
-                NightItem item = opening.isSelectedReward(reward) ? this.selectedIcon.copy() : NightItem.fromItemStack(reward.getPreviewItem())
-                    .setDisplayName(this.rewardName)
-                    .setLore(this.rewardLore);
+            .setItems(opening.getDisplayRewards(this.randomizeSlots))
+                .setItemCreator(reward -> {
+                    boolean selected = opening.isSelectedReward(reward);
+                    boolean locked = opening.getProvider().isLockSelection();
 
-                return item.replacement(replacer -> replacer.replace(reward.replacePlaceholders()));
-            })
+                    if (selected && locked) {
+                        Material originalMat = reward.getPreviewItem().getType();
+                        String originalName = reward.getPreviewItem().hasItemMeta() && reward.getPreviewItem().getItemMeta().hasDisplayName()
+                            ? reward.getPreviewItem().getItemMeta().getDisplayName()
+                            : this.rewardName;
+                        NightItem base = this.selectedIcon.copy();
+                        base.setMaterial(originalMat);
+                        base.setDisplayName(originalName);
+
+                        int max = opening.getProvider().getLockSelectionRedos();
+                        int left = opening.getRedoLeft(reward);
+
+                        if (max > 0 && this.selectedRedosCountLore != null && !this.selectedRedosCountLore.isEmpty()) {
+                            java.util.List<String> lore = new java.util.ArrayList<>();
+                            if (base.getLore() != null) lore.addAll(base.getLore());
+                            for (String line : this.selectedRedosCountLore) {
+                                lore.add(
+                                        line.replace("%redo_used%", String.valueOf(left))
+                                            .replace("%redo_max%", String.valueOf(max))
+                                );
+                            }
+                            base.setLore(lore);
+                        }
+
+                        return base.replacement(r -> r.replace(reward.replacePlaceholders()));
+                    }
+
+                    Material rewardMaterial = (this.rewardMaterialOverride != null && !(opening.isOverrideDisabled(reward)))
+                        ? this.rewardMaterialOverride
+                        : reward.getPreviewItem().getType();
+
+                    NightItem item = selected
+                        ? this.selectedIcon.copy()
+                        : NightItem.fromItemStack(reward.getPreviewItem())
+                        .setDisplayName(this.rewardName)
+                        .setMaterial(rewardMaterial)
+                        .setLore(this.rewardLore);
+
+                    return item.replacement(r -> r.replace(reward.replacePlaceholders()));
+                })
             .setItemClick(reward -> (viewer1, event) -> {
                 if (opening.isSelectedReward(reward)) {
-                    opening.removeSelectedReward(reward);
-                    this.unselectSound.play(player);
-                }
-                else {
+                    boolean ok = opening.tryUnselect(reward);
+                    if (ok) {
+                        this.unselectSound.play(player);
+                    } else {
+                        this.limitSound.play(player);
+                    }
+                } else {
                     if (opening.isAllRewardsSelected()) {
                         this.limitSound.play(player);
                         return;
                     }
-
                     opening.addSelectedReward(reward);
                     this.selectSound.play(player);
                 }
-                this.runNextTick(() -> this.flush(viewer));
+            this.runNextTick(() -> this.flush(viewer));
             })
             .build();
     }
@@ -160,6 +207,11 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
             REWARD_NAME
         ).read(config);
 
+        String mat = ConfigValue.create("Reward.MaterialOverride", "").read(config);
+        this.rewardMaterialOverride = mat.isEmpty() ? null : Material.matchMaterial(mat);
+
+        this.randomizeSlots = ConfigValue.create("Reward.RandomizeSlots", false).read(config);
+
         this.rewardLore = ConfigValue.create("Reward.Lore", Lists.newList(
             REWARD_DESCRIPTION,
             EMPTY_IF_ABOVE,
@@ -179,6 +231,11 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                     GREEN.wrap("→ " + UNDERLINED.wrap("Click to unselect"))
                 ))
                 .hideAllComponents()
+        ).read(config);
+
+        this.selectedRedosCountLore = ConfigValue.create(
+                "Selection.Icon.Redos_Count",
+                Lists.newList()
         ).read(config);
 
         this.selectSound = ConfigValue.create("Selection.Sound-V", VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE)).read(config);
