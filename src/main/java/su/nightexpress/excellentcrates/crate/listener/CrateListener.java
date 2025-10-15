@@ -57,15 +57,18 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         Action action = event.getAction();
-        Block block = null;
+        Block block = event.getClickedBlock();
         Crate crate = null;
 
         if (item != null && !item.getType().isAir()) {
+            if (block != null) {
+                if (this.manager.handleLinkToolInteraction(player, block, item, event)) return;
+            }
+
             crate = this.manager.getCrateByItem(item);
         }
         if (crate == null) {
             item = null;
-            block = event.getClickedBlock();
             if (block == null) return;
 
             crate = this.manager.getCrateByBlock(block);
@@ -100,7 +103,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
         if (clickAction == InteractType.CRATE_PREVIEW && crate.isPreviewEnabled()) {
             if (this.manager.hasPreviewCooldown(player)) {
-                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer -> replacer
+                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.message().send(player, replacer -> replacer
                     .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(this.manager.getPreviewCooldown(player), TimeFormatType.LITERAL))
                 );
                 return;

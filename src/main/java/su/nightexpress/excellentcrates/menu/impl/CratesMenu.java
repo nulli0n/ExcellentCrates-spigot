@@ -55,13 +55,13 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
             }
 
             Player player = viewer.getPlayer();
-            ItemStack icon = crate.getRawItem();
+            ItemStack icon = crate.getRawItemStack();
 
             ItemReplacer.create(icon).readMeta().trimmed().hideFlags()
                 .setDisplayName(this.crateName)
                 .setLore(this.crateLore)
                 .replace(crate.replacePlaceholders())
-                .replace(GENERIC_KEYS, () -> NumberUtil.format(plugin.getKeyManager().getKeysAmount(player, crate)))
+                //.replace(GENERIC_KEYS, () -> NumberUtil.format(plugin.getKeyManager().getKeysAmount(player, crate)))
                 .writeMeta();
 
             MenuItem menuItem = new MenuItem(icon);

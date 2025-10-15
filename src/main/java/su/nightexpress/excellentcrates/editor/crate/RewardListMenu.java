@@ -1,33 +1,66 @@
 package su.nightexpress.excellentcrates.editor.crate;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.config.EditorLang;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.nightcore.locale.LangContainer;
+import su.nightexpress.nightcore.locale.LangEntry;
+import su.nightexpress.nightcore.locale.entry.IconLocale;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
+import su.nightexpress.nightcore.ui.menu.click.ClickResult;
 import su.nightexpress.nightcore.ui.menu.data.Filled;
 import su.nightexpress.nightcore.ui.menu.data.MenuFiller;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
-import su.nightexpress.nightcore.util.ItemUtil;
+import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements Filled<Reward> {
+import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-    private static final String SKULL_SORT   = "5cce7359a25de6da56308e6a369c6372e2c30906c62647040da137a32addc9";
-    private static final String SKULL_CREATE = "e3c81adc6c06d95c65b6c1089755a04d7ebc414f51ba66d14d0c4c1d71520df6";
+public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements Filled<Reward>, LangContainer {
+
+    private static final IconLocale LOCALE_REWARD = LangEntry.iconBuilder("Editor.Button.Rewards.Reward")
+        .rawName(REWARD_NAME)
+        .appendCurrent("Status", GENERIC_INSPECTION)
+        .appendCurrent("ID", REWARD_ID)
+        .appendCurrent("Weight", REWARD_WEIGHT + " → " + GREEN.wrap(REWARD_ROLL_CHANCE + "%"))
+        .appendCurrent("Rarity", REWARD_RARITY_NAME + " → " + GREEN.wrap(REWARD_RARITY_ROLL_CHANCE + "%"))
+        .br()
+        .appendClick("Left-Click to edit")
+        .appendClick("Shift-Left to move forward")
+        .appendClick("Shift-Right move backward")
+        .build();
+
+    private static final IconLocale LOCALE_CREATION = LangEntry.iconBuilder("Editor.Button.Rewards.Creation")
+        .accentColor(GREEN)
+        .name("Reward Creation")
+        .appendInfo("Drop item on " + GREEN.wrap("this") + " button", "to create a new reward of it.")
+        .build();
+
+    private static final IconLocale LOCALE_SORTING = LangEntry.iconBuilder("Editor.Button.Rewards.Sorting")
+        .name("Sort Rewards")
+        .appendInfo("Automatically sorts rewards in", "certain order.").br()
+        .appendClick("Click to open")
+        .build();
 
     public RewardListMenu(@NotNull CratesPlugin plugin) {
-        super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_REWARD_LIST.getString());
+        super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_REWARD_LIST.text());
+        this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
             this.runNextTick(() -> plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));
@@ -36,12 +69,36 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
         this.addItem(MenuItem.buildNextPage(this, 44));
         this.addItem(MenuItem.buildPreviousPage(this, 36));
 
-        this.addItem(ItemUtil.getCustomHead(SKULL_CREATE), EditorLang.REWARD_CREATE, 42, (viewer, event, crate) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openRewardCreation(viewer.getPlayer(), crate));
+        this.addItem(NightItem.fromType(Material.GRAY_STAINED_GLASS_PANE)
+            .setHideTooltip(true)
+            .toMenuItem()
+            .setSlots(IntStream.range(0, 36).toArray())
+            .setPriority(-1)
+        );
+
+        this.addItem(NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE)
+            .setHideTooltip(true)
+            .toMenuItem()
+            .setSlots(IntStream.range(36, 45).toArray())
+            .setPriority(-1)
+        );
+
+        this.addItem(Material.ANVIL, LOCALE_CREATION, 42, (viewer, event, crate) -> {
+            Player player = viewer.getPlayer();
+            ItemStack cursor = event.getCursor();
+            if (cursor == null || cursor.getType().isAir()) return;
+
+            CrateDialogs.REWARD_CREATION.ifPresent(dialog -> {
+                ItemStack copy = new ItemStack(cursor);
+                event.getView().setCursor(null);
+                Players.addItem(player, copy);
+                dialog.show(player, crate, copy, () -> this.flush(player));
+            });
         });
 
-        this.addItem(ItemUtil.getCustomHead(SKULL_SORT), EditorLang.REWARD_SORT, 38, (viewer, event, crate) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openRewardSort(viewer.getPlayer(), crate));
+        this.addItem(Material.COMPARATOR, LOCALE_SORTING, 38, (viewer, event, crate) -> {
+            Player player = viewer.getPlayer();
+            CrateDialogs.REWARD_SORTING.ifPresent(dialog -> dialog.show(player, crate, () -> this.flush(player)));
         });
     }
 
@@ -55,8 +112,11 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
         autoFill.setItemCreator(reward -> {
             return NightItem.fromItemStack(reward.getPreviewItem())
                 .hideAllComponents()
-                .localized(EditorLang.REWARD_OBJECT)
-                .replacement(replacer -> replacer.replace(reward.replaceAllPlaceholders()));
+                .localized(LOCALE_REWARD)
+                .replacement(replacer -> replacer
+                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_GENERIC_OVERVIEW, !reward.hasProblems()))
+                    .replace(reward.replacePlaceholders())
+                );
         });
 
         autoFill.setItemClick(reward -> (viewer1, event) -> {
@@ -81,7 +141,7 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
                     all.add(index - 1, reward);
                 }
                 crate.setRewards(all);
-                crate.saveRewards();
+                crate.markDirty();
                 this.runNextTick(() -> this.flush(viewer));
                 return;
             }
@@ -102,5 +162,14 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, Crate> implements F
     @Override
     protected void onReady(@NotNull MenuViewer viewer, @NotNull Inventory inventory) {
 
+    }
+
+    @Override
+    public void onClick(@NotNull MenuViewer viewer, @NotNull ClickResult result, @NotNull InventoryClickEvent event) {
+        super.onClick(viewer, result, event);
+
+        if (result.isInventory()) {
+            event.setCancelled(false);
+        }
     }
 }

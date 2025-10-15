@@ -9,9 +9,9 @@ import su.nightexpress.excellentcrates.api.opening.OpeningProvider;
 import su.nightexpress.excellentcrates.api.opening.ProviderLoader;
 import su.nightexpress.excellentcrates.api.opening.ProviderSupplier;
 import su.nightexpress.excellentcrates.config.Config;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.world.provider.DummyProvider;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.manager.AbstractManager;
@@ -171,21 +171,21 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         return this.openingByPlayerMap.remove(player.getUniqueId());
     }
 
-    public boolean isOpeningAvailable(@NotNull Player player, @NotNull CrateSource source) {
+    public boolean isOpeningAvailable(@NotNull Player player) {
         return !this.isOpening(player);
     }
 
     @NotNull
-    public Opening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
+    public Opening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
         Crate crate = source.getCrate();
         OpeningProvider provider = null;
 
-        if (crate.isAnimationEnabled()) {
-            provider = this.getProviderById(crate.getAnimationId());
+        if (crate.isOpeningEnabled()) {
+            provider = this.getProviderById(crate.getOpeningId());
         }
         if (provider == null) provider = this.dummyProvider;
 
-        return provider.createOpening(player, source, key);
+        return provider.createOpening(player, source, cost);
     }
 
     public void startOpening(@NotNull Player player, @NotNull Opening opening, boolean instaRoll) {

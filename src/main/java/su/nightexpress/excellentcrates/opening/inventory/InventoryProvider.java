@@ -6,8 +6,8 @@ import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractProvider;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerHolder;
@@ -127,10 +127,10 @@ public class InventoryProvider extends AbstractProvider {
 
     @Override
     @NotNull
-    public InventoryOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
+    public InventoryOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
         InventoryView view = this.invType.typed().create(player, NightMessage.asLegacy(source.getCrate().replacePlaceholders().apply(this.invTitle)));
 
-        return new InventoryOpening(this.plugin, this, view, player, source, key);
+        return new InventoryOpening(this.plugin, this, view, player, source, cost);
     }
 
     @NotNull

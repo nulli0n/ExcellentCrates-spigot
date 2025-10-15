@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.OpeningProvider;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.world.impl.DummyOpening;
 import su.nightexpress.nightcore.config.FileConfig;
 
@@ -31,7 +31,7 @@ public class DummyProvider implements OpeningProvider {
 
     @Override
     @NotNull
-    public DummyOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
-        return new DummyOpening(this.plugin, player, source, key);
+    public DummyOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
+        return new DummyOpening(this.plugin, player, source, cost);
     }
 }

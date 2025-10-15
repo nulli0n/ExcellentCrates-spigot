@@ -12,16 +12,15 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.crate.impl.OpenSettings;
+import su.nightexpress.excellentcrates.crate.impl.OpenOptions;
 import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.nightcore.command.experimental.CommandContext;
-import su.nightexpress.nightcore.command.experimental.TabContext;
-import su.nightexpress.nightcore.command.experimental.argument.ArgumentTypes;
-import su.nightexpress.nightcore.command.experimental.argument.ParsedArguments;
-import su.nightexpress.nightcore.command.experimental.builder.DirectNodeBuilder;
-import su.nightexpress.nightcore.command.experimental.impl.ReloadCommand;
-import su.nightexpress.nightcore.command.experimental.node.ChainedNode;
-import su.nightexpress.nightcore.command.experimental.node.DirectNode;
+import su.nightexpress.nightcore.commands.Arguments;
+import su.nightexpress.nightcore.commands.Commands;
+import su.nightexpress.nightcore.commands.builder.HubNodeBuilder;
+import su.nightexpress.nightcore.commands.builder.LiteralNodeBuilder;
+import su.nightexpress.nightcore.commands.context.CommandContext;
+import su.nightexpress.nightcore.commands.context.ParsedArguments;
+import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.Players;
@@ -32,122 +31,138 @@ import java.util.function.Function;
 
 public class BaseCommands {
 
-    public static void load(@NotNull CratesPlugin plugin) {
-        var root = plugin.getRootNode();
+    public static void load(@NotNull CratesPlugin plugin, @NotNull HubNodeBuilder root) {
+        root.branch(Commands.literal("reload")
+            .description(CoreLang.COMMAND_RELOAD_DESC)
+            .permission(Perms.COMMAND_RELOAD)
+            .executes((context, arguments) -> {
+                plugin.doReload(context.getSender());
+                return true;
+            })
+        );
 
-        root.addChildren(ReloadCommand.builder(plugin, Perms.COMMAND_RELOAD));
-
-        root.addChildren(ChainedNode.builder(plugin, "key")
+        root.branch(Commands.hub("key")
             .description(Lang.COMMAND_KEY_DESC)
             .permission(Perms.COMMAND_KEY)
-            .addDirect("drop", builder -> builder
+            .branch(Commands.literal("drop")
                 .description(Lang.COMMAND_DROP_KEY_DESC)
                 .permission(Perms.COMMAND_DROP_KEY)
-                .withArgument(CommandArguments.forKey(plugin).required())
-                .withArgument(ArgumentTypes.decimal(CommandArguments.X).required().localized(Lang.COMMAND_ARGUMENT_NAME_X).withSamples(context -> getCoords(context, Location::getBlockX)))
-                .withArgument(ArgumentTypes.decimal(CommandArguments.Y).required().localized(Lang.COMMAND_ARGUMENT_NAME_Y).withSamples(context -> getCoords(context, Location::getBlockY)))
-                .withArgument(ArgumentTypes.decimal(CommandArguments.Z).required().localized(Lang.COMMAND_ARGUMENT_NAME_Z).withSamples(context -> getCoords(context, Location::getBlockZ)))
-                .withArgument(ArgumentTypes.world(CommandArguments.WORLD).required())
+                .withArguments(
+                    CommandArguments.forKey(plugin),
+                    Arguments.decimal(CommandArguments.X).localized(Lang.COMMAND_ARGUMENT_NAME_X).suggestions((reader, context) -> getCoords(context, Location::getBlockX)),
+                    Arguments.decimal(CommandArguments.Y).localized(Lang.COMMAND_ARGUMENT_NAME_Y).suggestions((reader, context) -> getCoords(context, Location::getBlockY)),
+                    Arguments.decimal(CommandArguments.Z).localized(Lang.COMMAND_ARGUMENT_NAME_Z).suggestions((reader, context) -> getCoords(context, Location::getBlockZ)),
+                    Arguments.world(CommandArguments.WORLD)
+                )
                 .executes((context, arguments) -> dropKey(plugin, context, arguments))
             )
-            .addDirect("inspect", builder -> builder
+            .branch(Commands.literal("inspect")
                 .description(Lang.COMMAND_KEY_INSPECT_DESC)
                 .permission(Perms.COMMAND_KEY_INSPECT)
-                .withArgument(ArgumentTypes.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_KEY_INSPECT_OTHERS))
+                .withArguments(Arguments.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_KEY_INSPECT_OTHERS).optional())
                 .executes((context, arguments) -> inspectKeys(plugin, context, arguments))
             )
-            .addDirect("giveall", builder -> builder
+            .branch(Commands.literal("giveall")
                 .description(Lang.COMMAND_KEY_GIVE_ALL_DESC)
                 .permission(Perms.COMMAND_KEY_GIVE)
-                .withArgument(CommandArguments.forKey(plugin).required())
-                .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
-                .withFlag(CommandFlags.silent())
-                .withFlag(CommandFlags.silentFeedback())
+                .withArguments(
+                    CommandArguments.forKey(plugin),
+                    Arguments.integer(CommandArguments.AMOUNT, 1).localized(CoreLang.COMMAND_ARGUMENT_NAME_AMOUNT).suggestions((reader, context) -> Lists.newList("1", "5", "10")).optional()
+                )
+                .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK)
                 .executes((context, arguments) -> giveKeyAll(plugin, context, arguments))
             )
-            .addDirect("give", builder -> buildKeyManage(plugin, builder)
+            .branch(Commands.literal("give", builder -> buildKeyManage(plugin, builder)
                 .description(Lang.COMMAND_KEY_GIVE_DESC)
                 .permission(Perms.COMMAND_KEY_GIVE)
                 .executes((context, arguments) -> giveKey(plugin, context, arguments))
-            )
-            .addDirect("set", builder -> buildKeyManage(plugin, builder)
+            ))
+            .branch(Commands.literal("set", builder -> buildKeyManage(plugin, builder)
                 .description(Lang.COMMAND_KEY_SET_DESC)
                 .permission(Perms.COMMAND_KEY_SET)
                 .executes((context, arguments) -> setKey(plugin, context, arguments))
-            )
-            .addDirect("take", builder -> buildKeyManage(plugin, builder)
+            ))
+            .branch(Commands.literal("take", builder -> buildKeyManage(plugin, builder)
                 .description(Lang.COMMAND_KEY_TAKE_DESC)
                 .permission(Perms.COMMAND_KEY_TAKE)
                 .executes((context, arguments) -> takeKey(plugin, context, arguments))
-            )
+            ))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "drop")
+        root.branch(Commands.literal("drop")
             .description(Lang.COMMAND_DROP_DESC)
             .permission(Perms.COMMAND_DROP)
-            .withArgument(CommandArguments.forCrate(plugin).required())
-            .withArgument(ArgumentTypes.decimal(CommandArguments.X).required().localized(Lang.COMMAND_ARGUMENT_NAME_X).withSamples(context -> getCoords(context, Location::getBlockX)))
-            .withArgument(ArgumentTypes.decimal(CommandArguments.Y).required().localized(Lang.COMMAND_ARGUMENT_NAME_Y).withSamples(context -> getCoords(context, Location::getBlockY)))
-            .withArgument(ArgumentTypes.decimal(CommandArguments.Z).required().localized(Lang.COMMAND_ARGUMENT_NAME_Z).withSamples(context -> getCoords(context, Location::getBlockZ)))
-            .withArgument(ArgumentTypes.world(CommandArguments.WORLD).required())
+            .withArguments(
+                CommandArguments.forCrate(plugin),
+                Arguments.decimal(CommandArguments.X).localized(Lang.COMMAND_ARGUMENT_NAME_X).suggestions((reader, context) -> getCoords(context, Location::getBlockX)),
+                Arguments.decimal(CommandArguments.Y).localized(Lang.COMMAND_ARGUMENT_NAME_Y).suggestions((reader, context) -> getCoords(context, Location::getBlockY)),
+                Arguments.decimal(CommandArguments.Z).localized(Lang.COMMAND_ARGUMENT_NAME_Z).suggestions((reader, context) -> getCoords(context, Location::getBlockZ)),
+                Arguments.world(CommandArguments.WORLD)
+            )
             .executes((context, arguments) -> dropCrate(plugin, context, arguments))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "editor")
+        root.branch(Commands.literal("editor")
             .description(Lang.COMMAND_EDITOR_DESC)
             .permission(Perms.COMMAND_EDITOR)
             .playerOnly()
             .executes((context, arguments) -> openEditor(plugin, context))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "give")
+        root.branch(Commands.literal("give")
             .description(Lang.COMMAND_GIVE_DESC)
             .permission(Perms.COMMAND_GIVE)
-            .withArgument(ArgumentTypes.player(CommandArguments.PLAYER).required())
-            .withArgument(CommandArguments.forCrate(plugin).required())
-            .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
-            .withFlag(CommandFlags.silent())
-            .withFlag(CommandFlags.silentFeedback())
+            .withArguments(
+                Arguments.player(CommandArguments.PLAYER),
+                CommandArguments.forCrate(plugin),
+                Arguments.integer(CommandArguments.AMOUNT, 1).localized(CoreLang.COMMAND_ARGUMENT_NAME_AMOUNT).suggestions((reader, context) -> Lists.newList("1", "5", "10")).optional()
+            )
+            .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK)
             .executes((context, arguments) -> giveCrate(plugin, context, arguments))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "open")
+        root.branch(Commands.literal("open")
             .description(Lang.COMMAND_OPEN_DESC)
             .permission(Perms.COMMAND_OPEN)
             .playerOnly()
-            .withArgument(CommandArguments.forCrate(plugin).required())
+            .withArguments(CommandArguments.forCrate(plugin))
             .executes((context, arguments) -> openCrate(plugin, context, arguments))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "openfor")
+        root.branch(Commands.literal("openfor")
             .description(Lang.COMMAND_OPEN_FOR_DESC)
             .permission(Perms.COMMAND_OPEN_FOR)
-            .withArgument(ArgumentTypes.player(CommandArguments.PLAYER).required())
-            .withArgument(CommandArguments.forCrate(plugin).required())
-            .withFlag(CommandFlags.silent())
-            .withFlag(CommandFlags.force())
+            .withArguments(
+                Arguments.player(CommandArguments.PLAYER),
+                CommandArguments.forCrate(plugin)
+            )
+            .withFlags(CommandFlags.SILENT, CommandFlags.FORCE)
             .executes((context, arguments) -> openCrateFor(plugin, context, arguments))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "preview")
+        root.branch(Commands.literal("preview")
             .description(Lang.COMMAND_PREVIEW_DESC)
             .permission(Perms.COMMAND_PREVIEW)
-            .withArgument(CommandArguments.forCrate(plugin).required())
-            .withArgument(ArgumentTypes.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_PREVIEW_OTHERS))
+            .withArguments(
+                CommandArguments.forCrate(plugin),
+                Arguments.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_PREVIEW_OTHERS).optional()
+            )
             .executes((context, arguments) -> previewCrate(plugin, context, arguments))
         );
 
-        root.addChildren(DirectNode.builder(plugin, "resetcooldown")
+        root.branch(Commands.literal("resetcooldown")
             .description(Lang.COMMAND_RESET_COOLDOWN_DESC)
             .permission(Perms.COMMAND_RESETCOOLDOWN)
-            .withArgument(ArgumentTypes.playerName(CommandArguments.PLAYER).required())
-            .withArgument(CommandArguments.forCrate(plugin).required())
+            .withArguments(
+                Arguments.playerName(CommandArguments.PLAYER),
+                CommandArguments.forCrate(plugin)
+            )
             .executes((context, arguments) -> resetCrateCooldown(plugin, context, arguments))
         );
     }
 
     @NotNull
-    private static List<String> getCoords(@NotNull TabContext context, @NotNull Function<Location, Integer> function) {
+    private static List<String> getCoords(@NotNull CommandContext context, @NotNull Function<Location, Integer> function) {
         Player player = context.getPlayer();
         if (player == null) return Collections.emptyList();
 
@@ -156,28 +171,29 @@ public class BaseCommands {
     }
 
     @NotNull
-    private static DirectNodeBuilder buildKeyManage(@NotNull CratesPlugin plugin, @NotNull DirectNodeBuilder builder) {
+    private static LiteralNodeBuilder buildKeyManage(@NotNull CratesPlugin plugin, @NotNull LiteralNodeBuilder builder) {
         return builder
-            .withArgument(ArgumentTypes.playerName(CommandArguments.PLAYER).required())
-            .withArgument(CommandArguments.forKey(plugin).required())
-            .withArgument(ArgumentTypes.integerAbs(CommandArguments.AMOUNT).localized(Lang.COMMAND_ARGUMENT_NAME_AMOUNT).withSamples(context -> Lists.newList("1", "5", "10")))
-            .withFlag(CommandFlags.silent())
-            .withFlag(CommandFlags.silentFeedback());
+            .withArguments(
+                Arguments.playerName(CommandArguments.PLAYER),
+                CommandArguments.forKey(plugin),
+                Arguments.integer(CommandArguments.AMOUNT, 1).localized(CoreLang.COMMAND_ARGUMENT_NAME_AMOUNT).suggestions((reader, context) -> Lists.newList("1", "5", "10")).optional()
+            )
+            .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK);
     }
 
     private static boolean dropCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
+        Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
 
-        double x = arguments.getDoubleArgument(CommandArguments.X);
-        double y = arguments.getDoubleArgument(CommandArguments.Y);
-        double z = arguments.getDoubleArgument(CommandArguments.Z);
-        World world = arguments.getWorldArgument(CommandArguments.WORLD);
+        double x = arguments.getDouble(CommandArguments.X);
+        double y = arguments.getDouble(CommandArguments.Y);
+        double z = arguments.getDouble(CommandArguments.Z);
+        World world = arguments.getWorld(CommandArguments.WORLD);
 
         Location location = new Location(world, x, y, z);
 
         if (!plugin.getCrateManager().dropCrateItem(crate, location)) return false;
 
-        Lang.COMMAND_DROP_DONE.getMessage().send(context.getSender(), replacer -> replacer
+        Lang.COMMAND_DROP_DONE.message().send(context.getSender(), replacer -> replacer
             .replace(crate.replacePlaceholders())
             .replace(Placeholders.forLocation(location))
         );
@@ -190,20 +206,20 @@ public class BaseCommands {
     }
 
     private static boolean giveCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        Player player = arguments.getPlayerArgument(CommandArguments.PLAYER);
-        Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
-        int amount = arguments.getIntArgument(CommandArguments.AMOUNT, 1);
+        Player player = arguments.getPlayer(CommandArguments.PLAYER);
+        Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
+        int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
 
         plugin.getCrateManager().giveCrateItem(player, crate, amount);
 
-        if (!arguments.hasFlag(CommandFlags.SILENT)) {
-            Lang.COMMAND_GIVE_NOTIFY.getMessage().send(player, replacer -> replacer
+        if (!context.hasFlag(CommandFlags.SILENT)) {
+            Lang.COMMAND_GIVE_NOTIFY.message().send(player, replacer -> replacer
                 .replace(Placeholders.GENERIC_AMOUNT, amount)
                 .replace(crate.replacePlaceholders())
             );
         }
-        if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK) && context.getSender() != player) {
-            Lang.COMMAND_GIVE_DONE.getMessage().send(context.getSender(), replacer -> replacer
+        if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK) && context.getSender() != player) {
+            Lang.COMMAND_GIVE_DONE.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.forPlayer(player))
                 .replace(Placeholders.GENERIC_AMOUNT, amount)
                 .replace(crate.replacePlaceholders())
@@ -213,34 +229,41 @@ public class BaseCommands {
     }
 
     private static boolean openCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
+        Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
         Player player = context.getPlayerOrThrow();
-        plugin.getCrateManager().openCrate(player, new CrateSource(crate), new OpenSettings());
+        plugin.getCrateManager().preOpenCrate(player, new CrateSource(crate));
         return true;
     }
 
     private static boolean openCrateFor(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        Player player = arguments.getPlayerArgument(CommandArguments.PLAYER);
-        Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
+        Player player = arguments.getPlayer(CommandArguments.PLAYER);
+        Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
 
-        if (!arguments.hasFlag(CommandFlags.SILENT)) {
-            Lang.COMMAND_OPEN_FOR_NOTIFY.getMessage().send(context.getSender(), replacer -> replacer.replace(crate.replacePlaceholders()));
+        if (!context.hasFlag(CommandFlags.SILENT)) {
+            Lang.COMMAND_OPEN_FOR_NOTIFY.message().send(context.getSender(), replacer -> replacer.replace(crate.replacePlaceholders()));
         }
         if (context.getSender() != player) {
-            Lang.COMMAND_OPEN_FOR_DONE.getMessage().send(context.getSender(), replacer -> replacer
+            Lang.COMMAND_OPEN_FOR_DONE.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.forPlayer(player))
                 .replace(crate.replacePlaceholders())
             );
         }
 
-        boolean force = arguments.hasFlag(CommandFlags.FORCE);
-        plugin.getCrateManager().openCrate(player, new CrateSource(crate), new OpenSettings().setForce(force));
+        boolean force = context.hasFlag(CommandFlags.FORCE);
+        CrateSource source = new CrateSource(crate);
+
+        if (!force) {
+            plugin.getCrateManager().openCrate(player, source, OpenOptions.empty(), null);
+        }
+        else {
+            plugin.getCrateManager().openCrate(player, source, OpenOptions.ignoreRestrictions(), null);
+        }
         return true;
     }
 
     private static boolean previewCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
-        Player player = plugin.getServer().getPlayer(arguments.getStringArgument(CommandArguments.PLAYER, context.getSender().getName()));
+        Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
+        Player player = plugin.getServer().getPlayer(arguments.getString(CommandArguments.PLAYER, context.getSender().getName()));
         if (player == null) {
             context.errorBadPlayer();
             return false;
@@ -249,7 +272,7 @@ public class BaseCommands {
         plugin.getCrateManager().previewCrate(player, new CrateSource(crate));
 
         if (context.getSender() != player) {
-            Lang.COMMAND_PREVIEW_DONE_OTHERS.getMessage().send(context.getSender(), replacer -> replacer
+            Lang.COMMAND_PREVIEW_DONE_OTHERS.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.forPlayer(player))
                 .replace(crate.replacePlaceholders())
             );
@@ -258,17 +281,17 @@ public class BaseCommands {
     }
 
     private static boolean resetCrateCooldown(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER), user -> {
+        plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
             }
 
-            Crate crate = arguments.getArgument(CommandArguments.CRATE, Crate.class);
+            Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
             user.getCrateData(crate).setOpenCooldown(0);
             plugin.getUserManager().save(user);
 
-            Lang.COMMAND_RESET_COOLDOWN_DONE.getMessage().send(context.getSender(), replacer -> replacer
+            Lang.COMMAND_RESET_COOLDOWN_DONE.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.PLAYER_NAME, user.getName())
                 .replace(crate.replacePlaceholders())
             );
@@ -279,18 +302,18 @@ public class BaseCommands {
 
 
     private static boolean dropKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        CrateKey key = arguments.getArgument(CommandArguments.KEY, CrateKey.class);
+        CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
-        double x = arguments.getDoubleArgument(CommandArguments.X);
-        double y = arguments.getDoubleArgument(CommandArguments.Y);
-        double z = arguments.getDoubleArgument(CommandArguments.Z);
-        World world = arguments.getWorldArgument(CommandArguments.WORLD);
+        double x = arguments.getDouble(CommandArguments.X);
+        double y = arguments.getDouble(CommandArguments.Y);
+        double z = arguments.getDouble(CommandArguments.Z);
+        World world = arguments.getWorld(CommandArguments.WORLD);
 
         Location location = new Location(world, x, y, z);
 
         if (!plugin.getKeyManager().dropKeyItem(key, location)) return false;
 
-        Lang.COMMAND_DROP_KEY_DONE.getMessage().send(context.getSender(), replacer -> replacer
+        Lang.COMMAND_DROP_KEY_DONE.message().send(context.getSender(), replacer -> replacer
             .replace(key.replacePlaceholders())
             .replace(Placeholders.forLocation(location))
         );
@@ -298,12 +321,12 @@ public class BaseCommands {
     }
 
     private static boolean giveKeyAll(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        CrateKey key = arguments.getArgument(CommandArguments.KEY, CrateKey.class);
+        CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
-        int amount = arguments.getIntArgument(CommandArguments.AMOUNT, 1);
+        int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
         if (amount == 0) return false;
 
-        boolean silent = arguments.hasFlag(CommandFlags.SILENT);
+        boolean silent = context.hasFlag(CommandFlags.SILENT);
 
         Players.getOnline().forEach(player -> {
             if (!player.hasPermission(Perms.INCLUDE_KEY_GIVEALL)) return;
@@ -311,15 +334,15 @@ public class BaseCommands {
             plugin.getKeyManager().giveKey(player, key, amount);
 
             if (!silent) {
-                Lang.COMMAND_KEY_GIVE_NOTIFY.getMessage().send(player, replacer -> replacer
+                Lang.COMMAND_KEY_GIVE_NOTIFY.message().send(player, replacer -> replacer
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
                 );
             }
         });
 
-        if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
-            Lang.COMMAND_KEY_GIVE_ALL_DONE.getMessage().send(context.getSender(), replacer -> replacer
+        if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+            Lang.COMMAND_KEY_GIVE_ALL_DONE.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.GENERIC_AMOUNT, amount)
                 .replace(key.replacePlaceholders()));
         }
@@ -327,19 +350,19 @@ public class BaseCommands {
     }
 
     private static boolean inspectKeys(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER, context.getSender().getName()), user -> {
+        plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER, context.getSender().getName()), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
             }
 
-            Lang.COMMAND_KEY_INSPECT_LIST.getMessage().send(context.getSender(), replacer -> replacer
+            Lang.COMMAND_KEY_INSPECT_LIST.message().send(context.getSender(), replacer -> replacer
                 .replace(Placeholders.PLAYER_NAME, user.getName())
                 .replace(Placeholders.GENERIC_ENTRY, list -> {
                     plugin.getKeyManager().getKeys().forEach(key -> {
                         if (!key.isVirtual()) return;
 
-                        list.add(key.replacePlaceholders().apply(Lang.COMMAND_KEY_INSPECT_ENTRY.getString()
+                        list.add(key.replacePlaceholders().apply(Lang.COMMAND_KEY_INSPECT_ENTRY.text()
                             .replace(Placeholders.GENERIC_AMOUNT, NumberUtil.format(user.countKeys(key.getId())))
                         ));
                     });
@@ -350,12 +373,12 @@ public class BaseCommands {
     }
 
     private static boolean giveKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        CrateKey key = arguments.getArgument(CommandArguments.KEY, CrateKey.class);
+        CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
-        int amount = arguments.getIntArgument(CommandArguments.AMOUNT, 1);
+        int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
         if (amount <= 0) return false;
 
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER), user -> {
+        plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
@@ -365,15 +388,15 @@ public class BaseCommands {
             plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
-            if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {
-                Lang.COMMAND_KEY_GIVE_NOTIFY.getMessage().send(target, replacer -> replacer
+            if (target != null && !context.hasFlag(CommandFlags.SILENT)) {
+                Lang.COMMAND_KEY_GIVE_NOTIFY.message().send(target, replacer -> replacer
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
                 );
             }
 
-            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
-                Lang.COMMAND_KEY_GIVE_DONE.getMessage().send(context.getSender(), replacer -> replacer
+            if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_GIVE_DONE.message().send(context.getSender(), replacer -> replacer
                     .replace(Placeholders.PLAYER_NAME, user.getName())
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders()));
@@ -383,12 +406,12 @@ public class BaseCommands {
     }
 
     private static boolean setKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        CrateKey key = arguments.getArgument(CommandArguments.KEY, CrateKey.class);
+        CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
-        int amount = arguments.getIntArgument(CommandArguments.AMOUNT, 1);
+        int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
         if (amount <= 0) return false;
 
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER), user -> {
+        plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
@@ -398,15 +421,15 @@ public class BaseCommands {
             plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
-            if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {
-                Lang.COMMAND_KEY_SET_NOTIFY.getMessage().send(target, replacer -> replacer
+            if (target != null && !context.hasFlag(CommandFlags.SILENT)) {
+                Lang.COMMAND_KEY_SET_NOTIFY.message().send(target, replacer -> replacer
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
                 );
             }
 
-            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
-                Lang.COMMAND_KEY_SET_DONE.getMessage().send(context.getSender(), replacer -> replacer
+            if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_SET_DONE.message().send(context.getSender(), replacer -> replacer
                     .replace(Placeholders.PLAYER_NAME, user.getName())
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders()));
@@ -416,12 +439,12 @@ public class BaseCommands {
     }
 
     private static boolean takeKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
-        CrateKey key = arguments.getArgument(CommandArguments.KEY, CrateKey.class);
+        CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
-        int amount = arguments.getIntArgument(CommandArguments.AMOUNT, 1);
+        int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
         if (amount <= 0) return false;
 
-        plugin.getUserManager().manageUser(arguments.getStringArgument(CommandArguments.PLAYER), user -> {
+        plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER), user -> {
             if (user == null) {
                 context.errorBadPlayer();
                 return;
@@ -431,15 +454,15 @@ public class BaseCommands {
             plugin.getUserManager().save(user);
 
             Player target = user.getPlayer();
-            if (target != null && !arguments.hasFlag(CommandFlags.SILENT)) {
-                Lang.COMMAND_KEY_TAKE_NOTIFY.getMessage().send(target, replacer -> replacer
+            if (target != null && !context.hasFlag(CommandFlags.SILENT)) {
+                Lang.COMMAND_KEY_TAKE_NOTIFY.message().send(target, replacer -> replacer
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders())
                 );
             }
 
-            if (!arguments.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
-                Lang.COMMAND_KEY_TAKE_DONE.getMessage().send(context.getSender(), replacer -> replacer
+            if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK)) {
+                Lang.COMMAND_KEY_TAKE_DONE.message().send(context.getSender(), replacer -> replacer
                     .replace(Placeholders.PLAYER_NAME, user.getName())
                     .replace(Placeholders.GENERIC_AMOUNT, amount)
                     .replace(key.replacePlaceholders()));

@@ -3,24 +3,35 @@ package su.nightexpress.excellentcrates.crate.effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.crate.effect.impl.DummyEffect;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 public abstract class CrateEffect {
 
+    protected final String id;
     protected final long tickInterval;
     protected final int  maxSteps;
 
     protected long tickCount;
 
-    public CrateEffect(long tickInterval, int maxSteps) {
+    public CrateEffect(@NotNull String id, long tickInterval, int maxSteps) {
+        this.id = id;
         this.tickCount = 0L;
         this.tickInterval = Math.max(1L, tickInterval);
         this.maxSteps = Math.max(0, maxSteps);
     }
 
+    @NotNull
+    public String getId() {
+        return this.id;
+    }
+
+    @NotNull
+    public abstract String getName();
+
     public boolean isDummy() {
-        return false;
+        return this == DummyEffect.INSTANCE;
     }
 
     public void complete() {

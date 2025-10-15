@@ -5,7 +5,6 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.StringUtil;
-import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.Collection;
 import java.util.function.UnaryOperator;
@@ -64,11 +63,6 @@ public class Rarity {
     @NotNull
     public String getName() {
         return this.name;
-    }
-
-    @NotNull
-    public String getNameTranslated() {
-        return NightMessage.asLegacy(this.getName());
     }
 
     public void setName(@NotNull String name) {

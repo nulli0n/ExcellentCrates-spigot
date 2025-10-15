@@ -6,7 +6,7 @@
 
     <groupId>su.nightexpress.excellentcrates</groupId>
     <artifactId>ExcellentCrates</artifactId>
-    <version>6.3.3</version>
+    <version>6.4.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -62,20 +62,15 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>main</artifactId>
-            <version>2.7.12</version>
-        </dependency>
-
-        <dependency>
-            <groupId>su.nightexpress.economybridge</groupId>
-            <artifactId>economy-bridge</artifactId>
-            <version>1.2.1</version>
+            <version>2.9.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -88,7 +83,7 @@
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
-            <version>2.9.0</version>
+            <version>2.9.4</version>
             <scope>provided</scope>
         </dependency>
 

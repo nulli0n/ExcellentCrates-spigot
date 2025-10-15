@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.opening.Spinner;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerHolder;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerType;
@@ -34,8 +34,8 @@ public class InventoryOpening extends AbstractOpening {
                             @NotNull InventoryView view,
                             @NotNull Player player,
                             @NotNull CrateSource source,
-                            @Nullable CrateKey key) {
-        super(plugin, player, source, key);
+                            @Nullable Cost cost) {
+        super(plugin, player, source, cost);
         this.view = view;
         this.config = config;
         this.spinners = new ArrayList<>();

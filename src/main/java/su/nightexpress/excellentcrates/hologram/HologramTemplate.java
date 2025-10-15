@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static su.nightexpress.excellentcrates.Placeholders.*;
+import static su.nightexpress.excellentcrates.Placeholders.CRATE_ID;
+import static su.nightexpress.excellentcrates.Placeholders.CRATE_NAME;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class HologramTemplate implements Writeable {
@@ -37,7 +38,7 @@ public class HologramTemplate implements Writeable {
 
         HologramTemplate template1 = new HologramTemplate(Placeholders.DEFAULT, Lists.newList(
             LIGHT_YELLOW.wrap(BOLD.wrap(CRATE_NAME)),
-            LIGHT_GRAY.wrap("You have " + LIGHT_YELLOW.wrap("%excellentcrates_keys_" + CRATE_ID + "%") + " keys"),
+            LIGHT_GRAY.wrap("You can open this crate " + LIGHT_YELLOW.wrap("%excellentcrates_openings_available_" + CRATE_ID + "%") + " times."),
             LIGHT_GRAY.wrap("Edit templates in " + LIGHT_YELLOW.wrap("config.yml")))
         );
 

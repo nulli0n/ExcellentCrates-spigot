@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
+import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
 public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> implements ConfigBased, Filled<Reward> {
 
@@ -62,7 +62,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
         return MenuFiller.builder(this)
             .setSlots(this.rewardSlots)
-            .setItems(opening.getRewards())
+            .setItems(opening.getCrateRewards())
             .setItemCreator(reward -> {
                 NightItem item = opening.isSelectedReward(reward) ? this.selectedIcon.copy() : NightItem.fromItemStack(reward.getPreviewItem())
                     .setDisplayName(this.rewardName)
@@ -124,7 +124,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                 .replace(GENERIC_REWARDS, () -> opening.getSelectedRewards().stream()
                     .sorted(Comparator.comparing(Reward::getId))
                     .map(reward -> Replacer.create().replace(reward.replacePlaceholders()).apply(this.rewardEntry))
-                    .collect(Collectors.joining(TAG_LINE_BREAK))
+                    .collect(Collectors.joining(BR))
                 )
             );
         }
@@ -163,7 +163,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
         this.rewardLore = ConfigValue.create("Reward.Lore", Lists.newList(
             REWARD_DESCRIPTION,
             EMPTY_IF_ABOVE,
-            LIGHT_YELLOW.wrap("→ " + UNDERLINED.wrap("Click to select"))
+            YELLOW.wrap("→ " + UNDERLINED.wrap("Click to select"))
         )).read(config);
 
         this.rewardEntry = ConfigValue.create("Reward.EntryName",
