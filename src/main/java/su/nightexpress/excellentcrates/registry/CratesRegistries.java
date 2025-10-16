@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 public class CratesRegistries {
 
-    public static final NightRegistry<CrateEffect> EFFECT = new NightRegistry<>();
-    public static final NightRegistry<CostType> COST_TYPE = new NightRegistry<>();
+    public static final NightRegistry<String, CrateEffect> EFFECT = new NightRegistry<>();
+    public static final NightRegistry<String, CostType> COST_TYPE = new NightRegistry<>();
 
     public static void load(@NotNull CratesPlugin plugin) {
         registerDefaultEffects();

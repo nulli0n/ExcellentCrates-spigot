@@ -100,7 +100,7 @@ public class Cost implements Writeable {
     }
 
     public int countMaxOpenings(@NotNull Player player) {
-        return this.entries.stream().mapToInt(entry -> entry.countPossibleOpenings(player)).min().orElse(0);
+        return this.entries.stream().mapToInt(entry -> entry.countPossibleOpenings(player)).max().orElse(0);
     }
 
     @NotNull

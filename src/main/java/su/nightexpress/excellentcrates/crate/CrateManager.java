@@ -443,7 +443,12 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         if (!crate.hasCost()) {
             if (Config.MASS_OPENING_ALLOW_FOR_NO_COST.get()) {
-                this.openAmountMenu(player, source, null);
+                if (Config.MASS_OPENING_SNEAK_TO_USE.get() && player.isSneaking()) {
+                    this.multiOpenCrate(player, source, OpenOptions.empty(), null, Config.MASS_OPENING_LIMIT.get());
+                }
+                else {
+                    this.openAmountMenu(player, source, null);
+                }
             }
             else {
                 this.openCrate(player, source, OpenOptions.empty(), null);
@@ -451,14 +456,28 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             return;
         }
 
-        this.costMenu.open(player, source);
+        if (crate.hasMultipleCosts() || Config.OPENING_CONFIRM_FOR_SINGLE_COST.get()) {
+            this.openCostMenu(player, source);
+            return;
+        }
+
+        Cost cost = crate.getFirstCost().orElse(null);
+
+        if (Config.MASS_OPENING_SNEAK_TO_USE.get() && player.isSneaking()) {
+            this.multiOpenCrate(player, source, OpenOptions.empty(), cost, crate.countMaxOpenings(player));
+        }
+        else {
+            this.openCrate(player, source, OpenOptions.empty(), cost);
+        }
     }
 
     public void multiOpenCrate(@NotNull Player player, @NotNull CrateSource source, @NotNull OpenOptions options, @Nullable Cost cost, int amount) {
         int massLimit = Config.MASS_OPENING_LIMIT.get();
         int openings = Math.clamp(amount, 1, massLimit);
 
-        options.add(OpenOptions.Option.IGNORE_ANIMATION);
+        if (openings > 1) {
+            options.add(OpenOptions.Option.IGNORE_ANIMATION);
+        }
 
         for (int spent = 0; spent < openings; spent++) {
             if (!this.openCrate(player, source, options, cost)) {

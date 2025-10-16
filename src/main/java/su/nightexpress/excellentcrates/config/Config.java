@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.hooks.HookId;
-import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.CrateUtils;
-import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.util.Enums;
 import su.nightexpress.nightcore.util.Plugins;
@@ -14,7 +12,6 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,9 +141,19 @@ public class Config {
         "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
     );
 
+    public static final ConfigValue<Boolean> OPENING_CONFIRM_FOR_SINGLE_COST = ConfigValue.create("Crate.Opening.Confirmation.ForSingleCost",
+        false,
+        "Controls whether the Costs GUI will appear even if there is only cost option available."
+    );
+
     public static final ConfigValue<Boolean> MASS_OPENING_ALLOW_FOR_NO_COST = ConfigValue.create("Crate.MassOpening.AllowForNoCost",
         false,
         "Controls whether players can do Mass Opening for crates with no cost options defined."
+    );
+
+    public static final ConfigValue<Boolean> MASS_OPENING_SNEAK_TO_USE = ConfigValue.create("Crate.MassOpening.SneakToUse",
+        true,
+        "Controls whether players can do Mass Opening by opening crates while sneaking."
     );
 
     public static final ConfigValue<Integer> MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
@@ -173,26 +180,11 @@ public class Config {
         -1.25D,
         "Vector multiplier for crate block pushback. The higher value - the harder pushback.");
 
-    @Deprecated
-    private static final ConfigValue<Map<ClickType, InteractType>> CRATE_CLICK_ACTIONS = ConfigValue.create("Crate.Click_Actions",
-        (cfg, path, def) -> {
-            Map<ClickType, InteractType> map = new HashMap<>();
-            for (ClickType clickType : ClickType.values()) {
-                InteractType clickAction = cfg.getEnum(path + "." + clickType.name(), InteractType.class);
-                if (clickAction == null) continue;
-
-                map.put(clickType, clickAction);
-            }
-            return map;
-        },
-        (cfg, path, map) -> map.forEach((click, action) -> cfg.set(path + "." + click.name(), action)),
-        () -> Map.of(
-            ClickType.LEFT, InteractType.CRATE_PREVIEW,
-            ClickType.RIGHT, InteractType.CRATE_OPEN
-        ),
-        "Defines the crate behavior on certain clicks.",
-        "Allowed click types: " + Enums.inline(ClickType.class),
-        "Allowed crate actions: " + Enums.inline(InteractType.class));
+    public static final ConfigValue<Boolean> CRATE_REVERSE_CLICK_ACTIONS = ConfigValue.create("Crate.Reverse_Click_Actions",
+        false,
+        "Controls whether click actions, when interacting with crate blocks, should be reversed.",
+        "By default it uses Left Click to preview crates, and Right Click to open them."
+    );
 
     public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
         true,
@@ -207,11 +199,6 @@ public class Config {
         "When disabled, rewards choosen by a blind random.",
         "[Default is false]"
     );
-
-    @Nullable
-    public static InteractType getCrateClickAction(@NotNull ClickType clickType) {
-        return CRATE_CLICK_ACTIONS.get().get(clickType);
-    }
 
     public static boolean isMilestonesEnabled() {
         return MILESTONES_ENABLED.get();

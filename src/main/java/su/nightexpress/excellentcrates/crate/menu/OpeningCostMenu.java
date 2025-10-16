@@ -38,7 +38,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
     private final Map<Integer, int[]> slotsByCostsAmount;
 
     public OpeningCostMenu(@NotNull CratesPlugin plugin, @NotNull CrateManager manager) {
-        super(plugin, MenuType.GENERIC_9X3, BLACK.wrap("[" + CRATE_NAME + "] Select a Cost"));
+        super(plugin, MenuType.GENERIC_9X3, BLACK.wrap("[" + DARK_GRAY.wrap(CRATE_NAME) + "] Select a Cost"));
         this.manager = manager;
         this.slotsByCostsAmount = new HashMap<>();
     }
@@ -55,7 +55,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
         CrateSource source = this.getLink(player);
         Crate crate = source.getCrate();
 
-        List<Cost> costs = crate.getCosts();
+        List<Cost> costs = crate.getCosts().stream().filter(Cost::isAvailable).toList();
         int costCount = costs.size();
         int[] costSlots = this.slotsByCostsAmount.getOrDefault(costCount, new int[0]);
 
