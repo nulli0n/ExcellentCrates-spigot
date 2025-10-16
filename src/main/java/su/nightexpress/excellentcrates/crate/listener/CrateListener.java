@@ -23,7 +23,6 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.manager.AbstractListener;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
@@ -86,9 +85,12 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
 
         if (event.getHand() != EquipmentSlot.HAND) return;
 
-        ClickType clickType = ClickType.from(action, player.isSneaking());
-        InteractType clickAction = Config.getCrateClickAction(clickType);
+        boolean isLeftClick = action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK;
+        boolean isRightClick = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
+
+        InteractType clickAction = isLeftClick ? InteractType.CRATE_PREVIEW : (isRightClick ? InteractType.CRATE_OPEN : null);
         if (clickAction == null) return;
+        if (Config.CRATE_REVERSE_CLICK_ACTIONS.get()) clickAction = clickAction.reversed();
 
         // Uh, adventure gamemode triggers LEFT_CLICK interaction on interactable blocks together with RIGHT_CLICK interaction.
         if (player.getGameMode() == GameMode.ADVENTURE && block != null && block.getType().isInteractable()) {

@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.nightcore.util.Lists;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,18 +11,18 @@ public class OpenOptions {
 
     private final Set<Option> options;
 
-    private OpenOptions() {
-        this.options = new HashSet<>();
+    private OpenOptions(@NotNull Set<Option> options) {
+        this.options = options;
     }
 
     @NotNull
     public static OpenOptions empty() {
-        return new OpenOptions();
+        return new OpenOptions(new HashSet<>());
     }
 
     @NotNull
     public static OpenOptions of(@NotNull Option... options) {
-        return new OpenOptions();
+        return new OpenOptions(Lists.newSet(options));
     }
 
     @NotNull

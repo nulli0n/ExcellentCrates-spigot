@@ -10,6 +10,7 @@ import su.nightexpress.excellentcrates.command.CommandArguments;
 import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.OpenOptions;
@@ -253,7 +254,8 @@ public class BaseCommands {
         CrateSource source = new CrateSource(crate);
 
         if (!force) {
-            plugin.getCrateManager().openCrate(player, source, OpenOptions.empty(), null);
+            Cost cost = crate.getCosts().stream().filter(c -> c.isAvailable() && c.canAfford(player)).findAny().or(crate::getFirstCost).orElse(null);
+            plugin.getCrateManager().openCrate(player, source, OpenOptions.empty(), cost);
         }
         else {
             plugin.getCrateManager().openCrate(player, source, OpenOptions.ignoreRestrictions(), null);

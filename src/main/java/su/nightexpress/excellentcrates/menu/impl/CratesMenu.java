@@ -69,7 +69,7 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
             menuItem.setOptions(ItemOptions.personalWeak(player));
             menuItem.setHandler((viewer1, event) -> {
                 ClickType clickType = ClickType.from(event);
-                InteractType clickAction = Config.getCrateClickAction(clickType);
+                InteractType clickAction = null;//Config.getCrateClickAction(clickType);
                 if (clickAction == null) return;
 
                 this.runNextTick(() -> {
