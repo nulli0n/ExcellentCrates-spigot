@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractProvider;
 import su.nightexpress.excellentcrates.opening.world.impl.SimpleRollOpening;
 import su.nightexpress.nightcore.config.ConfigValue;
@@ -30,8 +30,8 @@ public class SimpleRollProvider extends AbstractProvider {
 
     @Override
     @NotNull
-    public SimpleRollOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
-        return new SimpleRollOpening(this.plugin, player, source, key, this.spinsRequired, this.spinInterval, this.finishDelay);
+    public SimpleRollOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
+        return new SimpleRollOpening(this.plugin, player, source, cost, this.spinsRequired, this.spinInterval, this.finishDelay);
     }
 
     public int getSpinsRequired() {

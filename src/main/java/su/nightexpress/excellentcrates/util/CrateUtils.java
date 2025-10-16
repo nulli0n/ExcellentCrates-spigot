@@ -4,32 +4,23 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.nightcore.util.ItemUtil;
-import su.nightexpress.nightcore.util.PDCUtil;
-import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.*;
+import su.nightexpress.nightcore.util.bukkit.NightItem;
+import su.nightexpress.nightcore.util.text.night.NightMessage;
+import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 public class CrateUtils {
 
     public static final int REWARD_ITEMS_LIMIT = 27;
-
-    private static final Map<Player, Crate> ASSIGN_BLOCK_MAP = new WeakHashMap<>();
-
-    public static void setAssignBlockCrate(@NotNull Player player, @NotNull Crate crate) {
-        ASSIGN_BLOCK_MAP.put(player, crate);
-    }
-
-    @Nullable
-    public static Crate getAssignBlockCrate(@NotNull Player player) {
-        return ASSIGN_BLOCK_MAP.remove(player);
-    }
 
     @NotNull
     public static Set<Player> getPlayersForEffects(@NotNull Location location) {
@@ -56,6 +47,31 @@ public class CrateUtils {
     }
 
     @NotNull
+    public static ItemStack getQuestionStack() {
+        return NightItem.asCustomHead("2705fd94a0c431927fb4e639b0fcfb49717e412285a02b439e0112da22b2e2ec").hideAllComponents().getItemStack();
+    }
+
+    @NotNull
+    public static NightItem getDefaultLinkTool() {
+        return NightItem.fromType(Material.BLAZE_ROD)
+            .hideAllComponents()
+            .setDisplayName(TagWrappers.GOLD.and(TagWrappers.BOLD).wrap("Link Tool"))
+            .setLore(Lists.newList(
+                TagWrappers.GRAY.wrap("Click a block to link it"),
+                TagWrappers.GRAY.wrap("with the crate!")
+            ));
+    }
+    @NotNull
+    public static ItemStack getDefaultItem(@NotNull Crate crate) {
+        return NightItem.fromType(Material.CHEST)
+            .setDisplayName(crate.getName())
+            .setLore(crate.getDescription())
+            .hideAllComponents()
+            .getItemStack();
+    }
+
+    @NotNull
+    @Deprecated
     public static String createID(@NotNull String name) {
         String id = StringUtil.transformForID(name);
         if (id.isBlank()) id = UUID.randomUUID().toString().substring(0, 8);
@@ -64,15 +80,19 @@ public class CrateUtils {
     }
 
     @NotNull
-    public static String generateRewardID(@NotNull Crate crate, @NotNull ItemProvider provider) {
-        String itemName = createID(provider.getItemType());
+    public static String generateRewardID(@NotNull Crate crate, @NotNull ItemStack itemStack) {
+        String itemName = Optional.ofNullable(ItemUtil.getDisplayNameSerialized(itemStack))
+            .map(NightMessage::stripTags)
+            .orElse(BukkitThing.getValue(itemStack.getType()));
+
+        String name = Strings.varStyle(itemName).orElse(UUID.randomUUID().toString());
 
         int count = 0;
-        while (crate.getReward(addCount(itemName, count)) != null) {
+        while (crate.getReward(addCount(name, count)) != null) {
             count++;
         }
 
-        return addCount(itemName, count);
+        return addCount(name, count);
     }
 
     private static String addCount(@NotNull String str, int count) {

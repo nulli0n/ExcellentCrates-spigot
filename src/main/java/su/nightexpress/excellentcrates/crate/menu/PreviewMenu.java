@@ -31,22 +31,17 @@ import java.util.Collections;
 import java.util.List;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
-import static su.nightexpress.nightcore.util.text.tag.Tags.*;
+import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
 public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implements Filled<Reward>, ConfigBased {
 
     private static final String NO_PERMISSION = "%no_permission%";
-    private static final String LIMITS        = "%limits%";
-    private static final String PERSONAL_LIMITS = "%personal_limits%";
-    private static final String SERVER_LIMITS   = "%server_limits%";
 
     private int[]        rewardSlots;
     private String       rewardName;
     private List<String> rewardLore;
     private List<String> noPermissionLore;
     private List<String> limitsLore;
-    private List<String> personalLimitsLore;
-    private List<String> serverLimitsLore;
     private boolean      hideUnavailable;
 
     public PreviewMenu(@NotNull CratesPlugin plugin, @NotNull FileConfig config) {
@@ -78,8 +73,6 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
     public MenuFiller<Reward> createFiller(@NotNull MenuViewer viewer) {
         Player player = viewer.getPlayer();
         Crate crate = this.getLink(player).getCrate();
-        //CrateUser user = plugin.getUserManager().getUserData(player);
-        //CrateData crateData = user.getCrateData(crate);
 
         var autoFill = MenuFiller.builder(this);
 
@@ -90,27 +83,11 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             List<String> limits = new ArrayList<>();
 
             if (reward.fitRequirements(player)) {
-                if (reward.hasGlobalLimit() || reward.hasPersonalLimit()) {
-                    List<String> personal = new ArrayList<>();
-                    List<String> global = new ArrayList<>();
-
-                    if (reward.hasGlobalLimit()) {
-                        global = Replacer.create()
-                            .replace(GENERIC_AMOUNT, String.valueOf(plugin.getCrateManager().getGlobalRollsLeft(reward)))
-                            .replace(GENERIC_MAX, String.valueOf(reward.getGlobalLimits().getAmount()))
-                            .apply(this.serverLimitsLore);
-                    }
-                    if (reward.hasPersonalLimit()) {
-                        personal = Replacer.create()
-                            .replace(GENERIC_AMOUNT, String.valueOf(plugin.getCrateManager().getPersonalRollsLeft(reward, player)))
-                            .replace(GENERIC_MAX, String.valueOf(reward.getPlayerLimits().getAmount()))
-                            .apply(this.personalLimitsLore);
-                    }
-
+                if (reward.getLimits().isEnabled() && reward.getLimits().isAmountLimited()) {
                     limits.addAll(Replacer.create()
-                        .replace(SERVER_LIMITS, global)
-                        .replace(PERSONAL_LIMITS, personal)
-                        .apply(this.limitsLore));
+                        .replace(GENERIC_AMOUNT, () -> String.valueOf(reward.getAvailableRolls(player)))
+                        .apply(this.limitsLore)
+                    );
                 }
             }
             else {
@@ -123,7 +100,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
                 .setLore(this.rewardLore)
                 .replacement(replacer -> {
                         replacer
-                            .replace(LIMITS, limits)
+                            .replace(GENERIC_LIMITS, limits)
                             .replace(NO_PERMISSION, restrictions)
                             .replace("%win_limit_amount%", limits)
                             .replace("%win_limit_cooldown%", Collections.emptyList())
@@ -157,30 +134,20 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
         ).read(config);
 
         this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
-            REWARD_DESCRIPTION,
-            EMPTY_IF_ABOVE,
-            LIMITS,
             NO_PERMISSION,
             EMPTY_IF_ABOVE,
-            DARK_GRAY.wrap(WHITE.wrap(REWARD_RARITY_NAME) + " ┃┃ " + GREEN.wrap(REWARD_ROLL_CHANCE + "%"))
+            DARK_GRAY.wrap("»") + GRAY.wrap( " Rarity: " + WHITE.wrap(REWARD_RARITY_NAME) + " → " + GREEN.wrap(REWARD_ROLL_CHANCE + "%")),
+            GENERIC_LIMITS,
+            EMPTY_IF_BELOW,
+            REWARD_DESCRIPTION
         )).read(config);
 
         this.noPermissionLore = ConfigValue.create("Reward.Lore.No_Permission", Lists.newList(
             GRAY.wrap(RED.wrap("✘") + " You don't have access to this reward.")
         )).read(config);
 
-        this.limitsLore = ConfigValue.create("Reward.Lore.Limits.Info", Lists.newList(
-            RED.wrap(BOLD.wrap("Limits:")),
-            PERSONAL_LIMITS,
-            SERVER_LIMITS
-        )).read(config);
-
-        this.personalLimitsLore = ConfigValue.create("Reward.Lore.Limits.Personal", Lists.newList(
-            GRAY.wrap(RED.wrap("→") + " Your limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
-        )).read(config);
-
-        this.serverLimitsLore = ConfigValue.create("Reward.Lore.Limits.Server", Lists.newList(
-            GRAY.wrap(RED.wrap("→") + " Server limit: " + RED.wrap(GENERIC_AMOUNT) + "/" + RED.wrap(GENERIC_MAX))
+        this.limitsLore = ConfigValue.create("Reward.Lore.LimitInfo", Lists.newList(
+            DARK_GRAY.wrap("»") + GRAY.wrap(" Rolls Available: ") + YELLOW.wrap(GENERIC_AMOUNT)
         )).read(config);
 
         loader.addHandler(new ItemHandler("open", (viewer, event) -> {
@@ -205,7 +172,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             .setSlots(0,4,8,36,44));
 
         loader.addDefaultItem(NightItem.asCustomHead("1daf09284530ce92ed2df2a62e1b05a11f1871f85ae559042844206d66c0b5b0")
-            .setDisplayName(LIGHT_YELLOW.wrap(BOLD.wrap("Milestones")))
+            .setDisplayName(GOLD.wrap(BOLD.wrap("Milestones")))
             .toMenuItem()
             .setPriority(10)
             .setSlots(4)

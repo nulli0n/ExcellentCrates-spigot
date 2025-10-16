@@ -3,10 +3,8 @@ version: '${project.version}'
 name: ExcellentCrates
 author: NightExpress
 desciption: Lightweight, powerful, feature-rich and highly customizable crates plugin.
-depend:
-  - nightcore
+depend: [ nightcore ]
 softdepend:
-  - EconomyBridge
   - PlaceholderAPI
   - ProtocolLib
   - packetevents

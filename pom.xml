@@ -6,7 +6,7 @@
 
     <groupId>su.nightexpress.excellentcrates</groupId>
     <artifactId>ExcellentCrates</artifactId>
-    <version>6.3.3</version>
+    <version>6.4.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -62,22 +62,15 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>main</artifactId>
-            <version>2.7.15</version>
-            <classifier>shaded</classifier>
+            <version>2.9.0</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>su.nightexpress.economybridge</groupId>
-            <artifactId>economy-bridge</artifactId>
-            <version>1.2.1</version>
         </dependency>
 
         <dependency>
@@ -100,21 +93,21 @@
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory> <!-- (your resources folder location) -->
-                <filtering>true</filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+                <filtering>true
+                </filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

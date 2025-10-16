@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
 import su.nightexpress.nightcore.util.random.Rnd;
 
@@ -28,8 +28,8 @@ public class SelectableOpening extends AbstractOpening {
                             @NotNull SelectableMenu menu,
                             @NotNull Player player,
                             @NotNull CrateSource source,
-                            @Nullable CrateKey key) {
-        super(plugin, player, source, key);
+                            @Nullable Cost cost) {
+        super(plugin, player, source, cost);
         this.menu = menu;
         this.provider = provider;
         this.selectedRewards = new HashSet<>();
@@ -41,12 +41,12 @@ public class SelectableOpening extends AbstractOpening {
     }
 
     @NotNull
-    public List<Reward> getRewards() {
+    public List<Reward> getCrateRewards() {
         return this.crate.getRewards(this.player);
     }
 
     public int getRequiredAmount() {
-        return Math.min(this.getRewards().size(), this.provider.getSelectionAmount());
+        return Math.min(this.getCrateRewards().size(), this.provider.getSelectionAmount());
     }
 
     public int getSelectedAmount() {
@@ -79,7 +79,7 @@ public class SelectableOpening extends AbstractOpening {
 
         this.setRefundable(false);
 
-        this.selectedRewards.forEach(reward -> reward.give(this.player));
+        this.addRewards(this.selectedRewards);
         this.selectedRewards.clear();
         this.completed = true; // Use explicit variable to ensure all checks and validations are passed.
         return true;
@@ -129,7 +129,7 @@ public class SelectableOpening extends AbstractOpening {
     @Override
     public void instaRoll() {
         // Just give random rewards I assume?
-        List<Reward> rewards = this.getRewards();
+        List<Reward> rewards = this.getCrateRewards();
         while (!this.isAllRewardsSelected() && !rewards.isEmpty()) {
             Reward reward = rewards.remove(Rnd.get(rewards.size()));
             this.selectedRewards.add(reward);

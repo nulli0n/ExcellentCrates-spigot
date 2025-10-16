@@ -12,6 +12,7 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.user.CrateUser;
+import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.time.TimeFormats;
 
@@ -40,56 +41,75 @@ public class PlaceholderHook {
     private static class Expansion extends PlaceholderExpansion {
 
         private final CratesPlugin                                   plugin;
-        private final Map<String, BiFunction<Player, Crate, String>> placeholders;
+        private final Map<String, BiFunction<Player, Crate, String>> userPlaceholders;
 
         public Expansion(@NotNull CratesPlugin plugin) {
             this.plugin = plugin;
-            this.placeholders = new LinkedHashMap<>();
+            this.userPlaceholders = new LinkedHashMap<>();
 
-            this.placeholders.put("keys", (player, crate) -> {
-                int keys = plugin.getKeyManager().getKeysAmount(player, crate);
-                return NumberUtil.format(keys);
+            this.userPlaceholders.put("keys", (player, crate) -> {
+                if (player == null) return null;
+
+                int amount = crate.countMaxOpenings(player);
+                return amount < 0 ? CoreLang.OTHER_INFINITY.text() : String.valueOf(amount);
             });
 
-            this.placeholders.put("openings_raw", (player, crate) -> {
+            this.userPlaceholders.put("openings_available", (player, crate) -> {
+                if (player == null) return null;
+
+                int amount = crate.countMaxOpenings(player);
+                return amount < 0 ? CoreLang.OTHER_INFINITY.text() : String.valueOf(amount);
+            });
+
+            this.userPlaceholders.put("openings_raw", (player, crate) -> {
+                if (player == null) return null;
+
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 return String.valueOf(user.getCrateData(crate).getOpenings());
             });
 
-            this.placeholders.put("openings", (player, crate) -> {
+            this.userPlaceholders.put("openings", (player, crate) -> {
+                if (player == null) return null;
+
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 return NumberUtil.format(user.getCrateData(crate).getOpenings());
             });
 
-            this.placeholders.put("cooldown", (player, crate) -> {
+            this.userPlaceholders.put("cooldown", (player, crate) -> {
+                if (player == null) return null;
+
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 UserCrateData data = user.getCrateData(crate);
-                if (!data.hasCooldown()) return Lang.OTHER_COOLDOWN_READY.getString();
+                if (!data.hasCooldown()) return Lang.OTHER_COOLDOWN_READY.text();
 
                 return TimeFormats.formatDuration(data.getOpenCooldown(), Config.CRATE_COOLDOWN_FORMAT_TYPE.get());
             });
 
-            this.placeholders.put("next_milestone_openings", (player, crate) -> {
+            this.userPlaceholders.put("next_milestone_openings", (player, crate) -> {
+                if (player == null) return null;
+
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
-                if (milestone == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.getString();
+                if (milestone == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.text();
 
                 return NumberUtil.format(milestone.getOpenings() - milestones);
             });
 
-            this.placeholders.put("next_milestone_reward", (player, crate) -> {
+            this.userPlaceholders.put("next_milestone_reward", (player, crate) -> {
+                if (player == null) return null;
+
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 Reward reward = milestone == null ? null : milestone.getReward();
-                if (reward == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.getString();
+                if (reward == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.text();
 
                 return reward.getName();
             });
 
-            this.placeholders.put("latest_opener", (player, crate) -> crate.getLastOpenerName());
-            this.placeholders.put("latest_rolled_reward", (player, crate) -> crate.getLastRewardName());
+            this.userPlaceholders.put("latest_opener", (player, crate) -> crate.getLastOpenerName());
+            this.userPlaceholders.put("latest_rolled_reward", (player, crate) -> crate.getLastRewardName());
         }
 
         @Override
@@ -117,9 +137,7 @@ public class PlaceholderHook {
 
         @Override
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
-            if (player == null) return null;
-
-            for (var entry : this.placeholders.entrySet()) {
+            for (var entry : this.userPlaceholders.entrySet()) {
                 String prefix = entry.getKey() + "_";
                 if (!params.startsWith(prefix)) continue;
 
