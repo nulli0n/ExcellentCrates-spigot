@@ -83,7 +83,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadPreviews();
         this.loadCrates();
         this.loadUI();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.runTask(this::reportProblems); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -139,9 +139,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 rarities.add(new Rarity(this.plugin, "mythic", TagWrappers.SOFT_PURPLE.wrap("Mythic"), 5));
             }
 
-            rarities.forEach(rarity -> {
-                rarity.write(config, "Rewards.Rarities." + rarity.getId());
-            });
+            rarities.forEach(rarity -> rarity.write(config, "Rewards.Rarities." + rarity.getId()));
         }
 
         config.getSection("Rewards.Rarities").forEach(rarityId -> {
