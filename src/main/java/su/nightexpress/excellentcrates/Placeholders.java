@@ -9,6 +9,8 @@ import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderList;
 
+import java.util.stream.Collectors;
+
 public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
 
     public static final String WIKI_URL          = "https://nightexpressdev.com/excellentcrates/";
@@ -46,6 +48,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
     public static final String CRATE_DESCRIPTION = "%crate_description%";
     public static final String CRATE_LAST_OPENER = "%crate_last_opener%";
     public static final String CRATE_LAST_REWARD = "%crate_last_reward%";
+    public static final String CRATE_OPEN_COST = "%crate_open_cost%";
 
     public static final String KEY_ID   = "%key_id%";
     public static final String KEY_NAME = "%key_name%";
@@ -68,6 +71,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
         .add(CRATE_DESCRIPTION, crate -> String.join("\n", crate.getDescription()))
         .add(CRATE_LAST_OPENER, Crate::getLastOpenerName)
         .add(CRATE_LAST_REWARD, Crate::getLastRewardName)
+        .add(CRATE_OPEN_COST, crate -> crate.getCosts().stream().map(Cost::getName).collect(Collectors.joining(", ")))
     );
 
     public static final PlaceholderList<Reward> REWARD = PlaceholderList.create(list -> list

@@ -10,9 +10,6 @@ import su.nightexpress.nightcore.util.TimeUtil;
 
 public class RewardData {
 
-    private static final int INIT_AMOUNT = 0;
-    private static final long INIT_RESET = -1L;
-
     private final String crateId;
     private final String rewardId;
     private final String holder;
@@ -27,7 +24,7 @@ public class RewardData {
         Crate crate = reward.getCrate();
         String holder = DataManager.getHolder(reward, player);
 
-        return new RewardData(crate.getId(), reward.getId(), holder, INIT_AMOUNT, INIT_RESET);
+        return new RewardData(crate.getId(), reward.getId(), holder, 0, 0L);
     }
 
     public RewardData(@NotNull String crateId, @NotNull String rewardId, @NotNull String holder, int rolls, long cooldownUntil) {
@@ -47,8 +44,8 @@ public class RewardData {
     }
 
     public void reset() {
-        this.rolls = INIT_AMOUNT;
-        this.cooldownUntil = INIT_RESET;
+        this.rolls = 0;
+        this.cooldownUntil = 0L;
     }
 
     public boolean isOnCooldown() {
@@ -56,7 +53,7 @@ public class RewardData {
     }
 
     public boolean isCooldownExpired() {
-        return TimeUtil.isPassed(this.cooldownUntil);
+        return this.cooldownUntil > 0L && TimeUtil.isPassed(this.cooldownUntil);
     }
 
     public void addRoll(int amount) {
@@ -92,9 +89,5 @@ public class RewardData {
 
     public void setCooldownUntil(long cooldownUntil) {
         this.cooldownUntil = cooldownUntil;
-    }
-
-    public boolean isResetTime() {
-        return TimeUtil.isPassed(this.cooldownUntil);
     }
 }

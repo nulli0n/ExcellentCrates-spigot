@@ -158,7 +158,7 @@ public class Lang implements LangContainer {
         " "
     );
 
-    public static final MessageLocale CRATE_REWARDS = LangEntry.builder("Crate.Rewards").message(
+    public static final MessageLocale CRATE_OPEN_RESULT_INFO = LangEntry.builder("Crate.Rewards").message(
         MessageData.CHAT_NO_PREFIX,
         " ",
         YELLOW.and(BOLD).wrap("CRATE OPENED:"),
@@ -166,6 +166,8 @@ public class Lang implements LangContainer {
         YELLOW.wrap("» ") + GRAY.wrap("Rewards: ") + WHITE.wrap(GENERIC_REWARDS),
         " "
     );
+
+    public static final TextLocale CRATE_OPEN_RESULT_REWARD = LangEntry.builder("Crate.Opened.Result.Reward").text(REWARD_NAME);
 
     public static final MessageLocale CRATE_OPEN_MILESTONE_COMPLETED = LangEntry.builder("Crate.Open.Milestone.Completed").message(
         MessageData.chat().usePrefix(false).sound(Sound.ENTITY_PLAYER_LEVELUP).build(),

@@ -70,6 +70,8 @@ public class LimitValues implements Writeable {
     }
 
     private long createCooldownTimestamp(long cooldown) {
+        if (cooldown == 0L) return 0L;
+
         return switch (this.cooldownType) {
             case CUSTOM -> TimeUtil.createFutureTimestamp(cooldown);
             case DAILY -> TimeUtil.toEpochMillis(LocalDateTime.of(TimeUtil.getCurrentDate().plusDays(1), LocalTime.MIDNIGHT));

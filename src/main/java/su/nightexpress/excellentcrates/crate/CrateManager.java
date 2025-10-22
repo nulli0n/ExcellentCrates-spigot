@@ -631,18 +631,25 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         LimitValues limits = reward.getLimits();
         if (!limits.isEnabled()) return;
 
-        RewardData globalData = this.plugin.getDataManager().getRewardLimitOrCreate(reward, null);
-        RewardData playerData = this.plugin.getDataManager().getRewardLimitOrCreate(reward, player);
-
-        if (limits.hasGlobalCooldown()) {
-            globalData.setCooldownUntil(limits.generateGlobalCooldown());
-            globalData.addRoll(1);
+        if (limits.hasGlobalCooldown() || limits.isGlobalAmountLimited()) {
+            RewardData globalData = this.plugin.getDataManager().getRewardLimitOrCreate(reward, null);
+            if (limits.hasGlobalCooldown()) {
+                globalData.setCooldownUntil(limits.generateGlobalCooldown());
+            }
+            if (limits.isGlobalAmountLimited()) {
+                globalData.addRoll(1);
+            }
             globalData.setSaveRequired(true);
         }
 
-        if (limits.hasPlayerCooldown()) {
-            playerData.setCooldownUntil(limits.generatePlayerCooldown());
-            playerData.addRoll(1);
+        if (limits.hasPlayerCooldown() || limits.isPlayerAmountLimited()) {
+            RewardData playerData = this.plugin.getDataManager().getRewardLimitOrCreate(reward, player);
+            if (limits.hasPlayerCooldown()) {
+                playerData.setCooldownUntil(limits.generatePlayerCooldown());
+            }
+            if (limits.isPlayerAmountLimited()) {
+                playerData.addRoll(1);
+            }
             playerData.setSaveRequired(true);
         }
     }

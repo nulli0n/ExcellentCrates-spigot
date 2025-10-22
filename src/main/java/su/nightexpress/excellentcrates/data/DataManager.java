@@ -102,11 +102,7 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     public void loadRewardLimits() {
         this.rewardLimitMap.clear();
 
-        this.plugin.getDataHandler().loadRewardLimits().forEach(limit -> {
-            if (!this.removeExpired(limit)) {
-                this.addRewardLimit(limit);
-            }
-        });
+        this.plugin.getDataHandler().loadRewardLimits().forEach(this::addRewardLimit);
 
         //this.plugin.debug("Loaded " + this.rewardLimitMap.size() + " reward limit datas.");
     }
@@ -176,7 +172,7 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     @NotNull
     public RewardData getRewardLimitOrCreate(@NotNull Reward reward, @Nullable Player player) {
         RewardData limit = this.getRewardLimit(reward, player);
-        if (limit != null && !this.removeExpired(limit)) return limit;
+        if (limit != null) return limit;
 
         RewardData fresh = RewardData.create(reward, player);
         this.plugin.runTaskAsync(() -> this.plugin.getDataHandler().insertRewardLimit(fresh));
@@ -198,14 +194,6 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     private void addRewardLimit(@NotNull RewardData limit) {
         RewardKey key = getRewardKey(limit);
         this.rewardLimitMap.put(key, limit);
-    }
-
-    private boolean removeExpired(@NotNull RewardData limit) {
-        if (!limit.isResetTime()) return false;
-
-        //this.plugin.debug("Expired reward limit removed: " + limit.getHolder() + " | " + limit.getCrateId() + " | " + limit.getRewardId());
-        this.deleteRewardLimit(limit);
-        return true;
     }
 
     public void deleteRewardLimit(@NotNull RewardData limit) {
