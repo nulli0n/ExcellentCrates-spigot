@@ -127,10 +127,17 @@ public abstract class AbstractReward implements Reward {
     public boolean isOnCooldown(@NotNull Player player) {
         if (!this.limits.isEnabled()) return false;
 
-        RewardData globalLimit = this.plugin.getDataManager().getRewardLimit(this, null);
-        RewardData playerLimit = this.plugin.getDataManager().getRewardLimit(this, player);
+        if (this.limits.hasGlobalCooldown()) {
+            RewardData globalLimit = this.plugin.getDataManager().getRewardLimit(this, null);
+            if (globalLimit != null && globalLimit.isOnCooldown()) return true;
+        }
 
-        return (globalLimit != null && globalLimit.isOnCooldown()) || (playerLimit != null && playerLimit.isOnCooldown());
+        if (this.limits.hasPlayerCooldown()) {
+            RewardData playerLimit = this.plugin.getDataManager().getRewardLimit(this, player);
+            return playerLimit != null && playerLimit.isOnCooldown();
+        }
+
+        return false;
     }
 
     @Override

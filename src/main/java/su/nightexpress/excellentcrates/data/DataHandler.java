@@ -72,7 +72,7 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
                         limits.add(new RewardData(crateId, rewardId, uuid.toString(), rewardData.getAmount(), rewardData.getExpireDate()));
                     });
                 });
-                limits.removeIf(RewardData::isResetTime);
+                //limits.removeIf(RewardData::isResetTime);
 
                 return limits;
             }
@@ -100,9 +100,7 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
             limits.forEach(this::insertRewardLimit);
         });
 
-        this.select(rewardDataTable, globalLimitLoader, SelectQuery::all).forEach(limit -> {
-            if (!limit.isResetTime()) this.insertRewardLimit(limit);
-        });
+        this.select(rewardDataTable, globalLimitLoader, SelectQuery::all).forEach(this::insertRewardLimit);
 
         this.dropColumn(rewardDataTable, columnRewardData);
     }

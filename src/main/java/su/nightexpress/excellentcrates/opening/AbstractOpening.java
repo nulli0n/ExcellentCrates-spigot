@@ -134,9 +134,12 @@ public abstract class AbstractOpening implements Opening {
                 }
             }
 
-            Lang.CRATE_REWARDS.message().send(this.player, replacer -> replacer
+            Lang.CRATE_OPEN_RESULT_INFO.message().send(this.player, replacer -> replacer
                 .replace(this.crate.replacePlaceholders())
-                .replace(Placeholders.GENERIC_REWARDS, this.rewards.stream().map(Reward::getName).collect(Collectors.joining(", ")))
+                .replace(Placeholders.GENERIC_REWARDS, this.rewards.stream()
+                    .map(reward -> reward.replacePlaceholders().apply(Lang.CRATE_OPEN_RESULT_REWARD.text()))
+                    .collect(Collectors.joining(", "))
+                )
             );
 
             this.plugin.getUserManager().save(user);
