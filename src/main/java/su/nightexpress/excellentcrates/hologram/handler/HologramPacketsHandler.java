@@ -39,23 +39,6 @@ public class HologramPacketsHandler implements HologramHandler {
         Players.getOnline().forEach(player -> this.playerManager.sendPacket(player, packet));
     }
 
-
-//    @NotNull
-//    private List<PacketWrapper<?>> getItemPackets(int entityID, @NotNull EntityType type, @NotNull Location location, @NotNull ItemStack item) {
-//        List<PacketWrapper<?>> list = new ArrayList<>();
-//
-//        PacketWrapper<?> spawnPacket = this.createSpawnPacket(type, location, entityID);
-//        PacketWrapper<?> dataPacket = this.createMetadataPacket(entityID, dataList -> {
-//            dataList.add(new EntityData(5, EntityDataTypes.BOOLEAN, true)); // no gravity
-//            dataList.add(new EntityData(8, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(item))); // item
-//        });
-//
-//        list.add(spawnPacket);
-//        list.add(dataPacket);
-//
-//        return list;
-//    }
-
     @SuppressWarnings("deprecation")
     @Override
     public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {

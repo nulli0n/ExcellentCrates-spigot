@@ -38,7 +38,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     protected void onLoad() {
         this.loadCost();
         this.loadKeys();
-        this.plugin.runTask(task -> this.reportProblems()); // When everything is loaded.
+        this.plugin.runTask(() -> this.reportProblems()); // When everything is loaded.
 
         this.addListener(new KeyListener(this.plugin, this));
         this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get()); // TODO Config
