@@ -1,0 +1,585 @@
+# Tradução feita por: https://github.com/MrMadaraUchiha/ExcellentCrates-spigot
+
+Command:
+  Drop:
+    Usage: <crateId> <world> <x> <y> <z>
+    Desc: Solta a caixa na localização especificada no mundo.
+    Done: Soltou &6%crate_name%&7 em &6%location_x%&7, &6%location_y%&7, &6%location_z%&7 no mundo &6%location_world%&7.
+  ForceOpen:
+    Desc: Força a abertura de uma caixa para um jogador.
+    Usage: <crateId> [player]
+    Done: Forçou a abertura de &6%crate_name%&7 para &6%player_name%&7.
+    Notify: Você foi forçado a abrir &6%crate_name%&7.
+  Give:
+    Usage: <player | *> <crateId> [amount]
+    Desc: Dá caixa(s) para um jogador.
+    Done: Concedeu &6x%amount% &7de &6%crate_name% &7caixa(s) para &6%player_name%&7.
+    Notify: Você recebeu &6x%amount% &7de &6%crate_name%&7!
+  Key:
+    Desc: Gerencia ou visualiza chaves de caixa do jogador.
+    Error:
+      Player: '&cNão foi possível processar a operação para o jogador offline/inválido &e%player_name%&c!'
+    Give:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Dá chave(s) de caixa para um jogador.
+      Done: Concedeu &ax%amount% &7de &a%key_name% &7chave(s) para &a%player_name%&7.
+      Notify: Você recebeu &ax%amount% &7de &a%key_name%&7!
+    Take:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Retira chave(s) de caixa de um jogador.
+      Done: Retirou &cx%amount% &c%key_name% &7chave(s) de &c%player_name%
+      Notify: Você perdeu &cx%amount% &c%key_name%&7!
+    Set:
+      Usage: <player | *> <keyId> <amount>
+      Desc: Define o número de chave(s) de caixa para um jogador.
+      Done: Definiu &ex%amount% &7de &e%key_name% &7chave(s) para &e%player_name%&7.
+      Notify: Sua quantidade de &e%key_name%&7 foi alterada para &ex%amount%&7!
+    Show:
+      Desc: Mostra a quantidade de chaves suas ou de outro jogador.
+      Usage: '[player]'
+      Format:
+        List:
+        - <!prefix:"false"!>
+        - '&6&m              &6&l[ &a%player_name% &e&lChaves de Caixas &6&l]&6&m              &6'
+        - '&7'
+        - '&6▸ &e%key_name%: &6%amount%'
+    Usage: '[help]'
+    GiveAll:
+      Usage: <player> <key> <amount> [-s]
+      Desc: Dá chave para todos os jogadores online.
+      Done: '#d4d9d8Concedeu #fdf35ex%amount%#d4d9d8 de #fdf35e%key_name%#d4d9d8 chave(s) para #fdf35eTodos os Jogadores#d4d9d8.'
+  Preview:
+    Desc: Abre a pré-visualização da caixa.
+    Usage: <crateId> [player]
+    Done:
+      Others: Abriu a pré-visualização de &6%crate_name%&7 para &6%player_display_name%&7.
+  ResetLimit:
+    Desc: Reseta o limite de vitórias para uma caixa e recompensa especificada.
+    Usage: <player> <crateId> [rewardId]
+    Done:
+      Crate: Resetou o limite de vitórias para todas as recompensas de &6%crate_name%&7 para &6%player_name%&7.
+      Reward: Resetou o limite de vitórias de &6%player_name%&7 para a recompensa &6%reward_name% &7de &6%crate_name%&7.
+  ResetCooldown:
+    Desc: Reseta o cooldown do jogador para a caixa especificada.
+    Usage: <player> <crateId>
+    Done: Resetou o cooldown de &6%player_name%&7 para &6%crate_name%&7.
+  Menu:
+    Usage: '[menuId]'
+    Desc: Abre o menu de caixa.
+    Done:
+      Others: Abriu o menu de caixa &6%menu_id%&7 para &6%player_display_name%&7.
+  Editor:
+    Desc: Abre o editor de caixas e chaves.
+  Open:
+    Desc: Faz [player] abrir uma caixa [forçadamente].
+    Usage: <crate> [player] [-f] [-s]
+    Done: '#d4d9d8Forçou #fdf35e%player_name%#d4d9d8 a abrir #fdf35e%crate_name%#d4d9d8.'
+    Notify: '#d4d9d8Você foi forçado a abrir #fdf35e%crate_name%#d4d9d8.'
+Crate:
+  Error:
+    Invalid: '&cCaixa inválida!'
+    Exists: '#fd5e5eUma caixa com esse id já existe!'
+  Open:
+    Error:
+      InventorySpace: '&cPor favor, libere espaço no seu inventário para abrir a caixa!'
+      Cooldown:
+        Temporary: '&cVocê precisa esperar &6%time% &7antes de poder abrir &6%crate_name%&7 novamente!'
+        OneTimed: '&cVocê já abriu esta caixa, não pode abrir novamente!'
+      NoKey: '&cVocê não tem uma chave para esta caixa!'
+      NoHoldKey: '&cVocê precisa segurar uma chave para abrir esta caixa!'
+      NoRewards: '&cEsta caixa não contém recompensas para você!'
+      Cost:
+        Money: '&cVocê não tem dinheiro suficiente para abrir esta caixa!'
+        Exp: '&cVocê não tem níveis de experiência suficientes para abrir esta caixa!'
+    Reward:
+      Info: Você recebeu a recompensa &6%reward_name% &7da caixa &6%crate_name%&7!
+      Broadcast: '&7O jogador &a%player_display_name% &7acabou de receber a recompensa &6%reward_name% &7da caixa &6%crate_name%&7!'
+    Milestone:
+      Completed: '<! prefix:"false" sound:"ENTITY_PLAYER_LEVELUP" !>#d4d9d8Você completou o marco de #aefd5e%milestone_openings% Aberturas #d4d9d8 e ganhou #aefd5e%reward_name%#d4d9d8 como recompensa!'
+  Key:
+    Error:
+      Invalid: '&cChave inválida!'
+      Exists: '#fd5e5eUma chave com esse id já existe!'
+
+Menu:
+  Invalid: '&cMenu não existe!'
+Editor:
+  Crate:
+    Enter:
+      Id: '&7Digite o &aidentificador &7único da &acaixa&7...'
+      DisplayName: '&7Digite o &anome de exibição da caixa&7...'
+      Particle:
+        Name: '&7Digite o &anome &7da partícula...'
+        Data: '&7Digite os &adados &7da partícula...'
+      KeyId: '&7Digite o &aidentificador &7da chave...'
+      Block:
+        Location: '&7Clique em um &abloco &7para atribuir a caixa...'
+        Hologram:
+          Text: '&7Digite a &alinha de texto&7...'
+          Offset: '&7Digite o &avalor do deslocamento&7...'
+      Cooldown: '&7Digite o &atempo de recarga &7em segundos...'
+      Citizens: '&7Digite o &aID do NPC &7do Citizens...'
+      AnimationConfig: '&7Digite o &anome da configuração &7de animação...'
+      PreviewConfig: '&7Digite o &anome da configuração &7de pré-visualização...'
+      OpenCost:
+        Money: '&7Digite o &acusto em dinheiro&7...'
+        Exp: '&7Digite o &acusto em níveis de exp&7...'
+    Error:
+      Create:
+        Exists: '&cUma caixa com esse ID já existe!'
+    BlockPushback:
+      Name: '#ffed6a&lEmpurrão de Bloco'
+      Lore:
+      - '#ffed6a&lAtual:'
+      - '#ffed6a▪ #bdc8c9Habilitado: #ffed6a%crate_block_pushback_enabled%'
+      - ''
+      - '#bdc8c9Define se o jogador será empurrado'
+      - '#bdc8c9para longe do bloco da caixa ao tentar'
+      - '#bdc8c9abri-la sem uma chave.'
+      - ''
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aAlternar'
+  Reward:
+    Enter:
+      Id: '&7Digite o &aidentificador &7único do &aprêmio&7...'
+      DisplayName: '&7Digite o &anome de exibição do prêmio&7...'
+      Chance: '&7Digite a &achance de vitória&7...'
+      Rarity: '&7Digite a &a[Raridade]'
+      Command: '&7Digite um &acomando&7...'
+      Permissions: '&7Digite uma &apermissão&7...'
+      WinLimit:
+        Amount: '&7Digite o &aquantidade limite de vitórias&7...'
+        Cooldown: '&7Digite o &atempo de recarga limite de vitórias&7...'
+    Error:
+      Create:
+        Exist: '&cUm prêmio com esse ID já existe!'
+  Key:
+    Error:
+      Create:
+        Exist: A chave com esse ID já existe!
+  CrateEditorType:
+    EDITOR_CRATES:
+      Name: '#ffed6a&lEditor de Caixas'
+      Lore:
+      - '#bdc8c9Crie e gerencie suas caixas aqui!'
+      - ''
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aAbrir'
+    EDITOR_KEYS:
+      Name: '#ffed6a&lEditor de Chaves'
+      Lore:
+      - '#bdc8c9Crie e gerencie suas chaves aqui!'
+      - ''
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aAbrir'
+    CRATE_OBJECT:
+      Name: '#ffed6a&l%crate_name% &7(ID: &f%crate_id%&7)'
+      Lore:
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aEditar'
+      - '#bbff6a▪ #bdc8c9Shift-Direito: #bbff6aDeletar #ff6a6a(Sem Desfazer)'
+    CRATE_CREATE:
+      Name: '#ffed6a&lCriar uma Caixa'
+      Lore:
+      - '#bdc8c9Cria uma nova caixa.'
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aCriar'
+    CRATE_CHANGE_NAME:
+      Name: '#ffed6a&lNome de Exibição'
+      Lore:
+      - '#ffed6a&lAtual:'
+      - '#ffed6a▪ #bdc8c9Nome de Exibição: #ffed6a%crate_name%'
+      - ''
+      - '#bdc8c9Define o nome de exibição da caixa.'
+      - '#bdc8c9É usado em mensagens e GUIs.'
+      - ''
+      - '#ff6a6a▪ #bdc8c9Isso #ff6a6aNÃO#bdc8c9 é o nome do item da caixa!'
+      - ''
+      - '#bbff6a&lAções:'
+      - '#bbff6a▪ #bdc8c9Clique-Esquerdo: #bbff6aAlterar'
+      
+    CRATE_CHANGE_PERMISSION:
+      Name: '#ffed6a&lPermission Requirement'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Required: #ffed6a%crate_permission_required%'
+      - '#ffed6a▪ #bdc8c9Node: #ffed6a%crate_permission%'
+      - ''
+      - '#bdc8c9Sets whether permission is required'
+      - '#bdc8c9to open this crate.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aToggle'
+    CRATE_CHANGE_COOLDOWN:
+      Name: '#ffed6a&lOpen Cooldown'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Cooldown: #ffed6a%crate_opening_cooldown%'
+      - ''
+      - '#bdc8c9Sets how often player can'
+      - '#bdc8c9open this crate again.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Negative value will make crate one-timed!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aDisable'
+      - '#bbff6a▪ #bdc8c9[Q/Drop] Key: #bbff6aOne-Timed'
+    CRATE_CHANGE_CONFIG:
+      Name: '#ffed6a&lPreview & Animation'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Preview: #ffed6a%crate_preview_config%'
+      - '#ffed6a▪ #bdc8c9Opening: #ffed6a%crate_animation_config%'
+      - ''
+      - '#bdc8c9Defines the look of the crate'
+      - '#bdc8c9#ffed6apreview #bdc8c9and #ffed6aanimation #bdc8c9GUIs.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Previews are located in #ffa76a/previews/#bdc8c9 sub-folder.'
+      - '#ffa76a▪ #bdc8c9Openings are located in #ffa76a/openings/#bdc8c9 sub-folder.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange Opening'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aDisable Opening'
+      - '#bbff6a▪ #bdc8c9Shift-Left: #bbff6aChange Preview'
+      - '#bbff6a▪ #bdc8c9Shift-Right: #bbff6aDisable Preview'
+    CRATE_CHANGE_KEYS:
+      Name: '#ffed6a&lAttached Keys'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9IDs: #ffed6a%crate_key_ids%'
+      - ''
+      - '#bdc8c9Sets a list of keys that'
+      - '#bdc8c9can be used to open this crate.'
+      - ''
+      - '#ff6a6a&lWarning:'
+      - '#ff6a6a▪ #bdc8c9If no keys are set, crate can be opened without them!'
+      - '#ff6a6a▪ #bdc8c9If invalid keys provided, you will be unable to open crate!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aAttach Key'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aClear List'
+    CRATE_CHANGE_OPEN_COST:
+      Name: '#ffed6a&lOpen Cost'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Money: #ffed6a%crate_opening_cost_money%'
+      - '#ffed6a▪ #bdc8c9Exp Levels: #ffed6a%crate_opening_cost_exp%'
+      - ''
+      - '#bdc8c9Sets how many money/exp player'
+      - '#bdc8c9have to pay in order to'
+      - '#bdc8c9open this crate.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange Money'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aChange Exp'
+      - '#bbff6a▪ #bdc8c9[Q/Drop] Key: #bbff6aDisable All'
+    CRATE_CHANGE_ITEM:
+      Name: '#ffed6a&lCrate Item'
+      Lore:
+      - '#bdc8c9Sets the inventory crate item.'
+      - '#bdc8c9It''s used when you give crates to players'
+      - '#bdc8c9and in crate menus.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Use item with premade name, lore, model, etc.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Drag & Drop: #bbff6aReplace'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aObtain'
+    CRATE_CHANGE_BLOCK_LOCATION:
+      Name: '#ffed6a&lAttached Blocks'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#bdc8c9#ffed6a%crate_block_locations%'
+      - ''
+      - '#bdc8c9A set of blocks attached to'
+      - '#bdc8c9this crate to open or preview'
+      - '#bdc8c9it when interacted.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aAttach Block'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aClear List'
+    CRATE_CHANGE_BLOCK_HOLOGRAM:
+      Name: '#ffed6a&lBlock Hologram'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Enabled: #ffed6a%crate_block_hologram_enabled%'
+      - '#ffed6a▪ #bdc8c9Y Offset: #ffed6a%crate_block_hologram_offset_y%'
+      - '#ffed6a▪ #bdc8c9Text: #ffed6a%crate_block_hologram_text%'
+      - ''
+      - '#bdc8c9Sets whether hologram will be added'
+      - '#bdc8c9above the crate block with specified text.'
+      - '#bdc8c9Sets the Y offset for'
+      - '#bdc8c9hologram location'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aAdd Text'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aClear Text'
+      - '#bbff6a▪ #bdc8c9Shift-Left: #bbff6aToggle'
+      - '#bbff6a▪ #bdc8c9Shift-Right: #bbff6aChange Y Offset'
+    CRATE_CHANGE_BLOCK_EFFECT:
+      Name: '#ffed6a&lBlock Effects'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Model: #ffed6a%crate_block_effect_model%'
+      - '#ffed6a▪ #bdc8c9Particle: #ffed6a%crate_block_effect_particle_name%'
+      - '#ffed6a▪ #bdc8c9Data: #ffed6a%crate_block_effect_particle_data%'
+      - ''
+      - '#bdc8c9Sets a particle effect to play'
+      - '#bdc8c9around crate blocks.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange Particle'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aChange Data'
+      - '#bbff6a▪ #bdc8c9[Q/Drop] Key: #bbff6aToggle Model'
+    CRATE_CHANGE_REWARDS:
+      Name: '#ffed6a&lCrate Rewards'
+      Lore:
+      - '#bdc8c9Create & manage rewards here!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aOpen'
+    REWARD_OBJECT:
+      Name: '#ffed6a&l%reward_name% &7(ID: &f%reward_id%&7)'
+      Lore:
+      - '#bdc8c9Chance: &f%reward_chance%%'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aEdit'
+      - '#bbff6a▪ #bdc8c9Shift-Left: #bbff6aMove Forward'
+      - '#bbff6a▪ #bdc8c9Shift-Right: #bbff6aMove Backward'
+      - '#bbff6a▪ #bdc8c9[Q/Drop] Key: #bbff6aDelete #ff6a6a(No Undo)'
+    REWARD_CREATE:
+      Name: '#ffed6a&lCreate Reward'
+      Lore:
+      - '#bdc8c9Creates a new reward for crate.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aManual Creation'
+      - '#bbff6a▪ #bdc8c9Drag & Drop: #bbff6aFast Creation'
+    REWARD_SORT:
+      Name: '#ffed6a&lSort Rewards'
+      Lore:
+      - '#bdc8c9Automatically sorts rewards in'
+      - '#bdc8c9specified order.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9[Num 1]: #bbff6aBy Chance'
+      - '#bbff6a▪ #bdc8c9[Num 2]: #bbff6aBy Type'
+      - '#bbff6a▪ #bdc8c9[Num 3]: #bbff6aBy Name'
+      - '#bbff6a▪ #bdc8c9[Num 4]: #bbff6aBy Rarity'
+    REWARD_CHANGE_NAME:
+      Name: '#ffed6a&lDisplay Name'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Display Name: #ffed6a%reward_name%'
+      - ''
+      - '#bdc8c9Sets the reward display name.'
+      - '#bdc8c9It''s used in GUIs & messages.'
+      - ''
+      - '#ff6a6a&lWarning:'
+      - '#ff6a6a▪ #bdc8c9This is #ff6a6aNOT#bdc8c9 reward item name!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aSync from Preview'
+      - '#bbff6a▪ #bdc8c9Shift-Left: #bbff6aSet for Preview'
+    REWARD_CHANGE_PREVIEW:
+      Name: '#ffed6a&lPreview Item'
+      Lore:
+      - '#bdc8c9This item will represent the reward'
+      - '#bdc8c9when previewing and opening crate.'
+      - ''
+      - '#ff6a6a&lWarning:'
+      - '#ff6a6a▪ #bdc8c9This item is #ff6a6aNOT#bdc8c9 given to players!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Drag & Drop: #bbff6aReplace'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aGet Copy'
+    Reward:
+      Rarity:
+        Name: '#ffed6a&lRarity'
+        Lore:
+        - '#ffed6a&lCurrent:'
+        - '#ffed6a▪ #bdc8c9Rarity: #ffed6a%reward_rarity_name%'
+        - ''
+        - '#bdc8c9Learn more about reward chances on the plugin wiki.'
+        - ''
+        - '#bbff6a&lActions:'
+        - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange'
+    REWARD_CHANGE_CHANCE:
+      Name: '#ffed6a&lChance'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Chance: #ffed6a%reward_chance%%'
+      - ''
+      - '#bdc8c9Learn more about reward chances on the plugin wiki.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange'
+    REWARD_CHANGE_COMMANDS:
+      Name: '#ffed6a&lRun Commands'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#bdc8c9%reward_commands%'
+      - ''
+      - '#bdc8c9Sets a list of commands to run'
+      - '#bdc8c9when player receives this reward.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Use #ffa76a%player_name%#bdc8c9 placeholder for player name.'
+      - '#ffa76a▪ #bdc8c9Add #ffa76a[CONSOLE]#bdc8c9 prefix to run it from server.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aAdd Command'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aClear List'
+    REWARD_CHANGE_ITEMS:
+      Name: '#ffed6a&lGiven Items'
+      Lore:
+      - '#bdc8c9A list of items will be given'
+      - '#bdc8c9to player when receive this reward.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Use #ffa76aESC#bdc8c9 to save & return here.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aOpen'
+    REWARD_CHANGE_BROADCAST:
+      Name: '#ffed6a&lWin Broadcast'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Enabled: #ffed6a%reward_broadcast%'
+      - ''
+      - '#bdc8c9Sets whether a broadcast message should'
+      - '#bdc8c9be sent to everyone when this'
+      - '#bdc8c9reward is received.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aToggle'
+    REWARD_CHANGE_WIN_LIMITS:
+      Name: '#ffed6a&lWin Limits'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Amount: #ffed6a%reward_win_limit_amount%'
+      - '#ffed6a▪ #bdc8c9Cooldown: #ffed6a%reward_win_limit_cooldown%'
+      - ''
+      - '#bdc8c9Sets how often & how many times player'
+      - '#bdc8c9can receive this reward again.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Set amount to #ffa76a-1#bdc8c9 for unlimit.'
+      - '#ffa76a▪ #bdc8c9Set cooldown to #ffa76a-1#bdc8c9 for one-timed.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange Amount'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aChange Cooldown'
+      - '#bbff6a▪ #bdc8c9Shift-Left: #bbff6aOne-Timed'
+      - '#bbff6a▪ #bdc8c9Shift-Right: #bbff6aDisable All'
+    REWARD_CHANGE_IGNORED_FOR_PERMISSIONS:
+      Name: '#ffed6a&lPermission Restrictions'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#bdc8c9%reward_ignored_for_permissions%'
+      - ''
+      - '#bdc8c9Players having any permission'
+      - '#bdc8c9from the list won''t be able'
+      - '#bdc8c9to obtain this reward.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aAdd Permission'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aClear List'
+    KEY_OBJECT:
+      Name: '#ffed6a&l%key_name%#bdc8c9 (ID: #6adbff%key_id%#bdc8c9)'
+      Lore:
+      - '#ffed6a▪ #bdc8c9Virtual: #ffed6a%key_virtual%'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aEdit'
+      - '#bbff6a▪ #bdc8c9Shift-Right: #bbff6aDelete #ff6a6a(No Undo)'
+    KEY_CREATE:
+      Name: '#ffed6a&lCreate Key'
+      Lore:
+      - '#bdc8c9Creates a new crates key.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aCreate'
+    KEY_CHANGE_NAME:
+      Name: '#ffed6a&lDisplay Name'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Display Name: #ffed6a%key_name%'
+      - ''
+      - '#bdc8c9Sets the key display name.'
+      - '#bdc8c9It''s used in GUIs & messages.'
+      - ''
+      - '#ff6a6a&lWarning:'
+      - '#ff6a6a▪ #bdc8c9This is #ff6a6aNOT#bdc8c9 actual key item name!'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aChange'
+    KEY_CHANGE_ITEM:
+      Name: '#ffed6a&lKey Item'
+      Lore:
+      - '#bdc8c9Sets the physical key item.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9This option is useless for virtual keys.'
+      - '#ffa76a▪ #bdc8c9Use item with premade name, lore, etc.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Drag & Drop: #bbff6aReplace'
+      - '#bbff6a▪ #bdc8c9Right-Click: #bbff6aObtain'
+    KEY_VIRTUAL:
+      Name: '#ffed6a&lVirtual'
+      Lore:
+      - '#ffed6a&lCurrent:'
+      - '#ffed6a▪ #bdc8c9Is Virtual: #ffed6a%key_virtual%'
+      - ''
+      - '#bdc8c9Sets whether this key is virtual one.'
+      - ''
+      - '#ffa76a&lNotes:'
+      - '#ffa76a▪ #bdc8c9Virtual keys stored in database, not in inventories.'
+      - ''
+      - '#bbff6a&lActions:'
+      - '#bbff6a▪ #bdc8c9Left-Click: #bbff6aToggle'
+  Enter:
+    DisplayName: '#d4d9d8Enter #aefd5e[Display Name]'
+    Amount: '#d4d9d8Enter #aefd5e[Amount]'
+  Milestone:
+    Enter:
+      Reward: '#d4d9d8Enter #aefd5e[Reward Id]'
+  Item:
+    Crate:
+      Milestones:
+        Name: '#fdf35e&lMilestones'
+        Lore:
+        - '#fdf35e▪ #d4d9d8Repeatable: #fdf35e%crate_milestones_repeatable%'
+        - ''
+        - '#d4d9d8Create & manage milestones here!'
+        - ''
+        - '#aefd5e&lActions:'
+        - '#aefd5e▪ #d4d9d8Left-Click: #aefd5eOpen'
+        - '#aefd5e▪ #d4d9d8Right-Click: #aefd5eToggle Repeatable'
+    Milestone:
+      Create:
+        Name: '#fdf35e&lNew Milestone'
+        Lore: []
+      Object:
+        Name: '#fdf35e&lMilestone: %milestone_openings%'
+        Lore:
+        - '#fdf35e▪ #d4d9d8Openings: #fdf35e%milestone_openings%'
+        - '#fdf35e▪ #d4d9d8Reward Id: #fdf35e%milestone_reward_id%'
+        - ''
+        - '#aefd5e&lActions:'
+        - '#aefd5e▪ #d4d9d8Left-Click: #aefd5eChange Openings'
+        - '#aefd5e▪ #d4d9d8Right-Click: #aefd5eChange Reward Id'
+        - '#aefd5e▪ #d4d9d8Shift-Right: #aefd5eDelete #fd5e5e(No Undo)'
+# Here you can create your own custom placeholders to use it in language config.
+# Key = Placeholder, Value = Replacer.
+Placeholders:
+  '%red%': '#fd5e5e'
+  '%gray%': '#d4d9d8'
+  '%green%': '#aefd5e'
