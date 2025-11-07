@@ -48,14 +48,19 @@ public class ItemHelper {
                 String itemId = config.getString(path + ".ItemId", "null");
                 int amount = config.getInt(path + ".Amount");
 
+                config.remove(path + ".Handler");
+                config.remove(path + ".ItemId");
+                config.remove(path + ".Amount");
+
                 ItemAdapter<?> adapter = ItemBridge.getAdapter(handlerName);
                 if (adapter instanceof IdentifiableItemAdapter identifiableItemAdapter) {
                     adaptedItem = new AdaptedCustomStack(identifiableItemAdapter, new ItemIdData(itemId, amount));
                 }
-
-                config.remove(path + ".Handler");
-                config.remove(path + ".ItemId");
-                config.remove(path + ".Amount");
+                else if (adapter == null) {
+                    config.set(path + ".Provider", handlerName);
+                    config.set(path + ".Data.ID", itemId);
+                    config.set(path + ".Data.Amount", amount);
+                }
             }
 
             config.remove(path + ".Type");

@@ -175,7 +175,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     private void loadCrates() {
-        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false)) {
+        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, true)) {
             String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
 
             Crate crate = new Crate(plugin, file.toPath(), id);
@@ -476,7 +476,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         int openings = Math.clamp(amount, 1, massLimit);
 
         if (openings > 1) {
-            options.add(OpenOptions.Option.IGNORE_ANIMATION);
+            options.with(OpenOptions.Option.IGNORE_ANIMATION);
         }
 
         for (int spent = 0; spent < openings; spent++) {
@@ -681,6 +681,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
     public void playCrateEffects() {
         this.getCrates().forEach(crate -> {
+            if (!crate.isEffectEnabled()) return;
+
             CrateEffect effect = crate.getEffect();
             if (effect.isDummy()) return;
 

@@ -19,6 +19,7 @@ import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
 import su.nightexpress.excellentcrates.dialog.CrateDialogs;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.core.config.CoreLang;
+import su.nightexpress.nightcore.locale.LangContainer;
 import su.nightexpress.nightcore.locale.LangEntry;
 import su.nightexpress.nightcore.locale.entry.IconLocale;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
@@ -34,7 +35,7 @@ import java.util.stream.IntStream;
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
+public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implements LangContainer {
 
     private static final IconLocale LOCALE_ITEMS = LangEntry.iconBuilder("Editor.Button.Reward.Items").name("Items to Give")
         .appendCurrent("Status", GENERIC_INSPECTION)
@@ -112,6 +113,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> {
 
     public RewardOptionsMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_REWARD_SETTINGS.text());
+        this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
             this.runNextTick(() -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer).getCrate()));

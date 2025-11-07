@@ -62,7 +62,7 @@ public class RewardCommandsDialog extends CrateDialog<CommandReward> {
                 String commandsRaw = nbtHolder.getText(JSON_COMMANDS).orElse(null);
                 if (commandsRaw == null) return;
 
-                reward.setCommands(List.of(String.join("\n", commandsRaw)));
+                reward.setCommands(List.of(commandsRaw.split("\n")));
                 reward.getCrate().markDirty();
                 viewer.callback();
             });

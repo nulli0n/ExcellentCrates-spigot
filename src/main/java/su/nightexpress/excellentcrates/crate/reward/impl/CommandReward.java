@@ -82,7 +82,10 @@ public class CommandReward extends AbstractReward {
     }
 
     private boolean isValidCommand(@NotNull String command) {
-        return CommandUtil.getCommand(command.split(" ")[0]).isPresent();
+        int index = command.indexOf(':');
+        String name = index >= 0 ? command.substring(index + 1) : command;
+
+        return CommandUtil.getCommand(name.split(" ")[0]).isPresent();
     }
 
     @Override

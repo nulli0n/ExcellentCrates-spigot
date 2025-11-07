@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.command.basic;
+package su.nightexpress.excellentcrates.command;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -6,8 +6,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
-import su.nightexpress.excellentcrates.command.CommandArguments;
-import su.nightexpress.excellentcrates.command.CommandFlags;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
@@ -32,8 +30,14 @@ import java.util.function.Function;
 
 public class BaseCommands {
 
-    public static void load(@NotNull CratesPlugin plugin, @NotNull HubNodeBuilder root) {
-        root.branch(Commands.literal("reload")
+    private final CratesPlugin plugin;
+
+    public BaseCommands(@NotNull CratesPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public void load(@NotNull HubNodeBuilder nodeBuilder) {
+        nodeBuilder.branch(Commands.literal("reload")
             .description(CoreLang.COMMAND_RELOAD_DESC)
             .permission(Perms.COMMAND_RELOAD)
             .executes((context, arguments) -> {
@@ -42,7 +46,7 @@ public class BaseCommands {
             })
         );
 
-        root.branch(Commands.hub("key")
+        nodeBuilder.branch(Commands.hub("key")
             .description(Lang.COMMAND_KEY_DESC)
             .permission(Perms.COMMAND_KEY)
             .branch(Commands.literal("drop")
@@ -55,13 +59,13 @@ public class BaseCommands {
                     Arguments.decimal(CommandArguments.Z).localized(Lang.COMMAND_ARGUMENT_NAME_Z).suggestions((reader, context) -> getCoords(context, Location::getBlockZ)),
                     Arguments.world(CommandArguments.WORLD)
                 )
-                .executes((context, arguments) -> dropKey(plugin, context, arguments))
+                .executes(this::dropKey)
             )
             .branch(Commands.literal("inspect")
                 .description(Lang.COMMAND_KEY_INSPECT_DESC)
                 .permission(Perms.COMMAND_KEY_INSPECT)
                 .withArguments(Arguments.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_KEY_INSPECT_OTHERS).optional())
-                .executes((context, arguments) -> inspectKeys(plugin, context, arguments))
+                .executes(this::inspectKeys)
             )
             .branch(Commands.literal("giveall")
                 .description(Lang.COMMAND_KEY_GIVE_ALL_DESC)
@@ -71,26 +75,26 @@ public class BaseCommands {
                     Arguments.integer(CommandArguments.AMOUNT, 1).localized(CoreLang.COMMAND_ARGUMENT_NAME_AMOUNT).suggestions((reader, context) -> Lists.newList("1", "5", "10")).optional()
                 )
                 .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK)
-                .executes((context, arguments) -> giveKeyAll(plugin, context, arguments))
+                .executes(this::giveKeyAll)
             )
-            .branch(Commands.literal("give", builder -> buildKeyManage(plugin, builder)
+            .branch(Commands.literal("give", builder -> this.buildKeyManage(builder)
                 .description(Lang.COMMAND_KEY_GIVE_DESC)
                 .permission(Perms.COMMAND_KEY_GIVE)
-                .executes((context, arguments) -> giveKey(plugin, context, arguments))
+                .executes(this::giveKey)
             ))
-            .branch(Commands.literal("set", builder -> buildKeyManage(plugin, builder)
+            .branch(Commands.literal("set", builder -> this.buildKeyManage(builder)
                 .description(Lang.COMMAND_KEY_SET_DESC)
                 .permission(Perms.COMMAND_KEY_SET)
-                .executes((context, arguments) -> setKey(plugin, context, arguments))
+                .executes(this::setKey)
             ))
-            .branch(Commands.literal("take", builder -> buildKeyManage(plugin, builder)
+            .branch(Commands.literal("take", builder -> this.buildKeyManage(builder)
                 .description(Lang.COMMAND_KEY_TAKE_DESC)
                 .permission(Perms.COMMAND_KEY_TAKE)
-                .executes((context, arguments) -> takeKey(plugin, context, arguments))
+                .executes(this::takeKey)
             ))
         );
 
-        root.branch(Commands.literal("drop")
+        nodeBuilder.branch(Commands.literal("drop")
             .description(Lang.COMMAND_DROP_DESC)
             .permission(Perms.COMMAND_DROP)
             .withArguments(
@@ -100,17 +104,17 @@ public class BaseCommands {
                 Arguments.decimal(CommandArguments.Z).localized(Lang.COMMAND_ARGUMENT_NAME_Z).suggestions((reader, context) -> getCoords(context, Location::getBlockZ)),
                 Arguments.world(CommandArguments.WORLD)
             )
-            .executes((context, arguments) -> dropCrate(plugin, context, arguments))
+            .executes(this::dropCrate)
         );
 
-        root.branch(Commands.literal("editor")
+        nodeBuilder.branch(Commands.literal("editor")
             .description(Lang.COMMAND_EDITOR_DESC)
             .permission(Perms.COMMAND_EDITOR)
             .playerOnly()
-            .executes((context, arguments) -> openEditor(plugin, context))
+            .executes((context, arguments) -> this.openEditor(context))
         );
 
-        root.branch(Commands.literal("give")
+        nodeBuilder.branch(Commands.literal("give")
             .description(Lang.COMMAND_GIVE_DESC)
             .permission(Perms.COMMAND_GIVE)
             .withArguments(
@@ -119,51 +123,51 @@ public class BaseCommands {
                 Arguments.integer(CommandArguments.AMOUNT, 1).localized(CoreLang.COMMAND_ARGUMENT_NAME_AMOUNT).suggestions((reader, context) -> Lists.newList("1", "5", "10")).optional()
             )
             .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK)
-            .executes((context, arguments) -> giveCrate(plugin, context, arguments))
+            .executes(this::giveCrate)
         );
 
-        root.branch(Commands.literal("open")
+        nodeBuilder.branch(Commands.literal("open")
             .description(Lang.COMMAND_OPEN_DESC)
             .permission(Perms.COMMAND_OPEN)
             .playerOnly()
             .withArguments(CommandArguments.forCrate(plugin))
-            .executes((context, arguments) -> openCrate(plugin, context, arguments))
+            .executes(this::openCrate)
         );
 
-        root.branch(Commands.literal("openfor")
+        nodeBuilder.branch(Commands.literal("openfor")
             .description(Lang.COMMAND_OPEN_FOR_DESC)
             .permission(Perms.COMMAND_OPEN_FOR)
             .withArguments(
                 Arguments.player(CommandArguments.PLAYER),
                 CommandArguments.forCrate(plugin)
             )
-            .withFlags(CommandFlags.SILENT, CommandFlags.FORCE)
-            .executes((context, arguments) -> openCrateFor(plugin, context, arguments))
+            .withFlags(CommandFlags.SILENT, CommandFlags.FORCE, CommandFlags.MASS)
+            .executes(this::openCrateFor)
         );
 
-        root.branch(Commands.literal("preview")
+        nodeBuilder.branch(Commands.literal("preview")
             .description(Lang.COMMAND_PREVIEW_DESC)
             .permission(Perms.COMMAND_PREVIEW)
             .withArguments(
                 CommandArguments.forCrate(plugin),
                 Arguments.playerName(CommandArguments.PLAYER).permission(Perms.COMMAND_PREVIEW_OTHERS).optional()
             )
-            .executes((context, arguments) -> previewCrate(plugin, context, arguments))
+            .executes(this::previewCrate)
         );
 
-        root.branch(Commands.literal("resetcooldown")
+        nodeBuilder.branch(Commands.literal("resetcooldown")
             .description(Lang.COMMAND_RESET_COOLDOWN_DESC)
             .permission(Perms.COMMAND_RESETCOOLDOWN)
             .withArguments(
                 Arguments.playerName(CommandArguments.PLAYER),
                 CommandArguments.forCrate(plugin)
             )
-            .executes((context, arguments) -> resetCrateCooldown(plugin, context, arguments))
+            .executes(this::resetCrateCooldown)
         );
     }
 
     @NotNull
-    private static List<String> getCoords(@NotNull CommandContext context, @NotNull Function<Location, Integer> function) {
+    private List<String> getCoords(@NotNull CommandContext context, @NotNull Function<Location, Integer> function) {
         Player player = context.getPlayer();
         if (player == null) return Collections.emptyList();
 
@@ -172,7 +176,7 @@ public class BaseCommands {
     }
 
     @NotNull
-    private static LiteralNodeBuilder buildKeyManage(@NotNull CratesPlugin plugin, @NotNull LiteralNodeBuilder builder) {
+    private LiteralNodeBuilder buildKeyManage(@NotNull LiteralNodeBuilder builder) {
         return builder
             .withArguments(
                 Arguments.playerName(CommandArguments.PLAYER),
@@ -182,7 +186,7 @@ public class BaseCommands {
             .withFlags(CommandFlags.SILENT, CommandFlags.SILENT_FEEDBACK);
     }
 
-    private static boolean dropCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean dropCrate(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
 
         double x = arguments.getDouble(CommandArguments.X);
@@ -201,12 +205,12 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean openEditor(@NotNull CratesPlugin plugin, @NotNull CommandContext context) {
+    private boolean openEditor(@NotNull CommandContext context) {
         plugin.getEditorManager().openEditor(context.getPlayerOrThrow());
         return true;
     }
 
-    private static boolean giveCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean giveCrate(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         Player player = arguments.getPlayer(CommandArguments.PLAYER);
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
@@ -229,14 +233,14 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean openCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean openCrate(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
         Player player = context.getPlayerOrThrow();
         plugin.getCrateManager().preOpenCrate(player, new CrateSource(crate));
         return true;
     }
 
-    private static boolean openCrateFor(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean openCrateFor(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         Player player = arguments.getPlayer(CommandArguments.PLAYER);
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
 
@@ -251,19 +255,22 @@ public class BaseCommands {
         }
 
         boolean force = context.hasFlag(CommandFlags.FORCE);
+        boolean mass = context.hasFlag(CommandFlags.MASS);
         CrateSource source = new CrateSource(crate);
 
-        if (!force) {
-            Cost cost = crate.getCosts().stream().filter(c -> c.isAvailable() && c.canAfford(player)).findAny().or(crate::getFirstCost).orElse(null);
-            plugin.getCrateManager().openCrate(player, source, OpenOptions.empty(), cost);
+        Cost cost = force ? null : crate.getAnyCost(player).orElse(null);
+        OpenOptions options = force ? OpenOptions.ignoreRestrictions() : OpenOptions.empty();
+
+        if (mass) {
+            plugin.getCrateManager().multiOpenCrate(player, source, options, cost, cost == null ? 1 : cost.countMaxOpenings(player));
         }
         else {
-            plugin.getCrateManager().openCrate(player, source, OpenOptions.ignoreRestrictions(), null);
+            plugin.getCrateManager().openCrate(player, source, options, cost);
         }
         return true;
     }
 
-    private static boolean previewCrate(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean previewCrate(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
         Player player = plugin.getServer().getPlayer(arguments.getString(CommandArguments.PLAYER, context.getSender().getName()));
         if (player == null) {
@@ -282,7 +289,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean resetCrateCooldown(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean resetCrateCooldown(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER), user -> {
             if (user == null) {
                 context.errorBadPlayer();
@@ -303,7 +310,7 @@ public class BaseCommands {
 
 
 
-    private static boolean dropKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean dropKey(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
         double x = arguments.getDouble(CommandArguments.X);
@@ -322,7 +329,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean giveKeyAll(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean giveKeyAll(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
@@ -351,7 +358,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean inspectKeys(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean inspectKeys(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         plugin.getUserManager().manageUser(arguments.getString(CommandArguments.PLAYER, context.getSender().getName()), user -> {
             if (user == null) {
                 context.errorBadPlayer();
@@ -374,7 +381,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean giveKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean giveKey(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
@@ -407,7 +414,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean setKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean setKey(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
@@ -440,7 +447,7 @@ public class BaseCommands {
         return true;
     }
 
-    private static boolean takeKey(@NotNull CratesPlugin plugin, @NotNull CommandContext context, @NotNull ParsedArguments arguments) {
+    private boolean takeKey(@NotNull CommandContext context, @NotNull ParsedArguments arguments) {
         CrateKey key = arguments.get(CommandArguments.KEY, CrateKey.class);
 
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);

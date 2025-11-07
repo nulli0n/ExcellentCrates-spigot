@@ -39,13 +39,13 @@ public class OpenOptions {
     }
 
     @NotNull
-    public OpenOptions add(@NotNull Option... options) {
+    public OpenOptions with(@NotNull Option... options) {
         this.options.addAll(Arrays.asList(options));
         return this;
     }
 
     @NotNull
-    public OpenOptions remove(@NotNull Option... options) {
+    public OpenOptions without(@NotNull Option... options) {
         Arrays.asList(options).forEach(this.options::remove);
         return this;
     }
