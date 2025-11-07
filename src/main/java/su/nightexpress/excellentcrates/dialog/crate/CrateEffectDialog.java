@@ -31,11 +31,13 @@ public class CrateEffectDialog extends CrateDialog<Crate> {
         "These effects are shown around the blocks linked to the crate."
     );
 
+    private static final TextLocale INPUT_ENABLED = LangEntry.builder("Dialog.Crate.Effect.Input.Enabled").text("Enabled");
     private static final TextLocale INPUT_MODEL = LangEntry.builder("Dialog.Crate.Effect.Input.Model").text(SOFT_YELLOW.wrap("Effect Model"));
 
     private static final ButtonLocale BUTTON_PARTICLE = LangEntry.builder("Dialog.Crate.Effect.Button.Particle").button(SOFT_YELLOW.wrap("Particle: ") + "%s");
 
     private static final String ACTION_PARTICLE = "particle";
+    private static final String JSON_ENABLED = "enabled";
     private static final String JSON_MODEL      = "model";
 
     @Override
@@ -50,7 +52,10 @@ public class CrateEffectDialog extends CrateDialog<Crate> {
         return Dialogs.create(builder -> {
             builder.base(DialogBases.builder(TITLE)
                 .body(DialogBodies.plainMessage(BODY))
-                .inputs(DialogInputs.singleOption(JSON_MODEL, INPUT_MODEL, entries).build())
+                .inputs(
+                    DialogInputs.bool(JSON_ENABLED, INPUT_ENABLED).initial(crate.isEffectEnabled()).build(),
+                    DialogInputs.singleOption(JSON_MODEL, INPUT_MODEL, entries).build()
+                )
                 .afterAction(WrappedDialogAfterAction.NONE)
                 .build()
             );
@@ -72,6 +77,7 @@ public class CrateEffectDialog extends CrateDialog<Crate> {
             builder.handleResponse(DialogActions.OK, (viewer, identifier, nbtHolder) -> {
                 if (nbtHolder == null) return;
 
+                crate.setEffectEnabled(nbtHolder.getBoolean(JSON_ENABLED, crate.isEffectEnabled()));
                 crate.setEffectType(nbtHolder.getText(JSON_MODEL, crate.getEffectType()));
                 crate.markDirty();
                 viewer.closeFully();

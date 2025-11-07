@@ -12,10 +12,9 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.hologram.entity.FakeEntity;
 import su.nightexpress.nightcore.util.Players;
-import su.nightexpress.nightcore.util.text.NightMessage;
+import su.nightexpress.nightcore.util.text.night.NightMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class HologramPacketsHandler implements HologramHandler {
+public class HologramPacketsHandler extends AbstractHologramHandler {
 
     private final PlayerManager playerManager;
 
@@ -43,10 +42,12 @@ public class HologramPacketsHandler implements HologramHandler {
     @Override
     public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
         PacketWrapper<?> dataPacket = this.createMetadataPacket(entity.getId(), dataList -> {
-            dataList.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) 1)); // billboard
-            dataList.add(new EntityData<>(23, EntityDataTypes.COMPONENT, NightMessage.asJson(textLine))); // text
-            dataList.add(new EntityData<>(24, EntityDataTypes.INT, Integer.MAX_VALUE)); // line width
-            dataList.add(new EntityData<>(27, EntityDataTypes.BYTE, (byte) 0x1)); // shadow
+            dataList.add(new EntityData<>(15, EntityDataTypes.BYTE, this.billboard));
+            dataList.add(new EntityData<>(23, EntityDataTypes.COMPONENT, NightMessage.asJson(textLine)));
+            dataList.add(new EntityData<>(24, EntityDataTypes.INT, this.lineWidth));
+            dataList.add(new EntityData<>(25, EntityDataTypes.INT, this.backgroundColor));
+            dataList.add(new EntityData<>(26, EntityDataTypes.BYTE, this.textOpacity));
+            dataList.add(new EntityData<>(27, EntityDataTypes.BYTE, this.textBitmask));
         });
 
         if (needSpawn) {

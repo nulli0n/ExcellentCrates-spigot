@@ -18,8 +18,6 @@ import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
-import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.BOLD;
-import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.GRAY;
 
 public class EcoCostType extends AbstractCostType implements LangContainer {
 
@@ -35,6 +33,7 @@ public class EcoCostType extends AbstractCostType implements LangContainer {
 
     public EcoCostType(@NotNull CratesPlugin plugin) {
         super(CostTypeId.CURRENCY);
+        plugin.injectLang(this);
     }
 
     @Override

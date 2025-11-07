@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.config;
 
+import org.bukkit.entity.Display;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.hologram.HologramTemplate;
@@ -133,6 +134,40 @@ public class Config {
         5,
         "Sets how often (in seconds) crate holograms will update."
     );
+
+    public static final ConfigValue<Display.Billboard> CRATE_HOLOGRAM_BILLBOARD = ConfigValue.create("Crate.Holograms.Billboard",
+        Display.Billboard.class, Display.Billboard.VERTICAL,
+        "Controls if crate holograms should pivot to face player when rendered.",
+        "It can be FIXED (both vertical and horizontal angles are fixed), VERTICAL (faces player around vertical axis), HORIZONTAL (pivots around horizontal axis), and CENTER (pivots around center point).",
+        "[Default is " + Display.Billboard.VERTICAL.name() + "]"
+    );
+
+    public static final ConfigValue<Integer> CRATE_HOLOGRAM_TEXT_OPACITY = ConfigValue.create("Crate.Holograms.TextOpacity",
+        -1,
+        "Alpha value of rendered text. Value ranges from 0 to 255. Values up to 3 are treated as fully opaque (255).",
+        "The text rendering is discarded for values between 4 and 26. Defaults to -1, which represents 255 and is completely opaque.",
+        "[Default is -1]"
+    );
+
+    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SEE_THROUGH = ConfigValue.create("Crate.Holograms.SeeThrough",
+        false,
+        "Whether the text be visible through blocks.",
+        "[Default is false]"
+    );
+
+    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SHADOW = ConfigValue.create("Crate.Holograms.Shadow",
+        true,
+        "Whether the text is displayed with shadow.",
+        "[Default is true]"
+    );
+
+    public static final ConfigValue<int[]> CRATE_HOLOGRAM_BACKGROUND_COLOR = ConfigValue.create("Crate.Holograms.BackgroundColor",
+        new int[]{64, 0, 0, 0},
+        "The background color, arranged by [A,R,G,B]. Where: A = Alpha (opacity), R = Red, G = Green, B = Blue.",
+        "[Default is 64,0,0,0]"
+    );
+
+
 
     public static final ConfigValue<TimeFormatType> CRATE_COOLDOWN_FORMAT_TYPE = ConfigValue.create("Crate.Cooldown_Format_Type",
         TimeFormatType.class,

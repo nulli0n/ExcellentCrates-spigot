@@ -89,6 +89,7 @@ public class Crate implements ConfigBacked {
     private String  hologramTemplateId;
     private double  hologramYOffset;
 
+    private boolean effectEnabled;
     private String      effectType;
     private UniParticle effectParticle;
 
@@ -235,6 +236,7 @@ public class Crate implements ConfigBacked {
 
         this.setEffectType(config.getString("Block.Effect.Model", EffectId.NONE));
         this.setEffectParticle(UniParticle.read(config, "Block.Effect.Particle"));
+        this.setEffectEnabled(config.getBoolean("Block.Effect.Enabled", !this.effectType.equalsIgnoreCase(EffectId.NONE)));
 
         for (String sId : config.getSection("Rewards.List")) {
             Reward reward = RewardFactory.read(this.plugin, this, sId, config, "Rewards.List." + sId);
@@ -291,6 +293,7 @@ public class Crate implements ConfigBacked {
         config.set("Block.Hologram.Enabled", this.hologramEnabled);
         config.set("Block.Hologram.Template", this.hologramTemplateId);
         config.set("Block.Hologram.Y_Offset", this.hologramYOffset);
+        config.set("Block.Effect.Enabled", this.effectEnabled);
         config.set("Block.Effect.Model", this.effectType);
         config.remove("Block.Effect.Particle");
         this.effectParticle.write(config, "Block.Effect.Particle");
@@ -423,10 +426,6 @@ public class Crate implements ConfigBacked {
 
     public boolean isHologramTemplateValid() {
         return Config.getHologramTemplate(this.hologramTemplateId) != null;
-    }
-
-    public boolean isEffectEnabled() {
-        return !this.getEffect().isDummy();
     }
 
     @NotNull
@@ -708,6 +707,11 @@ public class Crate implements ConfigBacked {
         return this.getCosts().stream().filter(Cost::isAvailable).findFirst();
     }
 
+    @NotNull
+    public Optional<Cost> getAnyCost(@NotNull Player player) {
+        return this.getCosts().stream().filter(cost -> cost.isAvailable() && cost.canAfford(player)).findAny().or(this::getFirstCost);
+    }
+
     public boolean hasCost() {
         return !this.costMap.isEmpty() && this.getCosts().stream().anyMatch(Cost::isAvailable);
     }
@@ -752,6 +756,14 @@ public class Crate implements ConfigBacked {
 
     public void setHologramYOffset(double hologramYOffset) {
         this.hologramYOffset = hologramYOffset;
+    }
+
+    public boolean isEffectEnabled() {
+        return this.effectEnabled;
+    }
+
+    public void setEffectEnabled(boolean effectEnabled) {
+        this.effectEnabled = effectEnabled;
     }
 
     @NotNull
