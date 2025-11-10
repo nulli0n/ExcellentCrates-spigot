@@ -173,7 +173,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     private void loadCrates() {
-        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, true)) {
+        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false)) {
             String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
 
             Crate crate = new Crate(plugin, file.toPath(), id);
