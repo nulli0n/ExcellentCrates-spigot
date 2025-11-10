@@ -49,8 +49,6 @@ public class Config {
         "Sets whether or not all crate openings & reward wins will be logged to a file."
     );
 
-
-
     public static final ConfigValue<Boolean> DATA_REWARD_LIMITS_SYNC_ENABLED = ConfigValue.create("Data.Rewards.Limits.Synchronize",
         true,
         "When enabled, synchronizes reward limits datas (both, global and player ones) in addition to player data sync.",
@@ -83,17 +81,14 @@ public class Config {
         "[*] You can increase this value to improve performance if you don't sync/share crate data across multiple servers."
     );
 
-
     public static final ConfigValue<Boolean> FEATURE_MASS_OPENING = ConfigValue.create("Features.MassOpening",
         true,
         "Whether Mass Opening feature is enabled."
     );
 
-
     public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
         true,
         "Controls whether Milestones feature is enabled.");
-
 
     public static final ConfigValue<Integer> CRATE_SAVE_INTERVAL = ConfigValue.create("Crate.SaveInterval",
         300,
@@ -166,8 +161,6 @@ public class Config {
         "The background color, arranged by [A,R,G,B]. Where: A = Alpha (opacity), R = Red, G = Green, B = Blue.",
         "[Default is 64,0,0,0]"
     );
-
-
 
     public static final ConfigValue<TimeFormatType> CRATE_COOLDOWN_FORMAT_TYPE = ConfigValue.create("Crate.Cooldown_Format_Type",
         TimeFormatType.class,

@@ -65,6 +65,7 @@
             <groupId>su.nightexpress.nightcore</groupId>
             <artifactId>main</artifactId>
             <version>2.10.0</version>
+            <classifier>shaded</classifier>
             <scope>provided</scope>
         </dependency>
 
@@ -88,21 +89,21 @@
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory> <!-- (your resources folder location) -->
-                <filtering>true
-                </filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+                <filtering>true</filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
