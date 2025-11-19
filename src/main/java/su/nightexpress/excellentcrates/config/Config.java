@@ -221,6 +221,11 @@ public class Config {
         "By default it uses Left Click to preview crates, and Right Click to open them."
     );
 
+    public static final ConfigValue<Boolean> KEY_NOTIFY_ON_INVENTORY_FULL = ConfigValue.create("Key.Notify_On_Inventory_Full",
+        true,
+        "Controls whether players receive a title notification when a physical key is dropped due to full inventory."
+    );
+
     public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
         true,
         "Controls whether the Holograms feature is available.",
