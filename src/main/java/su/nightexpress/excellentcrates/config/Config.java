@@ -176,6 +176,11 @@ public class Config {
         "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
     );
 
+    public static final ConfigValue<Boolean> OPENING_CONFIRM_ENABLED = ConfigValue.create("Crate.Opening.Confirmation.Enabled",
+        true,
+        "Controls whether the Costs GUI is enabled. When disabled, cost is chosen automatically."
+    );
+
     public static final ConfigValue<Boolean> OPENING_CONFIRM_FOR_SINGLE_COST = ConfigValue.create("Crate.Opening.Confirmation.ForSingleCost",
         false,
         "Controls whether the Costs GUI will appear even if there is only cost option available."
