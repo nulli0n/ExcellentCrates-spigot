@@ -172,8 +172,8 @@ public class CrateParticleDialog extends CrateDialog<Crate> {
             case EXPLOSION -> "explosion_10";
             case HAPPY_VILLAGER -> "glint";
             case GUST -> "gust_8";
-            case HEART, INFESTED, ENCHANTED_HIT, FIREFLY, FLASH, GLOW, BUBBLE, LAVA,
-                 NAUTILUS, NOTE, RAID_OMEN, SHRIEK, SOUL_FIRE_FLAME, TRIAL_OMEN, VAULT_CONNECTION -> value;
+            case HEART, ENCHANTED_HIT, GLOW, BUBBLE, LAVA,
+                 NAUTILUS, NOTE, SHRIEK, SOUL_FIRE_FLAME, VAULT_CONNECTION -> value;
             case TINTED_LEAVES -> "leaf_0";
             case PALE_OAK_LEAVES -> "pale_oak_0";
             case SCULK_CHARGE -> "sculk_charge_3";
@@ -219,8 +219,8 @@ public class CrateParticleDialog extends CrateDialog<Crate> {
             inputs.addAll(this.getColorButtons());
             dataParser = nbtHolder -> {
                 Color color = parseColor(nbtHolder);
-                float power = nbtHolder.getFloat(JSON_EXTRA, DEF_POWER);
-                return new Particle.Spell(color, power);
+                // Particle.Spell was removed in newer versions - use color-based fallback
+                return new Particle.DustOptions(color, 1.0f);
             };
         }
         else if (type == ItemStack.class) {

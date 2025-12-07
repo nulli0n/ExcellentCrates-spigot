@@ -121,7 +121,8 @@ public class PlaceholderHook {
         @Override
         @NotNull
         public String getAuthor() {
-            return this.plugin.getDescription().getAuthors().getFirst();
+            List<String> authors = this.plugin.getDescription().getAuthors();
+            return authors.isEmpty() ? "Unknown" : authors.get(0);
         }
 
         @Override

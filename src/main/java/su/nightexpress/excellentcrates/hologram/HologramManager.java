@@ -153,7 +153,9 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         FakeDisplay display = this.getDisplay(crate);
         if (display == null) return;
 
-        List<String> text = Replacer.create().replace(crate.replacePlaceholders()).apply(crate.getHologramText().reversed());
+        List<String> hologramText = new ArrayList<>(crate.getHologramText());
+        Collections.reverse(hologramText);
+        List<String> text = Replacer.create().replace(crate.replacePlaceholders()).apply(hologramText);
         if (text.isEmpty()) return;
 
         for (FakeEntityGroup group : display.getGroups()) {

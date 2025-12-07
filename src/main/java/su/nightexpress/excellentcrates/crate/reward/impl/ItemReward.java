@@ -172,7 +172,7 @@ public class ItemReward extends AbstractReward {
             return super.getPreview();
         }
 
-        return this.items.getFirst();
+        return this.items.get(0);
     }
 
     @NotNull
