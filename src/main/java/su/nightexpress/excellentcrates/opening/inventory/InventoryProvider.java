@@ -20,6 +20,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.util.BukkitThing;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
+import su.nightexpress.nightcore.util.placeholder.Replacer;
 import su.nightexpress.nightcore.util.text.NightMessage;
 
 import java.util.HashMap;
@@ -128,7 +129,10 @@ public class InventoryProvider extends AbstractProvider {
     @Override
     @NotNull
     public InventoryOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
-        InventoryView view = this.invType.typed().create(player, NightMessage.asLegacy(source.getCrate().replacePlaceholders().apply(this.invTitle)));
+        InventoryView view = this.invType.typed().create(player, NightMessage.asLegacy(Replacer.create()
+                .replace(source.getCrate().replacePlaceholders())
+                .replacePlaceholderAPI(player)
+                .apply(this.invTitle)));
 
         return new InventoryOpening(this.plugin, this, view, player, source, cost);
     }

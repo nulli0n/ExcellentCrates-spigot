@@ -13,6 +13,7 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.AbstractSpinner
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinMode;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
 import su.nightexpress.nightcore.util.Lists;
+import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.random.Rnd;
 
 import java.util.HashMap;
@@ -78,7 +79,12 @@ public class RewardSpinner extends AbstractSpinner {
         Reward reward = this.shouldUsePredictedReward(slot) ? this.opening.getRewards().get(this.rewardIndex++) : this.rollReward(true);
         if (reward == null) return new ItemStack(Material.AIR);
 
-        return reward.getPreviewItem();
+        return NightItem.fromItemStack(reward.getPreviewItem())
+                .replacement(replacer -> replacer
+                        .replace(reward.replacePlaceholders())
+                        .replace(reward.getCrate().replacePlaceholders())
+                        .replacePlaceholderAPI(this.opening.getPlayer())
+                ).getItemStack();
     }
 
     private boolean shouldUsePredictedReward(int slot) {
