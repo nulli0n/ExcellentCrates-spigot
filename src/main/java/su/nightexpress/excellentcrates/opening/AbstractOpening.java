@@ -140,6 +140,7 @@ public abstract class AbstractOpening implements Opening {
                     .map(reward -> reward.replacePlaceholders().apply(Lang.CRATE_OPEN_RESULT_REWARD.text()))
                     .collect(Collectors.joining(", "))
                 )
+                .replacePlaceholderAPI(this.player)
             );
 
             this.plugin.getUserManager().save(user);
