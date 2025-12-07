@@ -174,7 +174,9 @@ public class CrateParticleDialog extends CrateDialog<Crate> {
             case GUST -> "gust_8";
             case HEART, ENCHANTED_HIT, GLOW, BUBBLE, LAVA,
                  NAUTILUS, NOTE, SHRIEK, SOUL_FIRE_FLAME, VAULT_CONNECTION -> value;
-            case TINTED_LEAVES -> "leaf_0";
+            // TINTED_LEAVES added in 1.21.5, not available in 1.21.4
+            // case TINTED_LEAVES -> "leaf_0";
+            // PALE_OAK_LEAVES added in 1.21.2, available in 1.21.4
             case PALE_OAK_LEAVES -> "pale_oak_0";
             case SCULK_CHARGE -> "sculk_charge_3";
             case SCULK_CHARGE_POP -> "sculk_charge_pop_0";
