@@ -54,7 +54,7 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
     private NightItem pointerInc;
 
     public MilestonesMenu(@NotNull CratesPlugin plugin) {
-        super(plugin, MenuType.GENERIC_9X3, BLACK.enclose("Crate Milestones"));
+        super(plugin, MenuType.GENERIC_9X3, BLACK.wrap("Crate Milestones"));
         this.load(FileConfig.loadOrExtract(plugin, Config.FILE_MILESTONES));
     }
 
@@ -114,7 +114,7 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
                 .copy()
                 .setDisplayName(name)
                 .setLore(lore)
-                .setHideComponents(true)
+                .hideAllComponents()
                 .replacement(replacer -> replacer
                     .replace(crate.replacePlaceholders())
                     .replace(reward.replacePlaceholders())
@@ -139,26 +139,26 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
         this.mileCompName = ConfigValue.create("Milestones.Completed.Name",
-            LIGHT_GREEN.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Completed") + ")")
+            LIGHT_GREEN.wrap(BOLD.wrap(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.wrap("(" + WHITE.wrap("Completed") + ")")
         ).read(config);
 
         this.mileCompLore = ConfigValue.create("Milestones.Completed.Lore", Lists.newList(
-            LIGHT_GREEN.enclose(BOLD.enclose("Info:")),
-            LIGHT_GREEN.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
+            LIGHT_GREEN.wrap(BOLD.wrap("Info:")),
+            LIGHT_GREEN.wrap("▪ " + LIGHT_GRAY.wrap("Reward: ") + REWARD_NAME),
             "",
-            LIGHT_GREEN.enclose("✔") + " " + LIGHT_GRAY.enclose("You have completed this milestone.")
+            LIGHT_GREEN.wrap("✔") + " " + LIGHT_GRAY.wrap("You have completed this milestone.")
         )).read(config);
 
         this.mileIncName = ConfigValue.create("Milestones.Incompleted.Name",
-            LIGHT_YELLOW.enclose(BOLD.enclose(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.enclose("(" + WHITE.enclose("Incompleted") + ")")
+            LIGHT_YELLOW.wrap(BOLD.wrap(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.wrap("(" + WHITE.wrap("Incompleted") + ")")
         ).read(config);
 
         this.mileIncLore = ConfigValue.create("Milestones.Incompleted.Lore", Lists.newList(
-            LIGHT_YELLOW.enclose(BOLD.enclose("Info:")),
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Openings Left: ") + PLACEHOLDER_OPENINGS_LEFT),
-            LIGHT_YELLOW.enclose("▪ " + LIGHT_GRAY.enclose("Reward: ") + REWARD_NAME),
+            LIGHT_YELLOW.wrap(BOLD.wrap("Info:")),
+            LIGHT_YELLOW.wrap("▪ " + LIGHT_GRAY.wrap("Openings Left: ") + PLACEHOLDER_OPENINGS_LEFT),
+            LIGHT_YELLOW.wrap("▪ " + LIGHT_GRAY.wrap("Reward: ") + REWARD_NAME),
             "",
-            LIGHT_RED.enclose("✘") + " " + LIGHT_GRAY.enclose("You haven''t completed this milestone yet.")
+            LIGHT_RED.wrap("✘") + " " + LIGHT_GRAY.wrap("You haven''t completed this milestone yet.")
         )).read(config);
 
         this.mileSlots = ConfigValue.create("Milestones.Slots", new int[]{10,12,14,16}).read(config);

@@ -3,12 +3,13 @@ package su.nightexpress.excellentcrates.api.crate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.api.item.ItemProvider;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
+import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.config.Writeable;
+import su.nightexpress.nightcore.util.problem.ProblemReporter;
 
 import java.util.List;
 import java.util.Set;
@@ -16,15 +17,13 @@ import java.util.function.UnaryOperator;
 
 public interface Reward extends Writeable {
 
-    void save();
-
     @NotNull UnaryOperator<String> replacePlaceholders();
-
-    @NotNull UnaryOperator<String> replaceAllPlaceholders();
 
     void load(@NotNull FileConfig config, @NotNull String path);
 
     @NotNull RewardType getType();
+
+    @NotNull ProblemReporter collectProblems();
 
     boolean hasProblems();
 
@@ -32,9 +31,7 @@ public interface Reward extends Writeable {
 
     int getAvailableRolls(@NotNull Player player);
 
-    boolean hasGlobalLimit();
-
-    boolean hasPersonalLimit();
+    boolean isOnCooldown(@NotNull Player player);
 
     boolean isRollable();
 
@@ -58,11 +55,7 @@ public interface Reward extends Writeable {
 
     @NotNull String getName();
 
-    @NotNull String getNameTranslated();
-
     @NotNull List<String> getDescription();
-
-    @NotNull List<String> getDescriptionTranslated();
 
     double getWeight();
 
@@ -76,27 +69,15 @@ public interface Reward extends Writeable {
 
     void setBroadcast(boolean broadcast);
 
-    void setPlaceholderApply(boolean placeholderApply);
+    @NotNull LimitValues getLimits();
 
-    boolean isPlaceholderApply();
-
-    boolean isOneTimed();
-
-    //@NotNull LimitValues getLimitValues(@NotNull LimitType limitType);
-
-    @NotNull LimitValues getPlayerLimits();
-
-    void setPlayerLimits(@NotNull LimitValues playerLimits);
-
-    @NotNull LimitValues getGlobalLimits();
-
-    void setGlobalLimits(@NotNull LimitValues globalLimits);
+    void setLimits(@NotNull LimitValues limitValues);
 
     @NotNull ItemStack getPreviewItem();
 
-    @NotNull ItemProvider getPreview();
+    @NotNull AdaptedItem getPreview();
 
-    void setPreview(@NotNull ItemProvider preview);
+    void setPreview(@NotNull AdaptedItem preview);
 
     @NotNull Set<String> getIgnoredPermissions();
 

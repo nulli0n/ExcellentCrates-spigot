@@ -4,69 +4,57 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
-import su.nightexpress.excellentcrates.opening.world.WorldOpeningProvider;
+import su.nightexpress.excellentcrates.opening.AbstractProvider;
 import su.nightexpress.excellentcrates.opening.world.impl.SimpleRollOpening;
+import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 
-import java.io.File;
+public class SimpleRollProvider extends AbstractProvider {
 
-public class SimpleRollProvider extends WorldOpeningProvider {
+    private int  spinsRequired = 15;
+    private long spinInterval = 3;
+    private long finishDelay  = 40;
 
-    public static final String ID = "simple_roll";
+    public SimpleRollProvider(@NotNull CratesPlugin plugin, @NotNull String id) {
+        super(plugin, id);
+    }
 
-    private int stepsAmount;
-    private long stepsTick;
-    private long completePause;
-
-    public SimpleRollProvider(@NotNull CratesPlugin plugin, @NotNull File file) {
-        super(plugin, file);
+    @Override
+    public void load(@NotNull FileConfig config) {
+        this.spinsRequired = ConfigValue.create("Settings.Steps_Amount", this.spinsRequired).read(config);
+        this.spinInterval = ConfigValue.create("Settings.Steps_Tick", this.spinInterval).read(config);
+        this.finishDelay = ConfigValue.create("Settings.Complete_Pause", this.finishDelay).read(config);
     }
 
     @Override
     @NotNull
-    public SimpleRollOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
-        return new SimpleRollOpening(this.plugin, player, source, key, this.getStepsAmount(), this.getStepsTick(), this.getCompletePause());
+    public SimpleRollOpening createOpening(@NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
+        return new SimpleRollOpening(this.plugin, player, source, cost, this.spinsRequired, this.spinInterval, this.finishDelay);
     }
 
-    @Override
-    protected boolean readAdditional(@NotNull FileConfig config) {
-        this.setStepsAmount(config.getInt("Settings.Steps_Amount"));
-        this.setStepsTick(config.getLong("Settings.Steps_Tick"));
-        this.setCompletePause(config.getLong("Settings.Complete_Pause"));
-
-        return true;
+    public int getSpinsRequired() {
+        return this.spinsRequired;
     }
 
-    @Override
-    protected void writeAdditional(@NotNull FileConfig config) {
-        config.set("Settings.Steps_Amount", this.stepsAmount);
-        config.set("Settings.Steps_Tick", this.stepsTick);
-        config.set("Settings.Complete_Pause", this.completePause);
+    public void setSpinsRequired(int spinsRequired) {
+        this.spinsRequired = Math.max(1, spinsRequired);
     }
 
-    public int getStepsAmount() {
-        return this.stepsAmount;
+    public long getSpinInterval() {
+        return this.spinInterval;
     }
 
-    public void setStepsAmount(int stepsAmount) {
-        this.stepsAmount = Math.max(1, stepsAmount);
+    public void setSpinInterval(long spinInterval) {
+        this.spinInterval = Math.max(1, spinInterval);
     }
 
-    public long getStepsTick() {
-        return this.stepsTick;
+    public long getFinishDelay() {
+        return this.finishDelay;
     }
 
-    public void setStepsTick(long stepsTick) {
-        this.stepsTick = Math.max(1, stepsTick);
-    }
-
-    public long getCompletePause() {
-        return this.completePause;
-    }
-
-    public void setCompletePause(long completePause) {
-        this.completePause = Math.max(0, completePause);
+    public void setFinishDelay(long finishDelay) {
+        this.finishDelay = Math.max(0, finishDelay);
     }
 }

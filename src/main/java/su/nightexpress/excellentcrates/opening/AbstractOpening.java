@@ -4,14 +4,22 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.Placeholders;
+import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.opening.Opening;
+import su.nightexpress.excellentcrates.config.Lang;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.user.CrateUser;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.util.Players;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractOpening implements Opening {
 
@@ -19,24 +27,26 @@ public abstract class AbstractOpening implements Opening {
     protected final Player       player;
     protected final CrateSource  source;
     protected final Crate        crate;
-    protected final CrateKey     key;
+    protected final Cost         cost;
+    protected final List<Reward> rewards;
 
     protected long    tickCount;
     protected boolean running;
     protected boolean refundable;
 
-    public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
+    public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
         this.plugin = plugin;
         this.player = player;
         this.source = source;
         this.crate = source.getCrate();
-        this.key = key;
+        this.cost = cost;
+        this.rewards = new ArrayList<>();
         this.setRefundable(true);
     }
 
     @Override
-    public void run() {
-        if (this.isRunning()) return;
+    public void start() {
+        if (this.running) return;
 
         this.running = true;
         this.onStart();
@@ -44,7 +54,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void stop() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         this.running = false;
         this.onStop();
@@ -52,7 +62,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void tick() {
-        if (!this.isRunning()) return;
+        if (!this.running) return;
 
         if (this.isCompleted()) {
             this.stop();
@@ -61,14 +71,13 @@ public abstract class AbstractOpening implements Opening {
 
         if (this.isTickTime()) {
             this.onTick();
-            //this.tickCount = 0L;
         }
 
         this.tickCount = Math.max(0L, this.tickCount + 1L);
     }
 
     @Override
-    public boolean isRunning() {
+    public final boolean isRunning() {
         return this.running;
     }
 
@@ -90,15 +99,15 @@ public abstract class AbstractOpening implements Opening {
 
     protected void onStop() {
         if (this.isRefundable()) {
-            if (this.key != null) {
-                this.plugin.getKeyManager().giveKey(this.player, this.key, 1);
+            if (this.cost != null) {
+                this.cost.refundAll(this.player);
             }
             if (this.source.getItem() != null) {
-                Players.addItem(this.player, this.crate.getItem());
+                Players.addItem(this.player, this.crate.getItemStack());
             }
-
-            this.crate.refundForOpen(this.player);
         }
+
+        this.plugin.getOpeningManager().removeOpening(this.getPlayer());
 
         if (this.isCompleted()) {
             this.onComplete();
@@ -111,8 +120,10 @@ public abstract class AbstractOpening implements Opening {
             globalData.setLatestOpener(this.player);
             globalData.setSaveRequired(true);
 
-            if (crate.hasOpenCooldown() && !crate.hasCooldownBypassPermission(player)) {
-                userData.setCooldown(crate.getOpenCooldown());
+            this.rewards.forEach(reward -> reward.give(this.player));
+
+            if (crate.isOpeningCooldownEnabled() && !crate.hasCooldownBypassPermission(player)) {
+                userData.setCooldown(crate.getOpeningCooldownTime());
             }
 
             if (crate.hasMilestones()) {
@@ -123,15 +134,37 @@ public abstract class AbstractOpening implements Opening {
                 }
             }
 
+            Lang.CRATE_OPEN_RESULT_INFO.message().send(this.player, replacer -> replacer
+                .replace(this.crate.replacePlaceholders())
+                .replace(Placeholders.GENERIC_REWARDS, this.rewards.stream()
+                    .map(reward -> reward.replacePlaceholders().apply(Lang.CRATE_OPEN_RESULT_REWARD.text()))
+                    .collect(Collectors.joining(", "))
+                )
+            );
+
             this.plugin.getUserManager().save(user);
         }
+    }
 
-        this.plugin.getOpeningManager().removeOpening(this.getPlayer());
+    @Override
+    @NotNull
+    public List<Reward> getRewards() {
+        return this.rewards;
+    }
+
+    @Override
+    public void addReward(@NotNull Reward reward) {
+        this.rewards.add(reward);
+    }
+
+    @Override
+    public void addRewards(@NotNull Collection<Reward> rewards) {
+        this.rewards.addAll(rewards);
     }
 
     @Override
     public boolean isRefundable() {
-        return refundable;
+        return this.refundable;
     }
 
     @Override
@@ -159,7 +192,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     @Nullable
-    public CrateKey getKey() {
-        return this.key;
+    public Cost getCost() {
+        return this.cost;
     }
 }

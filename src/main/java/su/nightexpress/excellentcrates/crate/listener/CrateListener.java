@@ -23,7 +23,6 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
 import su.nightexpress.nightcore.manager.AbstractListener;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
@@ -57,15 +56,18 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         Action action = event.getAction();
-        Block block = null;
+        Block block = event.getClickedBlock();
         Crate crate = null;
 
         if (item != null && !item.getType().isAir()) {
+            if (block != null) {
+                if (this.manager.handleLinkToolInteraction(player, block, item, event)) return;
+            }
+
             crate = this.manager.getCrateByItem(item);
         }
         if (crate == null) {
             item = null;
-            block = event.getClickedBlock();
             if (block == null) return;
 
             crate = this.manager.getCrateByBlock(block);
@@ -83,9 +85,12 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
 
         if (event.getHand() != EquipmentSlot.HAND) return;
 
-        ClickType clickType = ClickType.from(action, player.isSneaking());
-        InteractType clickAction = Config.getCrateClickAction(clickType);
+        boolean isLeftClick = action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK;
+        boolean isRightClick = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
+
+        InteractType clickAction = isLeftClick ? InteractType.CRATE_PREVIEW : (isRightClick ? InteractType.CRATE_OPEN : null);
         if (clickAction == null) return;
+        if (Config.CRATE_REVERSE_CLICK_ACTIONS.get()) clickAction = clickAction.reversed();
 
         // Uh, adventure gamemode triggers LEFT_CLICK interaction on interactable blocks together with RIGHT_CLICK interaction.
         if (player.getGameMode() == GameMode.ADVENTURE && block != null && block.getType().isInteractable()) {
@@ -100,7 +105,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         // We don't need cooldown check & apply when previewing crates from GUIs or commands. Only for world interaction.
         if (clickAction == InteractType.CRATE_PREVIEW && crate.isPreviewEnabled()) {
             if (this.manager.hasPreviewCooldown(player)) {
-                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.getMessage().send(player, replacer -> replacer
+                Lang.CRATE_PREVIEW_ERROR_COOLDOWN.message().send(player, replacer -> replacer
                     .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(this.manager.getPreviewCooldown(player), TimeFormatType.LITERAL))
                 );
                 return;

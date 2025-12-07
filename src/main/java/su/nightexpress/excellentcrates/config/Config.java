@@ -1,31 +1,35 @@
 package su.nightexpress.excellentcrates.config;
 
+import org.bukkit.entity.Display;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.hologram.HologramTemplate;
-import su.nightexpress.excellentcrates.util.ClickType;
-import su.nightexpress.excellentcrates.util.InteractType;
+import su.nightexpress.excellentcrates.hooks.HookId;
+import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.util.Enums;
 import su.nightexpress.nightcore.util.Plugins;
-import su.nightexpress.nightcore.util.StringUtil;
+import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static su.nightexpress.excellentcrates.Placeholders.WIKI_PLACEHOLDERS;
-import static su.nightexpress.nightcore.util.text.tag.Tags.LIGHT_GREEN;
 
 public class Config {
 
-    public static final String DIR_CRATES         = "/crates/";
-    public static final String DIR_PREVIEWS       = "/previews/";
-    public static final String DIR_KEYS           = "/keys/";
-    public static final String DIR_MENUS          = "/menu/";
-    public static final String DIR_OPENINGS_GUI   = "/openings/inventory/";
-    public static final String DIR_OPENINGS_WORLD = "/openings/world/";
+    public static final String DIR_CRATES   = "/crates/";
+    public static final String DIR_PREVIEWS = "/previews/";
+    public static final String DIR_KEYS     = "/keys/";
+    public static final String DIR_MENUS    = "/menu/";
+    public static final String DIR_UI       = "/ui/";
+
+    public static final String DIR_OPENINGS             = "/openings/";
+    public static final String DIR_OPENINGS_INVENTORY   = DIR_OPENINGS + "inventory/";
+    public static final String DIR_OPENINGS_SELECTABLE  = DIR_OPENINGS + "selectable/";
+    public static final String DIR_OPENINGS_SIMPLE_ROLL = DIR_OPENINGS + "simple_roll/";
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
@@ -80,10 +84,27 @@ public class Config {
     );
 
 
+    public static final ConfigValue<Boolean> FEATURE_MASS_OPENING = ConfigValue.create("Features.MassOpening",
+        true,
+        "Whether Mass Opening feature is enabled."
+    );
+
 
     public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
         true,
         "Controls whether Milestones feature is enabled.");
+
+
+    public static final ConfigValue<Integer> CRATE_SAVE_INTERVAL = ConfigValue.create("Crate.SaveInterval",
+        300,
+        "Sets save interval (in seconds) for crates that were changed using the in-game editor.",
+        "[Default is 300 (5 min)]"
+    );
+
+    public static final ConfigValue<NightItem> CRATE_LINK_TOOL = ConfigValue.create("Crate.LinkTool",
+        CrateUtils.getDefaultLinkTool(),
+        "Sets the Link Tool item layout."
+    );
 
     public static final ConfigValue<Boolean> CRATE_ALLOW_CRATES_IN_AIR_BLOCKS = ConfigValue.create("Crate.Allow_Crates_In_Air_Blocks",
         false,
@@ -93,11 +114,6 @@ public class Config {
     public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
         24,
         "Sets max. distance where players can see crate particles and holograms."
-    );
-
-    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_USE_DISPLAYS = ConfigValue.create("Crate.Holograms.DisplayEntities",
-        true,
-        "When enabled, uses Display Entities for holograms instead of Armor Stands."
     );
 
     public static final ConfigValue<Map<String, HologramTemplate>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMapById("Crate.Holograms.TemplateList",
@@ -119,20 +135,63 @@ public class Config {
         "Sets how often (in seconds) crate holograms will update."
     );
 
+    public static final ConfigValue<Display.Billboard> CRATE_HOLOGRAM_BILLBOARD = ConfigValue.create("Crate.Holograms.Billboard",
+        Display.Billboard.class, Display.Billboard.VERTICAL,
+        "Controls if crate holograms should pivot to face player when rendered.",
+        "It can be FIXED (both vertical and horizontal angles are fixed), VERTICAL (faces player around vertical axis), HORIZONTAL (pivots around horizontal axis), and CENTER (pivots around center point).",
+        "[Default is " + Display.Billboard.VERTICAL.name() + "]"
+    );
+
+    public static final ConfigValue<Integer> CRATE_HOLOGRAM_TEXT_OPACITY = ConfigValue.create("Crate.Holograms.TextOpacity",
+        -1,
+        "Alpha value of rendered text. Value ranges from 0 to 255. Values up to 3 are treated as fully opaque (255).",
+        "The text rendering is discarded for values between 4 and 26. Defaults to -1, which represents 255 and is completely opaque.",
+        "[Default is -1]"
+    );
+
+    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SEE_THROUGH = ConfigValue.create("Crate.Holograms.SeeThrough",
+        false,
+        "Whether the text be visible through blocks.",
+        "[Default is false]"
+    );
+
+    public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SHADOW = ConfigValue.create("Crate.Holograms.Shadow",
+        true,
+        "Whether the text is displayed with shadow.",
+        "[Default is true]"
+    );
+
+    public static final ConfigValue<int[]> CRATE_HOLOGRAM_BACKGROUND_COLOR = ConfigValue.create("Crate.Holograms.BackgroundColor",
+        new int[]{64, 0, 0, 0},
+        "The background color, arranged by [A,R,G,B]. Where: A = Alpha (opacity), R = Red, G = Green, B = Blue.",
+        "[Default is 64,0,0,0]"
+    );
+
+
+
     public static final ConfigValue<TimeFormatType> CRATE_COOLDOWN_FORMAT_TYPE = ConfigValue.create("Crate.Cooldown_Format_Type",
         TimeFormatType.class,
         TimeFormatType.DIGITAL,
         "Sets crate cooldown format type.",
-        "Available values: [" + StringUtil.inlineEnum(TimeFormatType.class, ", " + "]")
+        "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
     );
 
-    public static final ConfigValue<Boolean> CRATE_HOLD_KEY_TO_OPEN = ConfigValue.create("Crate.Hold_Key_To_Open",
+    public static final ConfigValue<Boolean> OPENING_CONFIRM_FOR_SINGLE_COST = ConfigValue.create("Crate.Opening.Confirmation.ForSingleCost",
         false,
-        "Controls whether player must hold a key in the main hand in order to open crate.",
-        "[*] Works only for physical (not virtual) keys."
+        "Controls whether the Costs GUI will appear even if there is only cost option available."
     );
 
-    public static final ConfigValue<Integer> CRATE_MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
+    public static final ConfigValue<Boolean> MASS_OPENING_ALLOW_FOR_NO_COST = ConfigValue.create("Crate.MassOpening.AllowForNoCost",
+        false,
+        "Controls whether players can do Mass Opening for crates with no cost options defined."
+    );
+
+    public static final ConfigValue<Boolean> MASS_OPENING_SNEAK_TO_USE = ConfigValue.create("Crate.MassOpening.SneakToUse",
+        true,
+        "Controls whether players can do Mass Opening by opening crates while sneaking."
+    );
+
+    public static final ConfigValue<Integer> MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
         30,
         "Limits amount of crate openings for the Mass Opening feature to this value.",
         "[*] STABILITY NOTICE:",
@@ -156,31 +215,25 @@ public class Config {
         -1.25D,
         "Vector multiplier for crate block pushback. The higher value - the harder pushback.");
 
-    private static final ConfigValue<Map<ClickType, InteractType>> CRATE_CLICK_ACTIONS = ConfigValue.create("Crate.Click_Actions",
-        (cfg, path, def) -> {
-            Map<ClickType, InteractType> map = new HashMap<>();
-            for (ClickType clickType : ClickType.values()) {
-                InteractType clickAction = cfg.getEnum(path + "." + clickType.name(), InteractType.class);
-                if (clickAction == null) continue;
+    public static final ConfigValue<Boolean> CRATE_REVERSE_CLICK_ACTIONS = ConfigValue.create("Crate.Reverse_Click_Actions",
+        false,
+        "Controls whether click actions, when interacting with crate blocks, should be reversed.",
+        "By default it uses Left Click to preview crates, and Right Click to open them."
+    );
 
-                map.put(clickType, clickAction);
-            }
-            return map;
-        },
-        (cfg, path, map) -> map.forEach((click, action) -> cfg.set(path + "." + click.name(), action)),
-        () -> Map.of(
-            ClickType.LEFT, InteractType.CRATE_PREVIEW,
-            ClickType.RIGHT, InteractType.CRATE_OPEN,
-            ClickType.SHIFT_RIGHT, InteractType.CRATE_MASS_OPEN
-        ),
-        "Defines the crate behavior on certain clicks.",
-        "Allowed click types: " + StringUtil.inlineEnum(ClickType.class, ", "),
-        "Allowed crate actions: " + StringUtil.inlineEnum(InteractType.class, ", "));
+    public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
+        true,
+        "Controls whether the Holograms feature is available.",
+        "[*] One of the following plugins is required for holograms to work: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
+    );
 
-    @Nullable
-    public static InteractType getCrateClickAction(@NotNull ClickType clickType) {
-        return CRATE_CLICK_ACTIONS.get().get(clickType);
-    }
+    public static final ConfigValue<Boolean> OPENINGS_GUI_SIMULATE_REAL_CHANCES = ConfigValue.create("Openings.GUI.Simulate_Real_Chances",
+        false,
+        "[ THIS SETTING DOES NOT AFFECT THE FINAL REWARD, IT IS PREDICTED WHEN PLAYER OPENED A CRATE ]",
+        "Controls whether reward's weight and rarity should be respected when displaying rewards during GUI opening animation.",
+        "When disabled, rewards choosen by a blind random.",
+        "[Default is false]"
+    );
 
     public static boolean isMilestonesEnabled() {
         return MILESTONES_ENABLED.get();
@@ -208,7 +261,7 @@ public class Config {
         return CRATE_ALLOW_CRATES_IN_AIR_BLOCKS.get();
     }
 
-    public static boolean isKeyHoldRequired() {
-        return CRATE_HOLD_KEY_TO_OPEN.get();
+    public static boolean isMassOpenEnabled() {
+        return FEATURE_MASS_OPENING.get();
     }
 }

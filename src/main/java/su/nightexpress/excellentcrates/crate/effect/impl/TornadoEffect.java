@@ -4,7 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
+import su.nightexpress.excellentcrates.crate.effect.EffectId;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
 import java.util.ArrayList;
@@ -18,7 +20,13 @@ public class TornadoEffect extends CrateEffect {
     private static final double DISTANCE           = 0.375D;
 
     public TornadoEffect() {
-        super(2L, 8);
+        super(EffectId.TORNADO, 2L, 8);
+    }
+
+    @Override
+    @NotNull
+    public String getName() {
+        return Lang.EFFECT_MODEL_TORNADO.text();
     }
 
     @Override

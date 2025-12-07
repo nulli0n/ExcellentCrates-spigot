@@ -4,18 +4,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
-import su.nightexpress.excellentcrates.util.CrateUtils;
 
 public class DummyOpening extends AbstractOpening {
 
     private boolean rolled;
 
-    public DummyOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable CrateKey key) {
-        super(plugin, player, source, key);
+    public DummyOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
+        super(plugin, player, source, cost);
     }
 
     @Override
@@ -52,10 +50,7 @@ public class DummyOpening extends AbstractOpening {
     private void roll() {
         this.setRefundable(false);
 
-        Reward reward = this.getCrate().rollReward(this.player);
-        reward.give(this.player);
-
-        CrateUtils.callRewardObtainEvent(this.player, reward);
+        this.addReward(this.crate.rollReward(this.player));
 
         this.rolled = true;
     }

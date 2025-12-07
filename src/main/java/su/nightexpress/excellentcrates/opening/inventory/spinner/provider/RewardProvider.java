@@ -11,6 +11,7 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.impl.RewardSpin
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.config.Writeable;
+import su.nightexpress.nightcore.util.Lists;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,6 +23,11 @@ public class RewardProvider implements SpinnerProvider, Writeable {
 
     public RewardProvider(@NotNull Set<String> rarities) {
         this.rarities = new HashSet<>(rarities);
+    }
+
+    @NotNull
+    public static RewardProvider everything() {
+        return new RewardProvider(Lists.newSet(Placeholders.WILDCARD));
     }
 
     @NotNull
