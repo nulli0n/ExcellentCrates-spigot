@@ -8,7 +8,7 @@ import su.nightexpress.nightcore.locale.LangContainer;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 
-public abstract class CrateDialog<T> implements LangContainer {
+public abstract class Dialog<T> implements LangContainer {
 
     @NotNull
     public abstract WrappedDialog create(@NotNull Player player, @NotNull T source);

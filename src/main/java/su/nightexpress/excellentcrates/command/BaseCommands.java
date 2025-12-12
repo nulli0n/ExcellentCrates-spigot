@@ -297,7 +297,7 @@ public class BaseCommands {
             }
 
             Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
-            user.getCrateData(crate).setOpenCooldown(0);
+            user.getCrateData(crate).resetCooldownAndStreak();
             plugin.getUserManager().save(user);
 
             Lang.COMMAND_RESET_COOLDOWN_DONE.message().send(context.getSender(), replacer -> replacer

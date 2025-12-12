@@ -127,7 +127,7 @@ public class Lang implements LangContainer {
 
     public static final MessageLocale CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY = LangEntry.builder("Crate.Open.Error.Cooldown.Temporary").titleMessage(
         SOFT_RED.wrap(BOLD.wrap("Crate is on Cooldown!")),
-        GRAY.wrap("You can open it in " + SOFT_RED.wrap(GENERIC_TIME)),
+        GRAY.wrap("You can open it again in " + SOFT_RED.wrap(GENERIC_TIME)),
         Sound.ENTITY_VILLAGER_NO
     );
 
@@ -187,6 +187,10 @@ public class Lang implements LangContainer {
         GRAY.wrap("You can preview this crate again in " + SOFT_RED.wrap(GENERIC_TIME))
     );
 
+    public static final MessageLocale ERROR_DATA_IS_LOADING = LangEntry.builder("Error.DataIsLoading").chatMessage(
+        SOFT_RED.wrap("Data is still loading... Please try again later.")
+    );
+
     public static final TextLocale OTHER_COOLDOWN_READY       = LangEntry.builder("Other.Cooldown.Ready").text(GREEN.wrap("Ready to Open!"));
     public static final TextLocale OTHER_LAST_OPENER_EMPTY    = LangEntry.builder("Other.LastOpener.Empty").text("-");
     public static final TextLocale OTHER_LAST_REWARD_EMPTY    = LangEntry.builder("Other.LastReward.Empty").text("-");
@@ -206,11 +210,9 @@ public class Lang implements LangContainer {
     public static final TextLocale EFFECT_MODEL_VORTEX  = LangEntry.builder("EffectModel.Vortex").text("Vortex");
     public static final TextLocale EFFECT_MODEL_SIMPLE  = LangEntry.builder("EffectModel.Simple").text("Simple");
 
-    public static final TextLocale INSPECTION_PROBLEMS    = LangEntry.builder("Inspection.Problems").text(GENERIC_AMOUNT + " problem(s)");
-    public static final TextLocale INSPECTION_NO_PROBLEMS = LangEntry.builder("Inspection.NoProblems").text("No problems found");
-
     public static final BooleanLocale INSPECTIONS_GENERIC_OVERVIEW = LangEntry.builder("Inspections.Generic.Overview").bool("No problems detected.", "Problems detected!");
     public static final BooleanLocale INSPECTIONS_GENERIC_ITEM     = LangEntry.builder("Inspections.Generic.Item").bool("Item is valid.", "Item is invalid!");
+    public static final BooleanLocale INSPECTIONS_GENERIC_COMMANDS = LangEntry.builder("Inspections.Generic.Commands").bool("All commands are valid.", "Detected invalid commands!");
 
     public static final BooleanLocale INSPECTIONS_CRATE_PREVIEW      = LangEntry.builder("Inspections.Crate.Preview").bool("Preview is valid.", "Preview is invalid!");
     public static final BooleanLocale INSPECTIONS_CRATE_OPENING      = LangEntry.builder("Inspections.Crate.Opening").bool("Opening is valid.", "Opening is invalid!");
@@ -218,7 +220,6 @@ public class Lang implements LangContainer {
     public static final BooleanLocale INSPECTIONS_REWARD_PREVIEW     = LangEntry.builder("Inspections.Reward.Preview").bool("Preview item is valid.", "Preview item is invalid!");
     public static final BooleanLocale INSPECTIONS_REWARD_ITEMS       = LangEntry.builder("Inspections.Reward.Items").bool("All items are valid.", "Detected invalid items!");
     public static final TextLocale    INSPECTIONS_REWARD_NO_ITEMS    = LangEntry.builder("Inspections.Reward.NoItems").text("No items added.");
-    public static final BooleanLocale INSPECTIONS_REWARD_COMMANDS    = LangEntry.builder("Inspections.Reward.Commands").bool("All commands are valid.", "Detected invalid commands!");
     public static final TextLocale    INSPECTIONS_REWARD_NO_COMMANDS = LangEntry.builder("Inspections.Reward.NoCommands").text("No commands defined.");
 
     public static final IconLocale UI_COSTS_OPTION_AVAILABLE = LangEntry.iconBuilder("UI.Costs.Option.Available")

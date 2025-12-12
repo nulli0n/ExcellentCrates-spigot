@@ -7,7 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.crate.cost.entry.AbstractCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.impl.EcoCostType;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogKey;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.nightcore.bridge.currency.Currency;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -18,11 +19,17 @@ import java.util.Optional;
 
 public class EcoCostEntry extends AbstractCostEntry<EcoCostType> {
 
+    private static final DialogKey<EcoCostEntry> DIALOG_KEY = new DialogKey<>("eco_cost_options");
+
+    private final DialogRegistry dialogs;
+
     private String currencyId;
     private double amount;
 
-    public EcoCostEntry(@NotNull EcoCostType type, @NotNull String currencyId, double amount) {
+    public EcoCostEntry(@NotNull EcoCostType type, @NotNull DialogRegistry dialogs, @NotNull String currencyId, double amount) {
         super(type);
+        this.dialogs = dialogs;
+
         this.setCurrencyId(currencyId);
         this.setAmount(amount);
     }
@@ -35,7 +42,7 @@ public class EcoCostEntry extends AbstractCostEntry<EcoCostType> {
 
     @Override
     public void openEditor(@NotNull Player player, @Nullable Runnable callback) {
-        CrateDialogs.CURRENCY_COST_OPTIONS.ifPresent(dialog -> dialog.show(player, this, callback));
+        this.dialogs.show(player, DIALOG_KEY, this, callback);
     }
 
     @NotNull

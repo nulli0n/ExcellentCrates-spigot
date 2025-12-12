@@ -15,6 +15,7 @@ import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.user.CrateUser;
 import su.nightexpress.nightcore.util.Players;
+import su.nightexpress.nightcore.util.placeholder.Replacer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,12 +119,16 @@ public abstract class AbstractOpening implements Opening {
 
             userData.addOpenings(1);
             globalData.setLatestOpener(this.player);
-            globalData.setSaveRequired(true);
+            globalData.setDirty(true);
 
             this.rewards.forEach(reward -> reward.give(this.player));
 
-            if (crate.isOpeningCooldownEnabled() && !crate.hasCooldownBypassPermission(player)) {
-                userData.setCooldown(crate.getOpeningCooldownTime());
+            if (crate.isOpeningCooldownEnabled()) {
+                userData.addOpeningStreak(1);
+
+                if (!userData.isOnCooldown() && !crate.hasCooldownBypassPermission(player)) {
+                    userData.setCooldown(crate.getOpeningCooldownTime());
+                }
             }
 
             if (crate.hasMilestones()) {
@@ -141,6 +146,9 @@ public abstract class AbstractOpening implements Opening {
                     .collect(Collectors.joining(", "))
                 )
             );
+
+            List<String> postOpenCommands = Replacer.create().replace(this.crate.replacePlaceholders()).apply(this.crate.getPostOpenCommands());
+            Players.dispatchCommands(this.player, postOpenCommands);
 
             this.plugin.getUserManager().save(user);
         }

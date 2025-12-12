@@ -11,7 +11,8 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.crate.cost.CostDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.locale.LangContainer;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -76,8 +77,11 @@ public class CostsListMenu extends LinkedMenu<CratesPlugin, Crate> implements La
     private static final IconLocale LOCALE_STATUS_NOTHING = LangEntry.iconBuilder("Editor.Costs.Status.Nothing")
         .rawName(GRAY.and(BOLD).wrap("Status: ") + WHITE.wrap("< No Data>")).build();
 
-    public CostsListMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public CostsListMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_CRATE_COSTS.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
@@ -162,7 +166,7 @@ public class CostsListMenu extends LinkedMenu<CratesPlugin, Crate> implements La
                     .hideAllComponents()
                     .toMenuItem()
                     .setHandler((viewer1, event) -> {
-                        CrateDialogs.COST_CREATION.ifPresent(dialog -> dialog.show(player, crate, () -> this.flush(player)));
+                        this.dialogs.show(player, CostDialogs.CREATION, crate, () -> this.flush(player));
                     });
             }
 

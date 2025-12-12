@@ -6,7 +6,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
@@ -19,7 +19,7 @@ import su.nightexpress.nightcore.util.ItemUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GenericItemDialog<T> extends CrateDialog<GenericItemDialog.Data<T>> {
+public abstract class GenericItemDialog<T> extends Dialog<GenericItemDialog.Data<T>> {
 
     private static final String JSON_USE_NBT             = "use_nbt";
     private static final String JSON_REPLACE_NAME        = "replace_name";

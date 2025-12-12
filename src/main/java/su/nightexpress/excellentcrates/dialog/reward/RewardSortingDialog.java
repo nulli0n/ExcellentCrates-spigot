@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.common.NightNbtHolder;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.button.WrappedActionButton;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardSortingDialog extends CrateDialog<Crate> {
+public class RewardSortingDialog extends Dialog<Crate> {
 
     private static final EnumLocale<SortMode> SORT_MODE_LOCALE = LangEntry.builder("Dialog.Rewards.Sorting.Mode").enumeration(SortMode.class);
 

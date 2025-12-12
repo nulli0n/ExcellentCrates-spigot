@@ -4,8 +4,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.Dialog;
+import su.nightexpress.excellentcrates.crate.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.registry.CratesRegistries;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.base.WrappedDialogAfterAction;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.SOFT_YELLOW;
 
-public class CrateEffectDialog extends CrateDialog<Crate> {
+public class CrateEffectDialog extends Dialog<Crate> {
 
     private static final TextLocale TITLE = LangEntry.builder("Dialog.Crate.Effect.Title").text(title("Crate", "Block Effect"));
 
@@ -39,6 +40,12 @@ public class CrateEffectDialog extends CrateDialog<Crate> {
     private static final String ACTION_PARTICLE = "particle";
     private static final String JSON_ENABLED = "enabled";
     private static final String JSON_MODEL      = "model";
+
+    private final DialogRegistry dialogs;
+
+    public CrateEffectDialog(@NotNull DialogRegistry dialogs) {
+        this.dialogs = dialogs;
+    }
 
     @Override
     @NotNull
@@ -67,7 +74,7 @@ public class CrateEffectDialog extends CrateDialog<Crate> {
             ).exitAction(DialogButtons.back()).columns(1).build());
 
             builder.handleResponse(ACTION_PARTICLE, (viewer, identifier, nbtHolder) -> {
-                CrateDialogs.CRATE_PARTICLE.ifPresent(dialog -> dialog.show(player, crate, () -> this.show(player, crate, viewer.getCallback())));
+                this.dialogs.show(player, CrateDialogs.CRATE_PARTICLE, crate, () -> this.show(player, crate, viewer.getCallback()));
             });
 
             builder.handleResponse(DialogActions.BACK, (viewer, identifier, nbtHolder) -> {

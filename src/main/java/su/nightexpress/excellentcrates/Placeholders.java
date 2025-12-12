@@ -1,13 +1,16 @@
 package su.nightexpress.excellentcrates;
 
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.key.CrateKey;
+import su.nightexpress.nightcore.bridge.wrap.NightProfile;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderList;
+import su.nightexpress.nightcore.util.profile.CachedProfile;
 
 import java.util.stream.Collectors;
 
@@ -69,7 +72,7 @@ public class Placeholders extends su.nightexpress.nightcore.util.Placeholders {
         .add(CRATE_ID, Crate::getId)
         .add(CRATE_NAME, Crate::getName)
         .add(CRATE_DESCRIPTION, crate -> String.join("\n", crate.getDescription()))
-        .add(CRATE_LAST_OPENER, Crate::getLastOpenerName)
+        .add(CRATE_LAST_OPENER, crate -> crate.getLastOpener().map(CachedProfile::query).map(NightProfile::getName).orElse(Lang.OTHER_LAST_OPENER_EMPTY.text()))
         .add(CRATE_LAST_REWARD, Crate::getLastRewardName)
         .add(CRATE_OPEN_COST, crate -> crate.getCosts().stream().map(Cost::getName).collect(Collectors.joining(", ")))
     );

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardItemDialog extends CrateDialog<RewardItemDialog.Data> {
+public class RewardItemDialog extends Dialog<RewardItemDialog.Data> {
 
     private static final TextLocale TITLE = LangEntry.builder("Dialog.Reward.Item.Title").text(title("Reward", "Item"));
 

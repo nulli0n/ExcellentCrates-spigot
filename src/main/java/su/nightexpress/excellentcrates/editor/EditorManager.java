@@ -7,6 +7,7 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.editor.crate.*;
 import su.nightexpress.excellentcrates.editor.key.KeyListMenu;
 import su.nightexpress.excellentcrates.editor.key.KeyOptionsMenu;
@@ -14,6 +15,8 @@ import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.manager.AbstractManager;
 
 public class EditorManager extends AbstractManager<CratesPlugin> {
+
+    private final DialogRegistry dialogs;
 
     private EditorMenu editorMenu;
 
@@ -29,25 +32,26 @@ public class EditorManager extends AbstractManager<CratesPlugin> {
     private KeyListMenu    keyListMenu;
     private KeyOptionsMenu keyOptionsMenu;
 
-    public EditorManager(@NotNull CratesPlugin plugin) {
+    public EditorManager(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin);
+        this.dialogs = dialogs;
     }
 
     @Override
     protected void onLoad() {
         this.editorMenu = new EditorMenu(this.plugin);
 
-        this.crateListMenu = new CrateListMenu(this.plugin);
-        this.crateOptionsMenu = new CrateOptionsMenu(this.plugin);
-        this.costsListMenu = new CostsListMenu(this.plugin);
-        this.costOptionsMenu = new CostOptionsMenu(this.plugin);
+        this.crateListMenu = new CrateListMenu(this.plugin, this.dialogs);
+        this.crateOptionsMenu = new CrateOptionsMenu(this.plugin, this.dialogs);
+        this.costsListMenu = new CostsListMenu(this.plugin, this.dialogs);
+        this.costOptionsMenu = new CostOptionsMenu(this.plugin, this.dialogs);
         this.crateMilestonesMenu = new CrateMilestonesMenu(this.plugin);
-        this.rewardListMenu = new RewardListMenu(this.plugin);
-        this.rewardOptionsMenu = new RewardOptionsMenu(this.plugin);
-        this.rewardContentMenu = new RewardContentMenu(this.plugin);
+        this.rewardListMenu = new RewardListMenu(this.plugin, this.dialogs);
+        this.rewardOptionsMenu = new RewardOptionsMenu(this.plugin, this.dialogs);
+        this.rewardContentMenu = new RewardContentMenu(this.plugin, this.dialogs);
 
-        this.keyListMenu = new KeyListMenu(this.plugin);
-        this.keyOptionsMenu = new KeyOptionsMenu(this.plugin);
+        this.keyListMenu = new KeyListMenu(this.plugin, this.dialogs);
+        this.keyOptionsMenu = new KeyOptionsMenu(this.plugin, this.dialogs);
     }
 
     @Override

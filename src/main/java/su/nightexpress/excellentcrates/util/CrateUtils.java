@@ -95,6 +95,15 @@ public class CrateUtils {
         return addCount(name, count);
     }
 
+    public static boolean isValidCommand(@NotNull String command) {
+        String firstPart = command.split(" ")[0];
+
+        int index = firstPart.indexOf(':');
+        String name = index >= 0 ? firstPart.substring(index + 1) : firstPart;
+
+        return CommandUtil.getCommand(name).isPresent();
+    }
+
     private static String addCount(@NotNull String str, int count) {
         return count <= 0 ? str : str + "_" + count;
     }

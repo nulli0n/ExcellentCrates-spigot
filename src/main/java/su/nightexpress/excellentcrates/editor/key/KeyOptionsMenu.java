@@ -11,7 +11,9 @@ import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.key.dialog.KeyDialogs;
+import su.nightexpress.excellentcrates.dialog.generic.GenericItemDialog;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -61,8 +63,11 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
         .appendClick("Click to toggle")
         .build();
 
-    public KeyOptionsMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public KeyOptionsMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_KEY_LIST.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
@@ -81,7 +86,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
         viewer.addItem(NightItem.fromType(Material.NAME_TAG).localized(LOCALE_NAME)
             .replacement(replacer -> replacer.replace(key.replacePlaceholders()))
             .toMenuItem().setSlots(11).setHandler((viewer1, event) -> {
-                CrateDialogs.KEY_NAME.ifPresent(dialog -> dialog.show(player, key, flush));
+                this.dialogs.show(player, KeyDialogs.NAME, key, flush);
             }).build()
         );
 
@@ -108,7 +113,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
                     Players.addItem(player, cursor);
                     event.getView().setCursor(null);
 
-                    CrateDialogs.KEY_ITEM.ifPresent(dialog -> dialog.show(player, key, clean, flush));
+                    this.dialogs.show(player, KeyDialogs.ITEM, new GenericItemDialog.Data<>(key, clean), flush);
                 }).build()
             );
         }
