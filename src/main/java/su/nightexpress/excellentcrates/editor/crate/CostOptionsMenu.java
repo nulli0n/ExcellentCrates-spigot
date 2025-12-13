@@ -166,7 +166,10 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
 
                 builder = entry.getEditorIcon().toMenuItem().setHandler((viewer1, event) -> {
                     if (event.isLeftClick()) {
-                        entry.openEditor(player, crate::markDirty);
+                        entry.openEditor(player, () -> {
+                            crate.markDirty();
+                            this.runNextTick(() -> this.flush(viewer));
+                        });
                     }
                     else if (event.getClick() == ClickType.DROP) {
                         cost.removeEntry(entry);

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.KeyCostEntry;
 import su.nightexpress.excellentcrates.dialog.Dialog;
+import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -31,10 +32,10 @@ public class KeyCostOptionsDialog extends Dialog<KeyCostEntry> {
     private static final TextLocale LABEL_KEY    = LangEntry.builder("Dialog.CostEntry.Key.Input.Key").text(SOFT_YELLOW.wrap("Key"));
     private static final TextLocale LABEL_AMOUNT = LangEntry.builder("Dialog.CostEntry.Key.Input.Amount").text("Amount");
 
-    private final CratesPlugin plugin;
+    private final KeyManager keyManager;
 
-    public KeyCostOptionsDialog(@NotNull CratesPlugin plugin) {
-        this.plugin = plugin;
+    public KeyCostOptionsDialog(@NotNull KeyManager keyManager) {
+        this.keyManager = keyManager;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class KeyCostOptionsDialog extends Dialog<KeyCostEntry> {
             builder.base(DialogBases.builder(TITLE)
                 .body(DialogBodies.plainMessage(BODY))
                 .inputs(
-                    DialogInputs.singleOption(INPUT_ID, LABEL_KEY, plugin.getKeyManager().getKeys().stream()
+                    DialogInputs.singleOption(INPUT_ID, LABEL_KEY, this.keyManager.getKeys().stream()
                         .map(key -> new WrappedSingleOptionEntry(key.getId(), key.getName(), entry.getKeyId().equalsIgnoreCase(key.getId())))
                         .toList()
                     ).build(),

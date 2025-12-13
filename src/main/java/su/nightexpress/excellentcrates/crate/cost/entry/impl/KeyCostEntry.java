@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.crate.cost.entry.AbstractCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.impl.KeyCostType;
 import su.nightexpress.excellentcrates.dialog.DialogKey;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.dialog.cost.KeyCostOptionsDialog;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -35,6 +36,8 @@ public class KeyCostEntry extends AbstractCostEntry<KeyCostType> {
         this.dialogs = dialogs;
         this.setKeyId(keyId);
         this.setAmount(amount);
+
+        this.dialogs.register(DIALOG_KEY, new KeyCostOptionsDialog(keyManager));
     }
 
     @Override

@@ -9,6 +9,7 @@ import su.nightexpress.excellentcrates.crate.cost.entry.AbstractCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.impl.EcoCostType;
 import su.nightexpress.excellentcrates.dialog.DialogKey;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.dialog.cost.CurrencyCostOptionsDialog;
 import su.nightexpress.nightcore.bridge.currency.Currency;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -32,6 +33,8 @@ public class EcoCostEntry extends AbstractCostEntry<EcoCostType> {
 
         this.setCurrencyId(currencyId);
         this.setAmount(amount);
+
+        this.dialogs.register(DIALOG_KEY, new CurrencyCostOptionsDialog());
     }
 
     @Override
