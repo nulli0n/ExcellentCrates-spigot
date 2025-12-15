@@ -8,9 +8,10 @@ import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.config.Perms;
 import su.nightexpress.excellentcrates.crate.CrateManager;
+import su.nightexpress.excellentcrates.crate.cost.type.impl.EcoCostType;
 import su.nightexpress.excellentcrates.data.DataHandler;
 import su.nightexpress.excellentcrates.data.DataManager;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.editor.EditorManager;
 import su.nightexpress.excellentcrates.hologram.HologramManager;
 import su.nightexpress.excellentcrates.hooks.impl.PlaceholderHook;
@@ -23,7 +24,6 @@ import su.nightexpress.nightcore.NightPlugin;
 import su.nightexpress.nightcore.commands.command.NightCommand;
 import su.nightexpress.nightcore.config.PluginDetails;
 import su.nightexpress.nightcore.util.Plugins;
-import su.nightexpress.nightcore.util.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,8 @@ public class CratesPlugin extends NightPlugin {
 
     private final List<CratesAddon> addons = new ArrayList<>();
 
+    private DialogRegistry dialogRegistry;
+
     private DataHandler dataHandler;
     private DataManager dataManager;
     private UserManager userManager;
@@ -42,11 +44,9 @@ public class CratesPlugin extends NightPlugin {
     private OpeningManager  openingManager;
     private KeyManager      keyManager;
     private CrateManager    crateManager;
-    //private MenuManager     menuManager;
     private EditorManager   editorManager;
 
-    private CrateDialogs dialogs;
-    private CrateLogger  crateLogger;
+    private CrateLogger crateLogger;
 
     @Override
     @NotNull
@@ -74,9 +74,13 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void enable() {
-        this.loadEngine();
-
         this.crateLogger = new CrateLogger(this);
+        this.dialogRegistry = new DialogRegistry(this);
+
+        ProviderRegistry.load();
+        CratesRegistries.load(this);
+        CratesRegistries.registerCostType(new EcoCostType(this, this.dialogRegistry));
+        this.proceedAddons(CratesAddon::onInit);
 
         this.dataHandler = new DataHandler(this);
         this.dataHandler.setup();
@@ -95,28 +99,22 @@ public class CratesPlugin extends NightPlugin {
         this.openingManager = new OpeningManager(this);
         this.openingManager.setup();
 
-        this.keyManager = new KeyManager(this);
+        this.keyManager = new KeyManager(this, this.dialogRegistry);
         this.keyManager.setup();
 
-        this.crateManager = new CrateManager(this);
+        this.crateManager = new CrateManager(this, this.dialogRegistry);
         this.crateManager.setup();
 
-//        this.menuManager = new MenuManager(this);
-//        this.menuManager.setup();
-
-        this.editorManager = new EditorManager(this);
+        this.editorManager = new EditorManager(this, this.dialogRegistry);
         this.editorManager.setup();
 
         this.dataHandler.updateRewardLimits();
 
-        if (Version.withDialogs()) {
-            this.dialogs = new CrateDialogs(this);
-            this.dialogs.setup();
-        }
-
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.setup(this);
         }
+
+
 
         this.loadCommands();
         this.proceedAddons(CratesAddon::onLoad);
@@ -124,7 +122,6 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void disable() {
-        if (this.dialogs != null) this.dialogs.shutdown();
         if (this.editorManager != null) this.editorManager.shutdown();
         if (this.openingManager != null) this.openingManager.shutdown();
         if (this.keyManager != null) this.keyManager.shutdown();
@@ -134,6 +131,7 @@ public class CratesPlugin extends NightPlugin {
         if (this.userManager != null) this.userManager.shutdown();
         if (this.dataManager != null) this.dataManager.shutdown();
         if (this.dataHandler != null) this.dataHandler.shutdown();
+        if (this.dialogRegistry != null) this.dialogRegistry.clear();
 
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.shutdown();
@@ -148,12 +146,6 @@ public class CratesPlugin extends NightPlugin {
         super.onShutdown();
         Keys.clear();
         CratesAPI.clear();
-    }
-
-    private void loadEngine() {
-        ProviderRegistry.load();
-        CratesRegistries.load(this);
-        this.proceedAddons(CratesAddon::onInit);
     }
 
     private void loadCommands() {
@@ -221,14 +213,4 @@ public class CratesPlugin extends NightPlugin {
     public CrateManager getCrateManager() {
         return this.crateManager;
     }
-
-    @NotNull
-    public Optional<CrateDialogs> dialogs() {
-        return Optional.ofNullable(this.dialogs);
-    }
-
-//    @NotNull
-//    public MenuManager getMenuManager() {
-//        return this.menuManager;
-//    }
 }

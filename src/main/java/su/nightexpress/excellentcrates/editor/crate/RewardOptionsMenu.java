@@ -16,7 +16,9 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.impl.CommandReward;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.crate.reward.RewardDialogs;
+import su.nightexpress.excellentcrates.dialog.reward.RewardPreviewDialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.locale.LangContainer;
@@ -111,8 +113,11 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
         .appendClick("Press " + TagWrappers.KEY.apply("key.drop") + " to delete")
         .build();
 
-    public RewardOptionsMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public RewardOptionsMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_REWARD_SETTINGS.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
@@ -157,7 +162,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
                     this.runNextTick(flush);
                 }
                 else {
-                    CrateDialogs.REWARD_PREVIEW.ifPresent(dialog -> dialog.show(player, reward, copy, flush));
+                    this.dialogs.show(player, RewardDialogs.PREVIEW, new RewardPreviewDialog.Data(reward, copy), flush);
                 }
             }).build()
         );
@@ -180,25 +185,25 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
                 .hideAllComponents()
                 .localized(LOCALE_COMMANDS)
                 .replacement(replacer -> replacer
-                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_REWARD_COMMANDS, commandReward.hasContent() && !commandReward.hasInvalidCommands()))
+                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_GENERIC_COMMANDS, commandReward.hasContent() && !commandReward.hasInvalidCommands()))
                     .replace(GENERIC_AMOUNT, () -> commandReward.hasContent() ? CoreLang.goodEntry(String.valueOf(commandReward.countCommands())) : CoreLang.badEntry(Lang.INSPECTIONS_REWARD_NO_COMMANDS.text()))
                 )
                 .toMenuItem().setSlots(10).setHandler((viewer1, event) -> {
-                    CrateDialogs.REWARD_COMMANDS.ifPresent(dialog -> dialog.show(player, commandReward, flush));
+                    this.dialogs.show(player, RewardDialogs.COMMANDS, commandReward, flush);
                 }).build()
             );
 
             viewer.addItem(NightItem.fromType(Material.NAME_TAG).localized(LOCALE_NAME)
                 .replacement(replacer -> replacer.replace(reward.replacePlaceholders()))
                 .toMenuItem().setSlots(30).setHandler((viewer1, event) -> {
-                    CrateDialogs.REWARD_NAME.ifPresent(dialog -> dialog.show(player, commandReward, flush));
+                    this.dialogs.show(player, RewardDialogs.NAME, commandReward, flush);
                 }).build()
             );
 
             viewer.addItem(NightItem.fromType(Material.WRITABLE_BOOK).localized(LOCALE_DESCRIPTION)
                 .replacement(replacer -> replacer.replace(reward.replacePlaceholders()))
                 .toMenuItem().setSlots(32).setHandler((viewer1, event) -> {
-                    CrateDialogs.REWARD_DESCRIPTION.ifPresent(dialog -> dialog.show(player, commandReward, flush));
+                    this.dialogs.show(player, RewardDialogs.DESCRIPTION, commandReward, flush);
                 }).build()
             );
         }
@@ -206,7 +211,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
         viewer.addItem(NightItem.fromType(Material.GLISTERING_MELON_SLICE).localized(LOCALE_RARIRY_WEIGHT)
             .replacement(replacer -> replacer.replace(reward.replacePlaceholders()))
             .toMenuItem().setSlots(12).setHandler((viewer1, event) -> {
-                CrateDialogs.REWARD_WEIGHT.ifPresent(dialog -> dialog.show(player, reward, flush));
+                this.dialogs.show(player, RewardDialogs.WEIGHT, reward, flush);
             }).build()
         );
 
@@ -222,14 +227,14 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
         viewer.addItem(NightItem.fromType(Material.REDSTONE).localized(LOCALE_PERMISSIONS)
             .replacement(replacer -> replacer.replace(GENERIC_AMOUNT, () -> String.valueOf(reward.getIgnoredPermissions().size() + reward.getRequiredPermissions().size())))
             .toMenuItem().setSlots(14).setHandler((viewer1, event) -> {
-                CrateDialogs.REWARD_PERMISSIONS.ifPresent(dialog -> dialog.show(player, reward, flush));
+                this.dialogs.show(player, RewardDialogs.PERMISSIONS, reward, flush);
             }).build()
         );
 
         viewer.addItem(NightItem.fromType(Material.COMPARATOR).localized(LOCALE_LIMITS)
             .replacement(replacer -> replacer.replace(GENERIC_STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(reward.getLimits().isEnabled())))
             .toMenuItem().setSlots(15).setHandler((viewer1, event) -> {
-                CrateDialogs.REWARD_LIMITS.ifPresent(dialog -> dialog.show(player, reward, flush));
+                this.dialogs.show(player, RewardDialogs.LIMITS, reward, flush);
             }).build()
         );
 

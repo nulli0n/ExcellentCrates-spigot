@@ -9,7 +9,7 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.crate.RewardType;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.RewardFactory;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.common.NightNbtHolder;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
@@ -30,7 +30,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardCreationDialog extends CrateDialog<RewardCreationDialog.Data> {
+public class RewardCreationDialog extends Dialog<RewardCreationDialog.Data> {
 
     private static final TextLocale TITLE        = LangEntry.builder("Dialog.Rewards.Creation.Title").text(title("Reward", "Creation"));
     private static final TextLocale INPUT_METHOD = LangEntry.builder("Dialog.Rewards.Creation.Input.Method").text("Save Item as NBT");

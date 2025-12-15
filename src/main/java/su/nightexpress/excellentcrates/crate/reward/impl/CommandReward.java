@@ -10,6 +10,7 @@ import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
+import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.*;
@@ -56,7 +57,7 @@ public class CommandReward extends AbstractReward {
             reporter.report(Lang.INSPECTIONS_REWARD_NO_COMMANDS.text());
         }
         else {
-            this.commands.stream().filter(Predicate.not(this::isValidCommand)).forEach(command -> {
+            this.commands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
                 reporter.report("Command '" + command + "' does no exist.");
             });
         }
@@ -78,14 +79,7 @@ public class CommandReward extends AbstractReward {
     }
 
     public boolean hasInvalidCommands() {
-        return this.commands.stream().anyMatch(Predicate.not(this::isValidCommand));
-    }
-
-    private boolean isValidCommand(@NotNull String command) {
-        int index = command.indexOf(':');
-        String name = index >= 0 ? command.substring(index + 1) : command;
-
-        return CommandUtil.getCommand(name.split(" ")[0]).isPresent();
+        return this.commands.stream().anyMatch(Predicate.not(CrateUtils::isValidCommand));
     }
 
     @Override

@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class GenericDescriptionDialog<T> extends CrateDialog<T> {
+public abstract class GenericDescriptionDialog<T> extends Dialog<T> {
 
     protected static final String JSON_DESCRIPTION  = "description";
     protected static final String JSON_REPLACE_LORE = "replace_lore";
@@ -50,7 +50,7 @@ public abstract class GenericDescriptionDialog<T> extends CrateDialog<T> {
 
         inputs.add(DialogInputs.text(JSON_DESCRIPTION, Lang.DIALOG_GENERIC_DESCRIPTION_INPUT_DESC)
             .initial(String.join("\n", this.getDescription(source)))
-            .maxLength(500)
+            .maxLength(600)
             .width(300)
             .multiline(new WrappedMultilineOptions(10, 150))
             .build()

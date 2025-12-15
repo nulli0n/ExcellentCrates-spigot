@@ -10,7 +10,8 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.CrateManager;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.crate.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.nightcore.locale.LangContainer;
 import su.nightexpress.nightcore.locale.LangEntry;
 import su.nightexpress.nightcore.locale.entry.IconLocale;
@@ -25,7 +26,7 @@ import java.util.Comparator;
 import java.util.stream.IntStream;
 
 import static su.nightexpress.excellentcrates.Placeholders.*;
-import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
+import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.GREEN;
 
 public class CrateListMenu extends LinkedMenu<CratesPlugin, CrateManager> implements Filled<Crate>, LangContainer {
 
@@ -43,8 +44,11 @@ public class CrateListMenu extends LinkedMenu<CratesPlugin, CrateManager> implem
         .appendClick("Click to create")
         .build();
 
-    public CrateListMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public CrateListMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_CRATE_LIST.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
@@ -58,7 +62,7 @@ public class CrateListMenu extends LinkedMenu<CratesPlugin, CrateManager> implem
 
         this.addItem(Material.ANVIL, LOCALE_CREATION, 42, (viewer, event, manager) -> {
             Player player = viewer.getPlayer();
-            CrateDialogs.CRATE_CREATION.ifPresent(dialog -> dialog.show(player, manager, () -> this.flush(player)));
+            this.dialogs.show(player, CrateDialogs.CRATE_CREATION, manager, () -> this.flush(player));
         });
     }
 

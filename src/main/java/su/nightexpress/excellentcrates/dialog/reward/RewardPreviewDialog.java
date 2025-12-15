@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.impl.CommandReward;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardPreviewDialog extends CrateDialog<RewardPreviewDialog.Data> {
+public class RewardPreviewDialog extends Dialog<RewardPreviewDialog.Data> {
 
     private static final TextLocale TITLE          = LangEntry.builder("Dialog.Reward.Preview.Title").text(title("Reward", "Preview"));
     private static final TextLocale INPUT_NBT      = LangEntry.builder("Dialog.Reward.Preview.Input.NBT").text(SOFT_RED.wrap("Save as NBT"));

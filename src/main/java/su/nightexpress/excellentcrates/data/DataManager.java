@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DataManager extends AbstractManager<CratesPlugin> {
 
@@ -53,14 +54,10 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     public void saveCrateDatas() {
-        Set<GlobalCrateData> dataSet = new HashSet<>();
-
-        this.getCrateDatas().forEach(data -> {
-            if (data.isSaveRequired()) {
-                dataSet.add(data);
-                data.setSaveRequired(false);
-            }
-        });
+        Set<GlobalCrateData> dataSet = this.getCrateDatas().stream()
+            .filter(GlobalCrateData::isDirty)
+            .peek(data -> data.setDirty(false))
+            .collect(Collectors.toSet());
         if (dataSet.isEmpty()) return;
 
         this.plugin.getDataHandler().updateCrateDatas(dataSet);
@@ -68,14 +65,10 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     public void saveRewardLimits() {
-        Set<RewardData> limits = new HashSet<>();
-
-        this.getRewardLimits().forEach(limit -> {
-            if (limit.isSaveRequired()) {
-                limits.add(limit);
-                limit.setSaveRequired(false);
-            }
-        });
+        Set<RewardData> limits = this.getRewardLimits().stream()
+            .filter(RewardData::isSaveRequired)
+            .peek(data -> data.setSaveRequired(false))
+            .collect(Collectors.toSet());
         if (limits.isEmpty()) return;
 
         this.plugin.getDataHandler().updateRewardLimits(limits);

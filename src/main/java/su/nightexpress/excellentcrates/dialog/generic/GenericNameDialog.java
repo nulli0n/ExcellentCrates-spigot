@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
@@ -18,7 +18,7 @@ import su.nightexpress.nightcore.util.ItemUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GenericNameDialog<T> extends CrateDialog<T> {
+public abstract class GenericNameDialog<T> extends Dialog<T> {
 
     private static final String JSON_NAME         = "name";
     private static final String JSON_REPLACE_NAME = "replace_name";
@@ -46,7 +46,7 @@ public abstract class GenericNameDialog<T> extends CrateDialog<T> {
         AdaptedItem crateItem = this.getItem(source);
         ItemAdapter<?> itemAdapter = crateItem.getAdapter();
 
-        inputs.add(DialogInputs.text(JSON_NAME, Lang.DIALOG_GENERIC_NAME_INPUT_NAME).initial(this.getName(source)).maxLength(100).build());
+        inputs.add(DialogInputs.text(JSON_NAME, Lang.DIALOG_GENERIC_NAME_INPUT_NAME).initial(this.getName(source)).maxLength(300).build());
 
         // It makes no sense to replace custom item's name.
         if (itemAdapter.isVanilla() && crateItem.isValid()) {

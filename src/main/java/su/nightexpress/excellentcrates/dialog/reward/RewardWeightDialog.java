@@ -6,7 +6,7 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardWeightDialog extends CrateDialog<Reward> {
+public class RewardWeightDialog extends Dialog<Reward> {
 
     private static final TextLocale TITLE = LangEntry.builder("Dialog.Reward.Weight.Title").text(title("Reward", "Weight & Rariry"));
 

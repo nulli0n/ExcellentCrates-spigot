@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.cost.CostEntry;
 import su.nightexpress.excellentcrates.api.cost.CostType;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.registry.CratesRegistries;
 import su.nightexpress.nightcore.bridge.common.NightNbtHolder;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class CostEntryCreationDialog extends CrateDialog<Cost> {
+public class CostEntryCreationDialog extends Dialog<Cost> {
 
     private static final String ACTION_TYPE = "type";
     private static final String JSON_ID     = "id";
