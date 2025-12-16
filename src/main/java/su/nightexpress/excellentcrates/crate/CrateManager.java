@@ -30,11 +30,11 @@ import su.nightexpress.excellentcrates.crate.menu.MilestonesMenu;
 import su.nightexpress.excellentcrates.crate.menu.OpeningAmountMenu;
 import su.nightexpress.excellentcrates.crate.menu.OpeningCostMenu;
 import su.nightexpress.excellentcrates.crate.menu.PreviewMenu;
+import su.nightexpress.excellentcrates.crate.reward.RewardDialogs;
 import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.data.reward.RewardData;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
-import su.nightexpress.excellentcrates.crate.reward.RewardDialogs;
 import su.nightexpress.excellentcrates.dialog.cost.CostCreationDialog;
 import su.nightexpress.excellentcrates.dialog.cost.CostEntryCreationDialog;
 import su.nightexpress.excellentcrates.dialog.cost.CostNameDialog;
@@ -96,7 +96,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.runTask(this::reportProblems); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -152,9 +152,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 rarities.add(new Rarity(this.plugin, "mythic", TagWrappers.SOFT_PURPLE.wrap("Mythic"), 5));
             }
 
-            rarities.forEach(rarity -> {
-                rarity.write(config, "Rewards.Rarities." + rarity.getId());
-            });
+            rarities.forEach(rarity -> rarity.write(config, "Rewards.Rarities." + rarity.getId()));
         }
 
         config.getSection("Rewards.Rarities").forEach(rarityId -> {
@@ -305,8 +303,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         }
     }
 
-
-
     @NotNull
     public List<String> getCrateIds() {
         return new ArrayList<>(this.crateByIdMap.keySet());
@@ -400,15 +396,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         PDCUtil.set(itemStack, Keys.linkToolCrateId, crate.getId());
         Players.addItem(player, itemStack);
     }
-
-    /*public boolean isLinkTool(@NotNull ItemStack itemStack) {
-        return PDCUtil.getString(itemStack, Keys.linkToolCrateId).isPresent();
-    }
-
-    @Nullable
-    public Crate getLinkToolCrate(@NotNull Player player, @NotNull ItemStack itemStack) {
-        return PDCUtil.getString(itemStack, Keys.linkToolCrateId).map(this::getCrateById).orElse(null);
-    }*/
 
     public boolean handleLinkToolInteraction(@NotNull Player player, @NotNull Block block, @NotNull ItemStack itemStack, @NotNull PlayerInteractEvent event) {
         String crateId = PDCUtil.getString(itemStack, Keys.linkToolCrateId).orElse(null);
