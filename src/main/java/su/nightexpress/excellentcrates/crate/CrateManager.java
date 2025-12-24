@@ -498,12 +498,12 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
             return;
         }
 
-        if (crate.hasMultipleCosts() || Config.OPENING_CONFIRM_FOR_SINGLE_COST.get()) {
+        if (Config.OPENING_CONFIRM_ENABLED.get() && (crate.hasMultipleCosts() || Config.OPENING_CONFIRM_FOR_SINGLE_COST.get())) {
             this.openCostMenu(player, source);
             return;
         }
 
-        Cost cost = crate.getFirstCost().orElse(null);
+        Cost cost = crate.getAnyCost(player).orElse(null);
 
         if (Config.MASS_OPENING_SNEAK_TO_USE.get() && player.isSneaking()) {
             this.multiOpenCrate(player, source, OpenOptions.empty(), cost, crate.countMaxOpenings(player));
