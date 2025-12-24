@@ -172,9 +172,11 @@ public class CrateParticleDialog extends Dialog<Crate> {
             case EXPLOSION -> "explosion_10";
             case HAPPY_VILLAGER -> "glint";
             case GUST -> "gust_8";
-            case HEART, INFESTED, ENCHANTED_HIT, FIREFLY, FLASH, GLOW, BUBBLE, LAVA,
-                 NAUTILUS, NOTE, RAID_OMEN, SHRIEK, SOUL_FIRE_FLAME, TRIAL_OMEN, VAULT_CONNECTION -> value;
-            case TINTED_LEAVES -> "leaf_0";
+            case HEART, ENCHANTED_HIT, GLOW, BUBBLE, LAVA,
+                 NAUTILUS, NOTE, SHRIEK, SOUL_FIRE_FLAME, VAULT_CONNECTION -> value;
+            // TINTED_LEAVES added in 1.21.5, not available in 1.21.4
+            // case TINTED_LEAVES -> "leaf_0";
+            // PALE_OAK_LEAVES added in 1.21.2, available in 1.21.4
             case PALE_OAK_LEAVES -> "pale_oak_0";
             case SCULK_CHARGE -> "sculk_charge_3";
             case SCULK_CHARGE_POP -> "sculk_charge_pop_0";
@@ -219,8 +221,8 @@ public class CrateParticleDialog extends Dialog<Crate> {
             inputs.addAll(this.getColorButtons());
             dataParser = nbtHolder -> {
                 Color color = parseColor(nbtHolder);
-                float power = nbtHolder.getFloat(JSON_EXTRA, DEF_POWER);
-                return new Particle.Spell(color, power);
+                // Particle.Spell was removed in newer versions - use color-based fallback
+                return new Particle.DustOptions(color, 1.0f);
             };
         }
         else if (type == ItemStack.class) {

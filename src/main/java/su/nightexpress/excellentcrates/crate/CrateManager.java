@@ -515,7 +515,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
     public void multiOpenCrate(@NotNull Player player, @NotNull CrateSource source, @NotNull OpenOptions options, @Nullable Cost cost, int amount) {
         int massLimit = Config.MASS_OPENING_LIMIT.get();
-        int openings = Math.clamp(amount, 1, massLimit);
+        int openings = Math.min(Math.max(amount, 1), massLimit);
 
         if (openings > 1) {
             options.with(OpenOptions.Option.IGNORE_ANIMATION);

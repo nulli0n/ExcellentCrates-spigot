@@ -19,6 +19,7 @@ import su.nightexpress.nightcore.util.profile.CachedProfile;
 import su.nightexpress.nightcore.util.time.TimeFormats;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -139,7 +140,8 @@ public class PlaceholderHook {
         @Override
         @NotNull
         public String getAuthor() {
-            return this.plugin.getDescription().getAuthors().getFirst();
+            List<String> authors = this.plugin.getDescription().getAuthors();
+            return authors.isEmpty() ? "Unknown" : authors.get(0);
         }
 
         @Override

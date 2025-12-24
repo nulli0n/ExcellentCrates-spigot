@@ -54,7 +54,7 @@ public abstract class AbstractSpinner implements Spinner {
             return;
         }
 
-        this.currentStep = this.steps.removeFirst();
+        this.currentStep = this.steps.remove(0);
         this.tickInterval = this.currentStep.getTickInterval();
         this.stepCount = 0L;
         this.tickCount = 0L;
