@@ -10,6 +10,7 @@ public class EffectId {
     public static final String PULSAR  = "pulsar";
     public static final String BEACON  = "beacon";
     public static final String TORNADO = "tornado";
+    public static final String TWISTED_FIELD = "twisted_field";
     public static final String VORTEX  = "vortex";
     public static final String SIMPLE  = "simple";
     public static final String DUMMY = "dummy";

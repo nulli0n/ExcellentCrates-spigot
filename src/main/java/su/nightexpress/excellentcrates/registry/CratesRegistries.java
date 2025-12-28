@@ -31,6 +31,7 @@ public class CratesRegistries {
         registerEffect(new SpiralEffect());
         registerEffect(new TornadoEffect());
         registerEffect(new VortexEffect());
+        registerEffect(new TwistedFieldEffect());
     }
 
     public static void clear() {
