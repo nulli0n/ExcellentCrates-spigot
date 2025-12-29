@@ -2,10 +2,10 @@ package su.nightexpress.excellentcrates.crate.cost.type.impl;
 
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
-import su.nightexpress.excellentcrates.api.cost.CostEntry;
 import su.nightexpress.excellentcrates.crate.cost.CostTypeId;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.KeyCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.AbstractCostType;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -33,11 +33,14 @@ public class KeyCostType extends AbstractCostType implements LangContainer {
         .build();
 
     private final KeyManager keyManager;
+    private final DialogRegistry dialogs;
 
-    public KeyCostType(@NotNull CratesPlugin plugin, @NotNull KeyManager keyManager) {
+    public KeyCostType(@NotNull CratesPlugin plugin, @NotNull KeyManager keyManager, @NotNull DialogRegistry dialogs) {
         super(CostTypeId.KEY);
-        plugin.injectLang(this);
         this.keyManager = keyManager;
+        this.dialogs = dialogs;
+
+        plugin.injectLang(this);
     }
 
     @Override
@@ -57,12 +60,12 @@ public class KeyCostType extends AbstractCostType implements LangContainer {
         String keyId = ConfigValue.create(path + ".Key", "null").read(config);
         int amount = ConfigValue.create(path + ".Amount", 1).read(config);
 
-        return new KeyCostEntry(this, this.keyManager, keyId, amount);
+        return new KeyCostEntry(this, this.keyManager, this.dialogs, keyId, amount);
     }
 
     @Override
     @NotNull
     public KeyCostEntry createEmpty() {
-        return new KeyCostEntry(this, this.keyManager, "null", 0);
+        return new KeyCostEntry(this, this.keyManager, this.dialogs, "null", 0);
     }
 }

@@ -14,7 +14,9 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.crate.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.dialog.crate.CrateItemDialog;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.locale.LangContainer;
@@ -116,10 +118,11 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
         .appendClick("Click to toggle")
         .build();
 
-    private static final IconLocale LOCALE_OPENING_COOLDOWN = LangEntry.iconBuilder("Editor.Button.Crate.OpeningCooldown").name("Opening Cooldown")
-        .appendCurrent("Enabled", GENERIC_STATE)
-        .appendCurrent("Current", GENERIC_VALUE).br()
-        .appendInfo("Sets the crate's cooldown time.").br()
+    private static final IconLocale LOCALE_OPEN_LIMITS = LangEntry.iconBuilder("Editor.Button.Crate.OpeningCooldown").name("Open Limits")
+        .appendCurrent("Status", GENERIC_STATE)
+        .appendCurrent("Cooldown", GENERIC_VALUE)
+        .appendCurrent("Limit Amount", GENERIC_AMOUNT).br()
+        .appendInfo("Limits amount of crates", "can be opened per player", "for a time frame.").br()
         .appendClick("Click to edit")
         .build();
 
@@ -151,8 +154,18 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
         .appendClick("Click to open")
         .build();
 
-    public CrateOptionsMenu(@NotNull CratesPlugin plugin) {
+    private static final IconLocale LOCALE_POST_OPEN_COMMANDS = LangEntry.iconBuilder("Editor.Button.Crate.Post-Open-Commands").name("Post-Open Commands")
+        .appendCurrent("Status", GENERIC_INSPECTION)
+        .appendCurrent("Commands", GENERIC_AMOUNT).br()
+        .appendInfo("Runs listed commands", "when the crate is opened.").br()
+        .appendClick("Click to edit")
+        .build();
+
+    private final DialogRegistry dialogs;
+
+    public CrateOptionsMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_CRATE_SETTINGS.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
@@ -173,7 +186,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .localized(LOCALE_NAME)
             .replacement(replacer -> replacer.replace(crate.replacePlaceholders()))
             .toMenuItem().setSlots(10).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_NAME.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_NAME, crate, flush);
             }).build()
         );
 
@@ -181,7 +194,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .localized(LOCALE_DESCRIPTION)
             .replacement(replacer -> replacer.replace(crate.replacePlaceholders()))
             .toMenuItem().setSlots(11).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_DESCRIPTION.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_DESCRIPTION, crate, flush);
             }).build()
         );
 
@@ -206,7 +219,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 ItemStack clean = CrateUtils.removeCrateTags(new ItemStack(cursor));
                 Players.addItem(player, cursor);
                 event.getView().setCursor(null);
-                CrateDialogs.CRATE_ITEM.ifPresent(dialog -> dialog.show(player, crate, clean, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_ITEM, new CrateItemDialog.Data<>(crate, clean), flush);
             }).build()
         );
 
@@ -217,7 +230,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 .replace(GENERIC_VALUE, crate::getPreviewId)
             )
             .toMenuItem().setSlots(13).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_PREVIEW.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_PREVIEW, crate, flush);
             }).build()
         );
 
@@ -228,7 +241,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 .replace(GENERIC_VALUE, crate::getOpeningId)
             )
             .toMenuItem().setSlots(14).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_OPENING.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_OPENING, crate, flush);
             }).build()
         );
 
@@ -280,16 +293,18 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
         );
 
         viewer.addItem(NightItem.fromType(Material.CLOCK)
-            .localized(LOCALE_OPENING_COOLDOWN)
+            .localized(LOCALE_OPEN_LIMITS)
             .replacement(replacer -> replacer
                 .replace(GENERIC_STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(crate.isOpeningCooldownEnabled()))
                 .replace(GENERIC_VALUE, () -> {
                     if (crate.getOpeningCooldownTime() < 0L) return CoreLang.OTHER_ONE_TIMED.text();
 
                     return TimeFormats.toLiteral(crate.getOpeningCooldownTime() * 1000L);
-                }))
+                })
+                .replace(GENERIC_AMOUNT, () -> String.valueOf(crate.getOpeningLimitAmount()))
+            )
             .toMenuItem().setSlots(30).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_COOLDOWN.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_OPENING_LIMITS, crate, flush);
             }).build()
         );
 
@@ -299,7 +314,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 .replace(GENERIC_TYPE, () -> StringUtil.capitalizeUnderscored(crate.getEffectType()))
                 .replace(GENERIC_VALUE, () -> Lang.PARTICLE.getLocalized(crate.getEffectParticle().getParticle())))
             .toMenuItem().setSlots(31).setHandler((viewer1, event) -> {
-                CrateDialogs.CRATE_EFFECT.ifPresent(dialog -> dialog.show(player, crate, flush));
+                this.dialogs.show(player, CrateDialogs.CRATE_EFFECT, crate, flush);
             }).build()
         );
 
@@ -312,7 +327,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                     .replace(GENERIC_VALUE, crate::getHologramTemplateId)
                 )
                 .toMenuItem().setSlots(32).setHandler((viewer1, event) -> {
-                    CrateDialogs.CRATE_HOLOGRAM.ifPresent(dialog -> dialog.show(player, crate, flush));
+                    this.dialogs.show(player, CrateDialogs.CRATE_HOLOGRAM, crate, flush);
                 }).build()
             );
         }
@@ -348,6 +363,17 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
 
                 this.plugin.getCrateManager().delete(crate);
                 this.runNextTick(() -> this.plugin.getEditorManager().openCrateList(player));
+            }).build()
+        );
+
+        viewer.addItem(NightItem.fromType(Material.COMMAND_BLOCK)
+            .localized(LOCALE_POST_OPEN_COMMANDS)
+            .replacement(replacer -> replacer
+                .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_GENERIC_COMMANDS, crate.getPostOpenCommands().stream().allMatch(CrateUtils::isValidCommand)))
+                .replace(GENERIC_AMOUNT, () -> String.valueOf(crate.getPostOpenCommands().size()))
+            )
+            .toMenuItem().setSlots(40).setHandler((viewer1, event) -> {
+                this.dialogs.show(player, CrateDialogs.CRATE_POST_OPEN_COMMANDS, crate, flush);
             }).build()
         );
     }

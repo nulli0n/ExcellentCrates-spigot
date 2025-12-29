@@ -150,7 +150,7 @@ public class CrateKey implements ConfigBacked {
         ItemStack item = ItemHelper.toItemStack(this.item);
         ItemUtil.editMeta(item, meta -> {
             if (fullData) {
-                if (!this.isItemStackable()) meta.setMaxStackSize(1);
+                meta.setMaxStackSize(this.itemStackable ? null : 1);
                 PDCUtil.set(meta, Keys.keyId, this.getId());
             }
         });

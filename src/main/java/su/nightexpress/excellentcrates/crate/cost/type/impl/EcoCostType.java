@@ -6,6 +6,7 @@ import su.nightexpress.excellentcrates.api.cost.CostEntry;
 import su.nightexpress.excellentcrates.crate.cost.CostTypeId;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.EcoCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.AbstractCostType;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.nightcore.config.ConfigValue;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.integration.currency.CurrencyId;
@@ -31,8 +32,12 @@ public class EcoCostType extends AbstractCostType implements LangContainer {
         .appendClick("Click to edit")
         .build();
 
-    public EcoCostType(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public EcoCostType(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(CostTypeId.CURRENCY);
+        this.dialogs = dialogs;
+
         plugin.injectLang(this);
     }
 
@@ -53,12 +58,12 @@ public class EcoCostType extends AbstractCostType implements LangContainer {
         String currencyId = ConfigValue.create(path + ".Currency", CurrencyId.VAULT).read(config);
         double amount = ConfigValue.create(path + ".Amount", 0D).read(config);
 
-        return new EcoCostEntry(this, currencyId, amount);
+        return new EcoCostEntry(this, this.dialogs, currencyId, amount);
     }
 
     @Override
     @NotNull
     public EcoCostEntry createEmpty() {
-        return new EcoCostEntry(this, CurrencyId.VAULT, 0);
+        return new EcoCostEntry(this, this.dialogs, CurrencyId.VAULT, 0);
     }
 }

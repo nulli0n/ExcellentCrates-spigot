@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class CratePreviewDialog extends CrateDialog<Crate> {
+public class CratePreviewDialog extends Dialog<Crate> {
 
     private static final TextLocale TITLE = LangEntry.builder("Dialog.Crate.Preview.Title").text(title("Crate", "Preview Template"));
 

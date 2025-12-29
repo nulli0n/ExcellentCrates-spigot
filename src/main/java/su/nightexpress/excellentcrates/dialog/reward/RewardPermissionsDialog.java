@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.dialog.reward;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.crate.Reward;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.text.WrappedMultilineOptions;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -16,7 +16,7 @@ import java.util.*;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardPermissionsDialog extends CrateDialog<Reward> {
+public class RewardPermissionsDialog extends Dialog<Reward> {
 
     private static final String NEGATIVE = "-";
     private static final String POSITIVE = "+";
