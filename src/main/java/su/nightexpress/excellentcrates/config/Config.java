@@ -226,6 +226,11 @@ public class Config {
         "Controls whether players receive a title notification when a physical key is dropped due to full inventory."
     );
 
+    public static final ConfigValue<Boolean> CRATE_NOTIFY_ON_INVENTORY_FULL = ConfigValue.create("Crate.Notify_On_Inventory_Full",
+        true,
+        "Controls whether players receive a title notification when a physical crate is dropped due to full inventory."
+    );
+
     public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
         true,
         "Controls whether the Holograms feature is available.",
