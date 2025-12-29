@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.dialog.cost;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.locale.LangEntry;
 import su.nightexpress.nightcore.locale.entry.DialogElementLocale;
@@ -13,7 +13,7 @@ import su.nightexpress.nightcore.ui.dialog.build.*;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class CostNameDialog extends CrateDialog<Cost> {
+public class CostNameDialog extends Dialog<Cost> {
 
     private static final String INPUT_NAME = "name";
 

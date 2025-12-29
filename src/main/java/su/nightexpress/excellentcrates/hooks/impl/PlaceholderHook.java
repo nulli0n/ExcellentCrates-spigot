@@ -12,8 +12,10 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.user.CrateUser;
+import su.nightexpress.nightcore.bridge.wrap.NightProfile;
 import su.nightexpress.nightcore.core.config.CoreLang;
 import su.nightexpress.nightcore.util.NumberUtil;
+import su.nightexpress.nightcore.util.profile.CachedProfile;
 import su.nightexpress.nightcore.util.time.TimeFormats;
 
 import java.util.LinkedHashMap;
@@ -68,6 +70,19 @@ public class PlaceholderHook {
                 return String.valueOf(user.getCrateData(crate).getOpenings());
             });
 
+            this.userPlaceholders.put("openings_remaining", (player, crate) -> {
+                if (player == null) return null;
+                if (!crate.isOpeningCooldownEnabled()) return CoreLang.OTHER_INFINITY.text();
+
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
+                UserCrateData data = user.getCrateData(crate);
+
+                int openLimit = crate.getOpeningLimitAmount();
+                int openStreak = data.queryOpeningStreak();
+
+                return String.valueOf(Math.max(0, openLimit - openStreak));
+            });
+
             this.userPlaceholders.put("openings", (player, crate) -> {
                 if (player == null) return null;
 
@@ -77,12 +92,15 @@ public class PlaceholderHook {
 
             this.userPlaceholders.put("cooldown", (player, crate) -> {
                 if (player == null) return null;
+                if (!crate.isOpeningCooldownEnabled()) return Lang.OTHER_COOLDOWN_READY.text();
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
                 UserCrateData data = user.getCrateData(crate);
-                if (!data.hasCooldown()) return Lang.OTHER_COOLDOWN_READY.text();
 
-                return TimeFormats.formatDuration(data.getOpenCooldown(), Config.CRATE_COOLDOWN_FORMAT_TYPE.get());
+                if (!data.isOnCooldown()) return Lang.OTHER_COOLDOWN_READY.text();
+                if (data.isCooldownPermanent()) return CoreLang.OTHER_NEVER.text();
+
+                return TimeFormats.formatDuration(data.getCooldownTimestamp(), Config.CRATE_COOLDOWN_FORMAT_TYPE.get());
             });
 
             this.userPlaceholders.put("next_milestone_openings", (player, crate) -> {
@@ -108,7 +126,7 @@ public class PlaceholderHook {
                 return reward.getName();
             });
 
-            this.userPlaceholders.put("latest_opener", (player, crate) -> crate.getLastOpenerName());
+            this.userPlaceholders.put("latest_opener", (player, crate) -> crate.getLastOpener().map(CachedProfile::query).map(NightProfile::getName).orElse(Lang.OTHER_LAST_OPENER_EMPTY.text()));
             this.userPlaceholders.put("latest_rolled_reward", (player, crate) -> crate.getLastRewardName());
         }
 

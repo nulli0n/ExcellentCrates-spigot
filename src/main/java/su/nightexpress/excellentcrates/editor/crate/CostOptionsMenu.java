@@ -14,7 +14,8 @@ import su.nightexpress.excellentcrates.api.cost.CostEntry;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.crate.cost.CostDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -30,8 +31,9 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 import java.util.List;
 
-import static su.nightexpress.excellentcrates.Placeholders.*;
-import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
+import static su.nightexpress.excellentcrates.Placeholders.COST_NAME;
+import static su.nightexpress.excellentcrates.Placeholders.GENERIC_STATE;
+import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.GREEN;
 
 public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Data> implements LangContainer {
 
@@ -59,10 +61,13 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
 
     public record Data(@NotNull Crate crate, @NotNull Cost cost) {}
 
+    private final DialogRegistry dialogs;
+
     private boolean itemDetection;
 
-    public CostOptionsMenu(@NotNull CratesPlugin plugin) {
+    public CostOptionsMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X6, Lang.EDITOR_TITLE_CRATE_COST.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
         this.itemDetection = true;
 
@@ -122,7 +127,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
             .replacement(replacer -> replacer.replace(cost.replacePlaceholders()))
             .toMenuItem()
             .setSlots(12)
-            .setHandler((viewer1, event) -> CrateDialogs.COST_NAME.ifPresent(dialog -> dialog.show(player, cost, saveAndFlush)))
+            .setHandler((viewer1, event) -> this.dialogs.show(player, CostDialogs.NAME, cost, saveAndFlush))
             .build()
         );
 
@@ -161,7 +166,10 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
 
                 builder = entry.getEditorIcon().toMenuItem().setHandler((viewer1, event) -> {
                     if (event.isLeftClick()) {
-                        entry.openEditor(player, crate::markDirty);
+                        entry.openEditor(player, () -> {
+                            crate.markDirty();
+                            this.runNextTick(() -> this.flush(viewer));
+                        });
                     }
                     else if (event.getClick() == ClickType.DROP) {
                         cost.removeEntry(entry);
@@ -174,7 +182,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
                 builder = NightItem.fromType(Material.LIME_DYE)
                     .localized(LOCALE_ENTRY_VACANT)
                     .toMenuItem()
-                    .setHandler((viewer1, event) -> CrateDialogs.COST_ENTRY_CREATION.ifPresent(dialog -> dialog.show(player, cost, saveAndFlush)));
+                    .setHandler((viewer1, event) -> this.dialogs.show(player, CostDialogs.ENTRY_CREATION, cost, saveAndFlush));
             }
 
             viewer.addItem(builder.setSlots(slot).setPriority(Integer.MAX_VALUE).build());

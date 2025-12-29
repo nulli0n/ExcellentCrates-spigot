@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.bridge.common.NightNbtHolder;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
@@ -35,7 +35,7 @@ import java.util.function.Function;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class CrateParticleDialog extends CrateDialog<Crate> {
+public class CrateParticleDialog extends Dialog<Crate> {
 
     private static final TextLocale TITLE_MAIN = LangEntry.builder("Dialog.Crate.Particle.Title").text(title("Crate", "Particle Type"));
     private static final TextLocale TITLE_DATA = LangEntry.builder("Dialog.Crate.ParticleData.Title").text(title("Crate", "Particle Data"));

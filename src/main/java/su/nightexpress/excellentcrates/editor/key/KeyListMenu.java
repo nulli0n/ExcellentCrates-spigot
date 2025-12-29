@@ -8,7 +8,8 @@ import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.key.dialog.KeyDialogs;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -46,8 +47,11 @@ public class KeyListMenu extends LinkedMenu<CratesPlugin, KeyManager> implements
         .appendClick("Click to edit")
         .build();
 
-    public KeyListMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public KeyListMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_KEY_LIST.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
@@ -60,7 +64,7 @@ public class KeyListMenu extends LinkedMenu<CratesPlugin, KeyManager> implements
 
         this.addItem(Material.ANVIL, LOCALE_CREATION, 42, (viewer, event, manager) -> {
             Player player = viewer.getPlayer();
-            CrateDialogs.KEY_CREATION.ifPresent(dialog -> dialog.show(player, manager, () -> this.flush(player)));
+            this.dialogs.show(player, KeyDialogs.CREATION, manager, () -> this.flush(player));
         });
     }
 

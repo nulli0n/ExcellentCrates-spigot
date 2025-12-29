@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.EcoCostEntry;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.integration.currency.EconomyBridge;
@@ -16,7 +16,7 @@ import su.nightexpress.nightcore.ui.dialog.build.*;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class CurrencyCostOptionsDialog extends CrateDialog<EcoCostEntry> {
+public class CurrencyCostOptionsDialog extends Dialog<EcoCostEntry> {
 
     private static final String INPUT_ID     = "id";
     private static final String INPUT_AMOUNT = "amount";

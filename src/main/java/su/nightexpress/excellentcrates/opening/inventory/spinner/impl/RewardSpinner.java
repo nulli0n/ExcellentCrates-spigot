@@ -29,7 +29,7 @@ public class RewardSpinner extends AbstractSpinner {
     public RewardSpinner(@NotNull SpinnerData data, @NotNull InventoryOpening opening, @NotNull Set<Rarity> rarities) {
         super(data, opening);
         this.rarities = rarities;
-        this.rewardIndex = 0;
+        this.rewardIndex = opening.getRewards().size(); // Start from latest index after previous reward spinners added their rewards.
 
         this.prepareRewards();
     }

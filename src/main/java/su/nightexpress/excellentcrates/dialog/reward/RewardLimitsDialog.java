@@ -6,7 +6,7 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.limit.CooldownMode;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
-public class RewardLimitsDialog extends CrateDialog<Reward> {
+public class RewardLimitsDialog extends Dialog<Reward> {
 
     private static final TextLocale TITLE = LangEntry.builder("Dialog.Reward.Limits.Title").text(title("Reward", "Limits"));
 

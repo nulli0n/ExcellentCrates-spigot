@@ -13,7 +13,9 @@ import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.reward.impl.ItemReward;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.crate.reward.RewardDialogs;
+import su.nightexpress.excellentcrates.dialog.reward.RewardItemDialog;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
@@ -48,8 +50,11 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
         .appendClick("Click to toggle")
         .build();
 
-    public RewardContentMenu(@NotNull CratesPlugin plugin) {
+    private final DialogRegistry dialogs;
+
+    public RewardContentMenu(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin, MenuType.GENERIC_9X5, Lang.EDITOR_TITLE_REWARD_CONTENT.text());
+        this.dialogs = dialogs;
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.background(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(0, 9).toArray()));
@@ -80,7 +85,7 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
                 this.runNextTick(flush);
             }
             else {
-                CrateDialogs.REWARD_ITEM.ifPresent(dialog -> dialog.show(player, reward, copy, flush));
+                this.dialogs.show(player, RewardDialogs.ITEM, new RewardItemDialog.Data(reward, copy), flush);
             }
         }
         else {

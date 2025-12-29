@@ -7,7 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.crate.cost.entry.AbstractCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.impl.KeyCostType;
-import su.nightexpress.excellentcrates.dialog.CrateDialogs;
+import su.nightexpress.excellentcrates.dialog.DialogKey;
+import su.nightexpress.excellentcrates.dialog.DialogRegistry;
+import su.nightexpress.excellentcrates.dialog.cost.KeyCostOptionsDialog;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.key.KeyManager;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -20,16 +22,22 @@ import java.util.Optional;
 
 public class KeyCostEntry extends AbstractCostEntry<KeyCostType> {
 
+    private static final DialogKey<KeyCostEntry> DIALOG_KEY = new DialogKey<>("key_cost_options");
+
     private final KeyManager keyManager;
+    private final DialogRegistry dialogs;
 
     private String keyId;
     private int amount;
 
-    public KeyCostEntry(@NotNull KeyCostType type, @NotNull KeyManager keyManager, @NotNull String keyId, int amount) {
+    public KeyCostEntry(@NotNull KeyCostType type, @NotNull KeyManager keyManager, @NotNull DialogRegistry dialogs, @NotNull String keyId, int amount) {
         super(type);
         this.keyManager = keyManager;
+        this.dialogs = dialogs;
         this.setKeyId(keyId);
         this.setAmount(amount);
+
+        this.dialogs.register(DIALOG_KEY, new KeyCostOptionsDialog(keyManager));
     }
 
     @Override
@@ -40,7 +48,7 @@ public class KeyCostEntry extends AbstractCostEntry<KeyCostType> {
 
     @Override
     public void openEditor(@NotNull Player player, @Nullable Runnable callback) {
-        CrateDialogs.KEY_COST_OPTIONS.ifPresent(dialog -> dialog.show(player, this, callback));
+        this.dialogs.show(player, DIALOG_KEY, this, callback);
     }
 
     @NotNull

@@ -3,14 +3,14 @@ package su.nightexpress.excellentcrates.dialog.generic;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Lang;
-import su.nightexpress.excellentcrates.dialog.CrateDialog;
+import su.nightexpress.excellentcrates.dialog.Dialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.locale.entry.TextLocale;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.ui.dialog.build.*;
 import su.nightexpress.nightcore.util.Strings;
 
-public abstract class GenericCreationDialog<T> extends CrateDialog<T> {
+public abstract class GenericCreationDialog<T> extends Dialog<T> {
 
     private static final String INPUT_ID = "id";
 

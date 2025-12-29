@@ -41,6 +41,8 @@ import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.PDCUtil;
 import su.nightexpress.nightcore.util.problem.ProblemCollector;
 import su.nightexpress.nightcore.util.problem.ProblemReporter;
+import su.nightexpress.nightcore.util.profile.CachedProfile;
+import su.nightexpress.nightcore.util.profile.PlayerProfiles;
 import su.nightexpress.nightcore.util.random.Rnd;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
@@ -77,7 +79,8 @@ public class Crate implements ConfigBacked {
     private String  openingId;
 
     private boolean openingCooldownEnabled;
-    private int     openingCooldownTime;
+    private int openingCooldownTime;
+    private int openingLimitAmount;
 
     private boolean permissionRequired;
 
@@ -91,6 +94,8 @@ public class Crate implements ConfigBacked {
     private boolean effectEnabled;
     private String      effectType;
     private UniParticle effectParticle;
+
+    private List<String> postOpenCommands;
 
     private boolean dirty;
 
@@ -170,6 +175,7 @@ public class Crate implements ConfigBacked {
 
         this.setOpeningCooldownEnabled(config.getBoolean("OpeningCooldown.Enabled"));
         this.setOpeningCooldownTime(config.getInt("OpeningCooldown.Value"));
+        this.setOpeningLimitAmount(config.getInt("OpeningLimits.Amount"));
 
         this.setPermissionRequired(config.getBoolean("Permission_Required"));
 
@@ -230,6 +236,8 @@ public class Crate implements ConfigBacked {
         this.setEffectParticle(UniParticle.read(config, "Block.Effect.Particle"));
         this.setEffectEnabled(config.getBoolean("Block.Effect.Enabled", !this.effectType.equalsIgnoreCase(EffectId.NONE)));
 
+        this.setPostOpenCommands(config.getStringList("Post-Open.Commands"));
+
         for (String sId : config.getSection("Rewards.List")) {
             Reward reward = RewardFactory.read(this.plugin, this, sId, config, "Rewards.List." + sId);
             this.rewardMap.put(sId, reward);
@@ -276,6 +284,7 @@ public class Crate implements ConfigBacked {
 
         config.set("OpeningCooldown.Enabled", this.openingCooldownEnabled);
         config.set("OpeningCooldown.Value", this.openingCooldownTime);
+        config.set("OpeningLimits.Amount", this.openingLimitAmount);
 
         config.remove("CostOptions");
         this.getCosts().forEach(cost -> config.set("CostOptions." + cost.getId(), cost));
@@ -289,6 +298,8 @@ public class Crate implements ConfigBacked {
         config.set("Block.Effect.Model", this.effectType);
         config.remove("Block.Effect.Particle");
         this.effectParticle.write(config, "Block.Effect.Particle");
+
+        config.set("Post-Open.Commands", this.postOpenCommands);
     }
 
     private void writeRewards(@NotNull FileConfig config) {
@@ -330,6 +341,10 @@ public class Crate implements ConfigBacked {
         if (this.isOpeningEnabled() && !this.isOpeningValid()) collector.report(Lang.INSPECTIONS_CRATE_OPENING.get(false));
         if (this.isHologramEnabled() && !this.isHologramTemplateValid()) collector.report(Lang.INSPECTIONS_CRATE_HOLOGRAM.get(false));
 
+        this.postOpenCommands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
+            collector.report("Post-Open Command '" + command + "' does no exist.");
+        });
+
         this.costMap.values().forEach(cost -> {
             ProblemReporter reporter = cost.collectProblems();
             if (reporter.isEmpty()) return;
@@ -352,16 +367,16 @@ public class Crate implements ConfigBacked {
         return this.plugin.getDataManager().getCrateData(this.getId());
     }
 
-    @Nullable
-    public String getLatestOpener() {
+    @NotNull
+    public Optional<CachedProfile> getLastOpener() {
         GlobalCrateData data = this.getData();
-        return data == null ? null : data.getLatestOpener();
-    }
+        if (data == null) return Optional.empty();
 
-    @Nullable
-    public String getLastOpenerName() {
-        String last = this.getLatestOpener();
-        return last == null ? Lang.OTHER_LAST_OPENER_EMPTY.text() : last;
+        UUID playerId = data.getLatestOpenerId();
+        String playerName = data.getLatestOpenerName();
+        if (playerId == null || playerName == null) return Optional.empty();
+
+        return Optional.of(PlayerProfiles.createProfile(playerId, playerName));
     }
 
     @Nullable
@@ -591,7 +606,7 @@ public class Crate implements ConfigBacked {
             //ItemUtil.setLore(meta, this.description);
 
             if (fullData) {
-                if (!this.isItemStackable()) meta.setMaxStackSize(1);
+                meta.setMaxStackSize(this.itemStackable ? null : 1);
                 PDCUtil.set(meta, Keys.crateId, this.getId());
             }
         });
@@ -665,6 +680,14 @@ public class Crate implements ConfigBacked {
 
     public void setOpeningCooldownTime(int openingCooldownTime) {
         this.openingCooldownTime = openingCooldownTime;
+    }
+
+    public int getOpeningLimitAmount() {
+        return this.openingLimitAmount;
+    }
+
+    public void setOpeningLimitAmount(int openingLimitAmount) {
+        this.openingLimitAmount = Math.max(1, openingLimitAmount);
     }
 
     @NotNull
@@ -779,6 +802,15 @@ public class Crate implements ConfigBacked {
 
         this.effectParticle = wrapped;
         this.effectParticle.validateData();
+    }
+
+    @NotNull
+    public List<String> getPostOpenCommands() {
+        return this.postOpenCommands;
+    }
+
+    public void setPostOpenCommands(@Nullable List<String> postOpenCommands) {
+        this.postOpenCommands = postOpenCommands == null ? new ArrayList<>() : new ArrayList<>(postOpenCommands);
     }
 
     @NotNull
