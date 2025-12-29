@@ -442,7 +442,25 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         amount = Math.max(1, amount);
 
         ItemStack crateItem = crate.getItemStack();
-        Players.addItem(player, crateItem, amount);
+
+        // Notify player if inventory was full and crate was dropped.
+        if (Config.CRATE_NOTIFY_ON_INVENTORY_FULL.get()) {
+            int amountBefore = Players.countItem(player, crateItem);
+            Players.addItem(player, crateItem, amount);
+            int amountAfter = Players.countItem(player, crateItem);
+
+            // If not all crates were added to inventory, some were dropped
+            int amountDropped = amount - (amountAfter - amountBefore);
+            if (amountDropped > 0) {
+                Lang.COMMAND_GIVE_DROPPED.message().send(player, replacer -> replacer
+                    .replace(crate.replacePlaceholders())
+                    .replace(Placeholders.GENERIC_AMOUNT, amountDropped)
+                );
+            }
+        }
+        else {
+            Players.addItem(player, crateItem, amount);
+        }
     }
 
     public void openCostMenu(@NotNull Player player, @NotNull CrateSource source) {

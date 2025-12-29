@@ -66,6 +66,12 @@ public class Lang implements LangContainer {
     public static final MessageLocale COMMAND_GIVE_NOTIFY = LangEntry.builder("Command.Give.Notify").chatMessage(
         GRAY.wrap("You recieved " + SOFT_YELLOW.wrap("x" + GENERIC_AMOUNT) + " of " + SOFT_YELLOW.wrap(CRATE_NAME) + "."));
 
+    public static final MessageLocale COMMAND_GIVE_DROPPED = LangEntry.builder("Command.Give.Dropped").titleMessage(
+        SOFT_YELLOW.wrap(BOLD.wrap("Inventory Full!")),
+        GRAY.wrap(SOFT_YELLOW.wrap("x" + GENERIC_AMOUNT) + " " + WHITE.wrap(CRATE_NAME) + " was dropped on the ground!"),
+        Sound.ENTITY_ITEM_PICKUP
+    );
+
 
 
     public static final MessageLocale COMMAND_KEY_GIVE_DONE = LangEntry.builder("Command.Key.Give.Done").chatMessage(
@@ -73,6 +79,12 @@ public class Lang implements LangContainer {
 
     public static final MessageLocale COMMAND_KEY_GIVE_NOTIFY = LangEntry.builder("Command.Key.Give.Notify").chatMessage(
         GRAY.wrap("You recieved " + SOFT_YELLOW.wrap("x" + GENERIC_AMOUNT) + " of " + SOFT_YELLOW.wrap(KEY_NAME) + "!"));
+
+    public static final MessageLocale COMMAND_KEY_GIVE_DROPPED = LangEntry.builder("Command.Key.Give.Dropped").titleMessage(
+        SOFT_YELLOW.wrap(BOLD.wrap("Inventory Full!")),
+        GRAY.wrap(SOFT_YELLOW.wrap("x" + GENERIC_AMOUNT) + " " + WHITE.wrap(KEY_NAME) + " was dropped on the ground!"),
+        Sound.BLOCK_TRIAL_SPAWNER_EJECT_ITEM
+    );
 
     public static final TextLocale COMMAND_KEY_GIVE_ALL_DESC = LangEntry.builder("Command.Key.GiveAll.Desc").text(
         "Give key to all online players.");
