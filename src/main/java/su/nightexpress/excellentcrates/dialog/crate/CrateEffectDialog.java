@@ -32,7 +32,7 @@ public class CrateEffectDialog extends Dialog<Crate> {
             "Here you can choose the " + SOFT_YELLOW.wrap("effect model") + " and " + SOFT_YELLOW.wrap("particle type") + " for the crate.",
             "These effects are shown around the blocks linked to the crate.",
             "",
-            "Current Effect: %1$s" // Modified to show status
+            "Current Effect: %1$s"
     );
 
     private static final ButtonLocale BUTTON_PARTICLE = LangEntry.builder("Dialog.Crate.Effect.Button.Particle").button(SOFT_YELLOW.wrap("Particle: ") + "%s");
@@ -52,15 +52,11 @@ public class CrateEffectDialog extends Dialog<Crate> {
     public WrappedDialog create(@NotNull Player player, @NotNull Crate crate) {
         List<WrappedActionButton> buttons = new ArrayList<>();
 
-        // --- BUTTON 1: Edit Particle Type ---
-        // We keep this at the top so users can easily change the particle (Smoke, Flame, etc)
         String particleName = Lang.PARTICLE.getLocalized(crate.getEffectParticle().getParticle());
         buttons.add(DialogButtons.action(BUTTON_PARTICLE.replace(str -> str.formatted(particleName)))
                 .action(DialogActions.customClick(ACTION_PARTICLE))
                 .build());
 
-        // --- BUTTON 2: Disable Effect ---
-        // Clicking this disables the effect entirely
         NightNbtHolder disableNbt = NightNbtHolder.builder()
                 .put(JSON_ENABLED, false)
                 .put(JSON_MODEL, "")
@@ -70,12 +66,10 @@ public class CrateEffectDialog extends Dialog<Crate> {
                 .action(DialogActions.customClick(DialogActions.OK, disableNbt))
                 .build());
 
-        // --- BUTTONS 3+: Effect Models (Helix, Fountain, etc) ---
         CratesRegistries.getEffects().forEach(effect -> {
             boolean isSelected = crate.isEffectEnabled() && crate.getEffect() == effect;
             String label = isSelected ? SOFT_GREEN.wrap(effect.getName() + " (Selected)") : SOFT_YELLOW.wrap(effect.getName());
 
-            // Prepare data: Enable the effect + set the model ID
             NightNbtHolder nbt = NightNbtHolder.builder()
                     .put(JSON_ENABLED, true)
                     .put(JSON_MODEL, effect.getId())
@@ -87,7 +81,6 @@ public class CrateEffectDialog extends Dialog<Crate> {
         });
 
         return Dialogs.create(builder -> {
-            // Update Body text to show what is currently selected
             String status = crate.isEffectEnabled() && crate.getEffect() != null
                     ? SOFT_GREEN.wrap(crate.getEffect().getName())
                     : SOFT_RED.wrap("Disabled");
@@ -95,25 +88,22 @@ public class CrateEffectDialog extends Dialog<Crate> {
             builder.base(DialogBases.builder(TITLE)
                     .body(DialogBodies.plainMessage(BODY))
                     .afterAction(WrappedDialogAfterAction.NONE)
-                    .build() // No inputs needed anymore
+                    .build()
             );
 
             builder.type(DialogTypes.multiAction(buttons)
                     .exitAction(DialogButtons.back())
-                    .columns(3) // Grid layout
+                    .columns(3)
                     .build());
 
-            // Handler: Open Particle Menu
             builder.handleResponse(ACTION_PARTICLE, (viewer, identifier, nbtHolder) -> {
                 this.dialogs.show(player, CrateDialogs.CRATE_PARTICLE, crate, () -> this.show(player, crate, viewer.getCallback()));
             });
 
-            // Handler: Go Back
             builder.handleResponse(DialogActions.BACK, (viewer, identifier, nbtHolder) -> {
-                viewer.callback(); // Uses callback to return to previous menu nicely
+                viewer.callback();
             });
 
-            // Handler: Select Effect (or Disable)
             builder.handleResponse(DialogActions.OK, (viewer, identifier, nbtHolder) -> {
                 if (nbtHolder == null) return;
 
@@ -122,15 +112,12 @@ public class CrateEffectDialog extends Dialog<Crate> {
 
                 crate.setEffectEnabled(enabled);
 
-                // Only update the model type if one was actually clicked (not if we just disabled it)
                 if (enabled && modelId != null) {
                     crate.setEffectType(modelId);
                 }
 
                 crate.markDirty();
 
-                // Refresh the menu to show the new selection (Green text)
-                // If you prefer the menu to close after selection, change this to: viewer.callback();
                 this.show(player, crate, viewer.getCallback());
             });
         });

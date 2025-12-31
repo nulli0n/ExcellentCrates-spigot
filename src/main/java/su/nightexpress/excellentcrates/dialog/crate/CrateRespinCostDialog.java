@@ -48,7 +48,6 @@ public class CrateRespinCostDialog extends Dialog<Crate> {
             builder.handleResponse(DialogActions.OK, (viewer, identifier, nbtHolder) -> {
                 if (nbtHolder == null) return;
 
-                // FIXED: Parse the text to a double manually
                 String input = nbtHolder.getText(JSON_COST, String.valueOf(crate.getRespinCost()));
                 double cost;
                 try {

@@ -20,8 +20,6 @@ public class HeartOfTheForestEffect extends CrateEffect {
 
     @Override
     public void onStepPlay(@NotNull Location o, @NotNull UniParticle p, int step, @NotNull Player player) {
-
-        // Phase 1: calm life energy
         if (step < 60) {
             double t = step * 0.12;
 
@@ -33,8 +31,6 @@ public class HeartOfTheForestEffect extends CrateEffect {
 
             p.play(player, loc, 0, 1);
         }
-
-        // Phase 2: awakening
         else if (step < 100) {
             double t = step * 0.25;
 
@@ -50,8 +46,6 @@ public class HeartOfTheForestEffect extends CrateEffect {
                 p.play(player, loc, 0, 1);
             }
         }
-
-        // Phase 3: divine heart
         else {
             double pulse = Math.sin(step * 0.3) * 0.4;
             p.play(player, o.clone().add(0, 1.6 + pulse, 0), 0, 4);

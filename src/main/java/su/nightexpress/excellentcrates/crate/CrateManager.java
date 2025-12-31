@@ -96,7 +96,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.runTask(task -> this.reportProblems());
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -374,7 +374,6 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         crate.setPushbackEnabled(true);
         crate.setHologramEnabled(true);
 
-        // UPDATED: Set default lines instead of template ID
         crate.setHologramLines(new ArrayList<>(List.of("Right-Click To Open", "%crate_name%")));
 
         crate.setEffectType(EffectId.HELIX);

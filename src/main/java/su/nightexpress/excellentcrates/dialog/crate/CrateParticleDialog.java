@@ -122,7 +122,7 @@ public class CrateParticleDialog extends Dialog<Crate> {
         return Dialogs.create(builder -> {
             builder.base(DialogBases.builder(TITLE_MAIN)
                 .body(DialogBodies.plainMessage(BODY_MAIN))
-                .afterAction(WrappedDialogAfterAction.NONE) // None for smoother Particle Data dialog switch.
+                .afterAction(WrappedDialogAfterAction.NONE)
                 .build()
             );
 
@@ -148,7 +148,7 @@ public class CrateParticleDialog extends Dialog<Crate> {
 
                 crate.setEffectParticle(UniParticle.of(particle));
                 crate.markDirty();
-                viewer.callback(); // Close due to NONE action.
+                viewer.callback();
             });
         });
     }

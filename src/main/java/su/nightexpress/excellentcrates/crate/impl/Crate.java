@@ -118,7 +118,7 @@ public class Crate implements ConfigBacked {
         this.milestones = new HashSet<>();
         this.description = new ArrayList<>();
         this.hologramLines = new ArrayList<>();
-        this.hologramTemplateId = "custom"; // Default to custom
+        this.hologramTemplateId = "custom";
     }
 
     public void load() throws IllegalStateException {
@@ -312,7 +312,6 @@ public class Crate implements ConfigBacked {
         config.set("Block.Pushback.Enabled", this.pushbackEnabled);
         config.set("Block.Hologram.Enabled", this.hologramEnabled);
 
-        // Write both Template ID and Lines
         config.set("Block.Hologram.Template", this.hologramTemplateId);
         config.set("Block.Hologram.Lines", this.hologramLines);
 
@@ -366,7 +365,6 @@ public class Crate implements ConfigBacked {
         if (this.isPreviewEnabled() && !this.isPreviewValid()) collector.report(Lang.INSPECTIONS_CRATE_PREVIEW.get(false));
         if (this.isOpeningEnabled() && !this.isOpeningValid()) collector.report(Lang.INSPECTIONS_CRATE_OPENING.get(false));
 
-        // Validation: Check if hologram is enabled but empty (logic depends on template vs lines)
         if (this.isHologramEnabled() && this.getHologramText().isEmpty()) {
             collector.report("Crate hologram is enabled but contains no text.");
         }
@@ -461,7 +459,6 @@ public class Crate implements ConfigBacked {
         return this.plugin.getOpeningManager().getProviderById(this.openingId) != null;
     }
 
-    // Restored validation method for template
     public boolean isHologramTemplateValid() {
         return Config.getHologramTemplate(this.hologramTemplateId) != null;
     }
@@ -488,7 +485,6 @@ public class Crate implements ConfigBacked {
 
     @NotNull
     public List<String> getHologramText() {
-        // Logic to choose between Template and Custom Lines
         if (this.hologramTemplateId != null && !this.hologramTemplateId.equalsIgnoreCase("custom")) {
             HologramTemplate template = Config.getHologramTemplate(this.hologramTemplateId);
             if (template != null) {
@@ -498,7 +494,6 @@ public class Crate implements ConfigBacked {
         return new ArrayList<>(this.hologramLines);
     }
 
-    // --- Getters/Setters for Hologram ---
     @NotNull
     public String getHologramTemplateId() {
         return this.hologramTemplateId;
@@ -516,7 +511,6 @@ public class Crate implements ConfigBacked {
     public void setHologramLines(@Nullable List<String> lines) {
         this.hologramLines = lines == null ? new ArrayList<>() : new ArrayList<>(lines);
     }
-    // ------------------------------------
 
     public boolean hasRewards(@NotNull Player player) {
         return this.hasRewards(player, null);

@@ -35,7 +35,6 @@ public class CrateRespinLimitDialog extends Dialog<Crate> {
             builder.base(DialogBases.builder(TITLE)
                     .body(DialogBodies.plainMessage(BODY))
                     .inputs(
-                            // FIXED: Use 'text' instead of 'integer'
                             DialogInputs.text(JSON_LIMIT, INPUT_LIMIT)
                                     .initial(String.valueOf(crate.getRespinLimit()))
                                     .build()
@@ -48,7 +47,6 @@ public class CrateRespinLimitDialog extends Dialog<Crate> {
             builder.handleResponse(DialogActions.OK, (viewer, identifier, nbtHolder) -> {
                 if (nbtHolder == null) return;
 
-                // FIXED: Parse the text to an integer manually
                 String input = nbtHolder.getText(JSON_LIMIT, String.valueOf(crate.getRespinLimit()));
                 int limit;
                 try {

@@ -20,7 +20,6 @@ public class RespinSettings {
     public static ItemStack getItem(String type, String costPlaceholder) {
         NightItem nightItem;
 
-        // Map the type string to the ConfigValue field
         switch (type) {
             case "Filler":
                 nightItem = Config.RESPIN_ITEM_FILLER.get();
@@ -41,12 +40,10 @@ public class RespinSettings {
                 return new ItemStack(Material.STONE);
         }
 
-        // Convert NightItem to standard Bukkit ItemStack
-        ItemStack item = nightItem.getItemStack(); // or .getItem() depending on API
+        ItemStack item = nightItem.getItemStack();
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            // Replace placeholder in Lore
             if (meta.hasLore() && costPlaceholder != null) {
                 List<String> lore = meta.getLore();
                 List<String> newLore = new ArrayList<>();

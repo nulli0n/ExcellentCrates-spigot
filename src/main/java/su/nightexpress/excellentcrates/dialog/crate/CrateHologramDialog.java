@@ -52,22 +52,17 @@ public class CrateHologramDialog extends Dialog<Crate> {
     public WrappedDialog create(@NotNull Player player, @NotNull Crate crate) {
         List<WrappedDialogInput> inputs = new ArrayList<>();
 
-        // 1. Enabled Checkbox
         inputs.add(DialogInputs.bool(JSON_ENABLED, INPUT_ENABLED)
                 .initial(crate.isHologramEnabled())
                 .build());
 
-        // 2. Template Selector (Config Templates + "Custom")
         List<WrappedSingleOptionEntry> entries = new ArrayList<>();
-
-        // Add "Custom" Option
         entries.add(new WrappedSingleOptionEntry(
                 ID_CUSTOM,
                 "Custom (Edit Lines Below)",
                 crate.getHologramTemplateId().equalsIgnoreCase(ID_CUSTOM)
         ));
 
-        // Add Config Template Options
         Config.getHologramTemplateIds().stream().sorted().forEach(id -> {
             boolean isSelected = crate.getHologramTemplateId().equalsIgnoreCase(id);
             entries.add(new WrappedSingleOptionEntry(id, id, isSelected));
@@ -75,13 +70,11 @@ public class CrateHologramDialog extends Dialog<Crate> {
 
         inputs.add(DialogInputs.singleOption(JSON_TEMPLATE, INPUT_TEMPLATE, entries).build());
 
-        // 3. Y Offset Field
         inputs.add(DialogInputs.text(JSON_OFFSET, INPUT_OFFSET)
                 .initial(String.valueOf(crate.getHologramYOffset()))
                 .maxLength(5)
                 .build());
 
-        // 4. Custom Line Fields (Always visible, but used only if "Custom" is selected)
         List<String> hologramLines = crate.getHologramLines();
         int size = Math.max(LINES_AMOUNT, hologramLines.size());
 
@@ -106,11 +99,9 @@ public class CrateHologramDialog extends Dialog<Crate> {
                 if (nbtHolder == null) return;
 
                 boolean enabled = nbtHolder.getBoolean(JSON_ENABLED, false);
-                // Get the selected template ID (will be "custom" or a real ID)
                 String templateId = nbtHolder.getText(JSON_TEMPLATE, ID_CUSTOM);
                 double offset = nbtHolder.getDouble(JSON_OFFSET, crate.getHologramYOffset());
 
-                // Collect custom lines
                 List<String> lines = new ArrayList<>();
                 for (int index = 0; index < size; index++) {
                     nbtHolder.getText(JSON_LINE.apply(index))
@@ -119,9 +110,9 @@ public class CrateHologramDialog extends Dialog<Crate> {
                 }
 
                 crate.setHologramEnabled(enabled);
-                crate.setHologramTemplateId(templateId); // Save the template choice
+                crate.setHologramTemplateId(templateId);
                 crate.setHologramYOffset(offset);
-                crate.setHologramLines(lines); // Save lines regardless (so they aren't lost if user switches back and forth)
+                crate.setHologramLines(lines);
 
                 crate.recreateHologram();
                 crate.markDirty();
