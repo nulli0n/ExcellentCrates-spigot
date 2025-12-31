@@ -82,6 +82,8 @@ public class CratesPlugin extends NightPlugin {
         CratesRegistries.registerCostType(new EcoCostType(this, this.dialogRegistry));
         this.proceedAddons(CratesAddon::onInit);
 
+        this.getServer().getPluginManager().registerEvents(new su.nightexpress.excellentcrates.opening.RespinGUI.RespinListener(), this);
+
         this.dataHandler = new DataHandler(this);
         this.dataHandler.setup();
 

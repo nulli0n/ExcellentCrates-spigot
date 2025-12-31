@@ -17,5 +17,7 @@ public class CrateDialogs {
     public static final DialogKey<Crate>                         CRATE_PARTICLE           = new DialogKey<>("crate_particle");
     public static final DialogKey<Crate>                         CRATE_HOLOGRAM           = new DialogKey<>("crate_hologram");
     public static final DialogKey<Crate>                         CRATE_POST_OPEN_COMMANDS = new DialogKey<>("crate_post_open_commands");
+    public static final DialogKey<Crate>                         CRATE_RESPIN_COST = new DialogKey<>("crate_respin_cost");
+    public static final DialogKey<Crate>                         CRATE_RESPIN_LIMIT = new DialogKey<>("crate_respin_limit");
 
 }

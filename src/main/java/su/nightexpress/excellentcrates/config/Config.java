@@ -1,6 +1,10 @@
 package su.nightexpress.excellentcrates.config;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Display;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.hologram.HologramTemplate;
@@ -13,6 +17,7 @@ import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,210 +35,306 @@ public class Config {
     public static final String DIR_OPENINGS_INVENTORY   = DIR_OPENINGS + "inventory/";
     public static final String DIR_OPENINGS_SELECTABLE  = DIR_OPENINGS + "selectable/";
     public static final String DIR_OPENINGS_SIMPLE_ROLL = DIR_OPENINGS + "simple_roll/";
+    public static final String DIR_OPENINGS_COSMIC = DIR_OPENINGS + "/cosmic/";
+    public static final String DIR_OPENINGS_EMERALD = DIR_OPENINGS + "/emerald_storm/";
+    public static final String DIR_OPENINGS_ORBITAL = DIR_OPENINGS + "/orbital_strike/";
+    public static final String DIR_OPENINGS_GALAXY = DIR_OPENINGS + "/galaxy/";
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
 
     public static final ConfigValue<String> LOGS_DATE_FORMAT = ConfigValue.create("Logs.DateFormat",
-        "dd/MM/yyyy HH:mm:ss",
-        "Sets date format for crate opening logs."
+            "dd/MM/yyyy HH:mm:ss",
+            "Sets date format for crate opening logs."
     );
 
     public static final ConfigValue<Boolean> LOGS_TO_CONSOLE = ConfigValue.create("Logs.Enabled.Console",
-        false,
-        "Sets whether or not all crate openings & reward wins will be logged to console."
+            false,
+            "Sets whether or not all crate openings & reward wins will be logged to console."
     );
 
     public static final ConfigValue<Boolean> LOGS_TO_FILE = ConfigValue.create("Logs.Enabled.File",
-        true,
-        "Sets whether or not all crate openings & reward wins will be logged to a file."
+            true,
+            "Sets whether or not all crate openings & reward wins will be logged to a file."
     );
 
 
 
     public static final ConfigValue<Boolean> DATA_REWARD_LIMITS_SYNC_ENABLED = ConfigValue.create("Data.Rewards.Limits.Synchronize",
-        true,
-        "When enabled, synchronizes reward limits datas (both, global and player ones) in addition to player data sync.",
-        "[*] CAUTION: Removes all reward limit entries from the database when a crate/reward gets deleted.",
-        "[*] Useless for SQLite."
+            true,
+            "When enabled, synchronizes reward limits datas (both, global and player ones) in addition to player data sync.",
+            "[*] CAUTION: Removes all reward limit entries from the database when a crate/reward gets deleted.",
+            "[*] Useless for SQLite."
     );
 
     public static final ConfigValue<Integer> DATA_REWARD_LIMITS_SAVE_INTERVAL = ConfigValue.create("Data.Rewards.Limits.Save_Interval",
-        3,
-        "Sets auto-save interval for reward's limit datas.",
-        "Data also saved on plugin reload and server reboot.",
-        "[*] You can increase this value to improve performance if you don't sync/share reward limit data across multiple servers."
+            3,
+            "Sets auto-save interval for reward's limit datas.",
+            "Data also saved on plugin reload and server reboot.",
+            "[*] You can increase this value to improve performance if you don't sync/share reward limit data across multiple servers."
     );
 
     public static final ConfigValue<Boolean> DATA_CRATE_DATA_SYNC_ENABLED = ConfigValue.create("Data.Crates.GlobalData.Synchronize",
-        true,
-        "When enabled, synchronizes global crate datas in addition to player data sync.",
-        "[*] CAUTION: Removes all crate data entries from the database when a crate gets deleted.",
-        "[*] Useless for SQLite."
+            true,
+            "When enabled, synchronizes global crate datas in addition to player data sync.",
+            "[*] CAUTION: Removes all crate data entries from the database when a crate gets deleted.",
+            "[*] Useless for SQLite."
     );
 
     public static final ConfigValue<Integer> DATA_CRATE_DATA_SAVE_INTERVAL = ConfigValue.create("Data.Crates.GlobalData.Save_Interval",
-        60,
-        "Sets auto-save interval for crate's datas.",
-        "Data also saved on plugin reload and server reboot.",
-        "Crate data stores the following information:",
-        "- Latest opener ID",
-        "- Latest opener Name",
-        "- Latest reward ID",
-        "[*] You can increase this value to improve performance if you don't sync/share crate data across multiple servers."
+            60,
+            "Sets auto-save interval for crate's datas.",
+            "Data also saved on plugin reload and server reboot.",
+            "Crate data stores the following information:",
+            "- Latest opener ID",
+            "- Latest opener Name",
+            "- Latest reward ID",
+            "[*] You can increase this value to improve performance if you don't sync/share crate data across multiple servers."
     );
 
 
     public static final ConfigValue<Boolean> FEATURE_MASS_OPENING = ConfigValue.create("Features.MassOpening",
-        true,
-        "Whether Mass Opening feature is enabled."
+            true,
+            "Whether Mass Opening feature is enabled."
     );
 
 
     public static final ConfigValue<Boolean> MILESTONES_ENABLED = ConfigValue.create("Milestones.Enabled",
-        true,
-        "Controls whether Milestones feature is enabled.");
+            true,
+            "Controls whether Milestones feature is enabled.");
 
 
     public static final ConfigValue<Integer> CRATE_SAVE_INTERVAL = ConfigValue.create("Crate.SaveInterval",
-        300,
-        "Sets save interval (in seconds) for crates that were changed using the in-game editor.",
-        "[Default is 300 (5 min)]"
+            300,
+            "Sets save interval (in seconds) for crates that were changed using the in-game editor.",
+            "[Default is 300 (5 min)]"
     );
 
     public static final ConfigValue<NightItem> CRATE_LINK_TOOL = ConfigValue.create("Crate.LinkTool",
-        CrateUtils.getDefaultLinkTool(),
-        "Sets the Link Tool item layout."
+            CrateUtils.getDefaultLinkTool(),
+            "Sets the Link Tool item layout."
     );
 
     public static final ConfigValue<Boolean> CRATE_ALLOW_CRATES_IN_AIR_BLOCKS = ConfigValue.create("Crate.Allow_Crates_In_Air_Blocks",
-        false,
-        "When enabled allows crates to be assigned to 'air' blocks and disables block validation on crate load."
+            false,
+            "When enabled allows crates to be assigned to 'air' blocks and disables block validation on crate load."
     );
 
     public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
-        24,
-        "Sets max. distance where players can see crate particles and holograms."
+            24,
+            "Sets max. distance where players can see crate particles and holograms."
     );
 
     public static final ConfigValue<Map<String, HologramTemplate>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMapById("Crate.Holograms.TemplateList",
-        HologramTemplate::read,
-        map -> map.putAll(HologramTemplate.getDefaultTemplates()),
-        "Custom hologram templates to display above crate blocks.",
-        "Allowed Placeholders:",
-        "- " + Plugins.PLACEHOLDER_API + " placeholders.",
-        "- Crate placeholders: " + WIKI_PLACEHOLDERS
+            HologramTemplate::read,
+            map -> map.putAll(HologramTemplate.getDefaultTemplates()),
+            "Custom hologram templates to display above crate blocks.",
+            "Allowed Placeholders:",
+            "- " + Plugins.PLACEHOLDER_API + " placeholders.",
+            "- Crate placeholders: " + WIKI_PLACEHOLDERS
     );
 
     public static final ConfigValue<Double> CRATE_HOLOGRAM_LINE_GAP = ConfigValue.create("Crate.Holograms.LineGap",
-        0.3D,
-        "Sets the gap between hologram lines."
+            0.3D,
+            "Sets the gap between hologram lines."
     );
 
     public static final ConfigValue<Integer> CRATE_HOLOGRAM_UPDATE_INTERVAL = ConfigValue.create("Crate.Holograms.Update_Interval",
-        5,
-        "Sets how often (in seconds) crate holograms will update."
+            5,
+            "Sets how often (in seconds) crate holograms will update."
     );
 
     public static final ConfigValue<Display.Billboard> CRATE_HOLOGRAM_BILLBOARD = ConfigValue.create("Crate.Holograms.Billboard",
-        Display.Billboard.class, Display.Billboard.VERTICAL,
-        "Controls if crate holograms should pivot to face player when rendered.",
-        "It can be FIXED (both vertical and horizontal angles are fixed), VERTICAL (faces player around vertical axis), HORIZONTAL (pivots around horizontal axis), and CENTER (pivots around center point).",
-        "[Default is " + Display.Billboard.VERTICAL.name() + "]"
+            Display.Billboard.class, Display.Billboard.VERTICAL,
+            "Controls if crate holograms should pivot to face player when rendered.",
+            "It can be FIXED (both vertical and horizontal angles are fixed), VERTICAL (faces player around vertical axis), HORIZONTAL (pivots around horizontal axis), and CENTER (pivots around center point).",
+            "[Default is " + Display.Billboard.VERTICAL.name() + "]"
     );
 
     public static final ConfigValue<Integer> CRATE_HOLOGRAM_TEXT_OPACITY = ConfigValue.create("Crate.Holograms.TextOpacity",
-        -1,
-        "Alpha value of rendered text. Value ranges from 0 to 255. Values up to 3 are treated as fully opaque (255).",
-        "The text rendering is discarded for values between 4 and 26. Defaults to -1, which represents 255 and is completely opaque.",
-        "[Default is -1]"
+            -1,
+            "Alpha value of rendered text. Value ranges from 0 to 255. Values up to 3 are treated as fully opaque (255).",
+            "The text rendering is discarded for values between 4 and 26. Defaults to -1, which represents 255 and is completely opaque.",
+            "[Default is -1]"
     );
 
     public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SEE_THROUGH = ConfigValue.create("Crate.Holograms.SeeThrough",
-        false,
-        "Whether the text be visible through blocks.",
-        "[Default is false]"
+            false,
+            "Whether the text be visible through blocks.",
+            "[Default is false]"
     );
 
     public static final ConfigValue<Boolean> CRATE_HOLOGRAM_SHADOW = ConfigValue.create("Crate.Holograms.Shadow",
-        true,
-        "Whether the text is displayed with shadow.",
-        "[Default is true]"
+            true,
+            "Whether the text is displayed with shadow.",
+            "[Default is true]"
     );
 
     public static final ConfigValue<int[]> CRATE_HOLOGRAM_BACKGROUND_COLOR = ConfigValue.create("Crate.Holograms.BackgroundColor",
-        new int[]{64, 0, 0, 0},
-        "The background color, arranged by [A,R,G,B]. Where: A = Alpha (opacity), R = Red, G = Green, B = Blue.",
-        "[Default is 64,0,0,0]"
+            new int[]{64, 0, 0, 0},
+            "The background color, arranged by [A,R,G,B]. Where: A = Alpha (opacity), R = Red, G = Green, B = Blue.",
+            "[Default is 64,0,0,0]"
     );
 
 
 
     public static final ConfigValue<TimeFormatType> CRATE_COOLDOWN_FORMAT_TYPE = ConfigValue.create("Crate.Cooldown_Format_Type",
-        TimeFormatType.class,
-        TimeFormatType.DIGITAL,
-        "Sets crate cooldown format type.",
-        "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
+            TimeFormatType.class,
+            TimeFormatType.DIGITAL,
+            "Sets crate cooldown format type.",
+            "Available values: [" + Enums.inline(TimeFormatType.class) + "]"
     );
 
     public static final ConfigValue<Boolean> OPENING_CONFIRM_FOR_SINGLE_COST = ConfigValue.create("Crate.Opening.Confirmation.ForSingleCost",
-        false,
-        "Controls whether the Costs GUI will appear even if there is only cost option available."
+            false,
+            "Controls whether the Costs GUI will appear even if there is only cost option available."
     );
 
     public static final ConfigValue<Boolean> MASS_OPENING_ALLOW_FOR_NO_COST = ConfigValue.create("Crate.MassOpening.AllowForNoCost",
-        false,
-        "Controls whether players can do Mass Opening for crates with no cost options defined."
+            false,
+            "Controls whether players can do Mass Opening for crates with no cost options defined."
     );
 
     public static final ConfigValue<Boolean> MASS_OPENING_SNEAK_TO_USE = ConfigValue.create("Crate.MassOpening.SneakToUse",
-        true,
-        "Controls whether players can do Mass Opening by opening crates while sneaking."
+            true,
+            "Controls whether players can do Mass Opening by opening crates while sneaking."
     );
 
     public static final ConfigValue<Integer> MASS_OPENING_LIMIT = ConfigValue.create("Crate.Mass_Opening_Limit",
-        30,
-        "Limits amount of crate openings for the Mass Opening feature to this value.",
-        "[*] STABILITY NOTICE:",
-        "  Stability highly depends on reward's content.",
-        "  Using high values may result in freezes, stutters, bugs and errors."
+            30,
+            "Limits amount of crate openings for the Mass Opening feature to this value.",
+            "[*] STABILITY NOTICE:",
+            "  Stability highly depends on reward's content.",
+            "  Using high values may result in freezes, stutters, bugs and errors."
     );
 
     public static final ConfigValue<Long> CRATE_PREVIEW_COOLDOWN = ConfigValue.create("Crate.Preview_Cooldown",
-        2500L,
-        "Sets cooldown (in milliseconds) for crate preview by clicking crate block(s).",
-        "The main purpose of this setting is to prevent exploit using hacked clients by sending a lot of crate interaction packets causing server overload by GUI generation.",
-        "Resets on player quit.",
-        "[Default is 2500]"
+            2500L,
+            "Sets cooldown (in milliseconds) for crate preview by clicking crate block(s).",
+            "The main purpose of this setting is to prevent exploit using hacked clients by sending a lot of crate interaction packets causing server overload by GUI generation.",
+            "Resets on player quit.",
+            "[Default is 2500]"
     );
 
     public static final ConfigValue<Double> CRATE_PUSHBACK_Y = ConfigValue.create("Crate.Block_Pushback.Y",
-        -0.4D,
-        "Sets the Y offset for crate block pushback.");
+            -0.4D,
+            "Sets the Y offset for crate block pushback.");
 
     public static final ConfigValue<Double> CRATE_PUSHBACK_MULTIPLY = ConfigValue.create("Crate.Block_Pushback.Multiply",
-        -1.25D,
-        "Vector multiplier for crate block pushback. The higher value - the harder pushback.");
+            -1.25D,
+            "Vector multiplier for crate block pushback. The higher value - the harder pushback.");
 
     public static final ConfigValue<Boolean> CRATE_REVERSE_CLICK_ACTIONS = ConfigValue.create("Crate.Reverse_Click_Actions",
-        false,
-        "Controls whether click actions, when interacting with crate blocks, should be reversed.",
-        "By default it uses Left Click to preview crates, and Right Click to open them."
+            false,
+            "Controls whether click actions, when interacting with crate blocks, should be reversed.",
+            "By default it uses Left Click to preview crates, and Right Click to open them."
+    );
+
+    public static final ConfigValue<Boolean> KEY_NOTIFY_ON_INVENTORY_FULL = ConfigValue.create("Key.Notify_On_Inventory_Full",
+            true,
+            "Controls whether players receive a title notification when a physical key is dropped due to full inventory."
+    );
+
+    public static final ConfigValue<Boolean> CRATE_NOTIFY_ON_INVENTORY_FULL = ConfigValue.create("Crate.Notify_On_Inventory_Full",
+            true,
+            "Controls whether players receive a title notification when a physical crate is dropped due to full inventory."
     );
 
     public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
-        true,
-        "Controls whether the Holograms feature is available.",
-        "[*] One of the following plugins is required for holograms to work: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
+            true,
+            "Controls whether the Holograms feature is available.",
+            "[*] One of the following plugins is required for holograms to work: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
     );
 
     public static final ConfigValue<Boolean> OPENINGS_GUI_SIMULATE_REAL_CHANCES = ConfigValue.create("Openings.GUI.Simulate_Real_Chances",
-        false,
-        "[ THIS SETTING DOES NOT AFFECT THE FINAL REWARD, IT IS PREDICTED WHEN PLAYER OPENED A CRATE ]",
-        "Controls whether reward's weight and rarity should be respected when displaying rewards during GUI opening animation.",
-        "When disabled, rewards choosen by a blind random.",
-        "[Default is false]"
+            false,
+            "[ THIS SETTING DOES NOT AFFECT THE FINAL REWARD, IT IS PREDICTED WHEN PLAYER OPENED A CRATE ]",
+            "Controls whether reward's weight and rarity should be respected when displaying rewards during GUI opening animation.",
+            "When disabled, rewards choosen by a blind random.",
+            "[Default is false]"
     );
+
+    // -------------------------------------------------------------------------
+    // --- RESPIN GUI SETTINGS ---
+    // -------------------------------------------------------------------------
+
+    public static final ConfigValue<String> RESPIN_TITLE_REROLL = ConfigValue.create("Respin.GUI.Titles.Reroll",
+            "&8▸ &5&lTRASH & REROLL &8◂",
+            "Title for the Respin GUI when in Reroll Mode."
+    );
+    public static final ConfigValue<String> RESPIN_TITLE_REBUY = ConfigValue.create("Respin.GUI.Titles.Rebuy",
+            "&8▸ &6&lSPIN AGAIN? &8◂",
+            "Title for the Respin GUI when in Rebuy Mode."
+    );
+
+    public static final ConfigValue<NightItem> RESPIN_ITEM_FILLER = ConfigValue.create("Respin.GUI.Filler",
+            createItem(Material.BLACK_STAINED_GLASS_PANE, "&0", null),
+            "The background filler item."
+    );
+
+    // --- Buttons: Keep/Close ---
+    public static final ConfigValue<Integer> RESPIN_SLOT_CLOSE = ConfigValue.create("Respin.GUI.Buttons.Close.Slot",
+            11,
+            "Slot for the Close/Claim button."
+    );
+
+    public static final ConfigValue<NightItem> RESPIN_ITEM_KEEP = ConfigValue.create("Respin.GUI.Buttons.Close.Item_Keep",
+            createItem(Material.EMERALD, "&a&l✔ KEEP PRIZE", Arrays.asList(
+                    "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯",
+                    "&7Satisfied with this reward?",
+                    "&7Click here to claim it.",
+                    "",
+                    "&a► Click to Claim"
+            )),
+            "Button to claim prize in Reroll mode."
+    );
+
+    public static final ConfigValue<NightItem> RESPIN_ITEM_CLOSE = ConfigValue.create("Respin.GUI.Buttons.Close.Item_Close",
+            createItem(Material.BARRIER, "&c&l✖ FINISH", Arrays.asList(
+                    "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯",
+                    "&7Don't want to spin again?",
+                    "&7Click here to close.",
+                    "",
+                    "&c► Click to Close"
+            )),
+            "Button to close menu in Rebuy mode."
+    );
+
+    // --- Buttons: Action ---
+    public static final ConfigValue<Integer> RESPIN_SLOT_ACTION = ConfigValue.create("Respin.GUI.Buttons.Action.Slot",
+            15,
+            "Slot for the Action (Spin/Reroll) button."
+    );
+
+    public static final ConfigValue<NightItem> RESPIN_ITEM_ACTION_REROLL = ConfigValue.create("Respin.GUI.Buttons.Action.Item_Reroll",
+            createItem(Material.REDSTONE_BLOCK, "&c&l♻ DISCARD & REROLL", Arrays.asList(
+                    "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯",
+                    "&7Not happy? Trash this item",
+                    "&7and try your luck again!",
+                    "",
+                    "&7Cost: %cost%",
+                    "&7Rerolls Left: &f%remaining%/%limit%",
+                    "",
+                    "&e► Click to Reroll"
+            )),
+            "Button to trigger Reroll."
+    );
+
+    public static final ConfigValue<NightItem> RESPIN_ITEM_ACTION_REBUY = ConfigValue.create("Respin.GUI.Buttons.Action.Item_Rebuy",
+            createItem(Material.TOTEM_OF_UNDYING, "&6&l✦ SPIN AGAIN", Arrays.asList(
+                    "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯",
+                    "&7Keep your current prize",
+                    "&7and buy another spin!",
+                    "",
+                    "&7Cost: %cost%",
+                    "&7Attempts Left: &f%remaining%/%limit%",
+                    "",
+                    "&6► Click to Spin"
+            )),
+            "Button to trigger Spin Again."
+    );
+    // -------------------------------------------------------------------------
+
 
     public static boolean isMilestonesEnabled() {
         return MILESTONES_ENABLED.get();
@@ -263,5 +364,26 @@ public class Config {
 
     public static boolean isMassOpenEnabled() {
         return FEATURE_MASS_OPENING.get();
+    }
+
+    // Helper method to fix the "red code" error
+    private static NightItem createItem(Material material, String name, List<String> lore) {
+        ItemStack stack = new ItemStack(material);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            // Set Name (with color support)
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+
+            // Set Lore (with color support)
+            if (lore != null) {
+                List<String> coloredLore = new ArrayList<>();
+                for (String line : lore) {
+                    coloredLore.add(ChatColor.translateAlternateColorCodes('&', line));
+                }
+                meta.setLore(coloredLore);
+            }
+            stack.setItemMeta(meta);
+        }
+        return new NightItem(stack);
     }
 }

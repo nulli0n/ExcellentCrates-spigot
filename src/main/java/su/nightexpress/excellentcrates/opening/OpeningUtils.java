@@ -14,7 +14,7 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerBuilder;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.provider.AnimationProvider;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.provider.RewardProvider;
 import su.nightexpress.excellentcrates.opening.selectable.SelectableProvider;
-import su.nightexpress.excellentcrates.opening.world.provider.SimpleRollProvider;
+import su.nightexpress.excellentcrates.opening.world.provider.*;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.random.Rnd;
 import su.nightexpress.nightcore.util.random.WeightedItem;
@@ -430,6 +430,346 @@ public class OpeningUtils {
     }
 
     @NotNull
+    public static InventoryProvider setupCasino(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return setupInventoryProvider(plugin, id, provider -> {
+            // 1. Set GUI size to 5 rows (9x5)
+            provider.setInvType(MenuType.GENERIC_9X5);
+
+            // 2. The middle slot (22) is the winning slot where the reward lands
+            provider.setWinSlots(new int[]{22});
+
+            // 3. Static Background (Black Stained Glass)
+            // Fills the empty space around the "reels"
+            provider.getDefaultItems().put("background", NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE)
+                    .setDisplayName(" ")
+                    .toMenuItem()
+                    .setSlots(
+                            0, 1, 3, 5, 7, 8,
+                            9, 10, 12, 14, 16, 17,
+                            18, 19, 21, 23, 25, 26,
+                            27, 28, 30, 32, 34, 35,
+                            36, 37, 39, 41, 43, 44
+                    )
+                    .build());
+
+            // 4. Gold Borders (Top and Bottom of the reels)
+            // Adds a visual indicator of where the reels start/end
+            provider.getDefaultItems().put("borders", NightItem.fromType(Material.GOLD_NUGGET)
+                    .setDisplayName(YELLOW.wrap(BOLD.wrap("|||")))
+                    .toMenuItem()
+                    .setSlots(2, 4, 6, 38, 40, 42)
+                    .build());
+
+            // 5. Left Reel (Decoy) - Stops first
+            // Slots: 11 (Top), 20 (Mid), 29 (Bottom)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("reel_left")
+                    .mode(SpinMode.SEQUENTAL) // Items move down the slots
+                    .spinnerId(DEFAULT)
+                    .slots(11, 20, 29)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(15, 2), // Fast spin
+                            SpinStep.of(5, 5)   // Slow down and stop
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.UI_BUTTON_CLICK)
+                    .build()
+            );
+
+            // 6. Right Reel (Decoy) - Stops second
+            // Slots: 15 (Top), 24 (Mid), 33 (Bottom)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("reel_right")
+                    .mode(SpinMode.SEQUENTAL)
+                    .spinnerId(DEFAULT)
+                    .slots(15, 24, 33)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(20, 2), // Fast spin (longer than left)
+                            SpinStep.of(5, 5)   // Slow down and stop
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.UI_BUTTON_CLICK)
+                    .build()
+            );
+
+            // 7. Middle Reel (The Winner) - Stops last
+            // Slots: 13 (Top), 22 (Mid - Win Slot), 31 (Bottom)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("reel_main")
+                    .mode(SpinMode.SEQUENTAL)
+                    .spinnerId(DEFAULT)
+                    .slots(13, 22, 31)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(25, 1), // Very fast
+                            SpinStep.of(10, 2), // Fast
+                            SpinStep.of(5, 4),  // Medium
+                            SpinStep.of(3, 8),  // Slow
+                            SpinStep.of(2, 12), // Very Slow
+                            SpinStep.of(1, 15)  // Landing
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_NOTE_BLOCK_PLING)
+                    .build()
+            );
+        });
+    }
+
+    @NotNull
+    public static InventoryProvider setupVault(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return setupInventoryProvider(plugin, id, provider -> {
+            // 9x5 Inventory Size
+            provider.setInvType(MenuType.GENERIC_9X5);
+            // The actual prize lands in the center (Slot 22)
+            provider.setWinSlots(new int[]{22});
+
+            // 1. Background (Dark Tech look with Gray Glass)
+            provider.getDefaultItems().put("background", NightItem.fromType(Material.GRAY_STAINED_GLASS_PANE)
+                    .setDisplayName(" ")
+                    .toMenuItem()
+                    .setSlots(
+                            0, 1, 2, 3, 5, 6, 7, 8,
+                            9, 17, 18, 26, 27, 35,
+                            36, 37, 38, 39, 41, 42, 43, 44
+                    )
+                    .build());
+
+            // 2. The "Machine" Frame (Iron Bars & Hopper)
+            provider.getDefaultItems().put("frame", NightItem.fromType(Material.IRON_BARS)
+                    .setDisplayName(GRAY.wrap("Vault Mechanism"))
+                    .toMenuItem()
+                    .setSlots(
+                            4, 40,           // Top/Bottom Center
+                            10, 11, 15, 16,  // Inner Rings
+                            28, 29, 33, 34
+                    )
+                    .build());
+
+            provider.getDefaultItems().put("core_frame", NightItem.fromType(Material.HOPPER)
+                    .setDisplayName(GRAY.wrap("Vault Lock"))
+                    .toMenuItem()
+                    .setSlots(13, 31) // Above and Below the prize
+                    .build());
+
+            // 3. Lock 1 (Top Left) - Opens First (Tick 30)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("lock_1").mode(SpinMode.INDEPENDENT).spinnerId(DEFAULT)
+                    .slots(12)
+                    .delay(0)
+                    .steps(SpinStep.of(30, 2)) // Spins for 30 ticks then stops
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_IRON_TRAPDOOR_CLOSE) // "Clunk" sound
+                    .build());
+
+            // 4. Lock 2 (Top Right) - Opens Second (Tick 45)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("lock_2").mode(SpinMode.INDEPENDENT).spinnerId(DEFAULT)
+                    .slots(14)
+                    .delay(0)
+                    .steps(SpinStep.of(45, 2))
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_IRON_TRAPDOOR_CLOSE)
+                    .build());
+
+            // 5. Lock 3 (Bottom Left) - Opens Third (Tick 60)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("lock_3").mode(SpinMode.INDEPENDENT).spinnerId(DEFAULT)
+                    .slots(30)
+                    .delay(0)
+                    .steps(SpinStep.of(60, 2))
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_IRON_TRAPDOOR_CLOSE)
+                    .build());
+
+            // 6. Lock 4 (Bottom Right) - Opens Fourth (Tick 75)
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("lock_4").mode(SpinMode.INDEPENDENT).spinnerId(DEFAULT)
+                    .slots(32)
+                    .delay(0)
+                    .steps(SpinStep.of(75, 2))
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_IRON_TRAPDOOR_CLOSE)
+                    .build());
+
+            // 7. The Core (Center Prize) - Stops Last (Tick 110)
+            // It spins very fast while locks are opening, then decelerates.
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("vault_core").mode(SpinMode.INDEPENDENT).spinnerId(DEFAULT)
+                    .slots(22)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(75, 1),  // Hyper speed while waiting for locks
+                            SpinStep.of(15, 3),  // Slow down
+                            SpinStep.of(10, 6),  // Slower
+                            SpinStep.of(10, 10)  // Landing
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_BEACON_ACTIVATE) // "Power Up" sound
+                    .build());
+        });
+    }
+
+    @NotNull
+    public static InventoryProvider setupJungle(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return setupInventoryProvider(plugin, id, provider -> {
+            // 1. Size: 9x5
+            provider.setInvType(MenuType.GENERIC_9X5);
+            // 2. Winner: Center Slot (22)
+            provider.setWinSlots(new int[]{22});
+
+            // --- DECORATION ---
+
+            // 3. The Canopy (Dark Green Background)
+            // Fills the top, bottom, and outer edges to look like deep leaves.
+            provider.getDefaultItems().put("canopy", NightItem.fromType(Material.GREEN_STAINED_GLASS_PANE)
+                    .setDisplayName(GREEN.wrap("Deep Jungle"))
+                    .toMenuItem()
+                    .setSlots(
+                            0, 1, 2, 3, 4, 5, 6, 7, 8,   // Top Row
+                            9, 17, 18, 26, 27, 35,       // Sides
+                            36, 37, 38, 39, 40, 41, 42, 43, 44 // Bottom Row
+                    )
+                    .build());
+
+            // 4. The Tree Trunks (Brown Borders)
+            // Frames the spinning reels.
+            provider.getDefaultItems().put("trunks", NightItem.fromType(Material.BROWN_STAINED_GLASS_PANE)
+                    .setDisplayName(RED.wrap("Ancient Wood"))
+                    .toMenuItem()
+                    .setSlots(10, 12, 14, 16, 28, 30, 32, 34)
+                    .build());
+
+            // --- ANIMATION ---
+
+            // 5. Left Vine (Decoy)
+            // Spins fast and stops first.
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("vine_left")
+                    .mode(SpinMode.SEQUENTAL) // Items fall downwards
+                    .spinnerId(DEFAULT)
+                    .slots(11, 20, 29)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(15, 2), // Fast flow
+                            SpinStep.of(5, 5)   // Quick stop
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_BAMBOO_STEP) // Satisfying leafy click sound
+                    .build()
+            );
+
+            // 6. Right Vine (Decoy)
+            // Spins fast and stops first (symmetric with left).
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("vine_right")
+                    .mode(SpinMode.SEQUENTAL)
+                    .spinnerId(DEFAULT)
+                    .slots(15, 24, 33)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(15, 2),
+                            SpinStep.of(5, 5)
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_BAMBOO_STEP)
+                    .build()
+            );
+
+            // 7. Center Altar (The Prize)
+            // Spins longest, slows down gracefully.
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("vine_center")
+                    .mode(SpinMode.SEQUENTAL)
+                    .spinnerId(DEFAULT)
+                    .slots(13, 22, 31)
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(20, 1), // Rushing water speed
+                            SpinStep.of(10, 3), // Slowing down
+                            SpinStep.of(5, 7),  // Drifting
+                            SpinStep.of(2, 12), // Almost there
+                            SpinStep.of(1, 15)  // Landed
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_BAMBOO_PLACE) // Crisper sound for the main reel
+                    .build()
+            );
+        });
+    }
+
+    @NotNull
+    public static InventoryProvider setupToxic(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return setupInventoryProvider(plugin, id, provider -> {
+            // Size: 9x5
+            provider.setInvType(MenuType.GENERIC_9X5);
+            // The winner is exactly in the middle
+            provider.setWinSlots(new int[]{22});
+
+            // 1. Static Frame (Dark Green Walls)
+            // Creates a "Tank" boundary around the GUI
+            provider.getDefaultItems().put("tank_walls", NightItem.fromType(Material.GREEN_STAINED_GLASS_PANE)
+                    .setDisplayName(GREEN.wrap("Containment Wall"))
+                    .toMenuItem()
+                    .setSlots(
+                            0, 1, 2, 3, 5, 6, 7, 8,   // Top Rim
+                            9, 17, 18, 26, 27, 35,    // Side Walls
+                            36, 37, 38, 39, 41, 42, 43, 44 // Bottom Rim
+                    )
+                    .build());
+
+            // 2. The Pointers (Emerald Blocks)
+            // These sit at Slot 21 and 23, pointing directly at the winner (22).
+            // This ensures the player is never confused.
+            provider.getDefaultItems().put("pointer_left", NightItem.fromType(Material.EMERALD_BLOCK)
+                    .setDisplayName(GREEN.wrap(BOLD.wrap(">>> PRIZE HERE <<<")))
+                    .toMenuItem().setSlots(21).build());
+
+            provider.getDefaultItems().put("pointer_right", NightItem.fromType(Material.EMERALD_BLOCK)
+                    .setDisplayName(GREEN.wrap(BOLD.wrap(">>> PRIZE HERE <<<")))
+                    .toMenuItem().setSlots(23).build());
+
+            // 3. "Bubbling Acid" Background Animation
+            // The inner slots cycle between Green and Lime glass to look like boiling liquid.
+            Map<String, WeightedItem<NightItem>> acidItems = new HashMap<>();
+            acidItems.put("bubble_dark", getWeighted(Material.GREEN_STAINED_GLASS_PANE, 50D));
+            acidItems.put("bubble_light", getWeighted(Material.LIME_STAINED_GLASS_PANE, 50D));
+
+            provider.addSpinner(SpinnerBuilder.animationBuilder()
+                    .name("acid_bubbles")
+                    .mode(SpinMode.INDEPENDENT) // Every slot flickers independently
+                    .spinnerId("acid_anim")
+                    .slots(10, 11, 12, 14, 15, 16, 28, 29, 30, 32, 33, 34) // The inner fluid area
+                    .delay(0)
+                    .steps(SpinStep.of(100, 4)) // Animates for 100 ticks, updates every 4 ticks
+                    .provider(new AnimationProvider(acidItems))
+                    .build()
+            );
+
+            // 4. The Core Injector (The Spinning Reel)
+            // A single vertical column in the center.
+            provider.addSpinner(SpinnerBuilder.rewardBuilder()
+                    .name("injector_core")
+                    .mode(SpinMode.SEQUENTAL) // Items roll downwards
+                    .spinnerId(DEFAULT)
+                    .slots(4, 13, 22, 31, 40) // Top to Bottom Center Line
+                    .delay(0)
+                    .steps(
+                            SpinStep.of(25, 1), // Fast spin
+                            SpinStep.of(10, 3), // Slowing
+                            SpinStep.of(5, 6),  // Slower
+                            SpinStep.of(3, 10), // Precision
+                            SpinStep.of(1, 15)  // Landing
+                    )
+                    .provider(RewardProvider.everything())
+                    .sound(Sound.BLOCK_NOTE_BLOCK_BIT) // High-tech beep sound
+                    .build()
+            );
+        });
+    }
+
+    @NotNull
     private static Map<String, WeightedItem<NightItem>> getRainbowPanes() {
         Map<String, WeightedItem<NightItem>> rainbowItems = new HashMap<>();
         rainbowItems.put("s1", getWeighted(Material.WHITE_STAINED_GLASS_PANE, 1D));
@@ -454,5 +794,21 @@ public class OpeningUtils {
     @NotNull
     private static WeightedItem<NightItem> getWeighted(@NotNull Material material, double weight) {
         return new WeightedItem<>(NightItem.fromType(material), weight);
+    }
+
+    public static CosmicProvider createCosmic(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return new CosmicProvider(plugin, id);
+    }
+
+    public static EmeraldStormProvider createEmeraldStorm(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return new EmeraldStormProvider(plugin, id);
+    }
+
+    public static OrbitalStrikeProvider createOrbital(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return new OrbitalStrikeProvider(plugin, id);
+    }
+
+    public static GalaxyProvider createGalaxy(@NotNull CratesPlugin plugin, @NotNull String id) {
+        return new GalaxyProvider(plugin, id);
     }
 }

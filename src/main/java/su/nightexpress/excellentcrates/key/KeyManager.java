@@ -8,8 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
+import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
+import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.cost.type.impl.KeyCostType;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.dialog.key.KeyCreationDialog;
@@ -279,7 +281,24 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         else {
             ItemStack keyItem = key.getItemStack();
             keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
-            Players.addItem(player, keyItem);
+            // Notify player if inventory was full and key was dropped.
+            if (Config.KEY_NOTIFY_ON_INVENTORY_FULL.get()) {
+                int amountBefore = Players.countItem(player, keyItem);
+                Players.addItem(player, keyItem);
+                int amountAfter = Players.countItem(player, keyItem);
+
+                // If not all keys were added to inventory, some were dropped
+                int amountDropped = keyItem.getAmount() - (amountAfter - amountBefore);
+                if (amountDropped > 0) {
+                    Lang.COMMAND_KEY_GIVE_DROPPED.message().send(player, replacer -> replacer
+                            .replace(key.replacePlaceholders())
+                            .replace(Placeholders.GENERIC_AMOUNT, amountDropped)
+                    );
+                }
+            }
+            else {
+                Players.addItem(player, keyItem);
+            }
         }
     }
 

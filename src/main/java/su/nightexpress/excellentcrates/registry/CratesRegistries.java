@@ -1,11 +1,13 @@
 package su.nightexpress.excellentcrates.registry;
 
+import org.checkerframework.checker.units.qual.Force;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.cost.CostType;
 import su.nightexpress.excellentcrates.crate.effect.CrateEffect;
 import su.nightexpress.excellentcrates.crate.effect.impl.*;
+import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerType;
 import su.nightexpress.nightcore.bridge.registry.NightRegistry;
 
 import java.util.Set;
@@ -31,6 +33,22 @@ public class CratesRegistries {
         registerEffect(new SpiralEffect());
         registerEffect(new TornadoEffect());
         registerEffect(new VortexEffect());
+        registerEffect(new AtomEffect());
+        registerEffect(new CrystalEffect());
+        registerEffect(new OrbitEffect());
+        registerEffect(new CageEffect());
+        registerEffect(new RingEffect());
+        registerEffect(new HaloEffect());
+        registerEffect(new FountainEffect());
+        registerEffect(new BlackHoleEffect());
+        registerEffect(new CelestialBandsEffect());
+        registerEffect(new HeartOfTheForestEffect());
+        registerEffect(new RitualEffect());
+        registerEffect(new RainEffect());
+        registerEffect(new InfinityEffect());
+        registerEffect(new GalaxyEffect());
+        registerEffect(new SpiritWellEffect());
+        registerEffect(new ForceFieldEffect());
         registerEffect(new TwistedFieldEffect());
     }
 

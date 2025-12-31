@@ -26,7 +26,7 @@ import su.nightexpress.excellentcrates.crate.effect.EffectId;
 import su.nightexpress.excellentcrates.crate.reward.RewardFactory;
 import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
 import su.nightexpress.excellentcrates.hologram.HologramManager;
-import su.nightexpress.excellentcrates.hologram.HologramTemplate;
+import su.nightexpress.excellentcrates.hologram.HologramTemplate; // Re-enabled import
 import su.nightexpress.excellentcrates.registry.CratesRegistries;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.ItemHelper;
@@ -88,7 +88,9 @@ public class Crate implements ConfigBacked {
     private boolean     pushbackEnabled;
 
     private boolean hologramEnabled;
+    // Added template ID back
     private String  hologramTemplateId;
+    private List<String> hologramLines;
     private double  hologramYOffset;
 
     private boolean effectEnabled;
@@ -96,6 +98,12 @@ public class Crate implements ConfigBacked {
     private UniParticle effectParticle;
 
     private List<String> postOpenCommands;
+
+    private boolean respinEnabled;
+    private double respinCost;
+    private String respinCurrency;
+    private boolean respinRerollMode;
+    private int respinLimit;
 
     private boolean dirty;
 
@@ -109,11 +117,12 @@ public class Crate implements ConfigBacked {
         this.blockPositions = new HashSet<>();
         this.milestones = new HashSet<>();
         this.description = new ArrayList<>();
+        this.hologramLines = new ArrayList<>();
+        this.hologramTemplateId = "custom"; // Default to custom
     }
 
     public void load() throws IllegalStateException {
         if (!this.hasFile()) {
-            // TODO Throw
             return;
         }
 
@@ -229,12 +238,23 @@ public class Crate implements ConfigBacked {
 
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
-        this.setHologramTemplateId(config.getString("Block.Hologram.Template", Placeholders.DEFAULT));
+
+        // Load Template ID, default to "custom" if missing
+        this.setHologramTemplateId(config.getString("Block.Hologram.Template", "custom"));
+        this.setHologramLines(config.getStringList("Block.Hologram.Lines"));
+
         this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", 0D));
 
         this.setEffectType(config.getString("Block.Effect.Model", EffectId.NONE));
         this.setEffectParticle(UniParticle.read(config, "Block.Effect.Particle"));
         this.setEffectEnabled(config.getBoolean("Block.Effect.Enabled", !this.effectType.equalsIgnoreCase(EffectId.NONE)));
+
+        this.setRespinEnabled(config.getBoolean("Respin.Enabled"));
+        this.setRespinCost(config.getDouble("Respin.Cost"));
+        this.setRespinCurrency(config.getString("Respin.Currency", "vault"));
+
+        this.setRespinRerollMode(config.getBoolean("Respin.Reroll_Mode", false));
+        this.setRespinLimit(config.getInt("Respin.Max_Rerolls", 1));
 
         this.setPostOpenCommands(config.getStringList("Post-Open.Commands"));
 
@@ -243,7 +263,6 @@ public class Crate implements ConfigBacked {
             this.rewardMap.put(sId, reward);
         }
 
-        // Load milestones only if the feature is enabled.
         if (Config.isMilestonesEnabled()) {
             this.setMilestonesRepeatable(config.getBoolean("Milestones.Repeatable"));
             for (String sId : config.getSection("Milestones.List")) {
@@ -292,12 +311,20 @@ public class Crate implements ConfigBacked {
         config.set("Block.Positions", this.blockPositions.stream().map(WorldPos::serialize).toList());
         config.set("Block.Pushback.Enabled", this.pushbackEnabled);
         config.set("Block.Hologram.Enabled", this.hologramEnabled);
+
+        // Write both Template ID and Lines
         config.set("Block.Hologram.Template", this.hologramTemplateId);
+        config.set("Block.Hologram.Lines", this.hologramLines);
+
         config.set("Block.Hologram.Y_Offset", this.hologramYOffset);
         config.set("Block.Effect.Enabled", this.effectEnabled);
         config.set("Block.Effect.Model", this.effectType);
         config.remove("Block.Effect.Particle");
         this.effectParticle.write(config, "Block.Effect.Particle");
+
+        config.set("Respin.Enabled", this.respinEnabled);
+        config.set("Respin.Cost", this.respinCost);
+        config.set("Respin.Currency", this.respinCurrency);
 
         config.set("Post-Open.Commands", this.postOpenCommands);
     }
@@ -312,7 +339,6 @@ public class Crate implements ConfigBacked {
     }
 
     private void writeMilestones(@NotNull FileConfig config) {
-        // Write milestones only if the feature is enabled.
         if (!Config.isMilestonesEnabled()) return;
 
         config.set("Milestones.Repeatable", this.milestonesRepeatable);
@@ -339,7 +365,11 @@ public class Crate implements ConfigBacked {
         if (!this.item.isValid()) collector.report(Lang.INSPECTIONS_GENERIC_ITEM.get(false));
         if (this.isPreviewEnabled() && !this.isPreviewValid()) collector.report(Lang.INSPECTIONS_CRATE_PREVIEW.get(false));
         if (this.isOpeningEnabled() && !this.isOpeningValid()) collector.report(Lang.INSPECTIONS_CRATE_OPENING.get(false));
-        if (this.isHologramEnabled() && !this.isHologramTemplateValid()) collector.report(Lang.INSPECTIONS_CRATE_HOLOGRAM.get(false));
+
+        // Validation: Check if hologram is enabled but empty (logic depends on template vs lines)
+        if (this.isHologramEnabled() && this.getHologramText().isEmpty()) {
+            collector.report("Crate hologram is enabled but contains no text.");
+        }
 
         this.postOpenCommands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
             collector.report("Post-Open Command '" + command + "' does no exist.");
@@ -431,6 +461,7 @@ public class Crate implements ConfigBacked {
         return this.plugin.getOpeningManager().getProviderById(this.openingId) != null;
     }
 
+    // Restored validation method for template
     public boolean isHologramTemplateValid() {
         return Config.getHologramTemplate(this.hologramTemplateId) != null;
     }
@@ -457,9 +488,35 @@ public class Crate implements ConfigBacked {
 
     @NotNull
     public List<String> getHologramText() {
-        HologramTemplate template = Config.getHologramTemplate(this.hologramTemplateId);
-        return template == null ? Collections.emptyList() : template.getText();
+        // Logic to choose between Template and Custom Lines
+        if (this.hologramTemplateId != null && !this.hologramTemplateId.equalsIgnoreCase("custom")) {
+            HologramTemplate template = Config.getHologramTemplate(this.hologramTemplateId);
+            if (template != null) {
+                return template.getText();
+            }
+        }
+        return new ArrayList<>(this.hologramLines);
     }
+
+    // --- Getters/Setters for Hologram ---
+    @NotNull
+    public String getHologramTemplateId() {
+        return this.hologramTemplateId;
+    }
+
+    public void setHologramTemplateId(String id) {
+        this.hologramTemplateId = id;
+    }
+
+    @NotNull
+    public List<String> getHologramLines() {
+        return this.hologramLines;
+    }
+
+    public void setHologramLines(@Nullable List<String> lines) {
+        this.hologramLines = lines == null ? new ArrayList<>() : new ArrayList<>(lines);
+    }
+    // ------------------------------------
 
     public boolean hasRewards(@NotNull Player player) {
         return this.hasRewards(player, null);
@@ -492,8 +549,6 @@ public class Crate implements ConfigBacked {
     public Reward rollReward(@Nullable Player player, @Nullable Rarity rarity) {
         List<Reward> rewards = this.getRewards(player, rarity);
 
-        // If no rarity is specified, we have to select a random one and filter rewards by selected rarity.
-        // Otherwise reward list is already obtained with specified rarity.
         if (rarity == null) {
             Map<Rarity, Double> rarities = new HashMap<>();
             rewards.stream().map(Reward::getRarity).forEach(rewardRarity -> {
@@ -602,9 +657,6 @@ public class Crate implements ConfigBacked {
         ItemStack itemStack = this.item.itemStack().orElse(CrateUtils.getDefaultItem(this));
 
         ItemUtil.editMeta(itemStack, meta -> {
-            //ItemUtil.setCustomName(meta, this.name);
-            //ItemUtil.setLore(meta, this.description);
-
             if (fullData) {
                 meta.setMaxStackSize(this.itemStackable ? null : 1);
                 PDCUtil.set(meta, Keys.crateId, this.getId());
@@ -655,8 +707,6 @@ public class Crate implements ConfigBacked {
     public void setOpeningEnabled(boolean openingEnabled) {
         this.openingEnabled = openingEnabled;
     }
-
-
 
     public boolean isPermissionRequired() {
         return permissionRequired;
@@ -756,15 +806,6 @@ public class Crate implements ConfigBacked {
         this.hologramEnabled = hologramEnabled;
     }
 
-    @NotNull
-    public String getHologramTemplateId() {
-        return this.hologramTemplateId;
-    }
-
-    public void setHologramTemplateId(@NotNull String hologramTemplateId) {
-        this.hologramTemplateId = hologramTemplateId.toLowerCase();
-    }
-
     public double getHologramYOffset() {
         return hologramYOffset;
     }
@@ -857,7 +898,7 @@ public class Crate implements ConfigBacked {
     public void setRewards(@NotNull List<Reward> rewards) {
         this.rewardMap.clear();
         this.rewardMap.putAll(rewards.stream().collect(
-            Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
+                Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
     }
 
     @Nullable
@@ -909,5 +950,42 @@ public class Crate implements ConfigBacked {
     @Nullable
     public Milestone getNextMilestone(int openings) {
         return this.milestones.stream().filter(milestone -> milestone.getOpenings() > openings).min(Comparator.comparingInt(Milestone::getOpenings)).orElse(null);
+    }
+
+    public boolean isRespinEnabled() {
+        return respinEnabled;
+    }
+
+    public void setRespinEnabled(boolean respinEnabled) {
+        this.respinEnabled = respinEnabled;
+    }
+
+    public double getRespinCost() {
+        return respinCost;
+    }
+
+    public void setRespinCost(double respinCost) {
+        this.respinCost = respinCost;
+    }
+
+    public String getRespinCurrency() {
+        return respinCurrency;
+    }
+
+    public void setRespinCurrency(String respinCurrency) {
+        this.respinCurrency = respinCurrency;
+    }
+
+    public boolean isRespinRerollMode() {
+        return respinRerollMode;
+    }
+    public void setRespinRerollMode(boolean respinRerollMode) {
+        this.respinRerollMode = respinRerollMode;
+    }
+    public int getRespinLimit() {
+        return respinLimit;
+    }
+    public void setRespinLimit(int respinLimit) {
+        this.respinLimit = respinLimit;
     }
 }

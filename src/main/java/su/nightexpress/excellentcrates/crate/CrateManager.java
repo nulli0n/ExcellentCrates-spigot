@@ -134,7 +134,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
     private void loadRarities() {
         FileConfig config = this.plugin.getConfig();
-        
+
         if (config.getSection("Rewards.Rarities").isEmpty()) {
             Set<Rarity> rarities = new HashSet<>();
 
@@ -221,6 +221,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.dialogs.register(CrateDialogs.CRATE_PARTICLE, CrateParticleDialog::new);
         this.dialogs.register(CrateDialogs.CRATE_HOLOGRAM, CrateHologramDialog::new);
         this.dialogs.register(CrateDialogs.CRATE_POST_OPEN_COMMANDS, CratePostOpenCommandsDialog::new);
+
+        this.dialogs.register(CrateDialogs.CRATE_RESPIN_COST, CrateRespinCostDialog::new);
+        this.dialogs.register(CrateDialogs.CRATE_RESPIN_LIMIT, CrateRespinLimitDialog::new);
 
         this.dialogs.register(RewardDialogs.CREATION, () -> new RewardCreationDialog(this.plugin));
         this.dialogs.register(RewardDialogs.SORTING, RewardSortingDialog::new);
@@ -370,7 +373,10 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         crate.setPreviewId(Placeholders.DEFAULT);
         crate.setPushbackEnabled(true);
         crate.setHologramEnabled(true);
-        crate.setHologramTemplateId(Placeholders.DEFAULT);
+
+        // UPDATED: Set default lines instead of template ID
+        crate.setHologramLines(new ArrayList<>(List.of("Right-Click To Open", "%crate_name%")));
+
         crate.setEffectType(EffectId.HELIX);
         crate.setEffectParticle(UniParticle.of(Particle.CLOUD));
         crate.saveForce();
@@ -442,7 +448,24 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         amount = Math.max(1, amount);
 
         ItemStack crateItem = crate.getItemStack();
-        Players.addItem(player, crateItem, amount);
+        // Notify player if inventory was full and crate was dropped.
+        if (Config.CRATE_NOTIFY_ON_INVENTORY_FULL.get()) {
+            int amountBefore = Players.countItem(player, crateItem);
+            Players.addItem(player, crateItem, amount);
+            int amountAfter = Players.countItem(player, crateItem);
+
+            // If not all crates were added to inventory, some were dropped
+            int amountDropped = amount - (amountAfter - amountBefore);
+            if (amountDropped > 0) {
+                Lang.COMMAND_GIVE_DROPPED.message().send(player, replacer -> replacer
+                        .replace(crate.replacePlaceholders())
+                        .replace(Placeholders.GENERIC_AMOUNT, amountDropped)
+                );
+            }
+        }
+        else {
+            Players.addItem(player, crateItem, amount);
+        }
     }
 
     public void openCostMenu(@NotNull Player player, @NotNull CrateSource source) {
@@ -583,8 +606,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
             if (remaining <= 0) {
                 (userCrate.isCooldownPermanent() ? Lang.CRATE_OPEN_ERROR_COOLDOWN_ONE_TIMED : Lang.CRATE_OPEN_ERROR_COOLDOWN_TEMPORARY).message().send(player, replacer -> replacer
-                    .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(userCrate.getCooldownTimestamp(), TimeFormatType.LITERAL))
-                    .replace(crate.replacePlaceholders())
+                        .replace(Placeholders.GENERIC_TIME, TimeFormats.formatDuration(userCrate.getCooldownTimestamp(), TimeFormatType.LITERAL))
+                        .replace(crate.replacePlaceholders())
                 );
                 this.pushback(player, source);
                 return false;
@@ -593,8 +616,8 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         if (realCost != null && !realCost.canAfford(player)) {
             Lang.CRATE_OPEN_TOO_EXPENSIVE.message().send(player, replacer -> replacer
-                .replace(crate.replacePlaceholders())
-                .replace(Placeholders.GENERIC_COSTS, () -> realCost.formatInline(", ")) // TODO Delimiter lang
+                    .replace(crate.replacePlaceholders())
+                    .replace(Placeholders.GENERIC_COSTS, () -> realCost.formatInline(", ")) // TODO Delimiter lang
             );
             this.pushback(player, source);
             return false;
@@ -646,9 +669,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         reward.giveContent(player);
 
         Lang.CRATE_OPEN_MILESTONE_COMPLETED.message().send(player, replacer -> replacer
-            .replace(crate.replacePlaceholders())
-            .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(progress))
-            .replace(reward.replacePlaceholders())
+                .replace(crate.replacePlaceholders())
+                .replace(Placeholders.MILESTONE_OPENINGS, NumberUtil.format(progress))
+                .replace(reward.replacePlaceholders())
         );
 
         return true;
@@ -665,9 +688,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         if (reward.isBroadcast()) {
             Lang.CRATE_OPEN_REWARD_BROADCAST.message().broadcast(replacer -> replacer
-                .replace(Placeholders.forPlayerWithPAPI(player))
-                .replace(crate.replacePlaceholders())
-                .replace(reward.replacePlaceholders())
+                    .replace(Placeholders.forPlayerWithPAPI(player))
+                    .replace(crate.replacePlaceholders())
+                    .replace(reward.replacePlaceholders())
             );
         }
 

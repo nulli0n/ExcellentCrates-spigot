@@ -38,6 +38,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     @Override
     protected void onLoad() {
         this.loadDefaults();
+        this.loadCustomDefaults();
         this.loadProviders();
 
         this.addListener(new OpeningListener(this.plugin, this));
@@ -67,10 +68,29 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         this.loadProvider("roulette", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupRoulette);
         this.loadProvider("storm", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupStorm);
 
+        this.loadProvider("casino", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupCasino);
+
+        this.loadProvider("vault", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupVault);
+
+        this.loadProvider("jungle", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupJungle);
+
+        this.loadProvider("toxic", Config.DIR_OPENINGS_INVENTORY, OpeningUtils::setupToxic);
+
         this.loadProvider("simple_roll", Config.DIR_OPENINGS_SIMPLE_ROLL, OpeningUtils::createSimpleRoll);
 
         this.loadProvider("selective_1", Config.DIR_OPENINGS_SELECTABLE, OpeningUtils::createSelectableSingle);
         this.loadProvider("selective_3", Config.DIR_OPENINGS_SELECTABLE, OpeningUtils::createSelectableTriple);
+    }
+
+    private void loadCustomDefaults() {
+        // We do NOT check if directory exists here. We want these to register.
+        // The loadProvider method internally checks if the FILE exists before creating it,
+        // so this is safe to run every time.
+
+        this.loadProvider("cosmic", Config.DIR_OPENINGS_COSMIC, OpeningUtils::createCosmic);
+        this.loadProvider("emerald_storm", Config.DIR_OPENINGS_EMERALD, OpeningUtils::createEmeraldStorm);
+        this.loadProvider("orbital_strike", Config.DIR_OPENINGS_ORBITAL, OpeningUtils::createOrbital);
+        this.loadProvider("galaxy", Config.DIR_OPENINGS_GALAXY, OpeningUtils::createGalaxy);
     }
 
     public void loadProviders() {

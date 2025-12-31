@@ -99,13 +99,10 @@ public abstract class AbstractOpening implements Opening {
     protected abstract void onComplete();
 
     protected void onStop() {
+        // 1. Refund Logic (Same as before)
         if (this.isRefundable()) {
-            if (this.cost != null) {
-                this.cost.refundAll(this.player);
-            }
-            if (this.source.getItem() != null) {
-                Players.addItem(this.player, this.crate.getItemStack());
-            }
+            if (this.cost != null) this.cost.refundAll(this.player);
+            if (this.source.getItem() != null) Players.addItem(this.player, this.crate.getItemStack());
         }
 
         this.plugin.getOpeningManager().removeOpening(this.getPlayer());
@@ -113,6 +110,7 @@ public abstract class AbstractOpening implements Opening {
         if (this.isCompleted()) {
             this.onComplete();
 
+            // Stats / Data updates (Same as before)
             CrateUser user = plugin.getUserManager().getOrFetch(player);
             UserCrateData userData = user.getCrateData(this.crate);
             GlobalCrateData globalData = plugin.getDataManager().getCrateDataOrCreate(this.crate);
@@ -121,16 +119,22 @@ public abstract class AbstractOpening implements Opening {
             globalData.setLatestOpener(this.player);
             globalData.setDirty(true);
 
-            this.rewards.forEach(reward -> reward.give(this.player));
+            // --- LOGIC CHANGE HERE ---
+            boolean isRerollSystem = this.crate.isRespinEnabled() && this.crate.isRespinRerollMode();
 
+            // If this is standard mode OR Rebuy mode, give rewards immediately.
+            // If this is REROLL mode, we WAIT. The GUI will handle giving it.
+            if (!isRerollSystem) {
+                this.rewards.forEach(reward -> reward.give(this.player));
+            }
+
+            // Cooldowns and Milestones (Same as before)
             if (crate.isOpeningCooldownEnabled()) {
                 userData.addOpeningStreak(1);
-
                 if (!userData.isOnCooldown() && !crate.hasCooldownBypassPermission(player)) {
                     userData.setCooldown(crate.getOpeningCooldownTime());
                 }
             }
-
             if (crate.hasMilestones()) {
                 userData.addMilestones(1);
                 plugin.getCrateManager().triggerMilestones(player, crate, userData.getMilestone());
@@ -138,19 +142,40 @@ public abstract class AbstractOpening implements Opening {
                     userData.setMilestone(0);
                 }
             }
-
-            Lang.CRATE_OPEN_RESULT_INFO.message().send(this.player, replacer -> replacer
-                .replace(this.crate.replacePlaceholders())
-                .replace(Placeholders.GENERIC_REWARDS, this.rewards.stream()
-                    .map(reward -> reward.replacePlaceholders().apply(Lang.CRATE_OPEN_RESULT_REWARD.text()))
-                    .collect(Collectors.joining(", "))
-                )
-            );
-
-            List<String> postOpenCommands = Replacer.create().replace(this.crate.replacePlaceholders()).apply(this.crate.getPostOpenCommands());
-            Players.dispatchCommands(this.player, postOpenCommands);
-
             this.plugin.getUserManager().save(user);
+
+            // --- RESPIN / GUI LOGIC ---
+            if (this.crate.isRespinEnabled()) {
+
+                // Check how many times they have rerolled already
+                int currentRerolls = 0;
+                if (player.hasMetadata("excellent_reroll_count")) {
+                    currentRerolls = player.getMetadata("excellent_reroll_count").get(0).asInt();
+                }
+
+                // If they haven't reached the limit yet...
+                if (currentRerolls < this.crate.getRespinLimit()) {
+                    this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> {
+                        if (this.player.isOnline()) {
+                            // Pass the rewards to the GUI so it can decide whether to give them or discard them
+                            new RespinGUI(this.plugin, this.player, this.crate, this.source, this.rewards).open();
+                        } else if (isRerollSystem) {
+                            // If player quit before GUI opened, give items to be safe
+                            this.rewards.forEach(r -> r.give(this.player));
+                        }
+                    }, 2L);
+                } else {
+                    // Limit reached. If we were holding items (Reroll Mode), give them now.
+                    if (isRerollSystem) {
+                        this.rewards.forEach(reward -> reward.give(this.player));
+                        // Clean up metadata
+                        player.removeMetadata("excellent_reroll_count", plugin);
+                    }
+                }
+            } else {
+                // If Respin NOT enabled, but we somehow skipped giving items? (Shouldn't happen with logic above, but safety check)
+                if (isRerollSystem) this.rewards.forEach(reward -> reward.give(this.player));
+            }
         }
     }
 
