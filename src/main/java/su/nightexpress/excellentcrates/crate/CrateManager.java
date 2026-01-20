@@ -665,9 +665,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         if (reward.isBroadcast()) {
             Lang.CRATE_OPEN_REWARD_BROADCAST.message().broadcast(replacer -> replacer
-                .replace(Placeholders.forPlayerWithPAPI(player))
                 .replace(crate.replacePlaceholders())
                 .replace(reward.replacePlaceholders())
+                .replace(Placeholders.forPlayerWithPAPI(player))
             );
         }
 

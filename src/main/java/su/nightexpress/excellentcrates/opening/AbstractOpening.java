@@ -145,6 +145,7 @@ public abstract class AbstractOpening implements Opening {
                     .map(reward -> reward.replacePlaceholders().apply(Lang.CRATE_OPEN_RESULT_REWARD.text()))
                     .collect(Collectors.joining(", "))
                 )
+                .replacePlaceholderAPI(this.player)
             );
 
             List<String> postOpenCommands = Replacer.create().replace(this.crate.replacePlaceholders()).apply(this.crate.getPostOpenCommands());
