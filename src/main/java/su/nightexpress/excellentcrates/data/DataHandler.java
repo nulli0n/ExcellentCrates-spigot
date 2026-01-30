@@ -14,7 +14,7 @@ import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.data.serialize.UserCrateDataSerializer;
 import su.nightexpress.excellentcrates.data.legacy.LegacyCrateDataSerializer;
 import su.nightexpress.excellentcrates.data.legacy.LegacyLimitDataSerializer;
-import su.nightexpress.excellentcrates.data.reward.RewardLimit;
+import su.nightexpress.excellentcrates.data.reward.RewardData;
 import su.nightexpress.excellentcrates.user.CrateUser;
 import su.nightexpress.nightcore.db.AbstractUserDataManager;
 import su.nightexpress.nightcore.db.sql.column.Column;
@@ -61,18 +61,18 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
         if (!SQLQueries.hasTable(this.connector, rewardDataTable)) return;
         if (!SQLQueries.hasColumn(this.connector, rewardDataTable, columnRewardData)) return;
 
-        Function<ResultSet, List<RewardLimit>> playerLimitLoader = resultSet -> {
+        Function<ResultSet, List<RewardData>> playerLimitLoader = resultSet -> {
             try {
                 UUID uuid = UUID.fromString(resultSet.getString(COLUMN_USER_ID.getName()));
                 Map<String, LegacyCrateData> crateDataMap = this.gson.fromJson(resultSet.getString(COLUMN_CRATE_DATA.getName()), new TypeToken<Map<String, LegacyCrateData>>(){}.getType());
 
-                List<RewardLimit> limits = new ArrayList<>();
+                List<RewardData> limits = new ArrayList<>();
                 crateDataMap.forEach((crateId, crateData) -> {
                     crateData.getRewardDataMap().forEach((rewardId, rewardData) -> {
-                        limits.add(new RewardLimit(crateId, rewardId, uuid.toString(), rewardData.getAmount(), rewardData.getExpireDate()));
+                        limits.add(new RewardData(crateId, rewardId, uuid.toString(), rewardData.getAmount(), rewardData.getExpireDate()));
                     });
                 });
-                limits.removeIf(RewardLimit::isResetTime);
+                //limits.removeIf(RewardData::isResetTime);
 
                 return limits;
             }
@@ -82,13 +82,13 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
             }
         };
 
-        Function<ResultSet, RewardLimit> globalLimitLoader = resultSet -> {
+        Function<ResultSet, RewardData> globalLimitLoader = resultSet -> {
             try {
                 String crateId = resultSet.getString(COLUMN_CRATE_ID.getName());
                 String rewardId = resultSet.getString(COLUMN_REWARD_ID.getName());
                 LegacyLimitData limitData = this.gson.fromJson(resultSet.getString(columnRewardData.getName()), new TypeToken<LegacyLimitData>(){}.getType());
 
-                return new RewardLimit(crateId, rewardId, crateId, limitData.getAmount(), limitData.getExpireDate());
+                return new RewardData(crateId, rewardId, crateId, limitData.getAmount(), limitData.getExpireDate());
             }
             catch (SQLException exception) {
                 exception.printStackTrace();
@@ -100,9 +100,7 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
             limits.forEach(this::insertRewardLimit);
         });
 
-        this.select(rewardDataTable, globalLimitLoader, SelectQuery::all).forEach(limit -> {
-            if (!limit.isResetTime()) this.insertRewardLimit(limit);
-        });
+        this.select(rewardDataTable, globalLimitLoader, SelectQuery::all).forEach(this::insertRewardLimit);
 
         this.dropColumn(rewardDataTable, columnRewardData);
     }
@@ -232,25 +230,25 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
 
 
     @NotNull
-    public List<RewardLimit> loadRewardLimits() {
-        SelectQuery<RewardLimit> query = new SelectQuery<>(DataQueries.REWARD_LIMIT_LOADER).all();
+    public List<RewardData> loadRewardLimits() {
+        SelectQuery<RewardData> query = new SelectQuery<>(DataQueries.REWARD_LIMIT_LOADER).all();
 
         return this.select(this.tableRewardLimits, query);
     }
 
-    public void insertRewardLimit(@NotNull RewardLimit limit) {
+    public void insertRewardLimit(@NotNull RewardData limit) {
         this.insert(this.tableRewardLimits, DataQueries.REWARD_LIMIT_INSERT, limit);
     }
 
-    public void updateRewardLimit(@NotNull RewardLimit limit) {
+    public void updateRewardLimit(@NotNull RewardData limit) {
         this.updateRewardLimits(Lists.newSet(limit));
     }
 
-    public void updateRewardLimits(@NotNull Set<RewardLimit> limits) {
+    public void updateRewardLimits(@NotNull Set<RewardData> limits) {
         this.update(this.tableRewardLimits, DataQueries.REWARD_LIMIT_UPDATE, limits);
     }
 
-    public void deleteRewardLimit(@NotNull RewardLimit limit) {
+    public void deleteRewardLimit(@NotNull RewardData limit) {
         this.delete(this.tableRewardLimits, DataQueries.REWARD_LIMIT_DELETE, limit);
     }
 

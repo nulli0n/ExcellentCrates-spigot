@@ -186,10 +186,9 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
 
                 List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
                 List<FakeEntity> holograms = group.getEntities();
-                for (int index = 0; index < hologramText.size(); index++) {
-                    if (index >= holograms.size()) break;
-
-                    String line = hologramText.get(index);
+                for (int index = 0; index < holograms.size(); index++) {
+                    // Fix for fake entity's text not being updated/replaced when text size is less than holograms amount, so force it to empty string.
+                    String line = index >= hologramText.size() ? "" : hologramText.get(index);
                     FakeEntity entity = holograms.get(index);
                     this.handler.sendHologramPackets(player, entity, needSpawn, line);
                 }

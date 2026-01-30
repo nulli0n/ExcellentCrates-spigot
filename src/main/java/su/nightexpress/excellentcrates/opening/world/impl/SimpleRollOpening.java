@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
+import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
-import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.excellentcrates.opening.OpeningUtils;
 import su.nightexpress.excellentcrates.opening.world.WorldOpening;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
@@ -35,11 +35,11 @@ public class SimpleRollOpening extends WorldOpening {
     public SimpleRollOpening(@NotNull CratesPlugin plugin,
                              @NotNull Player player,
                              @NotNull CrateSource source,
-                             @Nullable CrateKey key,
+                             @Nullable Cost cost,
                              int spinsRequired,
                              long spinInterval,
                              long finishDelay) {
-        super(plugin, player, source, key);
+        super(plugin, player, source, cost);
         this.spinsRequired = spinsRequired;
         this.spinInterval = spinInterval;
         this.finishDelay = finishDelay;
@@ -127,7 +127,7 @@ public class SimpleRollOpening extends WorldOpening {
 
     @Override
     protected void onStop() {
-        this.reward.give(this.player);
+        this.addReward(this.reward);
 
         if (this.rewardDisplay != null) {
             this.rewardDisplay.remove();

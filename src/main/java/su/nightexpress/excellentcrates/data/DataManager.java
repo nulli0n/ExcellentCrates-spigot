@@ -8,8 +8,8 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
-import su.nightexpress.excellentcrates.data.reward.RewardKey;
-import su.nightexpress.excellentcrates.data.reward.RewardLimit;
+import su.nightexpress.excellentcrates.crate.reward.RewardKey;
+import su.nightexpress.excellentcrates.data.reward.RewardData;
 import su.nightexpress.nightcore.manager.AbstractManager;
 
 import java.util.HashSet;
@@ -17,11 +17,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DataManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, GlobalCrateData> crateDataMap;
-    private final Map<RewardKey, RewardLimit>  rewardLimitMap;
+    private final Map<RewardKey, RewardData>   rewardLimitMap;
 
     private boolean dataLoaded;
 
@@ -53,14 +54,10 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     public void saveCrateDatas() {
-        Set<GlobalCrateData> dataSet = new HashSet<>();
-
-        this.getCrateDatas().forEach(data -> {
-            if (data.isSaveRequired()) {
-                dataSet.add(data);
-                data.setSaveRequired(false);
-            }
-        });
+        Set<GlobalCrateData> dataSet = this.getCrateDatas().stream()
+            .filter(GlobalCrateData::isDirty)
+            .peek(data -> data.setDirty(false))
+            .collect(Collectors.toSet());
         if (dataSet.isEmpty()) return;
 
         this.plugin.getDataHandler().updateCrateDatas(dataSet);
@@ -68,14 +65,10 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     public void saveRewardLimits() {
-        Set<RewardLimit> limits = new HashSet<>();
-
-        this.getRewardLimits().forEach(limit -> {
-            if (limit.isSaveRequired()) {
-                limits.add(limit);
-                limit.setSaveRequired(false);
-            }
-        });
+        Set<RewardData> limits = this.getRewardLimits().stream()
+            .filter(RewardData::isSaveRequired)
+            .peek(data -> data.setSaveRequired(false))
+            .collect(Collectors.toSet());
         if (limits.isEmpty()) return;
 
         this.plugin.getDataHandler().updateRewardLimits(limits);
@@ -102,11 +95,7 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     public void loadRewardLimits() {
         this.rewardLimitMap.clear();
 
-        this.plugin.getDataHandler().loadRewardLimits().forEach(limit -> {
-            if (!this.removeExpired(limit)) {
-                this.addRewardLimit(limit);
-            }
-        });
+        this.plugin.getDataHandler().loadRewardLimits().forEach(this::addRewardLimit);
 
         //this.plugin.debug("Loaded " + this.rewardLimitMap.size() + " reward limit datas.");
     }
@@ -174,41 +163,33 @@ public class DataManager extends AbstractManager<CratesPlugin> {
 
 
     @NotNull
-    public RewardLimit getRewardLimitOrCreate(@NotNull Reward reward, @Nullable Player player) {
-        RewardLimit limit = this.getRewardLimit(reward, player);
-        if (limit != null && !this.removeExpired(limit)) return limit;
+    public RewardData getRewardLimitOrCreate(@NotNull Reward reward, @Nullable Player player) {
+        RewardData limit = this.getRewardLimit(reward, player);
+        if (limit != null) return limit;
 
-        RewardLimit fresh = RewardLimit.create(reward, player);
+        RewardData fresh = RewardData.create(reward, player);
         this.plugin.runTaskAsync(task -> this.plugin.getDataHandler().insertRewardLimit(fresh));
         this.addRewardLimit(fresh);
         return fresh;
     }
 
     @Nullable
-    public RewardLimit getRewardLimit(@NotNull Reward reward, @Nullable Player player) {
+    public RewardData getRewardLimit(@NotNull Reward reward, @Nullable Player player) {
         RewardKey key = getRewardKey(reward, player);
         return this.rewardLimitMap.get(key);
     }
 
     @NotNull
-    public Set<RewardLimit> getRewardLimits() {
+    public Set<RewardData> getRewardLimits() {
         return new HashSet<>(this.rewardLimitMap.values());
     }
 
-    private void addRewardLimit(@NotNull RewardLimit limit) {
+    private void addRewardLimit(@NotNull RewardData limit) {
         RewardKey key = getRewardKey(limit);
         this.rewardLimitMap.put(key, limit);
     }
 
-    private boolean removeExpired(@NotNull RewardLimit limit) {
-        if (!limit.isResetTime()) return false;
-
-        //this.plugin.debug("Expired reward limit removed: " + limit.getHolder() + " | " + limit.getCrateId() + " | " + limit.getRewardId());
-        this.deleteRewardLimit(limit);
-        return true;
-    }
-
-    public void deleteRewardLimit(@NotNull RewardLimit limit) {
+    public void deleteRewardLimit(@NotNull RewardData limit) {
         this.plugin.runTaskAsync(task -> this.plugin.getDataHandler().deleteRewardLimit(limit));
         this.rewardLimitMap.remove(getRewardKey(limit));
     }
@@ -217,7 +198,7 @@ public class DataManager extends AbstractManager<CratesPlugin> {
         String crateId = crate.getId();
 
         this.plugin.runTaskAsync(task -> this.plugin.getDataHandler().deleteRewardLimits(crate));
-        this.rewardLimitMap.keySet().removeIf(key -> key.getCrateId().equalsIgnoreCase(crateId));
+        this.rewardLimitMap.keySet().removeIf(key -> key.crateId().equalsIgnoreCase(crateId));
     }
 
     public void deleteRewardLimits(@NotNull Reward reward) {
@@ -225,14 +206,14 @@ public class DataManager extends AbstractManager<CratesPlugin> {
         String rewardId = reward.getId();
 
         this.plugin.runTaskAsync(task -> this.plugin.getDataHandler().deleteRewardLimits(reward));
-        this.rewardLimitMap.keySet().removeIf(key -> key.getCrateId().equalsIgnoreCase(crateId) && key.getRewardId().equalsIgnoreCase(rewardId));
+        this.rewardLimitMap.keySet().removeIf(key -> key.crateId().equalsIgnoreCase(crateId) && key.rewardId().equalsIgnoreCase(rewardId));
     }
 
     public void deleteRewardLimits(@NotNull UUID playerId) {
         String holder = playerId.toString();
 
         this.plugin.runTaskAsync(task -> this.plugin.getDataHandler().deleteRewardLimits(playerId));
-        this.rewardLimitMap.keySet().removeIf(key -> key.getHolder().equalsIgnoreCase(holder));
+        this.rewardLimitMap.keySet().removeIf(key -> key.holder().equalsIgnoreCase(holder));
     }
 
 
@@ -251,7 +232,7 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     @NotNull
-    public static RewardKey getRewardKey(@NotNull RewardLimit limit) {
+    public static RewardKey getRewardKey(@NotNull RewardData limit) {
         return new RewardKey(limit.getHolder(), limit.getCrateId(), limit.getRewardId());
     }
 }

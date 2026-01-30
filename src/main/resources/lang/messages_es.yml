@@ -86,7 +86,7 @@ Crate:
         Temporary:
           - <output:'titles:20:80:20'><sound:'entity_villager_no'>
           - <lred><b>Tiempo de espera de la crate!</b></lred>
-          - <lgray>Puedes abrirlo en <lred>%tiempo%</lred></lgray>
+          - <lgray>Puedes abrirlo en <lred>%time%</lred></lgray>
         OneTimed:
           - <output:'titles:20:80:20'><sound:'entity_villager_no'>
           - <lred><b>Ups!</b></lred>
