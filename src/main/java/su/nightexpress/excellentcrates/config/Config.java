@@ -235,6 +235,20 @@ public class Config {
         "[Default is false]"
     );
 
+    public static final ConfigValue<Boolean> CONSOLE_COMMAND_WHITELIST_ENABLED = ConfigValue.create("Console.Command_Whitelist.Enabled",
+        false,
+        "Controls whether console command whitelist is enabled.",
+        "When enabled, only whitelisted commands can be executed from console by the plugin.",
+        "[Default is false]"
+    );
+
+    public static final ConfigValue<List<String>> CONSOLE_COMMAND_WHITELIST = ConfigValue.create("Console.Command_Whitelist.Commands",
+        List.of("give", "gamemode", "tp", "teleport", "money", "eco", "experience", "xp"),
+        "List of commands that are allowed to be executed from console when whitelist is enabled.",
+        "Commands should be specified without the '/' prefix.",
+        "Example: ['give', 'gamemode', 'tp']"
+    );
+
     public static boolean isMilestonesEnabled() {
         return MILESTONES_ENABLED.get();
     }
@@ -263,5 +277,28 @@ public class Config {
 
     public static boolean isMassOpenEnabled() {
         return FEATURE_MASS_OPENING.get();
+    }
+
+    public static boolean isConsoleCommandWhitelistEnabled() {
+        return CONSOLE_COMMAND_WHITELIST_ENABLED.get();
+    }
+
+    @NotNull
+    public static List<String> getConsoleCommandWhitelist() {
+        return CONSOLE_COMMAND_WHITELIST.get();
+    }
+
+    public static boolean isConsoleCommandAllowed(@NotNull String command) {
+        if (!isConsoleCommandWhitelistEnabled()) {
+            return true;
+        }
+        
+        String baseCommand = command.split(" ")[0].toLowerCase();
+        if (baseCommand.startsWith("/")) {
+            baseCommand = baseCommand.substring(1);
+        }
+
+        String finalBaseCommand = baseCommand;
+        return getConsoleCommandWhitelist().stream().anyMatch(whitelistedCommand -> whitelistedCommand.toLowerCase().equals(finalBaseCommand));
     }
 }
