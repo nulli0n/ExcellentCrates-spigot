@@ -152,7 +152,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
         loader.addHandler(new ItemHandler("open", (viewer, event) -> {
             CrateSource source = this.getLink(viewer);
-            if (!source.hasItem() || !source.hasBlock()) return;
+            if (!source.hasItem() && !source.hasBlock()) return;
 
             Player player = viewer.getPlayer();
 
