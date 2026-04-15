@@ -103,7 +103,7 @@ public abstract class AbstractReward implements Reward {
 
     @NotNull
     protected Replacer createContentReplacer(@NotNull Player player) {
-        return Replacer.create().replace(this.crate.replacePlaceholders()).replace(this.replacePlaceholders());
+        return Replacer.create().replace(this.crate.replacePlaceholders()).replace(this.replacePlaceholders()).replacePlaceholderAPI(player);
     }
 
     @Override
