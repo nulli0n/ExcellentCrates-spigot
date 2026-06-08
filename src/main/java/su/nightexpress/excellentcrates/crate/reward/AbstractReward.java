@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.crate.reward;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
@@ -199,8 +200,20 @@ public abstract class AbstractReward implements Reward {
 
     @Override
     public double getRollChance() {
-        double sum = this.crate.getRewards(this.rarity).stream().mapToDouble(Reward::getWeight).sum();
-        double rarityChance = this.rarity.getRollChance(this.crate);
+        return this.getRollChance(null);
+    }
+
+    @Override
+    public double getRollChance(@Nullable Player player) {
+        // A player who can't win this reward has a real chance of 0%.
+        if (player != null && !this.canWin(player)) return 0D;
+
+        // Use the reward pool actually available to the player so previewed odds match real odds
+        // (rewards locked behind permissions are excluded from the roll, raising everyone else's chance).
+        double sum = this.crate.getRewards(player, this.rarity).stream().mapToDouble(Reward::getWeight).sum();
+        if (sum <= 0D) return 0D;
+
+        double rarityChance = this.rarity.getRollChance(this.crate, player);
         double chance = (this.weight / sum) * (rarityChance / 100D);
 
         return chance * 100D;

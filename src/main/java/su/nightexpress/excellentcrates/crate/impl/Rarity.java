@@ -1,6 +1,8 @@
 package su.nightexpress.excellentcrates.crate.impl;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -47,7 +49,11 @@ public class Rarity {
     }
 
     public double getRollChance(@NotNull Crate crate) {
-        return this.getRollChance(crate.getRarities());
+        return this.getRollChance(crate, null);
+    }
+
+    public double getRollChance(@NotNull Crate crate, @Nullable Player player) {
+        return this.getRollChance(crate.getRarities(player));
     }
 
     public double getRollChance(@NotNull Collection<Rarity> rarities) {

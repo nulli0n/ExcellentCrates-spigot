@@ -820,7 +820,12 @@ public class Crate implements ConfigBacked {
 
     @NotNull
     public Set<Rarity> getRarities() {
-        return this.getRewards().stream().map(Reward::getRarity).collect(Collectors.toSet());
+        return this.getRarities(null);
+    }
+
+    @NotNull
+    public Set<Rarity> getRarities(@Nullable Player player) {
+        return this.getRewards(player, null).stream().map(Reward::getRarity).collect(Collectors.toSet());
     }
 
     @NotNull

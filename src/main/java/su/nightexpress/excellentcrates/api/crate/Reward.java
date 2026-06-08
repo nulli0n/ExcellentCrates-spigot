@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.api.crate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
@@ -48,6 +49,8 @@ public interface Reward extends Writeable {
     void give(@NotNull Player player);
 
     double getRollChance();
+
+    double getRollChance(@Nullable Player player);
 
     @NotNull String getId();
 

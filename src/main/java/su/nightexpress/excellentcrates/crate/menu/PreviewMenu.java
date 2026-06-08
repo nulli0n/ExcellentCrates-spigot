@@ -23,6 +23,7 @@ import su.nightexpress.nightcore.ui.menu.item.ItemOptions;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.Lists;
+import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
 
@@ -100,6 +101,10 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
                 .setLore(this.rewardLore)
                 .replacement(replacer -> {
                         replacer
+                            // Player-aware odds: reflect the rewards actually rollable for THIS player,
+                            // so permission-locked rewards don't skew the previewed percentages.
+                            .replace(REWARD_ROLL_CHANCE, () -> NumberUtil.format(reward.getRollChance(player)))
+                            .replace(REWARD_RARITY_ROLL_CHANCE, () -> NumberUtil.format(reward.getRarity().getRollChance(crate, player)))
                             .replace(GENERIC_LIMITS, limits)
                             .replace(NO_PERMISSION, restrictions)
                             .replace("%win_limit_amount%", limits)
