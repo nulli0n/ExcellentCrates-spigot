@@ -57,9 +57,9 @@ public class CommandReward extends AbstractReward {
             reporter.report(Lang.INSPECTIONS_REWARD_NO_COMMANDS.text());
         }
         else {
-            this.commands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
-                reporter.report("Command '" + command + "' does no exist.");
-            });
+            this.commands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command ->
+                  reporter.report("Command '" + command + "' does no exist.")
+            );
         }
     }
 
@@ -86,9 +86,9 @@ public class CommandReward extends AbstractReward {
     public void giveContent(@NotNull Player player) {
         Replacer replacer = this.createContentReplacer(player).replace(Placeholders.forPlayerWithPAPI(player));
 
-        this.getCommands().forEach(command -> {
-            Players.dispatchCommand(player, replacer.apply(command));
-        });
+        this.getCommands().forEach(command ->
+              Players.dispatchCommand(player, replacer.apply(command))
+        );
     }
 
     @Override

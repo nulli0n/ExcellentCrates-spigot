@@ -221,9 +221,19 @@ public class Crate implements ConfigBacked {
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
         if (!Config.isCrateInAirBlocksAllowed()) {
-            this.blockPositions.removeIf(pos -> {
-                Block block = pos.toBlock();
-                return block != null && block.isEmpty();
+            this.plugin.runTask(() -> {
+                List<WorldPos> blockPositionsTemp = new ArrayList<>(this.blockPositions);
+                for (WorldPos pos : blockPositionsTemp) {
+                    Location location = pos.toLocation();
+                    if (location == null) continue;
+
+                    this.plugin.runTask(location, () -> {
+                        Block block = pos.toBlock();
+
+                        if (block == null || block.isEmpty())
+                            this.blockPositions.remove(pos);
+                    });
+                }
             });
         }
 

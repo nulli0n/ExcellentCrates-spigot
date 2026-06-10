@@ -152,7 +152,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void tickOpenings() {
-        this.getOpenings().forEach(Opening::tick);
+        this.getOpenings().forEach(opening -> this.plugin.runTask(opening.getPlayer(), opening::tick));
     }
 
     public boolean isOpening(@NotNull Player player) {
