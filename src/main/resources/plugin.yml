@@ -8,4 +8,4 @@ softdepend:
   - PlaceholderAPI
   - ProtocolLib
   - packetevents
-api-version: 1.21
+api-version: '26.1.2'
