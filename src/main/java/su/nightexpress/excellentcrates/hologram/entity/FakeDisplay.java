@@ -4,17 +4,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FakeDisplay {
 
     private final Map<WorldPos, FakeEntityGroup> entityGroups;
 
     public FakeDisplay() {
-        this.entityGroups = new HashMap<>();
+        // Groups for different block placements are created/rendered on different region threads (Folia).
+        this.entityGroups = new ConcurrentHashMap<>();
     }
 
     @NotNull

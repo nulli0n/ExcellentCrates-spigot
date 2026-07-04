@@ -152,7 +152,8 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void tickOpenings() {
-        this.getOpenings().forEach(Opening::tick);
+        // Each opening owns a player's inventory/menu state, so tick it on that player's own thread (Folia).
+        this.getOpenings().forEach(opening -> this.plugin.runTask(opening.getPlayer(), opening::tick));
     }
 
     public boolean isOpening(@NotNull Player player) {

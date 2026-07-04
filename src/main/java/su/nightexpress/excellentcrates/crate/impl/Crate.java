@@ -51,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -106,7 +107,8 @@ public class Crate implements ConfigBacked {
 
         this.costMap = new LinkedHashMap<>();
         this.rewardMap = new LinkedHashMap<>();
-        this.blockPositions = new HashSet<>();
+        // Air-block filtering on load() removes entries from a region thread per position (Folia), so this needs to be concurrent-safe.
+        this.blockPositions = ConcurrentHashMap.newKeySet();
         this.milestones = new HashSet<>();
         this.description = new ArrayList<>();
     }
@@ -219,11 +221,21 @@ public class Crate implements ConfigBacked {
             this.addCost(cost);
         });
 
-        this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
+        List<WorldPos> positions = config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList();
+        this.blockPositions.addAll(positions);
+
         if (!Config.isCrateInAirBlocksAllowed()) {
-            this.blockPositions.removeIf(pos -> {
-                Block block = pos.toBlock();
-                return block != null && block.isEmpty();
+            positions.forEach(pos -> {
+                Location location = pos.toLocation();
+                if (location == null) return;
+
+                // Dispatch onto the region/thread that owns this block before reading its state (Folia).
+                this.plugin.runTask(location, () -> {
+                    Block block = pos.toBlock();
+                    if (block != null && block.isEmpty()) {
+                        this.blockPositions.remove(pos);
+                    }
+                });
             });
         }
 

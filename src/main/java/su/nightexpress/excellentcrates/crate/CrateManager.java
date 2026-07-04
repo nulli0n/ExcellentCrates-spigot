@@ -96,11 +96,11 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.runTask(() -> this.reportProblems()); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
-        this.addAsyncTask(this::playCrateEffects, 1L);
+        this.addTask(this::playCrateEffects, 1L);
         this.addAsyncTask(this::saveCrates, Config.CRATE_SAVE_INTERVAL.get());
     }
 
@@ -743,8 +743,11 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 Location location = worldPos.toLocation();
                 if (location == null) return;
 
-                CrateUtils.getPlayersForEffects(location).forEach(player -> {
-                    effect.playStep(location, particle, player);
+                // Dispatch onto the region/thread that owns this location before touching world/player state (Folia).
+                this.plugin.runTask(location, () -> {
+                    CrateUtils.getPlayersForEffects(location).forEach(player -> {
+                        effect.playStep(location, particle, player);
+                    });
                 });
             });
         });

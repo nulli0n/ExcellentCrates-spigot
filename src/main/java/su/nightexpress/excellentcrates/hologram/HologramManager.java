@@ -24,6 +24,7 @@ import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager extends AbstractManager<CratesPlugin> {
 
@@ -33,7 +34,8 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
 
     public HologramManager(@NotNull CratesPlugin plugin) {
         super(plugin);
-        this.displayMap = new HashMap<>();
+        // Creation/rendering is dispatched per block location (Folia regions), so this map can be written concurrently.
+        this.displayMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -41,7 +43,7 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         if (this.detectHandler()) {
             this.addListener(new HologramListener(this.plugin, this));
 
-            this.addAsyncTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get());
+            this.addTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get());
         }
     }
 
@@ -160,42 +162,50 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
             if (group.isDisabled()) continue;
 
             WorldPos blockPosition = group.getBlockPosition();
-            World world = blockPosition.getWorld();
-            Location location = blockPosition.toLocation();
+            Location dispatchLocation = blockPosition.toLocation();
+            if (dispatchLocation == null) continue;
 
-            if (!blockPosition.isChunkLoaded() || world == null || location == null) {
-                this.discard(group); // Remove all viewers and send entity destroy packet.
-                continue;
-            }
-
-            List<Player> players = new ArrayList<>(world.getPlayers());
-            players.removeIf(player -> {
-                if (CrateUtils.isInEffectRange(player, location)) return false;
-
-                this.removeForViewer(player, group);
-                return true;
-            });
-
-            if (players.isEmpty()) {
-                this.discard(group); // Remove all viewers and send entity destroy packet.
-                continue;
-            }
-
-            players.forEach(player -> {
-                boolean needSpawn = !group.isViewer(player);
-
-                List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
-                List<FakeEntity> holograms = group.getEntities();
-                for (int index = 0; index < holograms.size(); index++) {
-                    // Fix for fake entity's text not being updated/replaced when text size is less than holograms amount, so force it to empty string.
-                    String line = index >= hologramText.size() ? "" : hologramText.get(index);
-                    FakeEntity entity = holograms.get(index);
-                    this.handler.sendHologramPackets(player, entity, needSpawn, line);
-                }
-
-                group.addViewer(player);
-            });
+            // Dispatch onto the region/thread that owns this block before touching world/player state (Folia).
+            this.plugin.runTask(dispatchLocation, () -> this.renderGroup(group, blockPosition, text));
         }
+    }
+
+    private void renderGroup(@NotNull FakeEntityGroup group, @NotNull WorldPos blockPosition, @NotNull List<String> text) {
+        World world = blockPosition.getWorld();
+        Location location = blockPosition.toLocation();
+
+        if (!blockPosition.isChunkLoaded() || world == null || location == null) {
+            this.discard(group); // Remove all viewers and send entity destroy packet.
+            return;
+        }
+
+        List<Player> players = new ArrayList<>(world.getPlayers());
+        players.removeIf(player -> {
+            if (CrateUtils.isInEffectRange(player, location)) return false;
+
+            this.removeForViewer(player, group);
+            return true;
+        });
+
+        if (players.isEmpty()) {
+            this.discard(group); // Remove all viewers and send entity destroy packet.
+            return;
+        }
+
+        players.forEach(player -> {
+            boolean needSpawn = !group.isViewer(player);
+
+            List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
+            List<FakeEntity> holograms = group.getEntities();
+            for (int index = 0; index < holograms.size(); index++) {
+                // Fix for fake entity's text not being updated/replaced when text size is less than holograms amount, so force it to empty string.
+                String line = index >= hologramText.size() ? "" : hologramText.get(index);
+                FakeEntity entity = holograms.get(index);
+                this.handler.sendHologramPackets(player, entity, needSpawn, line);
+            }
+
+            group.addViewer(player);
+        });
     }
 
     private void createIfAbsent(@NotNull Crate crate) {
@@ -206,28 +216,34 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         if (originText.isEmpty()) return;
 
         FakeDisplay display = new FakeDisplay();
+        // Put it before dispatching, so the containsKey guard above prevents recreation while groups populate async.
+        this.displayMap.put(crate.getId(), display);
 
         double yOffset = crate.getHologramYOffset() + 0.2;
         double lineGap = Config.CRATE_HOLOGRAM_LINE_GAP.get();
 
         crate.getBlockPositions().forEach(blockPos -> {
-            Block block = blockPos.toBlock();
-            if (block == null) return;
+            Location blockLocation = blockPos.toLocation();
+            if (blockLocation == null) return;
 
-            double height = block.getBoundingBox().getHeight() / 2D + yOffset;
+            // Dispatch onto the region/thread that owns this block before touching world state (Folia).
+            this.plugin.runTask(blockLocation, () -> {
+                Block block = blockPos.toBlock();
+                if (block == null) return;
 
-            // Allocate ID values for our fake entities, so there is no clash with new server entities.
+                double height = block.getBoundingBox().getHeight() / 2D + yOffset;
 
-            FakeEntityGroup group = display.getGroupOrCreate(blockPos);
+                // Allocate ID values for our fake entities, so there is no clash with new server entities.
 
-            for (int index = 0; index < originText.size(); index++) {
-                double gap = lineGap * index;
+                FakeEntityGroup group = display.getGroupOrCreate(blockPos);
 
-                Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
-                group.addEntity(FakeEntity.create(location));
-            }
+                for (int index = 0; index < originText.size(); index++) {
+                    double gap = lineGap * index;
+
+                    Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
+                    group.addEntity(FakeEntity.create(location));
+                }
+            });
         });
-
-        this.displayMap.put(crate.getId(), display);
     }
 }
