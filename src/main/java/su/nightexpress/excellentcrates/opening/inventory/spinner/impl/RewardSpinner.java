@@ -14,7 +14,7 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinMode;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.random.Rnd;
-
+import java.util.IdentityHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Set;
 public class RewardSpinner extends AbstractSpinner {
 
     private final Set<Rarity> rarities;
-
+    private final Map<Reward, ItemStack> previewCache = new IdentityHashMap<>();
     private int rewardIndex;
 
     public RewardSpinner(@NotNull SpinnerData data, @NotNull InventoryOpening opening, @NotNull Set<Rarity> rarities) {
@@ -75,12 +75,23 @@ public class RewardSpinner extends AbstractSpinner {
     @Override
     @NotNull
     public ItemStack createItem(int slot) {
-        Reward reward = this.shouldUsePredictedReward(slot) ? this.opening.getRewards().get(this.rewardIndex++) : this.rollReward(true);
-        if (reward == null) return new ItemStack(Material.AIR);
+        Reward reward = this.shouldUsePredictedReward(slot)
+                ? this.opening.getRewards().get(this.rewardIndex++)
+                : this.rollReward(true);
 
-        return reward.getPreviewItem();
+        if (reward == null) {
+            return new ItemStack(Material.AIR);
+        }
+
+        ItemStack preview = this.previewCache.computeIfAbsent(
+                reward,
+                Reward::getPreviewItem
+        );
+
+        return preview.clone();
     }
 
+    
     private boolean shouldUsePredictedReward(int slot) {
         if (this.rewardIndex >= this.opening.getRewards().size()) return false;
 

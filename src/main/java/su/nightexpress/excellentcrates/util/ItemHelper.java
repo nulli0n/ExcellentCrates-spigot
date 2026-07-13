@@ -75,7 +75,7 @@ public class ItemHelper {
 
     @NotNull
     public static ItemStack toItemStack(@NotNull AdaptedItem item) {
-        return item.itemStack().orElse(CrateUtils.getQuestionStack());
+        return item.itemStack().orElseGet(CrateUtils::getQuestionStack);
     }
 
     public static boolean isCustom(@NotNull ItemStack itemStack) {
