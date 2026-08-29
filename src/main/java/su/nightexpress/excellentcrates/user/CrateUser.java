@@ -42,6 +42,10 @@ public class CrateUser extends AbstractUser {
         return this.crateDataMap;
     }
 
+    public long getTotalOpenings() {
+        return this.crateDataMap.values().stream().mapToLong(UserCrateData::getOpenings).sum();
+    }
+
     @NotNull
     public UserCrateData getCrateData(@NotNull Crate crate) {
         return this.getCrateData(crate.getId());

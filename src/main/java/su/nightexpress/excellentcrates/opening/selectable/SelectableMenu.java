@@ -42,7 +42,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
     private String rewardEntry;
 
-    private NightItem  selectedIcon;
+    private NightItem selectedIcon;
 
     private NightSound selectSound;
     private NightSound unselectSound;
@@ -76,7 +76,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                     this.unselectSound.play(player);
                 }
                 else {
-                    if (opening.isAllRewardsSelected()) {
+                    if (opening.isSelectionLimitReached()) {
                         this.limitSound.play(player);
                         return;
                     }
@@ -209,7 +209,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
             .setPriority(10)
             .setHandler(new ItemHandler("confirm", (viewer, event) -> this.handleConfirm(viewer),
                 ItemOptions.builder()
-                    .setVisibilityPolicy(viewer -> this.getLink(viewer).isAllRewardsSelected())
+                    .setVisibilityPolicy(viewer -> this.getLink(viewer).canConfirm())
                     .build()
             ))
         );

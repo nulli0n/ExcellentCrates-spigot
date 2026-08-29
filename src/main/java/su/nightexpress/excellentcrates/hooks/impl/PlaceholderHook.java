@@ -155,6 +155,13 @@ public class PlaceholderHook {
 
         @Override
         public String onPlaceholderRequest(@Nullable Player player, @NotNull String params) {
+            if (params.equals("openings_total")) {
+                if (player == null) return null;
+
+                CrateUser user = plugin.getUserManager().getOrFetch(player);
+                return NumberUtil.format(user.getTotalOpenings());
+            }
+
             for (var entry : this.userPlaceholders.entrySet()) {
                 String prefix = entry.getKey() + "_";
                 if (!params.startsWith(prefix)) continue;
