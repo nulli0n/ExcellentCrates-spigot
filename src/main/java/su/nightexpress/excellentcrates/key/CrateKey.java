@@ -59,7 +59,7 @@ public class CrateKey implements ConfigBacked {
             config.set("ItemData", adaptedItem);
         }
 
-        this.setItem(ItemHelper.read(config, "ItemData").orElse(ItemHelper.vanilla(new ItemStack(Material.TRIAL_KEY))));
+        this.setItem(ItemHelper.read(config, "ItemData").orElseGet(() -> ItemHelper.vanilla(new ItemStack(Material.TRIAL_KEY))));
         this.setItemStackable(config.getBoolean("ItemStackable", true));
     }
 

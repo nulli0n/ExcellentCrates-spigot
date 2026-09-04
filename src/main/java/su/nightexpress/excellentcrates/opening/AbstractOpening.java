@@ -7,6 +7,7 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.api.opening.Opening;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
@@ -148,6 +149,20 @@ public abstract class AbstractOpening implements Opening {
             );
 
             List<String> postOpenCommands = Replacer.create().replace(this.crate.replacePlaceholders()).apply(this.crate.getPostOpenCommands());
+            
+            if (Config.isConsoleCommandWhitelistEnabled()) {
+                postOpenCommands = postOpenCommands.stream()
+                    .filter(command -> {
+                        if (Config.isConsoleCommandAllowed(command)) {
+                            return true;
+                        } else {
+                            this.plugin.warn("Blocked execution of non-whitelisted post-open command: " + command);
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
+            }
+            
             Players.dispatchCommands(this.player, postOpenCommands);
 
             this.plugin.getUserManager().save(user);

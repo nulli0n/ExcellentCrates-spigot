@@ -71,7 +71,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
+            this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
         }));
 
         this.addItem(MenuItem.background(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(36, 45).toArray()));
@@ -103,7 +103,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
                         if (event.isLeftClick()) {
                             key.setItemStackable(!key.isItemStackable());
                             key.markDirty();
-                            this.runNextTick(flush);
+                            this.runNextTick(player, flush);
                         }
                         return;
                     }
@@ -123,7 +123,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
             .toMenuItem().setSlots(15).setHandler((viewer1, event) -> {
                 key.setVirtual(!key.isVirtual());
                 key.markDirty();
-                this.runNextTick(flush);
+                this.runNextTick(player, flush);
             }).build()
         );
 
@@ -132,7 +132,7 @@ public class KeyOptionsMenu extends LinkedMenu<CratesPlugin, CrateKey> implement
                 if (event.getClick() != ClickType.DROP) return;
 
                 this.plugin.getKeyManager().delete(key);
-                this.runNextTick(() -> this.plugin.getEditorManager().openKeyList(player));
+                this.runNextTick(player, () -> this.plugin.getEditorManager().openKeyList(player));
             }).build()
         );
     }

@@ -12,6 +12,7 @@ import su.nightexpress.nightcore.integration.item.impl.AdaptedCustomStack;
 import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
 import su.nightexpress.nightcore.integration.item.impl.AdaptedVanillaStack;
 import su.nightexpress.nightcore.util.ItemTag;
+import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Version;
 
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class ItemHelper {
 
     @NotNull
     public static AdaptedItem readOrPlaceholder(@NotNull FileConfig config, @NotNull String path) {
-        return read(config, path).orElse(vanilla(CrateUtils.getQuestionStack()));
+        return read(config, path).orElseGet(CrateUtils::getQuestionItem);
     }
 
     @NotNull
@@ -75,12 +76,26 @@ public class ItemHelper {
 
     @NotNull
     public static ItemStack toItemStack(@NotNull AdaptedItem item) {
-        return item.itemStack().orElse(CrateUtils.getQuestionStack());
+        return item.itemStack().orElseGet(CrateUtils::getQuestionStack);
     }
 
     public static boolean isCustom(@NotNull ItemStack itemStack) {
         ItemAdapter<?> adapter = ItemBridge.getAdapter(itemStack);
         return adapter != null && !adapter.isVanilla();
+    }
+
+    public static void fixCustomMeta(@NotNull ItemStack itemStack) {
+        ItemUtil.editMeta(itemStack, meta -> {
+            if (meta.hasItemName()) {
+                ItemUtil.setItemName(meta, meta.getItemName());
+            }
+            if (meta.hasDisplayName()) {
+                ItemUtil.setCustomName(meta, meta.getDisplayName());
+            }
+            if (meta.hasLore()) {
+                ItemUtil.setLore(meta, meta.getLore());
+            }
+        });
     }
 
     @NotNull

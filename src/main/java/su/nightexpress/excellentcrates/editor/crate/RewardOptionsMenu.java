@@ -89,7 +89,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
     public static final IconLocale LOCALE_BROADCAST = LangEntry.iconBuilder("Editor.Button.Reward.Broadcast")
         .name("Win Broadcast")
         .appendCurrent("State", GENERIC_STATE).br()
-        .appendInfo("Restricts player access to the reward", "based on their permissions.").br()
+        .appendInfo("Announces to all players when", "someone wins this reward.").br()
         .appendClick("Click to toggle")
         .build();
 
@@ -121,7 +121,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer).getCrate()));
+            this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openRewardList(viewer.getPlayer(), this.getLink(viewer).getCrate()));
         }));
 
         this.addItem(MenuItem.background(Material.GLASS_PANE, 19,20,21,22,23,24,25));
@@ -147,7 +147,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
                     if (reward instanceof ItemReward itemReward) {
                         itemReward.setCustomPreview(!itemReward.isCustomPreview());
                         crate.markDirty();
-                        this.runNextTick(flush);
+                        this.runNextTick(player, flush);
                     }
                     return;
                 }
@@ -159,7 +159,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
                 if (!ItemHelper.isCustom(copy)) {
                     reward.setPreview(ItemHelper.vanilla(copy));
                     crate.markDirty();
-                    this.runNextTick(flush);
+                    this.runNextTick(player, flush);
                 }
                 else {
                     this.dialogs.show(player, RewardDialogs.PREVIEW, new RewardPreviewDialog.Data(reward, copy), flush);
@@ -176,7 +176,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
                     .replace(GENERIC_AMOUNT, () -> itemReward.hasContent() ? CoreLang.goodEntry(String.valueOf(itemReward.countItems())) : CoreLang.badEntry(Lang.INSPECTIONS_REWARD_NO_ITEMS.text()))
                 )
                 .toMenuItem().setSlots(10).setHandler((viewer1, event) -> {
-                    this.runNextTick(() -> plugin.getEditorManager().openRewardContent(viewer.getPlayer(), itemReward));
+                    this.runNextTick(player, () -> plugin.getEditorManager().openRewardContent(viewer.getPlayer(), itemReward));
                 }).build()
             );
         }
@@ -220,7 +220,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
             .toMenuItem().setSlots(13).setHandler((viewer1, event) -> {
                 reward.setBroadcast(!reward.isBroadcast());
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.runNextTick(player, flush);
             }).build()
         );
 
@@ -244,7 +244,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
 
                 crate.removeReward(reward);
                 crate.markDirty();
-                this.runNextTick(() -> this.plugin.getEditorManager().openRewardList(player, crate));
+                this.runNextTick(player, () -> this.plugin.getEditorManager().openRewardList(player, crate));
             }).build()
         );
     }

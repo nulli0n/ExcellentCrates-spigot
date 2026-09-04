@@ -54,6 +54,13 @@ public class DataHandler extends AbstractUserDataManager<CratesPlugin, CrateUser
         this.tableCrateData = this.getTablePrefix() + "_crate_data";
     }
 
+    @Override
+    protected void onShutdown() {
+        if (this.plugin.isReloading()) return;
+
+        super.onShutdown();
+    }
+
     public void updateRewardLimits() {
         Column columnRewardData = Column.of("rewardData", ColumnType.STRING);
         String rewardDataTable = this.getTablePrefix() + "_reward_data";

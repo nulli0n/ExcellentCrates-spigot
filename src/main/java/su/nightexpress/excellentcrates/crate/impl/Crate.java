@@ -3,7 +3,6 @@ package su.nightexpress.excellentcrates.crate.impl;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import su.nightexpress.excellentcrates.crate.effect.EffectId;
 import su.nightexpress.excellentcrates.crate.reward.RewardFactory;
 import su.nightexpress.excellentcrates.data.crate.GlobalCrateData;
 import su.nightexpress.excellentcrates.hologram.HologramManager;
-import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.registry.CratesRegistries;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.ItemHelper;
@@ -56,6 +54,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+
+import static su.nightexpress.excellentcrates.Placeholders.CRATE_NAME;
+import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
 public class Crate implements ConfigBacked {
 
@@ -88,7 +89,7 @@ public class Crate implements ConfigBacked {
     private boolean     pushbackEnabled;
 
     private boolean hologramEnabled;
-    private String  hologramTemplateId;
+    private List<String> hologramText;
     private double  hologramYOffset;
 
     private boolean effectEnabled;
@@ -109,6 +110,7 @@ public class Crate implements ConfigBacked {
         this.blockPositions = new HashSet<>();
         this.milestones = new HashSet<>();
         this.description = new ArrayList<>();
+        this.hologramText = new ArrayList<>();
     }
 
     public void load() throws IllegalStateException {
@@ -165,7 +167,7 @@ public class Crate implements ConfigBacked {
         this.setName(config.getString("Name", this.getId()));
         this.setDescription(config.getStringList("Description"));
 
-        this.setItem(ItemHelper.read(config, "ItemProvider").orElse(ItemHelper.vanilla(CrateUtils.getDefaultItem(this))));
+        this.setItem(ItemHelper.read(config, "ItemProvider").orElseGet(() -> ItemHelper.vanilla(CrateUtils.getDefaultItem(this))));
         this.setItemStackable(config.getBoolean("ItemStackable", true));
 
         this.setPreviewEnabled(config.getBoolean("Preview.Enabled"));
@@ -220,17 +222,21 @@ public class Crate implements ConfigBacked {
         });
 
         this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
-        if (!Config.isCrateInAirBlocksAllowed()) {
-            this.blockPositions.removeIf(pos -> {
-                Block block = pos.toBlock();
-                return block != null && block.isEmpty();
-            });
-        }
 
         this.setPushbackEnabled(config.getBoolean("Block.Pushback.Enabled"));
         this.setHologramEnabled(config.getBoolean("Block.Hologram.Enabled"));
-        this.setHologramTemplateId(config.getString("Block.Hologram.Template", Placeholders.DEFAULT));
         this.setHologramYOffset(config.getDouble("Block.Hologram.Y_Offset", 0D));
+
+        // Migrate legacy template reference into direct hologram text.
+        if (!config.contains("Block.Hologram.Text")) {
+            String legacyId = config.getString("Block.Hologram.Template", Placeholders.DEFAULT);
+            List<String> text = Config.getLegacyHologramTemplate(legacyId);
+            if (text == null || text.isEmpty()) text = getDefaultHologramText();
+
+            config.set("Block.Hologram.Text", text);
+            config.remove("Block.Hologram.Template");
+        }
+        this.setHologramText(config.getStringList("Block.Hologram.Text"));
 
         this.setEffectType(config.getString("Block.Effect.Model", EffectId.NONE));
         this.setEffectParticle(UniParticle.read(config, "Block.Effect.Particle"));
@@ -292,7 +298,8 @@ public class Crate implements ConfigBacked {
         config.set("Block.Positions", this.blockPositions.stream().map(WorldPos::serialize).toList());
         config.set("Block.Pushback.Enabled", this.pushbackEnabled);
         config.set("Block.Hologram.Enabled", this.hologramEnabled);
-        config.set("Block.Hologram.Template", this.hologramTemplateId);
+        config.set("Block.Hologram.Text", this.hologramText);
+        config.remove("Block.Hologram.Template");
         config.set("Block.Hologram.Y_Offset", this.hologramYOffset);
         config.set("Block.Effect.Enabled", this.effectEnabled);
         config.set("Block.Effect.Model", this.effectType);
@@ -339,7 +346,7 @@ public class Crate implements ConfigBacked {
         if (!this.item.isValid()) collector.report(Lang.INSPECTIONS_GENERIC_ITEM.get(false));
         if (this.isPreviewEnabled() && !this.isPreviewValid()) collector.report(Lang.INSPECTIONS_CRATE_PREVIEW.get(false));
         if (this.isOpeningEnabled() && !this.isOpeningValid()) collector.report(Lang.INSPECTIONS_CRATE_OPENING.get(false));
-        if (this.isHologramEnabled() && !this.isHologramTemplateValid()) collector.report(Lang.INSPECTIONS_CRATE_HOLOGRAM.get(false));
+        if (this.isHologramEnabled() && !this.hasHologramText()) collector.report(Lang.INSPECTIONS_CRATE_HOLOGRAM.get(false));
 
         this.postOpenCommands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
             collector.report("Post-Open Command '" + command + "' does no exist.");
@@ -411,7 +418,7 @@ public class Crate implements ConfigBacked {
 
     private void manageHologram(@NotNull Consumer<HologramManager> consumer) {
         if (this.hologramEnabled) {
-            this.plugin.getHologramManager().ifPresent(consumer);
+            Optional.ofNullable(this.plugin.getHologramManager()).ifPresent(consumer);
         }
     }
 
@@ -431,8 +438,8 @@ public class Crate implements ConfigBacked {
         return this.plugin.getOpeningManager().getProviderById(this.openingId) != null;
     }
 
-    public boolean isHologramTemplateValid() {
-        return Config.getHologramTemplate(this.hologramTemplateId) != null;
+    public boolean hasHologramText() {
+        return !this.hologramText.isEmpty();
     }
 
     @NotNull
@@ -453,12 +460,6 @@ public class Crate implements ConfigBacked {
     @NotNull
     public String getPermission() {
         return Perms.PREFIX_CRATE + this.getId();
-    }
-
-    @NotNull
-    public List<String> getHologramText() {
-        HologramTemplate template = Config.getHologramTemplate(this.hologramTemplateId);
-        return template == null ? Collections.emptyList() : template.getText();
     }
 
     public boolean hasRewards(@NotNull Player player) {
@@ -522,6 +523,7 @@ public class Crate implements ConfigBacked {
         this.plugin.getCrateManager().removeCratePositions(this);
         this.blockPositions.add(pos);
         this.plugin.getCrateManager().addCratePositions(this);
+        this.markDirty();
     }
 
     public void clearBlockPositions() {
@@ -757,12 +759,20 @@ public class Crate implements ConfigBacked {
     }
 
     @NotNull
-    public String getHologramTemplateId() {
-        return this.hologramTemplateId;
+    public static List<String> getDefaultHologramText() {
+        return List.of(
+            LIGHT_YELLOW.wrap(BOLD.wrap(CRATE_NAME)),
+            LIGHT_GRAY.wrap("Edit hologram text in " + LIGHT_YELLOW.wrap("crate config") + ".")
+        );
     }
 
-    public void setHologramTemplateId(@NotNull String hologramTemplateId) {
-        this.hologramTemplateId = hologramTemplateId.toLowerCase();
+    @NotNull
+    public List<String> getHologramText() {
+        return this.hologramText;
+    }
+
+    public void setHologramText(@NotNull List<String> hologramText) {
+        this.hologramText = new ArrayList<>(hologramText);
     }
 
     public double getHologramYOffset() {

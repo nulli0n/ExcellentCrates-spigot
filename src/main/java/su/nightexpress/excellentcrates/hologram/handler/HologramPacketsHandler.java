@@ -12,6 +12,7 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.hologram.entity.FakeEntity;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
@@ -26,7 +27,8 @@ public class HologramPacketsHandler extends AbstractHologramHandler {
 
     private final PlayerManager playerManager;
 
-    public HologramPacketsHandler() {
+    public HologramPacketsHandler(@NotNull CratesPlugin plugin) {
+        super(plugin);
         this.playerManager = PacketEvents.getAPI().getPlayerManager();
     }
 
@@ -40,7 +42,7 @@ public class HologramPacketsHandler extends AbstractHologramHandler {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
+    protected void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
         PacketWrapper<?> dataPacket = this.createMetadataPacket(entity.getId(), dataList -> {
             dataList.add(new EntityData<>(15, EntityDataTypes.BYTE, this.billboard));
             dataList.add(new EntityData<>(23, EntityDataTypes.COMPONENT, NightMessage.asJson(textLine)));
@@ -58,12 +60,12 @@ public class HologramPacketsHandler extends AbstractHologramHandler {
     }
 
     @Override
-    public void sendDestroyEntityPacket(@NotNull Set<Integer> idList) {
+    protected void sendDestroyEntityPacket(@NotNull Set<Integer> idList) {
         this.broadcastPacket(this.createDestroyPacket(idList));
     }
 
     @Override
-    public void sendDestroyEntityPacket(@NotNull Player player, @NotNull Set<Integer> idList) {
+    protected void sendDestroyEntityPacket(@NotNull Player player, @NotNull Set<Integer> idList) {
         this.sendPacket(player, this.createDestroyPacket(idList));
     }
 

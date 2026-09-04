@@ -11,17 +11,23 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.hologram.entity.FakeEntity;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class HologramProtocolHandler extends AbstractHologramHandler {
 
     private final ProtocolManager protocolManager;
 
-    public HologramProtocolHandler() {
+    public HologramProtocolHandler(@NotNull CratesPlugin plugin) {
+        super(plugin);
         this.protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
@@ -34,7 +40,7 @@ public class HologramProtocolHandler extends AbstractHologramHandler {
     }
 
     @Override
-    public void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
+    protected void sendHologramPackets(@NotNull Player player, @NotNull FakeEntity entity, boolean needSpawn, @NotNull String textLine) {
         Object component = WrappedChatComponent.fromJson(NightMessage.asJson(textLine)).getHandle();
 
         PacketContainer dataPacket = this.createMetadataPacket(entity.getId(), metadata -> {
@@ -54,12 +60,12 @@ public class HologramProtocolHandler extends AbstractHologramHandler {
     }
 
     @Override
-    public void sendDestroyEntityPacket(@NotNull Player player, @NotNull Set<Integer> idList) {
+    protected void sendDestroyEntityPacket(@NotNull Player player, @NotNull Set<Integer> idList) {
         this.sendPacket(player, this.createDestroyPacket(idList));
     }
 
     @Override
-    public void sendDestroyEntityPacket(@NotNull Set<Integer> idList) {
+    protected void sendDestroyEntityPacket(@NotNull Set<Integer> idList) {
         this.broadcastPacket(this.createDestroyPacket(idList));
     }
 

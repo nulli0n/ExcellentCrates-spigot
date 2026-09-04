@@ -54,6 +54,8 @@ public class OpeningListener extends AbstractListener<CratesPlugin> {
             inventoryOpening.setCloseTicks(0);
             opening.stop();
         }
+
+        plugin.runTask(player, player::updateInventory);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

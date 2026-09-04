@@ -52,7 +52,7 @@ public class CrateListMenu extends LinkedMenu<CratesPlugin, CrateManager> implem
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openEditor(viewer.getPlayer()));
+            this.runNextTick(viewer.getPlayer(), () -> this.plugin.getEditorManager().openEditor(viewer.getPlayer()));
         }));
 
         this.addItem(MenuItem.buildNextPage(this, 44));
@@ -82,7 +82,7 @@ public class CrateListMenu extends LinkedMenu<CratesPlugin, CrateManager> implem
                 );
         });
         autoFill.setItemClick(crate -> (viewer1, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openOptionsMenu(viewer1.getPlayer(), crate));
+            this.runNextTick(viewer1.getPlayer(), () -> this.plugin.getEditorManager().openOptionsMenu(viewer1.getPlayer(), crate));
         });
 
         return autoFill.build();

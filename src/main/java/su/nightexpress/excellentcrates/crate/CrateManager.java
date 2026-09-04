@@ -40,7 +40,6 @@ import su.nightexpress.excellentcrates.dialog.cost.CostEntryCreationDialog;
 import su.nightexpress.excellentcrates.dialog.cost.CostNameDialog;
 import su.nightexpress.excellentcrates.dialog.crate.*;
 import su.nightexpress.excellentcrates.dialog.reward.*;
-import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.registry.CratesRegistries;
 import su.nightexpress.excellentcrates.user.CrateUser;
 import su.nightexpress.excellentcrates.util.CrateUtils;
@@ -89,14 +88,17 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
     @Override
     protected void onLoad() {
-        this.updateHologramTemplates();
+        Config.loadLegacyHologramTemplates(this.plugin.getConfig());
 
         this.loadRarities();
         this.loadPreviews();
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+
+        this.removeLegacyHologramTemplates();
+
+        this.plugin.runTaskLaterAsync(this::reportProblems, 1L); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -117,19 +119,13 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.rarityByIdMap.clear();
     }
 
-    private void updateHologramTemplates() {
+    private void removeLegacyHologramTemplates() {
         FileConfig config = this.plugin.getConfig();
-        if (!config.contains("Crate.Holograms.Templates")) return;
 
-        config.remove("Crate.Holograms.TemplateList"); // Remove newly generated stuff.
-        config.getSection("Crate.Holograms.Templates").forEach(sId -> {
-            List<String> text = config.getStringList("Crate.Holograms.Templates." + sId);
-            HologramTemplate template = new HologramTemplate(sId, text);
-            template.write(config, "Crate.Holograms.TemplateList." + sId);
-        });
-        config.remove("Crate.Holograms.Templates"); // Remove old shit
+        config.remove("Crate.Holograms.TemplateList");
+        config.remove("Crate.Holograms.Templates");
 
-        Config.CRATE_HOLOGRAM_TEMPLATES.read(config); // Re-read
+        config.saveChanges();
     }
 
     private void loadRarities() {
@@ -188,13 +184,34 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     private void loadCrates() {
-        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false)) {
-            String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
+        List<Crate> loaded = FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false).parallelStream()
+            .map(this::readCrate)
+            .filter(Objects::nonNull)
+            .toList();
 
-            Crate crate = new Crate(plugin, file.toPath(), id);
-            this.loadCrate(crate);
-        }
+        loaded.forEach(crate -> {
+            this.crateByIdMap.put(crate.getId(), crate);
+            this.addCratePositions(crate);
+        });
+
         this.plugin.info("Loaded " + this.crateByIdMap.size() + " crates.");
+    }
+
+    @Nullable
+    private Crate readCrate(@NotNull File file) {
+        String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
+
+        Crate crate = new Crate(plugin, file.toPath(), id);
+        try {
+            crate.load();
+        }
+        catch (IllegalStateException exception) {
+            this.plugin.error("Crate '" + crate.getPath() + "' can not be loaded.");
+            exception.printStackTrace();
+            return null;
+        }
+
+        return crate;
     }
 
     private void loadCrate(@NotNull Crate crate) {
@@ -370,7 +387,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         crate.setPreviewId(Placeholders.DEFAULT);
         crate.setPushbackEnabled(true);
         crate.setHologramEnabled(true);
-        crate.setHologramTemplateId(Placeholders.DEFAULT);
+        crate.setHologramText(Crate.getDefaultHologramText());
         crate.setEffectType(EffectId.HELIX);
         crate.setEffectParticle(UniParticle.of(Particle.CLOUD));
         crate.saveForce();
@@ -420,10 +437,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         Crate crate = this.getCrateById(crateId);
         if (crate != null) {
-            crate.clearBlockPositions();
             crate.addBlockPosition(block.getLocation());
             crate.recreateHologram();
-            crate.markDirty();
+            crate.saveForce();
             this.plugin.getEditorManager().openOptionsMenu(player, crate);
         }
 
@@ -729,11 +745,12 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     public void playCrateEffects() {
-        this.getCrates().forEach(crate -> {
+        this.crateByIdMap.values().forEach(crate -> {
             if (!crate.isEffectEnabled()) return;
 
             CrateEffect effect = crate.getEffect();
             if (effect.isDummy()) return;
+            if (!effect.isPlayingStep()) return;
 
             UniParticle particle = crate.getEffectParticle();
 

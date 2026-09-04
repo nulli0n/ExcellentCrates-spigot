@@ -79,7 +79,7 @@ public class OpeningAmountMenu extends LinkedMenu<CratesPlugin, OpeningAmountMen
                 .setSlots(slots[index])
                 .setPriority(Integer.MAX_VALUE)
                 .setHandler((viewer1, event) -> {
-                    this.runNextTick(() -> {
+                    this.runNextTick(player, () -> {
                         player.closeInventory();
                         this.manager.multiOpenCrate(player, source, OpenOptions.empty(), cost, amount);
                     });

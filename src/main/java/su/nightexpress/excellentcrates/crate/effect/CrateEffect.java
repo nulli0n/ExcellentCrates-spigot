@@ -42,9 +42,13 @@ public abstract class CrateEffect {
         this.tickCount++;
     }
 
+    public boolean isPlayingStep() {
+        return this.tickCount >= 0 && this.tickCount % this.tickInterval == 0;
+    }
+
     public void playStep(@NotNull Location location, @NotNull UniParticle particle, @NotNull Player player) {
         // Do not play an effect while paused.
-        if (this.tickCount < 0 || this.tickCount % this.tickInterval != 0) return;
+        if (!this.isPlayingStep()) return;
 
         this.onStepPlay(LocationUtil.setCenter2D(location.clone()), particle, (int) this.tickCount, player);
 

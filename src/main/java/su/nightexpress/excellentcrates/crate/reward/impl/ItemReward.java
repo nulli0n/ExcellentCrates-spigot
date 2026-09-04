@@ -129,6 +129,8 @@ public class ItemReward extends AbstractReward {
                 });
             }
 
+            ItemHelper.fixCustomMeta(itemStack);
+
             Players.addItem(player, itemStack);
         });
     }

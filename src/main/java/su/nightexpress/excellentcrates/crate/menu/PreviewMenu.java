@@ -156,7 +156,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
             Player player = viewer.getPlayer();
 
-            this.runNextTick(() -> {
+            this.runNextTick(player, () -> {
                 player.closeInventory();
                 plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
             });
@@ -177,7 +177,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             .setPriority(10)
             .setSlots(4)
             .setHandler(new ItemHandler("milestones", (viewer, event) -> {
-                this.runNextTick(() -> plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer)));
+                this.runNextTick(viewer.getPlayer(), () -> plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer)));
             }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer).getCrate().hasMilestones()).build()))
         );
 

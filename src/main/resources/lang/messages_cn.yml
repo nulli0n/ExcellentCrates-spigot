@@ -297,7 +297,7 @@ Editor:
             - "&7在抽奖箱方块上方添加一个使用所"
             - "&7选模板的文本全息图"
             - ""
-            - "&7在 &dconfig.yml &7中编辑全息图模板"
+            - "&7在 &d抽奖箱配置 &7中编辑全息图文本"
             - ""
             - "&7状态: %crate_hologram_enabled%"
             - "&7模板: %crate_hologram_template%"

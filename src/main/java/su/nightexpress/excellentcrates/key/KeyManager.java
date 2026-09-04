@@ -47,7 +47,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         this.loadCost();
         this.loadKeys();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // When everything is loaded.
+        this.plugin.runTaskLaterAsync(this::reportProblems, 1L); // When everything is loaded.
 
         this.addListener(new KeyListener(this.plugin, this));
         this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get()); // TODO Config
@@ -64,10 +64,25 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     }
 
     private void loadKeys() {
-        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_KEYS, true)) {
-            String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
-            this.loadKey(new CrateKey(this.plugin, file.toPath(), id));
-        }
+        List<CrateKey> loaded = FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_KEYS, true).parallelStream()
+            .map(file -> {
+                String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
+                CrateKey key = new CrateKey(this.plugin, file.toPath(), id);
+                try {
+                    key.load();
+                    return key;
+                }
+                catch (IllegalStateException exception) {
+                    this.plugin.error("Key not loaded: '" + key.getPath() + "'.");
+                    exception.printStackTrace();
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .toList();
+
+        loaded.forEach(key -> this.keyByIdMap.put(key.getId(), key));
+
         this.plugin.info("Loaded " + this.keyByIdMap.size() + " crate keys.");
     }
 

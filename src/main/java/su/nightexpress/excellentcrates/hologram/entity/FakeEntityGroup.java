@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class FakeEntityGroup {
@@ -12,13 +13,15 @@ public class FakeEntityGroup {
     private final WorldPos         blockPos;
     private final List<FakeEntity> entities;
     private final Set<UUID>        humanViewers;
+    private final Map<UUID, List<String>> viewerTextCache;
 
     private boolean disabled;
 
     public FakeEntityGroup(@NotNull WorldPos blockPos) {
         this.blockPos = blockPos;
         this.entities = new ArrayList<>();
-        this.humanViewers = new HashSet<>();
+        this.humanViewers = ConcurrentHashMap.newKeySet();
+        this.viewerTextCache = new ConcurrentHashMap<>();
         this.disabled = false;
     }
 
@@ -28,6 +31,7 @@ public class FakeEntityGroup {
 
     public void removeViewer(@NotNull Player player) {
         this.humanViewers.remove(player.getUniqueId());
+        this.viewerTextCache.remove(player.getUniqueId());
     }
 
     public boolean isViewer(@NotNull Player player) {
@@ -36,6 +40,12 @@ public class FakeEntityGroup {
 
     public void clearViewers() {
         this.humanViewers.clear();
+        this.viewerTextCache.clear();
+    }
+
+    public boolean updateTextCache(@NotNull Player player, @NotNull List<String> text) {
+        List<String> previous = this.viewerTextCache.put(player.getUniqueId(), text);
+        return !text.equals(previous);
     }
 
     public void addEntity(@NotNull FakeEntity entity) {

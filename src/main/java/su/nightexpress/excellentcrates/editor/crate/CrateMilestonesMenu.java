@@ -42,7 +42,7 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         .appendCurrent("Reward Id", MILESTONE_REWARD_ID)
         .br()
         .appendClick("Left-Click to change openings")
-        .appendClick("Right-Click tochange reward")
+        .appendClick("Right-Click to change reward")
         .appendClick("Shift-Right delete " + SOFT_RED.wrap("(no undo)"))
         .build();
 
@@ -51,7 +51,7 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 39, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));
+            this.runNextTick(viewer.getPlayer(), () -> this.plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));
         }));
 
         this.addItem(MenuItem.buildNextPage(this, 44));
@@ -61,7 +61,7 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
             Milestone milestone = new Milestone(crate, "null", 0);
             crate.getMilestones().add(milestone);
             crate.markDirty();
-            this.runNextTick(() -> this.flush(viewer));
+            this.runNextTick(viewer.getPlayer(), () -> this.flush(viewer));
         });
     }
 
@@ -89,7 +89,7 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
                 if (event.isRightClick()) {
                     crate.getMilestones().remove(milestone);
                     crate.markDirty();
-                    this.runNextTick(() -> this.flush(viewer));
+                    this.runNextTick(viewer.getPlayer(), () -> this.flush(viewer));
                     return;
                 }
             }

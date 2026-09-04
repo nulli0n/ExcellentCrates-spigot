@@ -103,7 +103,7 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, RewardListMenu.Data
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer).crate));
+            this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer).crate));
         }));
 
         this.addItem(MenuItem.buildNextPage(this, 41));
@@ -184,12 +184,12 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, RewardListMenu.Data
                 }
                 crate.setRewards(all);
                 crate.markDirty();
-                this.runNextTick(() -> this.flush(viewer));
+                this.runNextTick(viewer.getPlayer(), () -> this.flush(viewer));
                 return;
             }
 
             if (event.isLeftClick()) {
-                this.runNextTick(() -> plugin.getEditorManager().openRewardOptions(viewer1.getPlayer(), reward));
+                this.runNextTick(viewer1.getPlayer(), () -> plugin.getEditorManager().openRewardOptions(viewer1.getPlayer(), reward));
             }
         });
 
@@ -208,10 +208,10 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, RewardListMenu.Data
             )
             .toMenuItem().setSlots(36).setHandler((viewer1, event) -> {
                 if (event.isLeftClick()) {
-                    this.runNextTick(() -> this.open(viewer.getPlayer(), data.crate, data.massModeType, !data.massMode, data.arrangeMode));
+                    this.runNextTick(viewer.getPlayer(), () -> this.open(viewer.getPlayer(), data.crate, data.massModeType, !data.massMode, data.arrangeMode));
                 }
                 else if (event.isRightClick()) {
-                    this.runNextTick(() -> this.open(viewer.getPlayer(), data.crate, Lists.next(data.massModeType), data.massMode, data.arrangeMode));
+                    this.runNextTick(viewer.getPlayer(), () -> this.open(viewer.getPlayer(), data.crate, Lists.next(data.massModeType), data.massMode, data.arrangeMode));
                 }
             }).build()
         );
@@ -222,7 +222,7 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, RewardListMenu.Data
                 .replace(GENERIC_STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(data.arrangeMode))
             )
             .toMenuItem().setSlots(44).setHandler((viewer1, event) -> {
-                this.runNextTick(() -> this.open(viewer.getPlayer(), data.crate, data.massModeType, data.massMode, !data.arrangeMode));
+                this.runNextTick(viewer.getPlayer(), () -> this.open(viewer.getPlayer(), data.crate, data.massModeType, data.massMode, !data.arrangeMode));
             }).build()
         );
 
@@ -253,6 +253,6 @@ public class RewardListMenu extends LinkedMenu<CratesPlugin, RewardListMenu.Data
         Reward reward = RewardFactory.wizardCreation(this.plugin, data.crate, itemStack, data.massModeType, adapt);
         data.crate.addReward(reward);
         data.crate.markDirty();
-        this.runNextTick(() -> this.flush(viewer));
+        this.runNextTick(viewer.getPlayer(), () -> this.flush(viewer));
     }
 }

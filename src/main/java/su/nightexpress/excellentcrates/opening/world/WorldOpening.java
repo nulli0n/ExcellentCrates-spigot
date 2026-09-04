@@ -9,6 +9,8 @@ import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.opening.AbstractOpening;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
+import java.util.Optional;
+
 public abstract class WorldOpening extends AbstractOpening {
 
     public WorldOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
@@ -16,10 +18,10 @@ public abstract class WorldOpening extends AbstractOpening {
     }
 
     protected void hideHologram(@NotNull WorldPos blockPos) {
-        this.plugin.getHologramManager().ifPresent(hologramManager -> hologramManager.disableBlockHologram(this.crate, blockPos));
+        Optional.ofNullable(this.plugin.getHologramManager()).ifPresent(hologramManager -> hologramManager.disableBlockHologram(this.crate, blockPos));
     }
 
     protected void showHologram(@NotNull WorldPos blockPos) {
-        this.plugin.getHologramManager().ifPresent(hologramManager -> hologramManager.enableBlockHologram(this.crate, blockPos));
+        Optional.ofNullable(this.plugin.getHologramManager()).ifPresent(hologramManager -> hologramManager.enableBlockHologram(this.crate, blockPos));
     }
 }

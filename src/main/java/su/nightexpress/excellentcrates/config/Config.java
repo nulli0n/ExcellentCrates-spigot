@@ -3,20 +3,17 @@ package su.nightexpress.excellentcrates.config;
 import org.bukkit.entity.Display;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.Enums;
-import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static su.nightexpress.excellentcrates.Placeholders.WIKI_PLACEHOLDERS;
 
 public class Config {
 
@@ -33,6 +30,8 @@ public class Config {
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
+
+    private static final Map<String, List<String>> LEGACY_HOLOGRAM_TEMPLATES = new HashMap<>();
 
     public static final ConfigValue<String> LOGS_DATE_FORMAT = ConfigValue.create("Logs.DateFormat",
         "dd/MM/yyyy HH:mm:ss",
@@ -114,15 +113,6 @@ public class Config {
     public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
         24,
         "Sets max. distance where players can see crate particles and holograms."
-    );
-
-    public static final ConfigValue<Map<String, HologramTemplate>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMapById("Crate.Holograms.TemplateList",
-        HologramTemplate::read,
-        map -> map.putAll(HologramTemplate.getDefaultTemplates()),
-        "Custom hologram templates to display above crate blocks.",
-        "Allowed Placeholders:",
-        "- " + Plugins.PLACEHOLDER_API + " placeholders.",
-        "- Crate placeholders: " + WIKI_PLACEHOLDERS
     );
 
     public static final ConfigValue<Double> CRATE_HOLOGRAM_LINE_GAP = ConfigValue.create("Crate.Holograms.LineGap",
@@ -224,7 +214,7 @@ public class Config {
     public static final ConfigValue<Boolean> HOLOGRAMS_ENABLED = ConfigValue.create("Holograms.Enabled",
         true,
         "Controls whether the Holograms feature is available.",
-        "[*] One of the following plugins is required for holograms to work: " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
+        "[*] One of the following plugins is required for holograms to work: " + HookId.FANCY_HOLOGRAMS + ", " + HookId.PACKET_EVENTS + " or " + HookId.PROTOCOL_LIB
     );
 
     public static final ConfigValue<Boolean> OPENINGS_GUI_SIMULATE_REAL_CHANCES = ConfigValue.create("Openings.GUI.Simulate_Real_Chances",
@@ -233,6 +223,20 @@ public class Config {
         "Controls whether reward's weight and rarity should be respected when displaying rewards during GUI opening animation.",
         "When disabled, rewards choosen by a blind random.",
         "[Default is false]"
+    );
+
+    public static final ConfigValue<Boolean> CONSOLE_COMMAND_WHITELIST_ENABLED = ConfigValue.create("Console.Command_Whitelist.Enabled",
+        false,
+        "Controls whether console command whitelist is enabled.",
+        "When enabled, only whitelisted commands can be executed from console by the plugin.",
+        "[Default is false]"
+    );
+
+    public static final ConfigValue<List<String>> CONSOLE_COMMAND_WHITELIST = ConfigValue.create("Console.Command_Whitelist.Commands",
+        List.of("give", "gamemode", "tp", "teleport", "money", "eco", "experience", "xp"),
+        "List of commands that are allowed to be executed from console when whitelist is enabled.",
+        "Commands should be specified without the '/' prefix.",
+        "Example: ['give', 'gamemode', 'tp']"
     );
 
     public static boolean isMilestonesEnabled() {
@@ -247,14 +251,21 @@ public class Config {
         return DATA_REWARD_LIMITS_SYNC_ENABLED.get();
     }
 
-    @NotNull
-    public static List<String> getHologramTemplateIds() {
-        return new ArrayList<>(CRATE_HOLOGRAM_TEMPLATES.get().keySet());
+    public static void loadLegacyHologramTemplates(@NotNull FileConfig config) {
+        LEGACY_HOLOGRAM_TEMPLATES.clear();
+
+        config.getSection("Crate.Holograms.TemplateList").forEach(id -> {
+            LEGACY_HOLOGRAM_TEMPLATES.put(id.toLowerCase(), config.getStringList("Crate.Holograms.TemplateList." + id + ".Text"));
+        });
+
+        config.getSection("Crate.Holograms.Templates").forEach(id -> {
+            LEGACY_HOLOGRAM_TEMPLATES.putIfAbsent(id.toLowerCase(), config.getStringList("Crate.Holograms.Templates." + id));
+        });
     }
 
     @Nullable
-    public static HologramTemplate getHologramTemplate(@NotNull String id) {
-        return CRATE_HOLOGRAM_TEMPLATES.get().get(id.toLowerCase());
+    public static List<String> getLegacyHologramTemplate(@NotNull String id) {
+        return LEGACY_HOLOGRAM_TEMPLATES.get(id.toLowerCase());
     }
 
     public static boolean isCrateInAirBlocksAllowed() {
@@ -263,5 +274,28 @@ public class Config {
 
     public static boolean isMassOpenEnabled() {
         return FEATURE_MASS_OPENING.get();
+    }
+
+    public static boolean isConsoleCommandWhitelistEnabled() {
+        return CONSOLE_COMMAND_WHITELIST_ENABLED.get();
+    }
+
+    @NotNull
+    public static List<String> getConsoleCommandWhitelist() {
+        return CONSOLE_COMMAND_WHITELIST.get();
+    }
+
+    public static boolean isConsoleCommandAllowed(@NotNull String command) {
+        if (!isConsoleCommandWhitelistEnabled()) {
+            return true;
+        }
+        
+        String baseCommand = command.split(" ")[0].toLowerCase();
+        if (baseCommand.startsWith("/")) {
+            baseCommand = baseCommand.substring(1);
+        }
+
+        String finalBaseCommand = baseCommand;
+        return getConsoleCommandWhitelist().stream().anyMatch(whitelistedCommand -> whitelistedCommand.toLowerCase().equals(finalBaseCommand));
     }
 }

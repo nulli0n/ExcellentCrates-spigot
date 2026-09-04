@@ -136,7 +136,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
     public static final IconLocale LOCALE_HOLOGRAM = LangEntry.iconBuilder("Editor.Button.Crate.Hologram").name("Crate Hologram")
         .appendCurrent("Status", GENERIC_INSPECTION)
         .appendCurrent("State", GENERIC_STATE)
-        .appendCurrent("Template", GENERIC_VALUE).br()
+        .appendCurrent("Lines", GENERIC_VALUE).br()
         .appendInfo("Auto-manageable hologram above", "the linked crate block.").br()
         .appendClick("Click to edit")
         .build();
@@ -169,7 +169,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openCrateList(viewer.getPlayer()));
+            this.runNextTick(viewer.getPlayer(), () -> this.plugin.getEditorManager().openCrateList(viewer.getPlayer()));
         }));
 
         this.addItem(MenuItem.background(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(45, 54).toArray()));
@@ -210,7 +210,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                     if (event.isLeftClick()) {
                         crate.setItemStackable(!crate.isItemStackable());
                         crate.markDirty();
-                        this.runNextTick(flush);
+                        this.runNextTick(player, flush);
                     }
                     return;
                 }
@@ -253,12 +253,12 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                     crate.removeHologram();
                     crate.clearBlockPositions();
                     crate.markDirty();
-                    this.runNextTick(flush);
+                    this.runNextTick(player, flush);
                     return;
                 }
 
                 this.plugin.getCrateManager().giveLinkTool(player, crate);
-                this.runNextTick(player::closeInventory);
+                this.runNextTick(player, player::closeInventory);
             }).build()
         );
 
@@ -268,14 +268,14 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .toMenuItem().setSlots(16).setHandler((viewer1, event) -> {
                 crate.setPushbackEnabled(!crate.isPushbackEnabled());
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.runNextTick(player, flush);
             }).build()
         );
 
         viewer.addItem(NightItem.fromType(Material.TRIAL_KEY)
             .localized(LOCALE_COST_OPTIONS)
             .toMenuItem().setSlots(28).setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openCosts(viewer.getPlayer(), crate));
+                this.runNextTick(player, () -> plugin.getEditorManager().openCosts(viewer.getPlayer(), crate));
             }).build()
         );
 
@@ -288,7 +288,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .toMenuItem().setSlots(29).setHandler((viewer1, event) -> {
                 crate.setPermissionRequired(!crate.isPermissionRequired());
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.runNextTick(player, flush);
             }).build()
         );
 
@@ -322,9 +322,9 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             viewer.addItem(NightItem.fromType(Material.ARMOR_STAND)
                 .localized(LOCALE_HOLOGRAM)
                 .replacement(replacer -> replacer
-                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_CRATE_HOLOGRAM, crate.isHologramTemplateValid()))
+                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_CRATE_HOLOGRAM, crate.hasHologramText()))
                     .replace(GENERIC_STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(crate.isHologramEnabled()))
-                    .replace(GENERIC_VALUE, crate::getHologramTemplateId)
+                    .replace(GENERIC_VALUE, () -> String.valueOf(crate.getHologramText().size()))
                 )
                 .toMenuItem().setSlots(32).setHandler((viewer1, event) -> {
                     this.dialogs.show(player, CrateDialogs.CRATE_HOLOGRAM, crate, flush);
@@ -339,7 +339,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 .replace(GENERIC_AMOUNT, () -> CoreLang.formatEntry(String.valueOf(crate.countRewards()), crate.countRewards() > 0))
             )
             .toMenuItem().setSlots(33).setHandler((viewer1, event) -> {
-                this.runNextTick(() -> this.plugin.getEditorManager().openRewardList(viewer.getPlayer(), crate));
+                this.runNextTick(player, () -> this.plugin.getEditorManager().openRewardList(viewer.getPlayer(), crate));
             }).build()
         );
 
@@ -351,7 +351,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 )
                 .toMenuItem().setSlots(34).setHandler((viewer1, event) -> {
                     // TODO crate.setMilestonesRepeatable(!crate.isMilestonesRepeatable());
-                    this.runNextTick(() -> this.plugin.getEditorManager().openMilestones(viewer.getPlayer(), crate));
+                    this.runNextTick(player, () -> this.plugin.getEditorManager().openMilestones(viewer.getPlayer(), crate));
                 }).build()
             );
         }
@@ -362,7 +362,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 if (event.getClick() != ClickType.DROP) return;
 
                 this.plugin.getCrateManager().delete(crate);
-                this.runNextTick(() -> this.plugin.getEditorManager().openCrateList(player));
+                this.runNextTick(player, () -> this.plugin.getEditorManager().openCrateList(player));
             }).build()
         );
 

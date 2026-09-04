@@ -72,7 +72,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
         this.itemDetection = true;
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openCosts(viewer.getPlayer(), this.getLink(viewer).crate));
+            this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openCosts(viewer.getPlayer(), this.getLink(viewer).crate));
         }));
 
         this.addItem(NightItem.fromType(Material.GLASS_PANE)
@@ -140,7 +140,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
             .setHandler((viewer1, event) -> {
                 if (event.isRightClick()) {
                     this.itemDetection = !this.itemDetection;
-                    this.runNextTick(() -> this.flush(viewer));
+                    this.runNextTick(player, () -> this.flush(viewer));
                     return;
                 }
 
@@ -152,7 +152,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
                 crate.markDirty();
                 Players.addItem(player, cursor);
                 event.getView().setCursor(null);
-                this.runNextTick(() -> this.flush(viewer));
+                this.runNextTick(player, () -> this.flush(viewer));
             })
             .build()
         );
@@ -168,13 +168,13 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
                     if (event.isLeftClick()) {
                         entry.openEditor(player, () -> {
                             crate.markDirty();
-                            this.runNextTick(() -> this.flush(viewer));
+                            this.runNextTick(player, () -> this.flush(viewer));
                         });
                     }
                     else if (event.getClick() == ClickType.DROP) {
                         cost.removeEntry(entry);
                         crate.markDirty();
-                        this.runNextTick(() -> this.flush(viewer));
+                        this.runNextTick(player, () -> this.flush(viewer));
                     }
                 });
             }

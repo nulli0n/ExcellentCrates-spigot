@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.api.crate.RewardType;
+import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Lang;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.Rarity;
@@ -60,6 +61,12 @@ public class CommandReward extends AbstractReward {
             this.commands.stream().filter(Predicate.not(CrateUtils::isValidCommand)).forEach(command -> {
                 reporter.report("Command '" + command + "' does no exist.");
             });
+            
+            if (Config.isConsoleCommandWhitelistEnabled()) {
+                this.commands.stream().filter(Predicate.not(Config::isConsoleCommandAllowed)).forEach(command -> {
+                    reporter.report("Command '" + command + "' is not whitelisted for console execution.");
+                });
+            }
         }
     }
 
@@ -87,7 +94,14 @@ public class CommandReward extends AbstractReward {
         Replacer replacer = this.createContentReplacer(player).replace(Placeholders.forPlayerWithPAPI(player));
 
         this.getCommands().forEach(command -> {
-            Players.dispatchCommand(player, replacer.apply(command));
+            String processedCommand = replacer.apply(command);
+            
+            if (Config.isConsoleCommandWhitelistEnabled() && !Config.isConsoleCommandAllowed(processedCommand)) {
+                this.plugin.warn("Blocked execution of non-whitelisted console command: " + processedCommand);
+                return;
+            }
+            
+            Players.dispatchCommand(player, processedCommand);
         });
     }
 

@@ -49,7 +49,7 @@ public class EditorMenu extends NormalMenu<CratesPlugin> implements LangContaine
             .toMenuItem()
             .setSlots(11)
             .setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openCrateList(viewer.getPlayer()));
+                this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openCrateList(viewer.getPlayer()));
             })
             .build()
         );
@@ -60,7 +60,7 @@ public class EditorMenu extends NormalMenu<CratesPlugin> implements LangContaine
             .toMenuItem()
             .setSlots(15)
             .setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
+                this.runNextTick(viewer.getPlayer(), () -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
             })
             .build()
         );

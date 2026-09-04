@@ -306,7 +306,7 @@ Editor:
           - <lgray>Añade un holograma encima del crate</lgray>
           - <lgray>bloque(s) con un texto de la plantilla seleccionada.</lgray>
           - ''
-          - <lgray>Edita las plantillas de holograma en <lorange>config.yml</lorange></lgray>
+          - <lgray>Edita el texto del holograma en la <lorange>configuración del crate</lorange></lgray>
           - ''
           - <lyellow>[▶]</lyellow> <lgray>Clic izquierdo para <lyellow>alternar</lyellow>.</lgray>
           - <lyellow>[▶]</lyellow> <lgray>Clic derecho para <lyellow>cambiar plantilla</lyellow>.</lgray>
