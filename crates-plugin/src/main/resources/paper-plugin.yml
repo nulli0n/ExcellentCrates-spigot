@@ -1,0 +1,17 @@
+main: su.nightexpress.excellentcrates.ExcellentCratesPlugin
+name: ExcellentCrates
+version: '${version}'
+description: Crates
+folia-supported: false
+authors:
+  - NightExpress
+api-version: 1.21
+dependencies:
+  server:
+    nightcore:
+      required: true
+      load: BEFORE
+    PlaceholderAPI:
+      required: false
+    packetevents:
+      required: false
