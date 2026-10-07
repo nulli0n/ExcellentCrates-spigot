@@ -74,12 +74,13 @@ public class DefaultCratePositionRegistry implements CratePositionRegistry {
     public void unregisterPositions(Crate crate) {
         Identifier crateId = crate.id();
 
-        this.positionsByCrateIdMap.remove(crateId);
         Map.copyOf(this.crateIdByPositionMap).forEach((pos, cachedId) -> {
             if (cachedId.equals(crateId)) {
                 this.unregisterPosition(pos); // Trigger observers for this position removal
             }
         });
+
+        this.positionsByCrateIdMap.remove(crateId);
     }
 
     @Override
