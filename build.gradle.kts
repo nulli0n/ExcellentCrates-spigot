@@ -14,6 +14,8 @@ allprojects {
     }
 }
 
+val publishedModules = setOf("crates-api", "crates-core")
+
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -36,21 +38,33 @@ subprojects {
         compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                from(components["java"])
-                
-                artifactId = project.name
+    if (publishedModules.contains(project.name)) {
+        apply(plugin = "maven-publish")
+
+        configure<PublishingExtension> {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    artifact(tasks.named("jar"))
+
+                    artifact(tasks.named("sourcesJar")) {
+                        classifier = "sources"
+                    }
+
+                    /* artifact(tasks.named("javadocJar")) {
+                        classifier = "javadoc"
+                    } */
+
+                    artifactId = project.name
+                }
             }
-        }
-        repositories {
-            maven {
-                name = "nightexpress"
-                url = uri("https://repo.nightexpressdev.com/releases")
-                credentials {
-                    username = System.getenv("REPOSILITE_USER")
-                    password = System.getenv("REPOSILITE_PASSWORD")
+            repositories {
+                maven {
+                    name = "nightexpress"
+                    url = uri("https://repo.nightexpressdev.com/releases")
+                    credentials {
+                        username = System.getenv("REPOSILITE_USER")
+                        password = System.getenv("REPOSILITE_PASSWORD")
+                    }
                 }
             }
         }
