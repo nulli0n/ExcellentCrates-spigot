@@ -6,9 +6,9 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.core.lang.Lang;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.bridge.item.ItemAdapter;
 import su.nightexpress.nightcore.integration.item.ItemBridge;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedVanillaStack;
+import su.nightexpress.nightcore.integration.item.ItemProviderKeys;
+import su.nightexpress.nightcore.integration.item.dummy.DummyItem;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 @NullMarked
@@ -24,54 +24,47 @@ public final class ItemHelper {
             .getItemStack();
     }
 
-    public static AdaptedItem adaptedPlaceholder() {
-        return BrokenAdaptedItem.INSTANCE;
-        //return AdaptedVanillaStack.of(createPlaceholder());
-    }
-
-    public static boolean isBroken(AdaptedItem item) {
-        return item instanceof BrokenAdaptedItem;
-    }
-
     public static ItemStack toItemStack(AdaptedItem item) {
         return item.itemStack().orElse(createPlaceholder());
     }
 
+    public static boolean isBroken(AdaptedItem item) {
+        return item instanceof DummyItem;
+    }
+
     public static boolean isCustom(ItemStack itemStack) {
-        ItemAdapter<?> adapter = ItemBridge.getAdapter(itemStack);
-        return adapter != null && !adapter.isVanilla();
+        return !isBukkitOnly(itemStack);
     }
 
-    public static AdaptedItem vanilla(ItemStack itemStack) {
-        return AdaptedVanillaStack.of(itemStack);
+    public static boolean isMixed(ItemStack itemStack) {
+        return ItemBridge.get().isMixed(itemStack);
     }
 
-    public static AdaptedItem vanillaIfMixed(ItemStack itemStack) {
-        if (isMixedItem(itemStack)) {
-            return vanilla(itemStack);
+    public static boolean isBukkitOnly(ItemStack itemStack) {
+        return ItemBridge.get().isBukkitOnly(itemStack);
+    }
+
+    public static AdaptedItem bukkit(ItemStack itemStack) {
+        return ItemBridge.get().getBukkitProvider().wrapItem(itemStack).orElse(DummyItem.INSTANCE);
+    }
+
+    public static AdaptedItem bukkitIfMixed(ItemStack itemStack) {
+        if (isMixed(itemStack)) {
+            return bukkitIfCrates(itemStack);
+        }
+
+        return adapt(itemStack);
+    }
+
+    public static AdaptedItem bukkitIfCrates(ItemStack itemStack) {
+        if (ItemBridge.get().isProducedBy(itemStack, ItemProviderKeys.EXCELLENT_CRATES)) {
+            return bukkit(itemStack);
         }
 
         return adapt(itemStack);
     }
 
     public static AdaptedItem adapt(ItemStack itemStack) {
-        ItemAdapter<?> adapter = ItemBridge.getAdapterOrVanilla(itemStack);
-        AdaptedItem item = adapter.adapt(itemStack).orElse(null);
-        return item == null ? vanilla(itemStack) : item;
-    }
-
-    public static AdaptedItem adapt(ItemStack itemStack, boolean allowCustoms) {
-        return allowCustoms ? adapt(itemStack) : vanilla(itemStack);
-    }
-
-    public static boolean isMixedItem(ItemStack itemStack) {
-        return ItemBridge.getAdapters()
-            .stream()
-            .filter(handler -> handler.canHandle(itemStack) && !handler.isVanilla())
-            .count() > 1;
-    }
-
-    public static boolean isVanillaOnly(ItemStack itemStack) {
-        return ItemBridge.getAdapterOrVanilla(itemStack).isVanilla();
+        return ItemBridge.get().adaptOrDummy(itemStack);
     }
 }

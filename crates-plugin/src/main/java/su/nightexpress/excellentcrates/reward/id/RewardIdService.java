@@ -12,9 +12,9 @@ import su.nightexpress.engine.id.IdentifierParser;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.RewardsConstants;
 import su.nightexpress.excellentcrates.util.ItemHelper;
+import su.nightexpress.nightcore.bridge.item.AdaptedDataItem;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.integration.item.data.ItemIdData;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
 import su.nightexpress.nightcore.util.BukkitThing;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
@@ -63,9 +63,9 @@ public class RewardIdService {
     }
 
     public Optional<Identifier> createRewardId(ItemStack itemStack) {
-        if (ItemHelper.isCustom(itemStack) && !ItemHelper.isMixedItem(itemStack)) {
+        if (ItemHelper.isCustom(itemStack) && !ItemHelper.isMixed(itemStack)) {
             AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
-            if (adaptedItem instanceof AdaptedItemStack stack && stack.getData() instanceof ItemIdData idData) {
+            if (adaptedItem instanceof AdaptedDataItem<?> dataItem && dataItem.getData() instanceof ItemIdData idData) {
                 return IdentifierParser.parseSanitized(idData.getItemId());
             }
         }

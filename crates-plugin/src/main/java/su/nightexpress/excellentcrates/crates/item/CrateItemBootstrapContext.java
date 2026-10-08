@@ -14,10 +14,12 @@ import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.command.CrateCommand;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.editor.CrateEditorExtension;
+import su.nightexpress.excellentcrates.api.crate.item.CrateItemAPI;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 import su.nightexpress.excellentcrates.core.settings.SettingsController;
 import su.nightexpress.excellentcrates.core.settings.SettingsProvider;
 import su.nightexpress.excellentcrates.crates.interact.CrateInteractionService;
+import su.nightexpress.excellentcrates.crates.item.api.StandardCrateItemAPI;
 import su.nightexpress.excellentcrates.crates.item.command.CrateItemDropCommand;
 import su.nightexpress.excellentcrates.crates.item.command.CrateItemGetCommand;
 import su.nightexpress.excellentcrates.crates.item.command.CrateItemGiveCommand;
@@ -43,6 +45,7 @@ public class CrateItemBootstrapContext extends NamedBootstrapContext {
 
     public final CrateItemFactory itemFactory;
     public final CrateItemService itemService;
+    public final CrateItemAPI     api;
 
     private final CrateEditorExtension     editorExtension;
     private final CrateItemValidationStage validationStage;
@@ -67,6 +70,7 @@ public class CrateItemBootstrapContext extends NamedBootstrapContext {
 
         this.itemFactory = new CrateItemFactory();
         this.itemService = new CrateItemService(this.itemFactory, itemKey);
+        this.api = new StandardCrateItemAPI(this.itemService);
 
         CrateItemEditorBootstrapContext editorContext = new CrateItemEditorBootstrapContext(
             plugin, coreUI, dispatcher, crates, itemFactory

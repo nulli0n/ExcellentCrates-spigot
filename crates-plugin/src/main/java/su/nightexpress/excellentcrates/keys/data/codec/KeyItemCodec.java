@@ -13,7 +13,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.configuration.exception.CodecReadException;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
+import su.nightexpress.nightcore.integration.item.ItemBridge;
 
 @NullMarked
 public class KeyItemCodec implements ConfigCodec<StandardKeyItem> {
@@ -24,10 +24,10 @@ public class KeyItemCodec implements ConfigCodec<StandardKeyItem> {
 
     @Override
     public StandardKeyItem read(FileConfig config, String path) throws CodecReadException {
-        AdaptedItem item = AdaptedItemStack.read(config, path + ".item");
+        AdaptedItem item = ItemBridge.get().read(config, path + ".item").orElse(null);
         if (item == null) {
             LOGGER.warn("Failed to read key item at path '{}', using default item instead.", path);
-            item = ItemHelper.vanilla(new ItemStack(Material.TRIPWIRE_HOOK));
+            item = ItemHelper.bukkit(new ItemStack(Material.TRIPWIRE_HOOK));
         }
 
         boolean stackable = config.getOrSet(path + ".stackable", ConfigCodecs.BOOLEAN, true);

@@ -70,10 +70,10 @@ public class KeyEditorService {
                     stackable = !meta.hasMaxStackSize() || meta.getMaxStackSize() > 1;
                 }
 
-                item = ItemHelper.adapt(itemStack);
+                item = ItemHelper.bukkitIfCrates(itemStack);
             }
             else {
-                item = ItemHelper.adapt(new ItemStack(Material.TRIAL_KEY));
+                item = ItemHelper.bukkit(new ItemStack(Material.TRIAL_KEY));
             }
 
             builder.display(new StandardKeyDisplay(name, lore));

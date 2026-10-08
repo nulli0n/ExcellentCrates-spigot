@@ -133,7 +133,7 @@ public final class KeysModuleBootstrap extends BaseModuleBootstrap {
         this.registerComponent(costEditorContext);
         this.registerComponent(costComponentContext);
 
-        KeysAPI api = new DefaultKeysAPI(balanceContext.api, itemContext.api);
+        KeysAPI api = new DefaultKeysAPI(keys, balanceContext.api, itemContext.api);
 
         services.register(CoreServices.KEYS, api);
     }

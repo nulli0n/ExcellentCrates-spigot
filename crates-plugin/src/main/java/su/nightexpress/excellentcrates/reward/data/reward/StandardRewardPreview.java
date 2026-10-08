@@ -7,8 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
+import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedVanillaStack;
 
 @NullMarked
 public class StandardRewardPreview implements RewardPreview {
@@ -26,9 +26,9 @@ public class StandardRewardPreview implements RewardPreview {
     }
 
     public static StandardRewardPreview createDefault() {
-        return new StandardRewardPreview("Reward", List.of(), AdaptedVanillaStack.of(new ItemStack(
-            Material.ITEM_FRAME)),
-            false);
+        AdaptedItem defaultIcon = ItemHelper.bukkit(new ItemStack(Material.ITEM_FRAME));
+
+        return new StandardRewardPreview("Reward", List.of(), defaultIcon, false);
     }
 
     @Override

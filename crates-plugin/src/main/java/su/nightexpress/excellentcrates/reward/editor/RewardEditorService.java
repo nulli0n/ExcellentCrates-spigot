@@ -59,7 +59,8 @@ public class RewardEditorService {
         }
 
         ItemStack itemStack = context.itemStack();
-        AdaptedItem item = context.useItemReference() ? ItemHelper.adapt(itemStack) : ItemHelper.vanilla(itemStack);
+        AdaptedItem item = context.useItemReference() ? ItemHelper.bukkitIfCrates(itemStack) : ItemHelper.bukkit(
+            itemStack);
 
         this.dataService.createReward(id, builder -> {
             String name = ItemUtil.getNameSerialized(itemStack);
@@ -111,11 +112,11 @@ public class RewardEditorService {
 
     public ActionResult setPreviewIcon(Identifier id, ItemStack itemStack) {
         return this.editReward(id, reward -> {
-            AdaptedItem item = ItemHelper.vanillaIfMixed(itemStack);
+            AdaptedItem item = ItemHelper.bukkitIfMixed(itemStack);
 
             RewardPreview preview = reward.getPreview();
             preview.setIcon(item);
-            preview.setUseIconData(!ItemHelper.isVanillaOnly(itemStack));
+            preview.setUseIconData(!ItemHelper.isBukkitOnly(itemStack));
 
             return ActionResult.ok();
         });

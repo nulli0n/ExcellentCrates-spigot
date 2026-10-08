@@ -22,7 +22,7 @@ public class CrateItem implements ICrateItem {
     }
 
     public static CrateItem createDefault() {
-        AdaptedItem item = ItemHelper.adapt(new ItemStack(Material.CHEST));
+        AdaptedItem item = ItemHelper.bukkit(new ItemStack(Material.CHEST));
         boolean stackable = true;
         boolean useDisplay = true;
 

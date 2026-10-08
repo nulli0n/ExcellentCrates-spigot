@@ -22,7 +22,7 @@ public class StandardKeyItem implements KeyItem {
     }
 
     public static StandardKeyItem createDefault() {
-        AdaptedItem item = ItemHelper.vanilla(new ItemStack(Material.TRIPWIRE_HOOK));
+        AdaptedItem item = ItemHelper.bukkit(new ItemStack(Material.TRIPWIRE_HOOK));
 
         return new StandardKeyItem(item, false, true);
     }

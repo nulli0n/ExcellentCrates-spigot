@@ -30,7 +30,7 @@ public class RewardItemsEditorService {
 
     public ActionResult addItemContent(RewardEditorHook hook, ItemStack itemStack, boolean useItemReference) {
         return this.modifyComponent(hook, items -> {
-            AdaptedItem item = useItemReference ? ItemHelper.adapt(itemStack) : ItemHelper.vanilla(itemStack);
+            AdaptedItem item = useItemReference ? ItemHelper.adapt(itemStack) : ItemHelper.bukkit(itemStack);
 
             items.addItem(item);
             return ActionResult.ok();

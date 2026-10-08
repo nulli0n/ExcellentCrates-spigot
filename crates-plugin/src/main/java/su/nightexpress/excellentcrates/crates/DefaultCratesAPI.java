@@ -14,14 +14,18 @@ import su.nightexpress.excellentcrates.api.crate.data.CrateDataAPI;
 import su.nightexpress.excellentcrates.api.crate.editor.CrateEditorAPI;
 import su.nightexpress.excellentcrates.api.crate.hologram.HologramsAPI;
 import su.nightexpress.excellentcrates.api.crate.interact.InteractionAPI;
+import su.nightexpress.excellentcrates.api.crate.item.CrateItemAPI;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineAPI;
+import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 
 @NullMarked
 public class DefaultCratesAPI implements CratesAPI {
 
+    private final CrateRegistry    registry;
     private final CrateCommandsAPI commands;
     private final CrateDataAPI     data;
     private final CrateEditorAPI   editor;
+    private final CrateItemAPI     items;
     private final PipelineAPI      pipeline;
     private final InteractionAPI   interaction;
 
@@ -30,11 +34,13 @@ public class DefaultCratesAPI implements CratesAPI {
     private final @Nullable CrateCooldownsAPI cooldowns;
 
     DefaultCratesAPI(Builder builder) {
+        this.registry = Objects.requireNonNull(builder.registry, "registry cannot be null");
         this.commands = Objects.requireNonNull(builder.commands, "commands cannot be null");
         this.data = Objects.requireNonNull(builder.data, "data cannot be null");
         this.editor = Objects.requireNonNull(builder.editor, "editor cannot be null");
         this.pipeline = Objects.requireNonNull(builder.pipeline, "pipeline cannot be null");
         this.interaction = Objects.requireNonNull(builder.interaction, "interaction cannot be null");
+        this.items = Objects.requireNonNull(builder.items, "items cannot be null");
 
         this.blocks = builder.blocks;
         this.holograms = builder.holograms;
@@ -43,6 +49,11 @@ public class DefaultCratesAPI implements CratesAPI {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public CrateRegistry registry() {
+        return this.registry;
     }
 
     @Override
@@ -58,6 +69,11 @@ public class DefaultCratesAPI implements CratesAPI {
     @Override
     public CrateEditorAPI editor() {
         return this.editor;
+    }
+
+    @Override
+    public CrateItemAPI items() {
+        return this.items;
     }
 
     @Override
@@ -87,15 +103,22 @@ public class DefaultCratesAPI implements CratesAPI {
 
     public static class Builder {
 
+        private @Nullable CrateRegistry    registry;
         private @Nullable CrateCommandsAPI commands;
         private @Nullable CrateDataAPI     data;
         private @Nullable CrateEditorAPI   editor;
+        private @Nullable CrateItemAPI     items;
         private @Nullable PipelineAPI      pipeline;
         private @Nullable InteractionAPI   interaction;
 
         private @Nullable BlockAPI          blocks;
         private @Nullable HologramsAPI      holograms;
         private @Nullable CrateCooldownsAPI cooldowns;
+
+        public Builder registry(@Nullable CrateRegistry registry) {
+            this.registry = registry;
+            return this;
+        }
 
         public Builder commands(@Nullable CrateCommandsAPI commands) {
             this.commands = commands;
@@ -109,6 +132,11 @@ public class DefaultCratesAPI implements CratesAPI {
 
         public Builder editor(@Nullable CrateEditorAPI editor) {
             this.editor = editor;
+            return this;
+        }
+
+        public Builder items(@Nullable CrateItemAPI items) {
+            this.items = items;
             return this;
         }
 

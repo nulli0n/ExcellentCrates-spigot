@@ -23,10 +23,10 @@ public class KeyItemEditorService {
 
             AdaptedItem item;
             if (setupContext.useItemRef()) {
-                item = ItemHelper.adapt(itemStack);
+                item = ItemHelper.bukkitIfCrates(itemStack);
             }
             else {
-                item = ItemHelper.vanilla(itemStack);
+                item = ItemHelper.bukkit(itemStack);
             }
 
             if (setupContext.setDisplayName()) {

@@ -87,7 +87,7 @@ public class RewardEditorUIController {
             return false;
         }
 
-        boolean useItemReference = !ItemHelper.isMixedItem(itemStack);
+        boolean useItemReference = !ItemHelper.isMixed(itemStack);
         boolean setItemContent = true;
 
         RewardCreationContext creationContext = new RewardCreationContext(itemStack, useItemReference, setItemContent);

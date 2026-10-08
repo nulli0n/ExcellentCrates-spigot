@@ -44,7 +44,7 @@ public class RewardItemsEditorUIController {
 
     public void onItemsItemClick(Player player, Reward reward, RewardEditorHook hook, ItemStack itemStack,
                                  Runnable refreshUI) {
-        if (ItemHelper.isVanillaOnly(itemStack)) {
+        if (ItemHelper.isBukkitOnly(itemStack)) {
             this.editorService.addItemContent(hook, itemStack, false).handleFeedback((locale, ctx) -> {
                 this.dispatcher.sendBase(player, reward, locale);
             });

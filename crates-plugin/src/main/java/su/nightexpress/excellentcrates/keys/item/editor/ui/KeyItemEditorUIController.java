@@ -46,7 +46,7 @@ public class KeyItemEditorUIController implements FeedbackHandler {
         Identifier keyId = currentContext.keyId();
         KeyEditorHook hook = currentContext.hook();
 
-        if (!ItemHelper.isVanillaOnly(selectedItem) || selectedItem.hasItemMeta()) {
+        if (!ItemHelper.isBukkitOnly(selectedItem) || selectedItem.hasItemMeta()) {
             KeyItemDialogContext dialogContext = new KeyItemDialogContext(keyId, hook, selectedItem);
             this.handleFeedback(player, this.uiService.showItemIconDialog(player, dialogContext, refreshUI));
         }

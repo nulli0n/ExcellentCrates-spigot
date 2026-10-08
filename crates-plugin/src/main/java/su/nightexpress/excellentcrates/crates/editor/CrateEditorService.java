@@ -51,7 +51,7 @@ public class CrateEditorService {
         this.dataService.createCrate(id, builder -> {
             String name = StringUtil.capitalizeUnderscored(id.value());
             List<String> lore = List.of();
-            AdaptedItem item = ItemHelper.adapt(new ItemStack(Material.CHEST));
+            AdaptedItem item = ItemHelper.bukkit(new ItemStack(Material.CHEST));
 
             builder.display(new CrateDisplay(name, lore));
             builder.item(new CrateItem(item, true, true));

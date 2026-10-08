@@ -49,7 +49,7 @@ public class CrateItemEditorUIController implements FeedbackHandler {
                                     Runnable refreshUI) {
         CrateEditorHook hook = currentContext.hook();
 
-        if (!ItemHelper.isVanillaOnly(selectedItem) || selectedItem.hasItemMeta()) {
+        if (!ItemHelper.isBukkitOnly(selectedItem) || selectedItem.hasItemMeta()) {
             CrateItemIconDialogContext dialogContext = new CrateItemIconDialogContext(currentContext.crateId(),
                 selectedItem, hook);
             this.handleFeedback(player, this.uiService.showItemIconDialog(player, dialogContext, refreshUI));

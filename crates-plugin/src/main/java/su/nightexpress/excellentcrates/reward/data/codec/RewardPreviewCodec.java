@@ -3,8 +3,6 @@ package su.nightexpress.excellentcrates.reward.data.codec;
 import java.util.List;
 
 import org.jspecify.annotations.NullMarked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardPreview;
 import su.nightexpress.excellentcrates.util.ItemHelper;
@@ -13,24 +11,18 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.configuration.exception.CodecReadException;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
+import su.nightexpress.nightcore.integration.item.codec.AdaptedItemCodec;
 
 @NullMarked
 public class RewardPreviewCodec implements ConfigCodec<StandardRewardPreview> {
 
     public static final RewardPreviewCodec INSTANCE = new RewardPreviewCodec();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RewardPreviewCodec.class);
-
     @Override
     public StandardRewardPreview read(FileConfig config, String path) throws CodecReadException {
         String name = config.getOrSet(path + ".name", ConfigCodecs.STRING, "No Name");
         List<String> lore = config.getOrSet(path + ".lore", ConfigCodecs.STRING_LIST, List.of());
-        AdaptedItem preview = AdaptedItemStack.read(config, path + ".icon");
-        if (preview == null) {
-            preview = ItemHelper.adaptedPlaceholder();
-            LOGGER.warn("Failed to read preview icon for reward at path '{}', using placeholder instead.", path);
-        }
+        AdaptedItem preview = AdaptedItemCodec.read(config, path + ".icon");
         boolean useItemData = config.getOrSet(path + ".use_item_data", ConfigCodecs.BOOLEAN, false);
 
         return new StandardRewardPreview(name, lore, preview, useItemData);

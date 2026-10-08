@@ -141,9 +141,11 @@ public final class CratesModuleBootstrap extends BaseModuleBootstrap {
         // -----------------------------------------
 
         DefaultCratesAPI.Builder apiBuilder = DefaultCratesAPI.builder()
+            .registry(crates)
             .commands(commandsContext.api)
             .data(dataContext.api)
             .editor(editorContext.api)
+            .items(itemContext.api)
             .pipeline(pipelineContext.api)
             .interaction(interactionContext.api);
 

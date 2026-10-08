@@ -108,12 +108,12 @@ public class InventoryMenuSettings {
         Map<InventoryButtonType, InventoryButton> inventoryButtons = new HashMap<>();
 
         inventoryItems.put("background_pane_gray", new InventoryButton(
-            NightItem.fromType(Material.GRAY_STAINED_GLASS_PANE),
+            NightItem.fromType(Material.GRAY_STAINED_GLASS_PANE).hideAllComponents().setHideTooltip(true),
             IntStream.range(0, 45).toArray()
         ));
 
         inventoryItems.put("background_pane_black", new InventoryButton(
-            NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE),
+            NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE).hideAllComponents().setHideTooltip(true),
             IntStream.range(45, 54).toArray()
         ));
 

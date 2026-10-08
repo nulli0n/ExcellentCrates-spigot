@@ -20,6 +20,8 @@ import su.nightexpress.nightcore.bridge.dialog.wrap.body.WrappedDialogBody;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
+import su.nightexpress.nightcore.integration.item.ItemBridge;
+import su.nightexpress.nightcore.integration.item.ItemProvider;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.ui.dialog.build.DialogActions;
 import su.nightexpress.nightcore.ui.dialog.build.DialogBases;
@@ -53,14 +55,15 @@ public class RewardCreationDialog extends Dialog<RewardCreateContext> {
 
         List<WrappedDialogInput> inputs = new ArrayList<>();
 
-        boolean isVanillaOnly = ItemHelper.isVanillaOnly(itemStack);
-        boolean isMixedItem = ItemHelper.isMixedItem(itemStack);
+        boolean isVanillaOnly = ItemHelper.isBukkitOnly(itemStack);
+        boolean isMixedItem = ItemHelper.isMixed(itemStack);
         boolean preferNBT = isMixedItem || isVanillaOnly;
 
-        AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
+        AdaptedItem adaptedItem = ItemHelper.bukkitIfCrates(itemStack);
+        ItemProvider provider = ItemBridge.get().getProvider(itemStack);
 
         PlaceholderContext placeholders = PlaceholderContext.builder()
-            .with(SharedPlaceholders.TYPE, () -> adaptedItem.getAdapter().getName())
+            .with(SharedPlaceholders.TYPE, () -> provider == null ? "null" : provider.getId())
             .build();
 
         if (!isVanillaOnly) {

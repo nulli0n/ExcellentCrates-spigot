@@ -11,9 +11,9 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.id.IdentifierParser;
 import su.nightexpress.excellentcrates.api.key.registry.KeyRegistry;
 import su.nightexpress.excellentcrates.util.ItemHelper;
+import su.nightexpress.nightcore.bridge.item.AdaptedDataItem;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.integration.item.data.ItemIdData;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
 import su.nightexpress.nightcore.util.BukkitThing;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
@@ -40,9 +40,9 @@ public class KeyIdService {
     }
 
     public Optional<Identifier> createKeyId(ItemStack itemStack) {
-        if (ItemHelper.isCustom(itemStack) && !ItemHelper.isMixedItem(itemStack)) {
+        if (ItemHelper.isCustom(itemStack) && !ItemHelper.isMixed(itemStack)) {
             AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
-            if (adaptedItem instanceof AdaptedItemStack stack && stack.getData() instanceof ItemIdData idData) {
+            if (adaptedItem instanceof AdaptedDataItem<?> dataItem && dataItem.getData() instanceof ItemIdData idData) {
                 return IdentifierParser.parseSanitized(idData.getItemId());
             }
         }
