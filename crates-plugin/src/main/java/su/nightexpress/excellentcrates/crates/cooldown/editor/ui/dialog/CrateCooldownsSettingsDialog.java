@@ -80,17 +80,17 @@ public class CrateCooldownsSettingsDialog extends Dialog<CrateCooldownsSettingsD
         else if (type == CooldownType.INDIVIDUAL) {
             bodies.add(DialogBodies.plain(CrateCooldownsLang.EDITOR_UI_DIALOG_COOLDOWN_SETTINGS_BODY_PLAYER).build());
         }
-        bodies.add(DialogBodies.plain(Lang.UI_GENERIC_DIALOG_COOLDOWN_BODY_MODES).build());
+        bodies.add(DialogBodies.plain(Lang.GENERIC_UI_DIALOG_COOLDOWN_BODY_MODES).build());
 
-        inputs.add(DialogInputs.singleOption(KEY_ENABLED, Lang.UI_GENERIC_DIALOG_COOLDOWN_INPUT_STATE, stateEntries)
+        inputs.add(DialogInputs.singleOption(KEY_ENABLED, Lang.GENERIC_UI_DIALOG_COOLDOWN_INPUT_STATE, stateEntries)
             .build()
         );
 
-        inputs.add(DialogInputs.singleOption(KEY_MODE, Lang.UI_GENERIC_DIALOG_COOLDOWN_INPUT_MODE, modeEntries)
+        inputs.add(DialogInputs.singleOption(KEY_MODE, Lang.GENERIC_UI_DIALOG_COOLDOWN_INPUT_MODE, modeEntries)
             .build()
         );
 
-        inputs.add(DialogInputs.text(KEY_DURATION, Lang.UI_GENERIC_DIALOG_COOLDOWN_INPUT_DURATION)
+        inputs.add(DialogInputs.text(KEY_DURATION, Lang.GENERIC_UI_DIALOG_COOLDOWN_INPUT_DURATION)
             .initial(String.valueOf(currentDuration))
             .maxLength(7)
             .build()

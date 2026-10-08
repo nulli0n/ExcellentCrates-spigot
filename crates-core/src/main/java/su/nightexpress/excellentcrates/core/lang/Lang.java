@@ -21,57 +21,57 @@ import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 @NullMarked
 public final class Lang implements LangContainer {
 
-    public static final EnumLocale<CooldownMode> COOLDOWN_MODE = LangEntry.builder("Enums.CooldownMode")
+    public static final EnumLocale<CooldownMode> COOLDOWN_MODE = LangEntry.builder("enums.cooldown_mode")
         .enumeration(CooldownMode.class);
 
-    public static final RegistryLocale<Particle> PARTICLE = LangEntry.builder("Assets.Particle")
+    public static final RegistryLocale<Particle> PARTICLE = LangEntry.builder("assets.particle")
         .registry(RegistryType.PARTICLE_TYPE);
 
     public static final TextLocale PLUGIN_COMMAND_ROOT_DESCRIPTION = LangEntry
-        .builder("Plugin.Command.Root.Description")
+        .builder("plugin.command.root.description")
         .text("Main command for ExcellentCrates");
 
     public static final TextLocale PLUGIN_COMMAND_STATUS_DESCRIPTION = LangEntry
-        .builder("Plugin.Command.Status.Description")
+        .builder("plugin.command.status.description")
         .text("Show plugin status");
 
     public static final TextLocale PLUGIN_COMMAND_RELOAD_DESCRIPTION = LangEntry
-        .builder("Plugin.Command.Reload.Description")
+        .builder("plugin.command.reload.description")
         .text("Reload the plugin");
 
     public static final MessageLocale CORE_UI_ERROR_MENU_NOT_FOUND = LangEntry
-        .builder("Core.UI.Menu.NotFound")
+        .builder("core.ui.menu.not_found")
         .chatMessage(TagWrappers.RED.wrap("Menu " +
             TagWrappers.WHITE.wrap(CommonPlaceholders.GENERIC_VALUE) + " not found.")
         );
 
     public static final MessageLocale CORE_UI_ERROR_DIALOG_NOT_FOUND = LangEntry
-        .builder("Core.UI.Dialog.NotFound")
+        .builder("core.ui.dialog.not_found")
         .chatMessage(TagWrappers.RED.wrap("Dialog " +
             TagWrappers.WHITE.wrap(CommonPlaceholders.GENERIC_VALUE) + " not found.")
         );
 
-    public static final TextLocale COMMAND_ARGUMENT_NAME_X = LangEntry.builder("Command.Argument.Name.X").text("x");
-    public static final TextLocale COMMAND_ARGUMENT_NAME_Y = LangEntry.builder("Command.Argument.Name.Y").text("y");
-    public static final TextLocale COMMAND_ARGUMENT_NAME_Z = LangEntry.builder("Command.Argument.Name.Z").text("z");
+    public static final TextLocale COMMAND_ARGUMENT_NAME_X = LangEntry.builder("command.argument.name.x").text("x");
+    public static final TextLocale COMMAND_ARGUMENT_NAME_Y = LangEntry.builder("command.argument.name.y").text("y");
+    public static final TextLocale COMMAND_ARGUMENT_NAME_Z = LangEntry.builder("command.argument.name.z").text("z");
 
     public static final MessageLocale COMMAND_SYNTAX_INVALID_ID = LangEntry
-        .builder("Command.Syntax.InvalidId")
+        .builder("command.syntax.invalid_id")
         .chatMessage(TagWrappers.RED.wrap(CommonPlaceholders.GENERIC_INPUT) + " is not a valid ID!");
 
     public static final TextLocale FORMAT_COOLDOWN_READY = LangEntry
-        .builder("Format.Cooldown.Ready")
+        .builder("format.cooldown.ready")
         .text(TagWrappers.GREEN.wrap("Ready"));
 
     public static final TextLocale FORMAT_COOLDOWN_NONE = LangEntry
-        .builder("Format.Cooldown.None")
+        .builder("format.cooldown.none")
         .text(TagWrappers.GREEN.wrap("None"));
 
     public static final TextLocale FORMAT_COOLDOWN_PERMANENT = LangEntry
-        .builder("Format.Cooldown.Permanent")
+        .builder("format.cooldown.permanent")
         .text(TagWrappers.RED.wrap("Permanent"));
 
-    public static final TextLocale FORMAT_LOCATION = LangEntry.builder("Format.Location")
+    public static final TextLocale FORMAT_LOCATION = LangEntry.builder("format.location")
         .text("[" +
             SharedPlaceholders.X + ", " +
             SharedPlaceholders.Y + ", " +
@@ -80,17 +80,17 @@ public final class Lang implements LangContainer {
         );
 
     public static final TextLocale UI_COMMAND_LIST_EMPTY = LangEntry
-        .builder("UI.Command.List.Empty")
+        .builder("ui.command.list.empty")
         .text(TagWrappers.RED.wrap("No commands defined."));
 
     public static final TextLocale UI_COMMAND_LIST_ENTRY = LangEntry
-        .builder("UI.Command.List.Entry")
+        .builder("ui.command.list.entry")
         .text(TagWrappers.WHITE.wrap(TagWrappers.SPRITE_BLOCKS.apply("block/command_block_back") + " /" +
             CommonPlaceholders.GENERIC_ENTRY)
         );
 
     public static final IconLocale UI_ITEM_PLACEHOLDER = LangEntry
-        .iconBuilder("UI.Item.Placeholder")
+        .iconBuilder("ui.item.placeholder")
         .accentColor(TagWrappers.RED)
         .name(TagWrappers.RED.wrap("Broken Item"))
         .appendInfo("Item data is missing or invalid.",
@@ -102,11 +102,11 @@ public final class Lang implements LangContainer {
         .build();
 
     public static final MessageLocale GENERIC_INTERNAL_ERROR = LangEntry
-        .builder("Generic.Internal.Error")
+        .builder("generic.internal.error")
         .chatMessage(TagWrappers.RED.wrap("An internal error has occurred. Check the server console for details."));
 
-    public static final DialogElementLocale UI_GENERIC_DIALOG_COOLDOWN_BODY_MODES = LangEntry
-        .builder("UI.Generic.Dialog.Cooldown.Body.Modes")
+    public static final DialogElementLocale GENERIC_UI_DIALOG_COOLDOWN_BODY_MODES = LangEntry
+        .builder("generic.ui.dialog.cooldown.body.modes")
         .dialogElement(
             TagWrappers.SPRITE_ITEMS.apply("item/clock_12") + " " + TagWrappers.GOLD.wrap("Daily Mode"),
             "Resets at " + TagWrappers.GOLD.wrap("midnight") + " after number of days set in " + TagWrappers.GOLD.wrap(
@@ -117,20 +117,20 @@ public final class Lang implements LangContainer {
                 .wrap("Duration field") + "."
         );
 
-    public static final TextLocale UI_GENERIC_DIALOG_COOLDOWN_INPUT_STATE = LangEntry
-        .builder("UI.Generic.Dialog.Cooldown.Input.State")
+    public static final TextLocale GENERIC_UI_DIALOG_COOLDOWN_INPUT_STATE = LangEntry
+        .builder("generic.ui.dialog.cooldown.input.state")
         .text("State");
 
-    public static final TextLocale UI_GENERIC_DIALOG_COOLDOWN_INPUT_MODE = LangEntry
-        .builder("UI.Generic.Dialog.Cooldown.Input.Mode")
+    public static final TextLocale GENERIC_UI_DIALOG_COOLDOWN_INPUT_MODE = LangEntry
+        .builder("generic.ui.dialog.cooldown.input.mode")
         .text("Type");
 
-    public static final TextLocale UI_GENERIC_DIALOG_COOLDOWN_INPUT_DURATION = LangEntry
-        .builder("UI.Generic.Dialog.Cooldown.Input.Duration")
+    public static final TextLocale GENERIC_UI_DIALOG_COOLDOWN_INPUT_DURATION = LangEntry
+        .builder("generic.ui.dialog.cooldown.input.duration")
         .text("Duration");
 
     public static final DialogElementLocale GENERIC_UI_DIALOG_ITEM_BODY_CUSTOM = LangEntry
-        .builder("Generic.UI.Dialog.Item.Body.Custom")
+        .builder("generic.ui.dialog.item.body.custom")
         .dialogElement(
             TagWrappers.GOLD.and(TagWrappers.BOLD).wrap("CUSTOM ITEM DETECTED:"),
             "It seems that the item you provided belongs to " + TagWrappers.GOLD.wrap(
@@ -140,7 +140,7 @@ public final class Lang implements LangContainer {
         );
 
     public static final DialogElementLocale GENERIC_UI_DIALOG_ITEM_BODY_MIXED = LangEntry
-        .builder("Generic.UI.Dialog.Item.Body.Mixed")
+        .builder("generic.ui.dialog.item.body.mixed")
         .dialogElement(
             TagWrappers.RED.and(TagWrappers.BOLD).wrap("MIXED ITEM DETECTED:"),
             "It seems that the item you provided belongs to two or more custom item providers.",
@@ -149,15 +149,15 @@ public final class Lang implements LangContainer {
         );
 
     public static final TextLocale GENERIC_UI_DIALOG_ITEM_INPUT_SAVE_METHOD = LangEntry
-        .builder("Generic.UI.Dialog.Item.Input.SaveMethod")
+        .builder("generic.ui.dialog.item.input.saveMethod")
         .text("Save Method");
 
     public static final TextLocale GENERIC_UI_DIALOG_ITEM_SAVE_METHOD_ITEM_REF = LangEntry
-        .builder("Generic.UI.Dialog.Item.SaveMethod.Auto")
+        .builder("generic.ui.dialog.item.saveMethod.auto")
         .text("Reference (" + TagWrappers.GOLD.wrap(SharedPlaceholders.TYPE) + ")");
 
     public static final TextLocale GENERIC_UI_DIALOG_ITEM_SAVE_METHOD_SNBT = LangEntry
-        .builder("Generic.UI.Dialog.Item.SaveMethod.SNBT")
+        .builder("generic.ui.dialog.item.saveMethod.snbt")
         .text("SNBT (" + TagWrappers.YELLOW.wrap("Game Default") + ")");
 
     private Lang() {
