@@ -6,7 +6,10 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.crate.hologram.component.HologramComponent;
 import su.nightexpress.excellentcrates.api.crate.hologram.component.HologramOffset;
+import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.crates.hologram.component.data.StandardHologramOffset;
+import su.nightexpress.nightcore.util.Lists;
+import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 
 @NullMarked
 public class StandardHologramComponent implements HologramComponent {
@@ -22,7 +25,16 @@ public class StandardHologramComponent implements HologramComponent {
     }
 
     public static StandardHologramComponent createDefault() {
-        return new StandardHologramComponent(true, List.of("Crate"), StandardHologramOffset.DEFAULT);
+        List<String> text = Lists.newList(
+            SharedPlaceholders.CRATE_NAME,
+            "",
+            SharedPlaceholders.CRATE_DESCRIPTION,
+            "",
+            TagWrappers.WHITE.wrap("Left-Click") + TagWrappers.GRAY.wrap(" to preview the crate"),
+            TagWrappers.WHITE.wrap("Right-Click") + TagWrappers.GRAY.wrap(" to open the crate")
+        );
+
+        return new StandardHologramComponent(true, text, StandardHologramOffset.DEFAULT);
     }
 
     public boolean isEnabled() {
