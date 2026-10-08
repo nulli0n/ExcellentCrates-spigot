@@ -95,3 +95,7 @@ Please view the [documentation](https://nightexpressdev.com/excellentcrates) for
 ## Releases
 
 Please see the [changelog](https://nightexpressdev.com/excellentcrates/releases) for more details about a given release.
+
+## Donate
+
+If you like my work or enjoy using my plugins, feel free to [Buy me a coffee](https://ko-fi.com/nightexpress) :) Thank you! 🧡
