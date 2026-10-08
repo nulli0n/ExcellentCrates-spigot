@@ -29,12 +29,21 @@ public class DefaultCrateSourcePipelineComponent implements CrateSourcePipelineC
     public Map<String, String> getLogData() {
         Map<String, String> logData = new HashMap<>();
         if (this.location != null) {
-            logData.put("location", this.location.toString());
+            logData.put("location", formatLocation(this.location));
         }
         if (this.itemStack != null) {
             logData.put("itemStack", this.itemStack.toString());
         }
         return logData;
+    }
+
+    private String formatLocation(Location location) {
+        return String.format("World: %s, X: %d, Y: %d, Z: %d",
+            location.getWorld().getName(),
+            location.getBlockX(),
+            location.getBlockY(),
+            location.getBlockZ()
+        );
     }
 
     @Override
