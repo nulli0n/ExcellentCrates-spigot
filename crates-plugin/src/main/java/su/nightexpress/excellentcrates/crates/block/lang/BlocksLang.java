@@ -20,6 +20,10 @@ public final class BlocksLang implements LangContainer {
         .builder("crates.blocks.command.get_block.description")
         .text("Get a crate block item.");
 
+    public static final TextLocale COMMAND_ASSIGN_DESCRIPTION = LangEntry
+        .builder("crates.blocks.command.assign.description")
+        .text("Assign a crate to a block in hand.");
+
     public static final MessageLocale COMMAND_SYNTAX_INVALID_BLOCK_KEY = LangEntry
         .builder("crates.blocks.command.syntax.invalid_block_key")
         .chatMessage("Invalid block key: " + TagWrappers.RED.wrap(CommonPlaceholders.GENERIC_INPUT) + ".");
@@ -34,6 +38,35 @@ public final class BlocksLang implements LangContainer {
             Sound.ENTITY_VILLAGER_NO,
             "The crate " + TagWrappers.WHITE.wrap(SharedPlaceholders.CRATE_NAME) +
                 " has no blocks component."
+        );
+
+    public static final MessageLocale ASSIGN_NO_ITEM_IN_HAND = LangEntry
+        .builder("crates.blocks.assign.no_item_in_hand")
+        .chatMessage(
+            Sound.ENTITY_VILLAGER_NO,
+            "No block item in hand to assign the crate to."
+        );
+
+    public static final MessageLocale ASSIGN_NOT_A_BLOCK = LangEntry
+        .builder("crates.blocks.assign.not_a_block")
+        .chatMessage(
+            Sound.ENTITY_VILLAGER_NO,
+            "The given item is not a valid/supported block or a furniture."
+        );
+
+    public static final MessageLocale ASSIGN_ALREADY_ASSIGNED = LangEntry
+        .builder("crates.blocks.assign.already_assigned")
+        .chatMessage(
+            Sound.ENTITY_VILLAGER_NO,
+            "The given block is already assigned to a crate."
+        );
+
+    public static final MessageLocale ASSIGN_SUCCESS = LangEntry
+        .builder("crates.blocks.assign.success")
+        .chatMessage(
+            Sound.BLOCK_NOTE_BLOCK_PLING,
+            "The crate " + TagWrappers.WHITE.wrap(SharedPlaceholders.CRATE_NAME) +
+                " has been successfully assigned to the given block."
         );
 
     public static final MessageLocale LINK_SUCCESS = LangEntry
@@ -109,16 +142,13 @@ public final class BlocksLang implements LangContainer {
         .builder("crates.blocks.editor.ui.inventory.component.title")
         .text("Crate Editor • Blocks");
 
-    public static final IconLocale EDITOR_UI_INVENTORY_COMPONENT_BUTTON_BLOCKS = LangEntry
-        .iconBuilder("crates.blocks.editor.ui.inventory.component.button.blocks")
-        .name("Block Catalog")
-        .appendInfo(
-            "Here you can view all available",
-            "crate blocks and obtain them",
-            "to place the crate in the world."
+    public static final IconLocale EDITOR_UI_INVENTORY_COMPONENT_BUTTON_ASSIGN = LangEntry
+        .iconBuilder("crates.blocks.editor.ui.inventory.component.button.assign")
+        .accentColor(TagWrappers.GREEN)
+        .name("Assign Crate")
+        .appendInfo("Create a placeable block for this crate",
+            "by " + TagWrappers.GREEN.wrap("dragging an item") + " onto this button."
         )
-        .br()
-        .appendClick("Click to navigate")
         .build();
 
     public static final IconLocale EDITOR_UI_INVENTORY_COMPONENT_BUTTON_UNLINK = LangEntry
@@ -131,10 +161,6 @@ public final class BlocksLang implements LangContainer {
         .br()
         .appendClick("Click to unlink")
         .build();
-
-    public static final TextLocale EDITOR_UI_INVENTORY_CATALOG_TITLE = LangEntry
-        .builder("crates.blocks.editor.ui.inventory.catalog.title")
-        .text("Blocks • Catalog");
 
     public static final TextLocale EDITOR_UI_DIALOG_UNLINK_TITLE = LangEntry
         .builder("crates.blocks.editor.ui.dialog.unlink.title")

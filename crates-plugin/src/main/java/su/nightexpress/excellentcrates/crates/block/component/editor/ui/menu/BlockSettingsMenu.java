@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
@@ -56,7 +57,11 @@ public class BlockSettingsMenu extends AbstractObjectMenu<BlockSettingsMenuConte
 
     @Override
     protected void onClick(ViewerContext context, InventoryClickEvent event) {
-
+        int slot = event.getRawSlot();
+        Inventory inventory = event.getInventory();
+        if (slot >= inventory.getSize()) {
+            event.setCancelled(false);
+        }
     }
 
     @Override
@@ -96,11 +101,11 @@ public class BlockSettingsMenu extends AbstractObjectMenu<BlockSettingsMenuConte
 
         items.add(MenuItem.custom()
             .defaultState(ItemState.builder()
-                .icon(NightItem.fromType(Material.CHEST)
-                    .localized(BlocksLang.EDITOR_UI_INVENTORY_COMPONENT_BUTTON_BLOCKS)
+                .icon(NightItem.fromType(Material.ENDER_CHEST)
+                    .localized(BlocksLang.EDITOR_UI_INVENTORY_COMPONENT_BUTTON_ASSIGN)
                     .hideAllComponents()
                 )
-                .action(this::handleBlockSelection)
+                .action(this::handleAssign)
                 .build()
             )
             .slots(12)
@@ -145,11 +150,26 @@ public class BlockSettingsMenu extends AbstractObjectMenu<BlockSettingsMenuConte
         menuContext.moveBackward(context.getPlayer());
     }
 
-    private void handleBlockSelection(ActionContext context) {
+    private void handleAssign(ActionContext context) {
         Player player = context.getPlayer();
         BlockSettingsMenuContext menuContext = this.getObject(context);
+        InventoryClickEvent event = context.getEvent();
+        ItemStack cursor = event.getCursor();
+        if (cursor == null || cursor.getType().isAir()) {
+            return;
+        }
 
-        this.controller.onComponentMenuBlockCatalogClick(player, menuContext);
+        Crate crate = this.crateResolver.resolveCrate(menuContext.crateId());
+        if (crate == null) {
+            return;
+        }
+
+        this.controller.onSettingsMenuAssignClick(player, crate, cursor, assigned -> {
+            InventoryView currentView = context.getViewer().getCurrentView();
+            if (currentView != null) {
+                currentView.setCursor(assigned);
+            }
+        });
     }
 
     private void handleUnlink(ActionContext context) {

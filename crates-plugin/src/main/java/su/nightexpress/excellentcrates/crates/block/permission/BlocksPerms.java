@@ -12,7 +12,7 @@ public final class BlocksPerms {
     public static final PermissionNamespace ROOT    = Perms.ROOT.namespace("blocks");
     public static final PermissionNamespace COMMAND = ROOT.namespace("command");
 
-    public static final Permission COMMAND_GET_BLOCK = COMMAND.create("getblock");
+    public static final Permission COMMAND_ASSIGN = COMMAND.create("assign");
 
     public static final Permission BLOCK_PLACE  = ROOT.create("block.place");
     public static final Permission BLOCK_REMOVE = ROOT.create("block.remove");

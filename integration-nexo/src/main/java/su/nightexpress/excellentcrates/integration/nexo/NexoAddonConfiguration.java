@@ -7,12 +7,11 @@ import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.block.BlockAPI;
 import su.nightexpress.excellentcrates.integration.nexo.block.NexoBlockController;
 import su.nightexpress.excellentcrates.integration.nexo.block.NexoBlockProvider;
-import su.nightexpress.excellentcrates.integration.nexo.block.NexoDataLoadController;
 
 @NullMarked
 public final class NexoAddonConfiguration {
 
-    private static final Identifier MODULE_ID = new Identifier("nexo-addon");
+    private static final Identifier MODULE_ID = new Identifier("crates.blocks.addon.nexo");
 
     private NexoAddonConfiguration() {
     }
@@ -21,7 +20,8 @@ public final class NexoAddonConfiguration {
         NexoAddonModule module = new NexoAddonModule(MODULE_ID);
         NexoBlockProvider provider = new NexoBlockProvider();
 
-        module.addComponent(new NexoDataLoadController(plugin, provider, blocksAPI));
+        blocksAPI.getRegistry().registerProvider(provider);
+
         module.addComponent(new NexoBlockController(plugin, blocksAPI));
 
         return module;

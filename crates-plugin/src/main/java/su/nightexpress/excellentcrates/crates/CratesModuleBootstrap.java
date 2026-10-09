@@ -195,7 +195,7 @@ public final class CratesModuleBootstrap extends BaseModuleBootstrap {
 
             BlockComponentBootstrapContext blockComponentContext = new BlockComponentBootstrapContext(
                 plugin, coreUI, dispatcher, crates, cratePlaceholders,
-                blockCoreContext.positions, blockCoreContext.registry, blockCoreContext.itemService
+                blockCoreContext.positions, blockCoreContext.itemService
             );
 
             this.registerComponent(blockCoreContext);

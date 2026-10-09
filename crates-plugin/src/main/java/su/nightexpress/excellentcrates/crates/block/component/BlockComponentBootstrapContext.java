@@ -6,7 +6,6 @@ import su.nightexpress.engine.bootstrap.context.NamedBootstrapContext;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.ui.CoreUIService;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
-import su.nightexpress.excellentcrates.api.crate.block.BlockRegistry;
 import su.nightexpress.excellentcrates.api.crate.block.position.CratePositionRegistry;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
@@ -37,7 +36,6 @@ public class BlockComponentBootstrapContext extends NamedBootstrapContext {
                                           CrateResolver crateResolver,
                                           CratePlaceholders cratePlaceholders,
                                           CratePositionRegistry positionRegistry,
-                                          BlockRegistry blockRegistry,
                                           BlockItemService itemService) {
         super(ID, NAME);
         ConfigCodecs.register(DefaultBlockComponent.class, BlockComponentCodec.INSTANCE);
@@ -48,10 +46,7 @@ public class BlockComponentBootstrapContext extends NamedBootstrapContext {
             itemService, editorService, uiService, dispatcher
         );
 
-        this.addComponent(
-            new BlockEditorUIMenuRegistrar(plugin, coreUI, crateResolver, blockRegistry, itemService, controller)
-        );
-
+        this.addComponent(new BlockEditorUIMenuRegistrar(plugin, coreUI, crateResolver, controller));
         this.addComponent(new BlockEditorUIDialogRegistrar(coreUI, controller));
 
         this.dataExtension = new BlockComponentDataExtension(positionRegistry);

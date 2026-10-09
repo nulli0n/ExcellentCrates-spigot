@@ -1,7 +1,5 @@
 package su.nightexpress.excellentcrates.crates.block;
 
-import java.util.Set;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,13 +7,11 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.id.Identifier;
-import su.nightexpress.excellentcrates.api.crate.block.BlockRegistry;
 import su.nightexpress.excellentcrates.api.crate.block.BlockAPI;
-import su.nightexpress.excellentcrates.api.crate.block.CrateBlock;
+import su.nightexpress.excellentcrates.api.crate.block.BlockRegistry;
 import su.nightexpress.excellentcrates.api.crate.block.interact.BlockInteractionType;
 import su.nightexpress.excellentcrates.api.crate.block.position.CratePositionObserver;
 import su.nightexpress.excellentcrates.api.crate.block.position.CratePositionRegistry;
-import su.nightexpress.excellentcrates.api.crate.block.provider.BlockProvider;
 import su.nightexpress.excellentcrates.crates.block.handler.BlockInteractionHandler;
 import su.nightexpress.excellentcrates.crates.block.handler.BlockPlacementHandler;
 
@@ -52,18 +48,6 @@ public class DefaultBlockAPI implements BlockAPI {
     public ActionResult handleInteraction(Identifier sourceId, BlockInteractionType type, Player player,
                                           Location location) {
         return this.interactionHandler.handleInteraction(sourceId, type, player, location);
-    }
-
-    @Override
-    public void registerProviderWithBlocks(BlockProvider<?> provider) {
-        this.blockRegistry.registerProvider(provider);
-
-        provider.fetchBlocks().forEach(this.blockRegistry::registerBlock);
-    }
-
-    @Override
-    public Set<CrateBlock> unregisterBlocks(BlockProvider<?> provider) {
-        return this.blockRegistry.unregisterBlocks(provider);
     }
 
     @Override

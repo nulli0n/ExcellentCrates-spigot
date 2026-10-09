@@ -5,14 +5,13 @@ import org.jspecify.annotations.NullMarked;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.block.BlockAPI;
-import su.nightexpress.excellentcrates.integration.itemsadder.block.ItemsAdderBlockPlaceController;
+import su.nightexpress.excellentcrates.integration.itemsadder.block.ItemsAdderBlockController;
 import su.nightexpress.excellentcrates.integration.itemsadder.block.ItemsAdderBlockProvider;
-import su.nightexpress.excellentcrates.integration.itemsadder.block.ItemsAdderLoadController;
 
 @NullMarked
 public final class ItemsAdderAddonConfiguration {
 
-    private static final Identifier MODULE_ID = new Identifier("itemsadder.module");
+    private static final Identifier MODULE_ID = new Identifier("crates.blocks.addon.itemsadder");
 
     private ItemsAdderAddonConfiguration() {
     }
@@ -21,8 +20,9 @@ public final class ItemsAdderAddonConfiguration {
         ItemsAdderAddonModule module = new ItemsAdderAddonModule(MODULE_ID);
         ItemsAdderBlockProvider provider = new ItemsAdderBlockProvider();
 
-        module.addComponent(new ItemsAdderLoadController(plugin, provider, blocksAPI));
-        module.addComponent(new ItemsAdderBlockPlaceController(plugin, blocksAPI));
+        blocksAPI.getRegistry().registerProvider(provider);
+
+        module.addComponent(new ItemsAdderBlockController(plugin, blocksAPI));
 
         return module;
     }

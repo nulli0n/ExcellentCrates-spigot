@@ -14,11 +14,11 @@ import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.block.BlockAPI;
 
 @NullMarked
-public class ItemsAdderBlockPlaceController extends BaseController {
+public class ItemsAdderBlockController extends BaseController {
 
     private final BlockAPI blocksAPI;
 
-    public ItemsAdderBlockPlaceController(CratesPlugin plugin, BlockAPI blocksAPI) {
+    public ItemsAdderBlockController(CratesPlugin plugin, BlockAPI blocksAPI) {
         super(plugin);
         this.blocksAPI = blocksAPI;
     }
