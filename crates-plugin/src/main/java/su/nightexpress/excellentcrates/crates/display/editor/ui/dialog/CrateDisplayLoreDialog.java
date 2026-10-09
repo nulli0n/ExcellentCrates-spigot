@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
 import su.nightexpress.excellentcrates.crates.display.editor.ui.DisplayEditorUIController;
 import su.nightexpress.excellentcrates.crates.display.editor.ui.dialog.context.CrateDisplayDialogContext;
 import su.nightexpress.excellentcrates.crates.editor.lang.CrateEditorLang;
@@ -35,7 +35,7 @@ public class CrateDisplayLoreDialog extends Dialog<CrateDisplayDialogContext> {
 
     public WrappedDialog create(Player player, CrateDisplayDialogContext context) {
         // Identifier crateId = context.crateId();
-        ICrateDisplay display = context.display();
+        CrateDisplay display = context.display();
 
         return Dialogs.create(builder -> {
             builder.base(DialogBases.builder(CrateEditorLang.UI_DIALOG_DISPLAY_LORE_TITLE)

@@ -7,15 +7,15 @@ import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponent;
 
 @NullMarked
-public interface ICrateBuilder {
+public interface CrateBuilder {
 
     Crate build();
 
-    ICrateBuilder base(ICrateBase base);
+    CrateBuilder base(CrateBase base);
 
-    ICrateBuilder display(ICrateDisplay display);
+    CrateBuilder display(CrateDisplay display);
 
-    ICrateBuilder item(ICrateItem item);
+    CrateBuilder item(CrateItem item);
 
-    <T extends CrateComponent> ICrateBuilder component(EntityComponentKey<T> key, T component);
+    <T extends CrateComponent> CrateBuilder component(EntityComponentKey<T> key, T component);
 }

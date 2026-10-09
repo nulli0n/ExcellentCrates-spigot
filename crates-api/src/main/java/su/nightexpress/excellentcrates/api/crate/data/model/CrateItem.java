@@ -5,7 +5,7 @@ import org.jspecify.annotations.NullMarked;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 
 @NullMarked
-public interface ICrateItem {
+public interface CrateItem {
 
     AdaptedItem getItem();
 

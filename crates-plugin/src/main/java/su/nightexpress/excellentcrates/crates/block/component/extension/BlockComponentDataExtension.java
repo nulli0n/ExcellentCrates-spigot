@@ -8,7 +8,7 @@ import su.nightexpress.excellentcrates.api.crate.block.crate.BlockComponent;
 import su.nightexpress.excellentcrates.api.crate.block.position.CratePositionRegistry;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.crates.block.component.DefaultBlockComponent;
 import su.nightexpress.nightcore.config.FileConfig;
 
@@ -22,12 +22,12 @@ public class BlockComponentDataExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.BLOCK, DefaultBlockComponent.empty());
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         DefaultBlockComponent component = config.getOrSet("blocks",
             DefaultBlockComponent.class,
             DefaultBlockComponent.empty()

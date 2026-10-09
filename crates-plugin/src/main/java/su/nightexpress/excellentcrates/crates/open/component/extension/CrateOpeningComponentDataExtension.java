@@ -6,7 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.api.crate.open.OpenActionsComponent;
 import su.nightexpress.excellentcrates.crates.open.component.DefaultOpeningComponent;
 import su.nightexpress.excellentcrates.crates.open.component.codec.OpeningComponentCodec;
@@ -16,7 +16,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 public class CrateOpeningComponentDataExtension implements CrateDataExtension {
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.OPEN_ACTIONS, DefaultOpeningComponent.createDefault());
     }
 
@@ -36,7 +36,7 @@ public class CrateOpeningComponentDataExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         OpenActionsComponent component = config.getOrSet("opening",
             OpeningComponentCodec.INSTANCE,
             DefaultOpeningComponent.createDefault()

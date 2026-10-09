@@ -6,7 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.api.reward.selectable.SelectableRewardsComponent;
 import su.nightexpress.excellentcrates.reward.selectable.component.codec.RewardSelectionComponentCodec;
 import su.nightexpress.excellentcrates.reward.selectable.component.data.DefaultSelectiveRewardsComponent;
@@ -16,7 +16,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 public class SelectiveRewardsDataExtension implements CrateDataExtension {
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.SELECTABLE_REWARDS, DefaultSelectiveRewardsComponent.createDefault());
     }
 
@@ -36,7 +36,7 @@ public class SelectiveRewardsDataExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         SelectableRewardsComponent component = config.getOrSet(
             "selective_rewards",
             RewardSelectionComponentCodec.INSTANCE,

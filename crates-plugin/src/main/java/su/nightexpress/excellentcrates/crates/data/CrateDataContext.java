@@ -19,9 +19,9 @@ import su.nightexpress.excellentcrates.crates.data.codec.CrateDisplayCodec;
 import su.nightexpress.excellentcrates.crates.data.codec.CrateItemCodec;
 import su.nightexpress.excellentcrates.crates.data.controller.CrateDataLoadController;
 import su.nightexpress.excellentcrates.crates.data.controller.CrateDataSaveController;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateBase;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateDisplay;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateItem;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateBase;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateDisplay;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateItem;
 import su.nightexpress.excellentcrates.crates.data.io.CrateIOService;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 
@@ -56,8 +56,8 @@ public final class CrateDataContext extends NamedBootstrapContext {
     }
 
     private void registerCodecs() {
-        ConfigCodecs.register(CrateBase.class, CrateBaseCodec.INSTANCE);
-        ConfigCodecs.register(CrateDisplay.class, CrateDisplayCodec.INSTANCE);
-        ConfigCodecs.register(CrateItem.class, CrateItemCodec.INSTANCE);
+        ConfigCodecs.register(StandardCrateBase.class, CrateBaseCodec.INSTANCE);
+        ConfigCodecs.register(StandardCrateDisplay.class, CrateDisplayCodec.INSTANCE);
+        ConfigCodecs.register(StandardCrateItem.class, CrateItemCodec.INSTANCE);
     }
 }

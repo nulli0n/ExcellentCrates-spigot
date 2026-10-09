@@ -4,24 +4,24 @@ import java.util.List;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
 
 @NullMarked
-public class CrateDisplay implements ICrateDisplay {
+public class StandardCrateDisplay implements CrateDisplay {
 
     private String       name;
     private List<String> lore;
 
-    public CrateDisplay(String name, List<String> lore) {
+    public StandardCrateDisplay(String name, List<String> lore) {
         this.name = name;
         this.lore = List.copyOf(lore);
     }
 
-    public static CrateDisplay createDefault() {
+    public static StandardCrateDisplay createDefault() {
         String name = "Crate";
         List<String> lore = List.of();
 
-        return new CrateDisplay(name, lore);
+        return new StandardCrateDisplay(name, lore);
     }
 
     @Override

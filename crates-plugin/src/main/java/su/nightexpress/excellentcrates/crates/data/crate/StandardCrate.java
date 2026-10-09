@@ -6,22 +6,22 @@ import su.nightexpress.engine.entity.ImmutableEntityComponentContainer;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponent;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBase;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBase;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 
 @NullMarked
-public class DefaultCrate implements Crate {
+public class StandardCrate implements Crate {
 
     private final Identifier id;
 
-    private final ICrateBase    base;
-    private final ICrateDisplay display;
-    private final ICrateItem    item;
+    private final CrateBase    base;
+    private final CrateDisplay display;
+    private final CrateItem    item;
 
     private final ImmutableEntityComponentContainer<CrateComponent> components;
 
-    public DefaultCrate(Identifier id, CrateBuilder builder) {
+    public StandardCrate(Identifier id, StandardCrateBuilder builder) {
         this.id = id;
         this.base = builder.base;
         this.display = builder.display;
@@ -35,17 +35,17 @@ public class DefaultCrate implements Crate {
     }
 
     @Override
-    public ICrateBase getBase() {
+    public CrateBase getBase() {
         return this.base;
     }
 
     @Override
-    public ICrateDisplay getDisplay() {
+    public CrateDisplay getDisplay() {
         return this.display;
     }
 
     @Override
-    public ICrateItem getItem() {
+    public CrateItem getItem() {
         return this.item;
     }
 

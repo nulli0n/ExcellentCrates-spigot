@@ -5,16 +5,16 @@ import org.jspecify.annotations.NullMarked;
 import su.nightexpress.engine.entity.ComponentEntity;
 import su.nightexpress.engine.id.Identifiable;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponent;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBase;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBase;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 
 @NullMarked
 public interface Crate extends ComponentEntity<CrateComponent>, Identifiable {
 
-    ICrateBase getBase();
+    CrateBase getBase();
 
-    ICrateDisplay getDisplay();
+    CrateDisplay getDisplay();
 
-    ICrateItem getItem();
+    CrateItem getItem();
 }

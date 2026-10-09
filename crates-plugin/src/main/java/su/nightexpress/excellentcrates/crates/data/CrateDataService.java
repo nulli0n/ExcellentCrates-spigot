@@ -13,10 +13,10 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateBuilder;
-import su.nightexpress.excellentcrates.crates.data.crate.DefaultCrate;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateBuilder;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrate;
 import su.nightexpress.excellentcrates.crates.data.io.CrateIOService;
 
 @NullMarked
@@ -67,18 +67,18 @@ public class CrateDataService {
         this.extensions.forEach(extension -> extension.onUnload(crate));
     }
 
-    public Crate createCrate(Identifier id, Consumer<ICrateBuilder> consumer) {
+    public Crate createCrate(Identifier id, Consumer<CrateBuilder> consumer) {
         if (this.hasCrate(id)) {
             throw new IllegalArgumentException("Crate with ID '" + id + "' already exists");
         }
 
-        CrateBuilder builder = new CrateBuilder(id);
+        StandardCrateBuilder builder = new StandardCrateBuilder(id);
 
         consumer.accept(builder);
 
         this.extensions.forEach(extension -> extension.onBuild(builder, id));
 
-        DefaultCrate crate = builder.build();
+        StandardCrate crate = builder.build();
 
         this.extensions.forEach(extension -> extension.onCreate(crate));
 

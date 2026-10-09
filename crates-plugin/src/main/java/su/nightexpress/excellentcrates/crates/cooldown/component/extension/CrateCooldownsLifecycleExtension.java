@@ -6,7 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.crates.cooldown.component.StandardCrateCooldownComponent;
 import su.nightexpress.excellentcrates.crates.cooldown.db.CrateCooldownCachedDataService;
 import su.nightexpress.nightcore.config.FileConfig;
@@ -21,7 +21,7 @@ public class CrateCooldownsLifecycleExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.COOLDOWN, StandardCrateCooldownComponent.createDefault());
     }
 
@@ -41,7 +41,7 @@ public class CrateCooldownsLifecycleExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         StandardCrateCooldownComponent cooldowns = config.getOrSet("cooldowns", StandardCrateCooldownComponent.class,
             StandardCrateCooldownComponent.createDefault());
 

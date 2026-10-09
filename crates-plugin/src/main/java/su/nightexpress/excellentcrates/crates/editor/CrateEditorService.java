@@ -12,8 +12,8 @@ import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.crates.data.CrateDataService;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateDisplay;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateItem;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateDisplay;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateItem;
 import su.nightexpress.excellentcrates.crates.editor.lang.CrateEditorLang;
 import su.nightexpress.excellentcrates.crates.lang.CratesLang;
 import su.nightexpress.excellentcrates.util.ItemHelper;
@@ -53,8 +53,8 @@ public class CrateEditorService {
             List<String> lore = List.of();
             AdaptedItem item = ItemHelper.bukkit(new ItemStack(Material.CHEST));
 
-            builder.display(new CrateDisplay(name, lore));
-            builder.item(new CrateItem(item, true, true));
+            builder.display(new StandardCrateDisplay(name, lore));
+            builder.item(new StandardCrateItem(item, true, true));
         });
 
         return ActionResult.ok(CrateEditorLang.CREATION_SUCCESS, ctx -> ctx

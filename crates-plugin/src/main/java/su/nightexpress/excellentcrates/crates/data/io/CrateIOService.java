@@ -16,11 +16,11 @@ import su.nightexpress.engine.id.IdentifierParser;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateBase;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateBuilder;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateDisplay;
-import su.nightexpress.excellentcrates.crates.data.crate.CrateItem;
-import su.nightexpress.excellentcrates.crates.data.crate.DefaultCrate;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateBase;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateBuilder;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateDisplay;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrateItem;
+import su.nightexpress.excellentcrates.crates.data.crate.StandardCrate;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.exception.ModelLoadException;
 import su.nightexpress.nightcore.util.FileUtil;
@@ -84,11 +84,12 @@ public class CrateIOService {
 
         FileConfig config = FileConfig.load(file);
 
-        CrateBase base = config.getOrSet("base", CrateBase.class, CrateBase.createDefault());
-        CrateDisplay display = config.getOrSet("display", CrateDisplay.class, CrateDisplay.createDefault());
-        CrateItem item = config.getOrSet("item", CrateItem.class, CrateItem.createDefault());
+        StandardCrateBase base = config.getOrSet("base", StandardCrateBase.class, StandardCrateBase.createDefault());
+        StandardCrateDisplay display = config.getOrSet("display", StandardCrateDisplay.class, StandardCrateDisplay
+            .createDefault());
+        StandardCrateItem item = config.getOrSet("item", StandardCrateItem.class, StandardCrateItem.createDefault());
 
-        CrateBuilder builder = new CrateBuilder(id);
+        StandardCrateBuilder builder = new StandardCrateBuilder(id);
 
         builder.base(base);
         builder.display(display);
@@ -98,7 +99,7 @@ public class CrateIOService {
             extension.onRead(config, builder, id);
         });
 
-        DefaultCrate crate = builder.build();
+        StandardCrate crate = builder.build();
 
         config.saveChanges();
 

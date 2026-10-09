@@ -6,7 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.api.crate.hologram.component.HologramComponent;
 import su.nightexpress.excellentcrates.crates.hologram.HologramDisplayService;
 import su.nightexpress.excellentcrates.crates.hologram.component.StandardHologramComponent;
@@ -22,12 +22,12 @@ public class HologramComponentExtension implements CrateDataExtension {
     }
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.HOLOGRAM, StandardHologramComponent.createDefault());
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         StandardHologramComponent component = config.getOrSet("hologram",
             StandardHologramComponent.class,
             StandardHologramComponent.createDefault()

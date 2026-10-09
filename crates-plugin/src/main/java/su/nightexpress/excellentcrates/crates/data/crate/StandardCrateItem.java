@@ -4,29 +4,29 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 
 @NullMarked
-public class CrateItem implements ICrateItem {
+public class StandardCrateItem implements CrateItem {
 
     private AdaptedItem item;
     private boolean     itemStackable;
     private boolean     useDisplay;
 
-    public CrateItem(AdaptedItem item, boolean itemStackable, boolean useDisplay) {
+    public StandardCrateItem(AdaptedItem item, boolean itemStackable, boolean useDisplay) {
         this.item = item;
         this.itemStackable = itemStackable;
         this.useDisplay = useDisplay;
     }
 
-    public static CrateItem createDefault() {
+    public static StandardCrateItem createDefault() {
         AdaptedItem item = ItemHelper.bukkit(new ItemStack(Material.CHEST));
         boolean stackable = true;
         boolean useDisplay = true;
 
-        return new CrateItem(item, stackable, useDisplay);
+        return new StandardCrateItem(item, stackable, useDisplay);
     }
 
     @Override

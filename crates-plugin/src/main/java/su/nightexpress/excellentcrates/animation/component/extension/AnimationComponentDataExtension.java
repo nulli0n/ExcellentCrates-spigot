@@ -8,19 +8,19 @@ import su.nightexpress.excellentcrates.api.animation.component.AnimationComponen
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.nightcore.config.FileConfig;
 
 @NullMarked
 public class AnimationComponentDataExtension implements CrateDataExtension {
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.ANIMATION, DefaultAnimationComponent.createDefault());
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         DefaultAnimationComponent openingComponent = config.getOrSet("animation",
             DefaultAnimationComponent.class,
             DefaultAnimationComponent.createDefault()

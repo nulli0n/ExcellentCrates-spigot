@@ -15,7 +15,7 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Crate;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateResolver;
 import su.nightexpress.excellentcrates.crates.display.editor.ui.DisplayEditorUIController;
 import su.nightexpress.excellentcrates.crates.display.editor.ui.menu.context.CrateDisplaySettingsMenuContext;
@@ -89,7 +89,7 @@ public class CrateDisplaySettingsMenu extends AbstractObjectMenu<CrateDisplaySet
         Crate crate = this.crateResolver.resolveCrate(menuContext.crateId());
         if (crate == null) return;
 
-        ICrateDisplay display = crate.getDisplay();
+        CrateDisplay display = crate.getDisplay();
 
         items.add(MenuItem.button()
             .defaultState(ItemState.builder()
@@ -140,7 +140,7 @@ public class CrateDisplaySettingsMenu extends AbstractObjectMenu<CrateDisplaySet
         menuContext.backwardNavigator().moveBack(context.getPlayer());
     }
 
-    private void handleName(ActionContext context, ICrateDisplay display) {
+    private void handleName(ActionContext context, CrateDisplay display) {
         Player player = context.getPlayer();
         CrateDisplaySettingsMenuContext menuContext = this.getObject(context);
         Runnable refreshUI = () -> context.getViewer().refresh();
@@ -148,7 +148,7 @@ public class CrateDisplaySettingsMenu extends AbstractObjectMenu<CrateDisplaySet
         this.controller.onSettingsMenuNameClick(player, menuContext, display, refreshUI);
     }
 
-    private void handleLore(ActionContext context, ICrateDisplay display) {
+    private void handleLore(ActionContext context, CrateDisplay display) {
         Player player = context.getPlayer();
         CrateDisplaySettingsMenuContext menuContext = this.getObject(context);
         Runnable refreshUI = () -> context.getViewer().refresh();

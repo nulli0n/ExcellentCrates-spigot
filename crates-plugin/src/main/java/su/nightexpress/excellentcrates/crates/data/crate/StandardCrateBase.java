@@ -1,17 +1,17 @@
 package su.nightexpress.excellentcrates.crates.data.crate;
 
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBase;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBase;
 
-public class CrateBase implements ICrateBase {
+public class StandardCrateBase implements CrateBase {
 
     private boolean permissionRequired;
 
-    public CrateBase(boolean permissionRequired) {
+    public StandardCrateBase(boolean permissionRequired) {
         this.permissionRequired = permissionRequired;
     }
 
-    public static CrateBase createDefault() {
-        return new CrateBase(false);
+    public static StandardCrateBase createDefault() {
+        return new StandardCrateBase(false);
     }
 
     @Override

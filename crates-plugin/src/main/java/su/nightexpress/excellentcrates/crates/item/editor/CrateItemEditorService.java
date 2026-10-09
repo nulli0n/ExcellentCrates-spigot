@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.id.Identifier;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 import su.nightexpress.excellentcrates.api.crate.editor.CrateEditorHook;
 import su.nightexpress.excellentcrates.crates.item.editor.ui.menu.context.CrateItemSetupContext;
 import su.nightexpress.excellentcrates.util.ItemHelper;
@@ -40,7 +40,7 @@ public class CrateItemEditorService {
                 crate.getDisplay().setLore(itemLore);
             }
 
-            ICrateItem display = crate.getItem();
+            CrateItem display = crate.getItem();
             display.setItem(item);
 
             return ActionResult.ok();
@@ -49,7 +49,7 @@ public class CrateItemEditorService {
 
     public void setItemStackable(CrateEditorHook hook, Identifier id, boolean state) {
         hook.modify(crate -> {
-            ICrateItem display = crate.getItem();
+            CrateItem display = crate.getItem();
             display.setStackable(state);
 
             return ActionResult.ok();
@@ -58,7 +58,7 @@ public class CrateItemEditorService {
 
     public void setItemUseDisplay(CrateEditorHook hook, Identifier id, boolean state) {
         hook.modify(crate -> {
-            ICrateItem display = crate.getItem();
+            CrateItem display = crate.getItem();
             display.setUseDisplay(state);
 
             return ActionResult.ok();

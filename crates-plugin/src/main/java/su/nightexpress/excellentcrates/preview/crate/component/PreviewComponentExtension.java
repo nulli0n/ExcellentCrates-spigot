@@ -6,7 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.data.extension.CrateDataExtension;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateBuilder;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateBuilder;
 import su.nightexpress.excellentcrates.api.preview.crate.PreviewComponent;
 import su.nightexpress.nightcore.config.FileConfig;
 
@@ -14,12 +14,12 @@ import su.nightexpress.nightcore.config.FileConfig;
 public class PreviewComponentExtension implements CrateDataExtension {
 
     @Override
-    public void onBuild(ICrateBuilder builder, Identifier crateId) {
+    public void onBuild(CrateBuilder builder, Identifier crateId) {
         builder.component(CrateComponentKeys.PREVIEW, DefaultPreviewComponent.defaults());
     }
 
     @Override
-    public void onRead(FileConfig config, ICrateBuilder builder, Identifier crateId) {
+    public void onRead(FileConfig config, CrateBuilder builder, Identifier crateId) {
         DefaultPreviewComponent component = config.get("preview", DefaultPreviewComponent.class);
         if (component != null) {
             builder.component(CrateComponentKeys.PREVIEW, component);

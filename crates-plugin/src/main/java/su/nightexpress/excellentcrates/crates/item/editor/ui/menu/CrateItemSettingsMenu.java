@@ -17,7 +17,7 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Crate;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 import su.nightexpress.excellentcrates.api.crate.item.ICrateItemFactory;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateResolver;
 import su.nightexpress.excellentcrates.crates.editor.lang.CrateEditorLang;
@@ -108,7 +108,7 @@ public class CrateItemSettingsMenu extends AbstractObjectMenu<CrateItemSettingsM
         Crate crate = this.resolver.resolveCrate(menuContext.crateId());
         if (crate == null) return;
 
-        ICrateItem crateItem = crate.getItem();
+        CrateItem crateItem = crate.getItem();
         boolean stackable = crateItem.isStackable();
         boolean useDisplay = crateItem.isUseDisplay();
 

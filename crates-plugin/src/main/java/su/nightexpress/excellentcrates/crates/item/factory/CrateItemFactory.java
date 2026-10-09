@@ -6,8 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.crate.Crate;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateItem;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateItem;
 import su.nightexpress.excellentcrates.api.crate.item.ICrateItemFactory;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.util.ItemUtil;
@@ -28,11 +28,11 @@ public class CrateItemFactory implements ICrateItemFactory {
 
     @Override
     public ItemStack createDisplayItem(Crate crate) {
-        ICrateItem crateItem = crate.getItem();
+        CrateItem crateItem = crate.getItem();
         ItemStack itemStack = this.createBaseItem(crate);
 
         if (crateItem.isUseDisplay()) {
-            ICrateDisplay display = crate.getDisplay();
+            CrateDisplay display = crate.getDisplay();
             ItemUtil.editMeta(itemStack, meta -> {
                 ItemUtil.setCustomName(meta, display.getName());
                 ItemUtil.setLore(meta, display.getLore());
@@ -49,7 +49,7 @@ public class CrateItemFactory implements ICrateItemFactory {
 
     @Override
     public Optional<ItemStack> baseItem(Crate crate) {
-        ICrateItem crateItem = crate.getItem();
+        CrateItem crateItem = crate.getItem();
         return crateItem.getItem().itemStack();
     }
 }

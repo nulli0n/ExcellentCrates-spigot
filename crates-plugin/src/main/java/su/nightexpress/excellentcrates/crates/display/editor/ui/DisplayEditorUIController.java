@@ -9,7 +9,7 @@ import su.nightexpress.engine.action.FeedbackHandler;
 import su.nightexpress.engine.dispatcher.MessageDispatcher;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.ui.menu.BackwardNavigator;
-import su.nightexpress.excellentcrates.api.crate.data.model.ICrateDisplay;
+import su.nightexpress.excellentcrates.api.crate.data.model.CrateDisplay;
 import su.nightexpress.excellentcrates.api.crate.editor.CrateEditorHook;
 import su.nightexpress.excellentcrates.crates.display.editor.DisplayEditorService;
 import su.nightexpress.excellentcrates.crates.display.editor.ui.dialog.context.CrateDisplayDialogContext;
@@ -46,7 +46,7 @@ public class DisplayEditorUIController implements FeedbackHandler {
     }
 
     public void onSettingsMenuNameClick(Player player, CrateDisplaySettingsMenuContext currentContext,
-                                        ICrateDisplay display,
+                                        CrateDisplay display,
                                         Runnable refreshUI) {
         CrateDisplayDialogContext dialogContext = new CrateDisplayDialogContext(currentContext.crateId(), display,
             currentContext
@@ -56,7 +56,7 @@ public class DisplayEditorUIController implements FeedbackHandler {
     }
 
     public void onSettingsMenuLoreClick(Player player, CrateDisplaySettingsMenuContext currentContext,
-                                        ICrateDisplay display,
+                                        CrateDisplay display,
                                         Runnable refreshUI) {
         CrateDisplayDialogContext dialogContext = new CrateDisplayDialogContext(currentContext.crateId(), display,
             currentContext
