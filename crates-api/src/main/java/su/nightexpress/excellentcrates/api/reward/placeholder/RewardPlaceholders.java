@@ -20,11 +20,11 @@ public interface RewardPlaceholders {
 
     PlaceholderApplier allPlaceholders(Crate crate, Reward reward, @Nullable Player player);
 
-    PlaceholderApplier basePlaceholders(Reward reward);
-
-    PlaceholderApplier basePlaceholders(Reward reward, @Nullable Player player);
-
     PlaceholderApplier inCratePlaceholders(Crate crate, Reward reward);
 
     PlaceholderApplier inCratePlaceholders(Crate crate, Reward reward, @Nullable Player player);
+
+    PlaceholderApplier basePlaceholders(Reward reward);
+
+    PlaceholderApplier basePlaceholders(Reward reward, @Nullable Player player);
 }

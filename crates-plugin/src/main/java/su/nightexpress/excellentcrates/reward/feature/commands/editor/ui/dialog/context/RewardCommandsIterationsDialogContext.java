@@ -2,10 +2,10 @@ package su.nightexpress.excellentcrates.reward.feature.commands.editor.ui.dialog
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
-public record RewardCommandsIterationsDialogContext(Identifier rewardId, int currentIterations, RewardEditorHook hook) {
+public record RewardCommandsIterationsDialogContext(RewardId rewardId, int currentIterations, RewardEditorHook hook) {
 
 }

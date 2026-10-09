@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.crates.editor.ui.dialog;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
+import su.nightexpress.excellentcrates.core.SharedConstants;
 import su.nightexpress.excellentcrates.crates.editor.lang.CrateEditorLang;
 import su.nightexpress.excellentcrates.crates.editor.ui.CrateEditorUIController;
 import su.nightexpress.excellentcrates.crates.editor.ui.dialog.context.CrateCreationDialogContext;
@@ -35,6 +36,7 @@ public class CrateCreationDialog extends Dialog<CrateCreationDialogContext> {
                 .body(DialogBodies.plain(CrateEditorLang.UI_DIALOG_CREATION_BODY).build())
                 .inputs(DialogInputs
                     .text(JSON_ID, CrateEditorLang.UI_DIALOG_CREATION_INPUT_ID)
+                    .maxLength(SharedConstants.MAX_CRATE_ID_LENGTH)
                     .build()
                 )
                 .build());

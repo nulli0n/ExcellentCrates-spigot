@@ -12,11 +12,11 @@ import su.nightexpress.excellentcrates.api.crate.component.CrateComponent;
 @NullMarked
 public interface CrateRewardsComponent extends CrateComponent {
 
-    void removeReward(Identifier rewardId);
+    boolean hasReward(Identifier rewardId);
 
     void addReward(CrateRewardEntry reward);
 
-    boolean hasReward(Identifier rewardId);
+    void removeReward(Identifier rewardId);
 
     @Nullable
     CrateRewardEntry getReward(Identifier id);
@@ -25,7 +25,7 @@ public interface CrateRewardsComponent extends CrateComponent {
 
     Collection<CrateRewardEntry> getRewards();
 
-    int getRequiredAmount();
+    int getRollCount();
 
-    void setRequiredAmount(int requiredAmount);
+    void setRollCount(int rollCount);
 }

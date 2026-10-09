@@ -16,7 +16,6 @@ import su.nightexpress.excellentcrates.keys.cost.evaluator.KeyCostLogicProvider;
 import su.nightexpress.excellentcrates.keys.cost.evaluator.KeyCostType;
 import su.nightexpress.excellentcrates.keys.cost.lang.KeyCostLang;
 import su.nightexpress.excellentcrates.keys.cost.settings.KeyCostSettings;
-import su.nightexpress.excellentcrates.keys.display.KeyDisplayResolver;
 import su.nightexpress.excellentcrates.keys.item.KeyItemFactory;
 
 @NullMarked
@@ -31,7 +30,6 @@ public class KeyCostBootstrapContext extends NamedBootstrapContext {
 
     public KeyCostBootstrapContext(CratesPlugin plugin,
                                    KeyRegistry registry,
-                                   KeyDisplayResolver displayResolver,
                                    KeyItemFactory itemFactory,
                                    KeyBalanceService balanceService) {
         super(KEY_ID, NAME);
@@ -41,7 +39,7 @@ public class KeyCostBootstrapContext extends NamedBootstrapContext {
         Path settingsPath = plugin.configPath().resolve(SETTINGS_FILE_NAME);
         SettingsProvider<KeyCostSettings> settings = new SettingsProvider<>(KeyCostSettings.defaultSettings());
 
-        KeyCostDisplayProvider display = new KeyCostDisplayProvider(settings, registry, displayResolver, itemFactory);
+        KeyCostDisplayProvider display = new KeyCostDisplayProvider(settings, registry, itemFactory);
         KeyCostLogicProvider logic = new KeyCostLogicProvider(registry, balanceService);
         this.costType = new KeyCostType(logic, display);
 

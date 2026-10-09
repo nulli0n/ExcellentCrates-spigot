@@ -47,21 +47,25 @@ public final class RewardEditorLang implements LangContainer {
                 TagWrappers.WHITE.wrap(SharedPlaceholders.REWARD_ID) + ".")
         );
 
-    public static final TextLocale UI_INVENTORY_REWARDS_TITLE = LangEntry
-        .builder("rewards.editor.ui.inventory.rewards.title")
+    public static final TextLocale UI_INVENTORY_BROWSE_TITLE = LangEntry
+        .builder("rewards.editor.ui.inventory.browse.title")
         .text("Reward Editor • All Rewards");
 
-    public static final IconLocale UI_INVENTORY_REWARDS_REWARD = LangEntry
-        .iconBuilder("rewards.editor.ui.inventory.rewards.reward")
+
+    public static final IconLocale UI_INVENTORY_BROWSE_BUTTON_REWARD = LangEntry
+        .iconBuilder("rewards.editor.ui.inventory.browse.button.reward")
         .rawName(SharedPlaceholders.REWARD_NAME)
+        .rawLore(SharedPlaceholders.REWARD_DESCRIPTION, CommonPlaceholders.EMPTY_IF_ABOVE)
         .appendCurrent("ID", SharedPlaceholders.REWARD_ID)
+        .appendCurrent("Weight", SharedPlaceholders.REWARD_WEIGHT)
         .appendCurrent("Rarity", SharedPlaceholders.REWARD_RARITY)
+        .appendCurrent("Roll Chance", SharedPlaceholders.REWARD_ROLL_CHANCE + "%")
         .br()
         .appendClick("Click to edit")
         .build();
 
-    public static final IconLocale UI_INVENTORY_REWARDS_BUTTON_CREATION = LangEntry
-        .iconBuilder("rewards.editor.ui.inventory.rewards.button.creation")
+    public static final IconLocale UI_INVENTORY_BROWSE_BUTTON_CREATION = LangEntry
+        .iconBuilder("rewards.editor.ui.inventory.browse.button.creation")
         .accentColor(TagWrappers.GREEN)
         .name("Create Reward")
         .appendInfo("To configure and create a reward",
@@ -70,8 +74,8 @@ public final class RewardEditorLang implements LangContainer {
         )
         .build();
 
-    public static final IconLocale UI_INVENTORY_REWARDS_BUTTON_QUICK_MODE = LangEntry
-        .iconBuilder("rewards.editor.ui.inventory.rewards.button.quick_mode")
+    public static final IconLocale UI_INVENTORY_BROWSE_BUTTON_QUICK_MODE = LangEntry
+        .iconBuilder("rewards.editor.ui.inventory.browse.button.quick_mode")
         .accentColor(TagWrappers.AQUA)
         .name("Quick Mode")
         .appendCurrent("Status", SharedPlaceholders.STATE)
@@ -87,6 +91,18 @@ public final class RewardEditorLang implements LangContainer {
     public static final TextLocale UI_INVENTORY_OPTIONS_TITLE = LangEntry
         .builder("rewards.editor.ui.inventory.options.title")
         .text("Reward Editor • Options");
+
+    public static final IconLocale UI_INVENTORY_OPTIONS_BUTTON_WEIGHT = LangEntry
+        .iconBuilder("rewards.editor.ui.inventory.options.button.weight")
+        .accentColor(TagWrappers.AQUA)
+        .name("Weight")
+        .appendCurrent("Weight", SharedPlaceholders.REWARD_WEIGHT)
+        .appendCurrent("Roll Chance", SharedPlaceholders.REWARD_ROLL_CHANCE + "%")
+        .br()
+        .appendInfo("Drop weight determining the roll chance", "relative to the sum of all reward weights.")
+        .br()
+        .appendClick("Click to edit")
+        .build();
 
     public static final IconLocale UI_INVENTORY_OPTIONS_BUTTON_PREVIEW = LangEntry
         .iconBuilder("rewards.editor.ui.inventory.options.button.preview")
@@ -159,12 +175,12 @@ public final class RewardEditorLang implements LangContainer {
         .appendClick("Click to delete")
         .build();
 
-    public static final TextLocale UI_DIALOG_CREATION_TITLE = LangEntry
-        .builder("rewards.editor.ui.dialog.creation.title")
+    public static final TextLocale UI_DIALOG_MANUAL_CREATION_TITLE = LangEntry
+        .builder("rewards.editor.ui.dialog.manual_creation.title")
         .text(TagWrappers.GREEN.and(TagWrappers.UNDERLINED).wrap("Reward Creation"));
 
-    public static final DialogElementLocale UI_DIALOG_CREATION_BODY = LangEntry
-        .builder("rewards.editor.ui.dialog.creation.body")
+    public static final DialogElementLocale UI_DIALOG_MANUAL_CREATION_BODY = LangEntry
+        .builder("rewards.editor.ui.dialog.manual_creation.body")
         .dialogElement(
             "You are configuring a " + TagWrappers.GREEN.wrap("new reward") + ".",
             "Ensure the displayed icon matches your intended item.",
@@ -179,26 +195,32 @@ public final class RewardEditorLang implements LangContainer {
             )
         );
 
-    public static final TextLocale UI_DIALOG_CREATION_INPUT_ID = LangEntry
-        .builder("rewards.editor.ui.dialog.creation.input.id")
+    public static final TextLocale UI_DIALOG_MANUAL_CREATION_INPUT_ID = LangEntry
+        .builder("rewards.editor.ui.dialog.manual_creation.input.id")
         .text(TagWrappers.SPRITE_ITEM.apply(Material.NAME_TAG) + " Reward ID");
 
-    /* public static final TextLocale UI_DIALOG_CREATION_INPUT_SET_PREVIEW = LangEntry
-        .builder("rewards.editor.ui.dialog.creation.input.set_preview")
-        .text(TagWrappers.SPRITE_ITEM.apply(Material.OAK_SIGN) + " Set as Preview"); */
-
-    public static final TextLocale UI_DIALOG_CREATION_INPUT_ADD_TO_GIVEN_ITEMS = LangEntry
-        .builder("rewards.editor.ui.dialog.creation.input.add_given_items")
+    public static final TextLocale UI_DIALOG_MANUAL_CREATION_INPUT_ADD_TO_GIVEN_ITEMS = LangEntry
+        .builder("rewards.editor.ui.dialog.manual_creation.input.add_given_items")
         .text(TagWrappers.SPRITE_ITEM.apply(Material.CHEST_MINECART) + " Add to Given Items");
 
     public static final TextLocale UI_DIALOG_DELETION_TITLE = LangEntry
         .builder("rewards.editor.ui.dialog.deletion.title")
         .text(TagWrappers.RED.and(TagWrappers.UNDERLINED).wrap("Reward Deletion"));
 
+    public static final IconLocale UI_DIALOG_DELETION_ICON = LangEntry
+        .iconBuilder("rewards.editor.ui.dialog.deletion.icon")
+        .rawName(SharedPlaceholders.REWARD_NAME)
+        .rawLore(SharedPlaceholders.REWARD_DESCRIPTION, CommonPlaceholders.EMPTY_IF_ABOVE)
+        .appendCurrent("ID", SharedPlaceholders.REWARD_ID)
+        .appendCurrent("Weight", SharedPlaceholders.REWARD_WEIGHT)
+        .appendCurrent("Rarity", SharedPlaceholders.REWARD_RARITY)
+        .appendCurrent("Roll Chance", SharedPlaceholders.REWARD_ROLL_CHANCE + "%")
+        .build();
+
     public static final DialogElementLocale UI_DIALOG_DELETION_BODY = LangEntry
         .builder("rewards.editor.ui.dialog.deletion.body")
         .dialogElement(
-            "Are you sure you want to delete reward " + TagWrappers.RED.wrap(SharedPlaceholders.REWARD_ID) + " ?",
+            "Are you sure you want to delete this reward?",
             "",
             TagWrappers.GRAY.wrap("This action is " + TagWrappers.RED.wrap("irreversible") + "."),
             TagWrappers.GRAY.wrap("Think twice before proceeding.")
@@ -240,6 +262,32 @@ public final class RewardEditorLang implements LangContainer {
     public static final TextLocale UI_DIALOG_ITEM_ADD_BODY = LangEntry
         .builder("rewards.editor.ui.dialog.item_add.body")
         .text("Select the desired " + TagWrappers.GOLD.wrap("item save method") + ".");
+
+
+    public static final TextLocale UI_DIALOG_WEIGHT_TITLE = LangEntry
+        .builder("rewards.editor.ui.dialog.weight.title")
+        .text(TagWrappers.GOLD.and(TagWrappers.UNDERLINED).wrap("Reward Weight"));
+
+    public static final DialogElementLocale UI_DIALOG_WEIGHT_BODY = LangEntry
+        .builder("rewards.editor.ui.dialog.weight.body")
+        .dialogElement(
+            "Set the desired " + TagWrappers.GOLD.wrap("reward weight") + ".",
+            "",
+            TagWrappers.GRAY.wrap(
+                "For simplicity, it is recommended to keep the total weight at " + TagWrappers.WHITE.wrap("100") +
+                    " so each weight directly corresponds to its roll chance."
+            ),
+            "",
+            TagWrappers.GRAY.wrap("Current total crate weight:") + " " +
+                TagWrappers.AQUA.wrap(SharedPlaceholders.CRATE_TOTAL_REWARDS_WEIGHT),
+            TagWrappers.GRAY.wrap("Current reward roll chance:") + " " +
+                TagWrappers.AQUA.wrap(SharedPlaceholders.REWARD_ROLL_CHANCE + "%")
+        );
+
+    public static final TextLocale UI_DIALOG_WEIGHT_INPUT_WEIGHT = LangEntry
+        .builder("rewards.editor.ui.dialog.weight.input.weight")
+        .text(TagWrappers.SPRITE_ITEM.apply(Material.IRON_INGOT) + " Weight");
+
 
     private RewardEditorLang() {
     }

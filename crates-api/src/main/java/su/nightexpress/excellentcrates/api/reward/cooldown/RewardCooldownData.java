@@ -4,17 +4,19 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.sql.OwnableData;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
-public interface RewardCooldownData extends OwnableData<UUID, Identifier> {
+public interface RewardCooldownData extends OwnableData<UUID, RewardId> {
 
     boolean isExpired();
 
     boolean isExpirationAllowed();
 
     String getRewardIdString();
+
+    String getCrateIdString();
 
     boolean isPermanent();
 

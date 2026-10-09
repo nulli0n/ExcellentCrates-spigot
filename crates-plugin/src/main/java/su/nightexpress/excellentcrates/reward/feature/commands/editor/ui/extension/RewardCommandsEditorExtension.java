@@ -57,11 +57,9 @@ public class RewardCommandsEditorExtension implements RewardEditorExtension {
             .build();
     }
 
-    private void click(ActionContext context, Reward reward, RewardEditorHook hook,
-                       BackwardNavigator backwardNavigator) {
+    private void click(ActionContext context, Reward reward, RewardEditorHook hook, BackwardNavigator navigator) {
         Player player = context.getPlayer();
-        Identifier rewardId = reward.getId();
 
-        this.controller.onExtensionClick(player, rewardId, hook, backwardNavigator);
+        this.controller.onExtensionClick(player, reward, hook, navigator);
     }
 }

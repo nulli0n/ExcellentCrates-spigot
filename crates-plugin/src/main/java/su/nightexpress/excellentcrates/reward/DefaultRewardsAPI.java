@@ -24,6 +24,7 @@ import su.nightexpress.excellentcrates.api.reward.grant.RewardGrantAPI;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
 import su.nightexpress.excellentcrates.api.reward.preview.RewardPreviewAPI;
 import su.nightexpress.excellentcrates.api.reward.quota.RewardQuotaAPI;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 
 @NullMarked
@@ -104,8 +105,13 @@ public class DefaultRewardsAPI implements RewardsAPI {
     }
 
     @Override
-    public @Nullable Reward getReward(Identifier key) {
+    public @Nullable Reward getReward(RewardId key) {
         return registry.get(key);
+    }
+
+    @Override
+    public @Nullable Reward getReward(Identifier crateId, Identifier rewardId) {
+        return this.registry.resolveReward(crateId, rewardId);
     }
 
     @Override

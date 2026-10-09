@@ -51,6 +51,14 @@ public class KeyPlaceholderService implements KeyPlaceholders {
         return ctx -> {
             ctx.with(SharedPlaceholders.KEY_ID, () -> key.idString());
 
+            ctx.with(SharedPlaceholders.KEY_NAME, () -> {
+                return key.getDisplay().getName();
+            });
+
+            ctx.with(SharedPlaceholders.KEY_LORE, () -> {
+                return String.join("\n", key.getDisplay().getLore());
+            });
+
             this.placeholders.forEach(placeholder -> {
                 ctx.apply(placeholder.applyBase(key, player));
             });

@@ -15,7 +15,6 @@ import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
@@ -41,7 +40,7 @@ public class RewardLimitsAlternativeMenu extends AbstractObjectMenu<RewardLimits
     private final RewardPlaceholders             rewardPlaceholders;
     private final RewardLimitsEditorUIController controller;
 
-    private final ItemPopulator<Identifier> rewardPopulator;
+    private final ItemPopulator<Reward> rewardPopulator;
 
     public RewardLimitsAlternativeMenu(CratesPlugin plugin,
                                        RewardRegistry registry,
@@ -55,7 +54,7 @@ public class RewardLimitsAlternativeMenu extends AbstractObjectMenu<RewardLimits
         this.rewardPlaceholders = rewardPlaceholders;
         this.controller = controller;
 
-        this.rewardPopulator = ItemPopulator.builder(Identifier.class)
+        this.rewardPopulator = ItemPopulator.builder(Reward.class)
             .itemProvider((context, rewardId) -> this.createRewardItem(rewardId))
             .actionProvider(rewardId -> context -> this.handleRewardClick(context, rewardId))
             .slots(IntStream.range(0, 36).toArray())
@@ -102,9 +101,9 @@ public class RewardLimitsAlternativeMenu extends AbstractObjectMenu<RewardLimits
 
     @Override
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
-        List<Identifier> rewardIds = this.registry.keys()
+        List<Reward> rewardIds = this.registry.values()
             .stream()
-            .sorted(Comparator.comparing(Identifier::value))
+            .sorted(Comparator.comparing(r -> r.rawId().value()))
             .toList();
 
         this.rewardPopulator.populateTo(context, rewardIds, items);
@@ -120,10 +119,7 @@ public class RewardLimitsAlternativeMenu extends AbstractObjectMenu<RewardLimits
 
     }
 
-    private @Nullable NightItem createRewardItem(Identifier rewardId) {
-        Reward reward = this.registry.get(rewardId);
-        if (reward == null) return null;
-
+    private @Nullable NightItem createRewardItem(Reward reward) {
         NightItem icon = this.previewService.createPreviewIcon(reward);
 
         return icon
@@ -140,12 +136,12 @@ public class RewardLimitsAlternativeMenu extends AbstractObjectMenu<RewardLimits
         menuContext.moveBackward(context.getPlayer());
     }
 
-    private void handleRewardClick(ActionContext context, Identifier rewardId) {
+    private void handleRewardClick(ActionContext context, Reward reward) {
         Player player = context.getPlayer();
         RewardLimitsAlternativeMenuContext menuContext = this.getObject(context);
         RewardEditorHook hook = menuContext.hook();
 
-        if (this.controller.onAlternativeMenuRewardClick(player, rewardId, hook)) {
+        if (this.controller.onAlternativeMenuRewardClick(player, reward.id(), hook)) {
             menuContext.moveBackward(player);
         }
     }

@@ -18,10 +18,6 @@ public class RewardsLang implements LangContainer {
         .builder("rewards.command.root.description")
         .text("Root command for managing rewards.");
 
-    public static final TextLocale COMMAND_EDITOR_DESCRIPTION = LangEntry
-        .builder("rewards.command.editor.description")
-        .text("Editor command for managing rewards.");
-
     public static final MessageLocale GENERIC_REWARD_NOT_FOUND = LangEntry
         .builder("rewards.generic.reward_not_found")
         .chatMessage("Reward with ID " + TagWrappers.RED.wrap(CommonPlaceholders.GENERIC_VALUE) + " not found.");
@@ -31,11 +27,6 @@ public class RewardsLang implements LangContainer {
         .chatMessage("Reward command bundle with ID " + TagWrappers.RED.wrap(CommonPlaceholders.GENERIC_VALUE) +
             " not found."
         );
-
-    public static final MessageLocale ERROR_NO_REWARDS_COMPONENT = LangEntry
-        .builder("rewards.error.no_rewards_component")
-        .chatMessage("No rewards component found for crate " + TagWrappers.WHITE.wrap(SharedPlaceholders.CRATE_NAME) +
-            ".");
 
     public static final MessageLocale ERROR_REWARD_NOT_FOUND = LangEntry
         .builder("rewards.error.reward_not_found")

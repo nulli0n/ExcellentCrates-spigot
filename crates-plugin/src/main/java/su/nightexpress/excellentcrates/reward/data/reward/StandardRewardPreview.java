@@ -62,12 +62,12 @@ public class StandardRewardPreview implements RewardPreview {
     }
 
     @Override
-    public boolean isUseIconData() {
+    public boolean isInheritFromIcon() {
         return useIconData;
     }
 
     @Override
-    public void setUseIconData(boolean autoResolveFromIcon) {
+    public void setInheritFromIcon(boolean autoResolveFromIcon) {
         this.useIconData = autoResolveFromIcon;
     }
 }

@@ -15,11 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
-import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.reward.editor.lang.RewardEditorLang;
 import su.nightexpress.excellentcrates.reward.editor.ui.RewardEditorUIController;
@@ -38,13 +36,11 @@ import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 @NullMarked
 public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuContext> {
 
-    private final RewardRegistry           registry;
     private final RewardEditorUIController controller;
 
-    public RewardPreviewMenu(CratesPlugin plugin, RewardRegistry registry, RewardEditorUIController controller) {
+    public RewardPreviewMenu(CratesPlugin plugin, RewardEditorUIController controller) {
         super(plugin, MenuType.GENERIC_9X4, RewardEditorLang.UI_INVENTORY_PREVIEW_TITLE
             .text(), RewardPreviewMenuContext.class);
-        this.registry = registry;
         this.controller = controller;
     }
 
@@ -70,11 +66,12 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
             if (itemStack == null || itemStack.getType().isAir()) return;
 
             RewardPreviewMenuContext menuContext = this.getObject(context);
-            Identifier rewardId = menuContext.rewardId();
+            Reward reward = menuContext.rewardRef().get();
+            if (reward == null) return;
 
             Player player = context.getPlayer();
 
-            if (this.controller.onPreviewMenuIconClick(player, rewardId, itemStack)) {
+            if (this.controller.onPreviewMenuIconClick(player, reward, itemStack)) {
                 context.getViewer().refresh(); // Refresh on successful replacement only.
             }
         }
@@ -108,8 +105,7 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
     @Override
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
         RewardPreviewMenuContext menuContext = this.getObject(context);
-        Identifier rewardId = menuContext.rewardId();
-        Reward reward = this.registry.get(rewardId);
+        Reward reward = menuContext.rewardRef().get();
         if (reward == null) return;
 
         RewardPreview preview = reward.getPreview();
@@ -124,11 +120,7 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
                         .with(CommonPlaceholders.GENERIC_VALUE, preview::getName)
                     )
                 )
-                .action(ctx -> {
-                    Player player = ctx.getPlayer();
-                    Runnable callback = () -> ctx.getViewer().refresh();
-                    this.controller.onPreviewMenuNameClick(player, rewardId, preview, callback);
-                })
+                .action(this::handleRewardName)
                 .build()
             )
             .slots(10)
@@ -146,11 +138,7 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
                         })
                     )
                 )
-                .action(ctx -> {
-                    Player player = ctx.getPlayer();
-                    Runnable callback = () -> ctx.getViewer().refresh();
-                    this.controller.onPreviewMenuLoreClick(player, rewardId, preview, callback);
-                })
+                .action(this::handleRewardLore)
                 .build()
             )
             .slots(12)
@@ -178,13 +166,8 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
                         .with(SharedPlaceholders.STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(true))
                     )
                 )
-                .condition(ctx -> preview.isUseIconData())
-                .action(ctx -> {
-                    Player player = ctx.getPlayer();
-                    if (this.controller.onPreviewMenuAutoResolveClick(player, rewardId, false)) {
-                        this.refresh(player);
-                    }
-                })
+                .condition(ctx -> preview.isInheritFromIcon())
+                .action(this::handleRewardInheritFromIcon)
                 .build()
             )
             .state("disabled", ItemState.builder()
@@ -195,13 +178,8 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
                         .with(SharedPlaceholders.STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(false))
                     )
                 )
-                .condition(ctx -> !preview.isUseIconData())
-                .action(ctx -> {
-                    Player player = ctx.getPlayer();
-                    if (this.controller.onPreviewMenuAutoResolveClick(player, rewardId, true)) {
-                        this.refresh(player);
-                    }
-                })
+                .condition(ctx -> !preview.isInheritFromIcon())
+                .action(this::handleRewardInheritFromIcon)
                 .build()
             )
             .slots(16)
@@ -223,5 +201,49 @@ public class RewardPreviewMenu extends AbstractObjectMenu<RewardPreviewMenuConte
         RewardPreviewMenuContext menuContext = this.getObject(context);
 
         menuContext.moveBackward(context.getPlayer());
+    }
+
+    private void handleRewardName(ActionContext context) {
+        RewardPreviewMenuContext menuContext = this.getObject(context);
+        Reward reward = menuContext.rewardRef().get();
+        if (reward == null) {
+            return;
+        }
+
+        Player player = context.getPlayer();
+        RewardPreview preview = reward.getPreview();
+        Runnable refreshUI = () -> this.refresh(player);
+
+        this.controller.onPreviewMenuNameClick(player, reward, preview, refreshUI);
+    }
+
+    private void handleRewardLore(ActionContext context) {
+        RewardPreviewMenuContext menuContext = this.getObject(context);
+        Reward reward = menuContext.rewardRef().get();
+        if (reward == null) {
+            return;
+        }
+
+        Player player = context.getPlayer();
+        RewardPreview preview = reward.getPreview();
+        Runnable refreshUI = () -> this.refresh(player);
+
+        this.controller.onPreviewMenuLoreClick(player, reward, preview, refreshUI);
+    }
+
+    private void handleRewardInheritFromIcon(ActionContext context) {
+        RewardPreviewMenuContext menuContext = this.getObject(context);
+        Reward reward = menuContext.rewardRef().get();
+        if (reward == null) {
+            return;
+        }
+
+        Player player = context.getPlayer();
+        RewardPreview preview = reward.getPreview();
+        boolean newState = !preview.isInheritFromIcon();
+
+        if (this.controller.onPreviewMenuAutoResolveClick(player, reward, newState)) {
+            this.refresh(player);
+        }
     }
 }

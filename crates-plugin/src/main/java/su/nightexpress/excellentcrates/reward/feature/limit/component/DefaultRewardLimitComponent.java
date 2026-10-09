@@ -6,6 +6,7 @@ import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
 import su.nightexpress.excellentcrates.api.common.limit.LimitType;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.core.common.limit.DefaultLimitOptions;
 
 @NullMarked
@@ -15,7 +16,7 @@ public class DefaultRewardLimitComponent implements RewardLimitComponent {
     private LimitOptions globalOptions;
     private LimitOptions individualOptions;
     private boolean      alternativeEnabled;
-    private Identifier   alternativeRewardId;
+    private RewardId     alternativeRewardId;
 
     DefaultRewardLimitComponent(Builder builder) {
         this.enabled = builder.enabled;
@@ -90,12 +91,12 @@ public class DefaultRewardLimitComponent implements RewardLimitComponent {
     }
 
     @Override
-    public Identifier getAlternativeRewardId() {
+    public RewardId getAlternativeRewardId() {
         return this.alternativeRewardId;
     }
 
     @Override
-    public void setAlternativeRewardId(Identifier rewardId) {
+    public void setAlternativeRewardId(RewardId rewardId) {
         this.alternativeRewardId = rewardId;
     }
 
@@ -105,14 +106,14 @@ public class DefaultRewardLimitComponent implements RewardLimitComponent {
         private LimitOptions globalOptions;
         private LimitOptions individualOptions;
         private boolean      alternativeEnabled;
-        private Identifier   alternativeRewardId;
+        private RewardId     alternativeRewardId;
 
         public Builder() {
             this.enabled = false;
             this.globalOptions = DefaultLimitOptions.createDefault();
             this.individualOptions = DefaultLimitOptions.createDefault();
             this.alternativeEnabled = false;
-            this.alternativeRewardId = new Identifier("none");
+            this.alternativeRewardId = new RewardId(new Identifier("none"), new Identifier("none"));
         }
 
         public Builder setEnabled(boolean enabled) {
@@ -135,7 +136,7 @@ public class DefaultRewardLimitComponent implements RewardLimitComponent {
             return this;
         }
 
-        public Builder setAlternativeRewardId(Identifier rewardId) {
+        public Builder setAlternativeRewardId(RewardId rewardId) {
             this.alternativeRewardId = rewardId;
             return this;
         }

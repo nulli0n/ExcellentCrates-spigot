@@ -10,8 +10,4 @@ public interface CrateRewardEntry {
     Identifier getRewardId();
 
     void setRewardId(Identifier rewardId);
-
-    double getWeight();
-
-    void setWeight(double weight);
 }

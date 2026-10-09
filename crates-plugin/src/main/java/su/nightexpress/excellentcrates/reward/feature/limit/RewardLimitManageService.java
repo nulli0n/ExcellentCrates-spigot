@@ -11,12 +11,12 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.cache.CacheStrategy;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
 import su.nightexpress.excellentcrates.api.common.limit.LimitRemaining;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.core.common.limit.DefaultLimitRemaining;
 import su.nightexpress.excellentcrates.reward.feature.limit.db.RewardLimitCachedDataService;
 import su.nightexpress.excellentcrates.reward.feature.limit.db.RewardLimitData;
@@ -51,7 +51,7 @@ public class RewardLimitManageService {
         if (limit == null || !limit.isEnabled()) return;
 
         UUID playerId = player.getUniqueId();
-        Identifier rewardId = reward.getId();
+        RewardId rewardId = reward.getId();
 
         LimitOptions globalOptions = limit.getGlobalOptions();
         LimitOptions individualOptions = limit.getIndividualOptions();
@@ -64,7 +64,7 @@ public class RewardLimitManageService {
         }
     }
 
-    private void incrementRolls(UUID playerId, Identifier rewardId, int amount) {
+    private void incrementRolls(UUID playerId, RewardId rewardId, int amount) {
         RewardLimitData data = this.cachedDataService.getCachedOrCreate(playerId, rewardId, CacheStrategy.PERMANENT);
 
         data.setRolls(data.getRolls() + amount);
@@ -76,7 +76,7 @@ public class RewardLimitManageService {
         RewardLimitComponent limit = reward.getComponentOrNull(RewardComponentKeys.LIMIT);
         if (limit == null || !limit.isEnabled()) return DefaultLimitRemaining.unlimited();
 
-        Identifier rewardId = reward.getId();
+        RewardId rewardId = reward.getId();
         UUID playerId = player.getUniqueId();
 
         LimitOptions globalOptions = limit.getGlobalOptions();
@@ -107,15 +107,15 @@ public class RewardLimitManageService {
             .orElse(DefaultLimitRemaining.unlimited());
     }
 
-    public int getGlobalRolls(Identifier rewardId) {
+    public int getGlobalRolls(RewardId rewardId) {
         return this.getRolls(GLOBAL_ID, rewardId);
     }
 
-    public int getIndividualRolls(UUID playerId, Identifier rewardId) {
+    public int getIndividualRolls(UUID playerId, RewardId rewardId) {
         return this.getRolls(playerId, rewardId);
     }
 
-    private int getRolls(UUID playerId, Identifier rewardId) {
+    private int getRolls(UUID playerId, RewardId rewardId) {
         RewardLimitData data = this.cachedDataService.getCached(playerId, rewardId).orElse(null);
         if (data == null) return 0;
 

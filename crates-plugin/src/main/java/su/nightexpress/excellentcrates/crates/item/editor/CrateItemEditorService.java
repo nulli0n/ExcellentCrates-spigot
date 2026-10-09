@@ -24,7 +24,7 @@ public class CrateItemEditorService {
 
             AdaptedItem item;
             if (setupContext.useItemRef()) {
-                item = ItemHelper.bukkitIfCrates(itemStack);
+                item = ItemHelper.bukkitIfFromCrates(itemStack);
             }
             else {
                 item = ItemHelper.bukkit(itemStack);

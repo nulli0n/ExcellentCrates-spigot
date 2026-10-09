@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.preview.NameAndLore;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.LangUtil;
@@ -24,7 +24,7 @@ public class RewardPreviewResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RewardPreviewResolver.class);
 
-    private final Cache<Identifier, NameAndLore> cache;
+    private final Cache<RewardId, NameAndLore> cache;
 
     public RewardPreviewResolver(long expireDuration, TimeUnit unit) {
         this.cache = CacheBuilder.newBuilder()
@@ -32,7 +32,7 @@ public class RewardPreviewResolver {
             .build();
     }
 
-    public void invalidateCache(Identifier id) {
+    public void invalidateCache(RewardId id) {
         this.cache.invalidate(id);
     }
 
@@ -43,7 +43,7 @@ public class RewardPreviewResolver {
     public NameAndLore getDisplayInfo(Reward reward) {
         RewardPreview preview = reward.getPreview();
 
-        if (!preview.isUseIconData()) {
+        if (!preview.isInheritFromIcon()) {
             return new NameAndLore(preview.getName(), preview.getLore());
         }
 
@@ -52,7 +52,7 @@ public class RewardPreviewResolver {
             return cache.get(reward.id(), () -> computeFromIcon(reward));
         }
         catch (ExecutionException e) {
-            LOGGER.error("Failed to resolve preview for reward {}", reward.idString(), e);
+            LOGGER.error("Failed to resolve preview for reward {}", reward.id(), e);
             // Fallback на данные из конфига при ошибке генерации
             return new NameAndLore(preview.getName(), preview.getLore());
         }
@@ -64,7 +64,7 @@ public class RewardPreviewResolver {
         ItemStack itemStack = icon.getItemStack();
 
         if (itemStack == null) {
-            LOGGER.warn("Failed to update preview for reward {}: item data is invalid.", reward.idString());
+            LOGGER.warn("Failed to update preview for reward {}: item data is invalid.", reward.id());
             return new NameAndLore(preview.getName(), preview.getLore());
         }
 

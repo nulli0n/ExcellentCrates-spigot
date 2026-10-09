@@ -52,7 +52,7 @@ public class RewardEvaluationService implements RewardEvaluator {
     @Override
     public int getRequiredRewards(Crate crate) {
         CrateRewardsComponent rewards = this.getRewardsComponent(crate);
-        return rewards == null ? 0 : rewards.getRequiredAmount();
+        return rewards == null ? 0 : rewards.getRollCount();
     }
 
     public Set<RollableReward> resolveAvailableRewards(Crate crate, Player player) {
@@ -60,15 +60,16 @@ public class RewardEvaluationService implements RewardEvaluator {
         if (rewards == null) return Set.of();
 
         Set<RollableReward> resolvedRewards = new HashSet<>();
+        Identifier crateId = crate.id();
 
         for (CrateRewardEntry rewardEntry : rewards.getRewards()) {
-            Reward reward = this.rewardResolver.resolveReward(rewardEntry.getRewardId());
-            if (reward == null || rewardEntry.getWeight() <= NEGATIVE_WEIGHT) continue;
+            Reward reward = this.rewardResolver.resolveReward(crateId, rewardEntry.getRewardId());
+            if (reward == null || reward.getWeight() <= NEGATIVE_WEIGHT) continue;
 
             QuotaThreshold threshold = this.quotaService.getLeastThreshold(player, crate, reward);
             if (threshold.isExhausted()) continue;
 
-            resolvedRewards.add(new RollableReward(reward, rewardEntry.getWeight(), threshold));
+            resolvedRewards.add(new RollableReward(reward, reward.getWeight(), threshold));
         }
 
         return resolvedRewards;
@@ -119,27 +120,31 @@ public class RewardEvaluationService implements RewardEvaluator {
 
     @Override
     public double calculateProbability(Crate crate, Reward reward) {
-        return this.calculateRewardProbability(crate, reward.getId());
+        return this.calculateRewardProbability(crate, reward.rawId());
     }
 
     @Override
     public double calculateRewardProbability(Crate crate, Identifier rewardId) {
-        CrateRewardsComponent rewards = this.getRewardsComponent(crate);
-        if (rewards == null) return 0D;
+        CrateRewardsComponent crateRewards = this.getRewardsComponent(crate);
+        if (crateRewards == null) return 0D;
 
-        CrateRewardEntry rewardEntry = rewards.getReward(rewardId);
-        if (rewardEntry == null || rewardEntry.getWeight() <= NEGATIVE_WEIGHT) return 0D;
+        CrateRewardEntry rewardEntry = crateRewards.getReward(rewardId);
+        if (rewardEntry == null) return 0D;
+
+        Reward reward = this.rewardResolver.resolveReward(crate.id(), rewardId);
+        if (reward == null || reward.getWeight() <= NEGATIVE_WEIGHT) return 0D;
 
         double sum = 0D;
 
-        for (CrateRewardEntry competitor : rewards.getRewards()) {
-            if (competitor.getWeight() <= NEGATIVE_WEIGHT) continue;
+        for (CrateRewardEntry competitorEntry : crateRewards.getRewards()) {
+            Reward competitor = this.rewardResolver.resolveReward(crate.id(), competitorEntry.getRewardId());
+            if (competitor == null || competitor.getWeight() <= NEGATIVE_WEIGHT) continue;
 
             sum += competitor.getWeight();
         }
 
         if (sum <= NEGATIVE_WEIGHT) return 0D;
 
-        return rewardEntry.getWeight() / sum;
+        return reward.getWeight() / sum;
     }
 }

@@ -55,7 +55,7 @@ public class RewardSelectionPipelineStage implements PipelineStage {
         int batchSize = context.getComponent(PipelineComponentKeys.BATCH)
             .map(BatchPipelineComponent::getSelectedAmount).orElse(1);
 
-        int requiredSelections = crateRewards.getRequiredAmount() * batchSize;
+        int requiredSelections = crateRewards.getRollCount() * batchSize;
         List<PipelineReward> targetRewards = new ArrayList<>();
 
         ProcessCallback<SelectivePickContext> callback = new ProcessCallback<SelectivePickContext>() {

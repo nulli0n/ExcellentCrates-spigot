@@ -42,7 +42,7 @@ public class InventoryPreviewMenu extends AbstractObjectMenu<InventoryMenuContex
     private final RewardsAPI            rewardsAPI;
     private final InventoryMenuSettings settings;
 
-    private final ItemPopulator<Identifier> rewardPopulator;
+    private final ItemPopulator<Reward> rewardPopulator;
 
     public InventoryPreviewMenu(CratesPlugin plugin,
                                 CratePlaceholders cratePlaceholders,
@@ -55,17 +55,14 @@ public class InventoryPreviewMenu extends AbstractObjectMenu<InventoryMenuContex
         this.rewardsAPI = rewardsAPI;
         this.settings = settings;
 
-        this.rewardPopulator = ItemPopulator.builder(Identifier.class)
+        this.rewardPopulator = ItemPopulator.builder(Reward.class)
             .slots(this.settings.getRewardSlots())
-            .itemProvider((context, rewardId) -> {
+            .itemProvider((context, reward) -> {
                 Player player = context.getPlayer();
                 InventoryMenuContext menuContext = this.getObject(context);
 
                 Crate crate = this.crateResolver.resolveCrate(menuContext.crateId());
                 if (crate == null) return null; // Crate is not found, skip.
-
-                Reward reward = this.rewardsAPI.getReward(rewardId);
-                if (reward == null) return null; // Reward is not found, skip.
 
                 NightItem icon = this.rewardsAPI.getView().createPreviewIcon(reward);
 
@@ -184,32 +181,34 @@ public class InventoryPreviewMenu extends AbstractObjectMenu<InventoryMenuContex
     @Override
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
         InventoryMenuContext menuContext = this.getObject(context);
+
         Crate crate = this.crateResolver.resolveCrate(menuContext.crateId());
         if (crate == null) return; // Crate is not found, skip.
 
-        List<Identifier> rewardIds = new ArrayList<>();
+        Identifier crateId = crate.id();
 
-        CrateRewardsComponent rewards = this.rewardsAPI.getRewardsComponent(crate);
-        if (rewards == null) return; // No rewards component, skip.
+        List<Reward> rewardIds = new ArrayList<>();
+
+        CrateRewardsComponent crateRewards = this.rewardsAPI.getRewardsComponent(crate);
+        if (crateRewards == null) return; // No rewards component, skip.
 
         Player player = context.getPlayer();
 
-        rewards.getRewards().forEach(crateReward -> {
-            if (crateReward.getWeight() <= 0) return; // Skip rewards with zero weight.
-
+        crateRewards.getRewards().forEach(crateReward -> {
             Identifier rewardId = crateReward.getRewardId();
-            Reward reward = this.rewardsAPI.getReward(rewardId);
+            Reward reward = this.rewardsAPI.getReward(crateId, rewardId);
             if (reward == null) return; // Reward is not found, skip.
+            if (reward.getWeight() <= 0) return; // Skip rewards with zero weight.
 
             if (this.settings.isHideUnavailable()) {
                 boolean isAvailable = this.rewardsAPI.getQuota().testQuotas(player, crate, reward).success();
                 if (!isAvailable) return; // Skip unavailable rewards.
             }
 
-            rewardIds.add(rewardId);
+            rewardIds.add(reward);
         });
 
-        rewardIds.sort(Comparator.comparing(Identifier::value));
+        rewardIds.sort(Comparator.comparing(reward -> reward.rawId().value()));
 
         this.rewardPopulator.populateTo(context, rewardIds, items);
     }

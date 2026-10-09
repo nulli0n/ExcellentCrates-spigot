@@ -23,7 +23,7 @@ public class KeyItemEditorService {
 
             AdaptedItem item;
             if (setupContext.useItemRef()) {
-                item = ItemHelper.bukkitIfCrates(itemStack);
+                item = ItemHelper.bukkitIfFromCrates(itemStack);
             }
             else {
                 item = ItemHelper.bukkit(itemStack);

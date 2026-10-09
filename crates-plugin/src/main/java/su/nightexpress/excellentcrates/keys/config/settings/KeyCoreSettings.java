@@ -7,14 +7,14 @@ import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.configuration.property.ConfigProperty;
 
 @NullMarked
-public record KeyCoreSettings(String[] commandAliases, int dataSaveInterval, int displayCacheTTL,
+public record KeyCoreSettings(String[] commandAliases,
+                              int dataSaveInterval,
                               KeyStorageSettings storage) {
 
     public static KeyCoreSettings defaults() {
         return new KeyCoreSettings(
             Schema.COMMAND_ALIASES.getDefaultValue(),
             Schema.DATA_SAVE_INTERVAL.getDefaultValue(),
-            Schema.DISPLAY_CACHE_TTL.getDefaultValue(),
             KeyStorageSettings.defaults()
         );
     }
@@ -22,11 +22,10 @@ public record KeyCoreSettings(String[] commandAliases, int dataSaveInterval, int
     public static KeyCoreSettings loadFrom(FileConfig config) {
         String[] commandAliases = config.getOrSet(Schema.COMMAND_ALIASES);
         int dataSaveInterval = config.getOrSet(Schema.DATA_SAVE_INTERVAL);
-        int displayCacheTTL = config.getOrSet(Schema.DISPLAY_CACHE_TTL);
 
         KeyStorageSettings storage = KeyStorageSettings.loadFrom(config);
 
-        return new KeyCoreSettings(commandAliases, dataSaveInterval, displayCacheTTL, storage);
+        return new KeyCoreSettings(commandAliases, dataSaveInterval, storage);
     }
 
     private static final class Schema {
@@ -43,13 +42,6 @@ public record KeyCoreSettings(String[] commandAliases, int dataSaveInterval, int
             "data_save_interval",
             5,
             "The interval in seconds at which key data is saved."
-        );
-
-        static final ConfigProperty<Integer> DISPLAY_CACHE_TTL = ConfigProperty.of(
-            ConfigCodecs.INT,
-            "display_cache_ttl",
-            15,
-            "The time-to-live in seconds for the display cache."
         );
     }
 }

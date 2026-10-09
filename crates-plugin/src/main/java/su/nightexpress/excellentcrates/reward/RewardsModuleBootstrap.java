@@ -23,7 +23,6 @@ import su.nightexpress.excellentcrates.reward.broadcast.RewardBroadcastBootstrap
 import su.nightexpress.excellentcrates.reward.command.RewardCommandBootstrapContext;
 import su.nightexpress.excellentcrates.reward.config.RewardsConfigBootstrapContext;
 import su.nightexpress.excellentcrates.reward.crate.component.RewardComponentBootstrapContext;
-import su.nightexpress.excellentcrates.reward.crate.editor.RewardComponentEditorContext;
 import su.nightexpress.excellentcrates.reward.data.RewardDataBootstrapContext;
 import su.nightexpress.excellentcrates.reward.dispatcher.DefaultRewardMessageDispatcher;
 import su.nightexpress.excellentcrates.reward.editor.RewardEditorBootstrapContext;
@@ -118,14 +117,13 @@ public class RewardsModuleBootstrap extends BaseModuleBootstrap {
         RewardEditorBootstrapContext editorContext = new RewardEditorBootstrapContext(
             plugin,
             coreUI,
+            cratePlaceholders,
             dispatcher,
             rewards,
             dataContext.dataService,
             rewardPlaceholders,
             previewContext.previewService
         );
-
-        commandsContext.commands.register(editorContext.editorCommand);
 
         apiBuilder.setEditor(editorContext.api);
 
@@ -152,16 +150,11 @@ public class RewardsModuleBootstrap extends BaseModuleBootstrap {
         // ----------------------------
         // Initialize Reward Component Bootstrap Context
         // ----------------------------
-        RewardComponentBootstrapContext componentContext = new RewardComponentBootstrapContext(plugin, crates);
-        RewardComponentEditorContext componentEditorContext = new RewardComponentEditorContext(
-            plugin, coreUI, dispatcher, crates, rewards, rewardPlaceholders, previewContext.previewService,
-            editorContext.uiService
+        RewardComponentBootstrapContext componentContext = new RewardComponentBootstrapContext(
+            plugin, coreUI, dispatcher, crates, rewards, dataContext.dataService, editorContext.uiService
         );
 
         this.registerComponent(componentContext);
-        this.registerComponent(componentEditorContext);
-
-        dataContext.extensions.register(componentContext.getDataExtension());
 
         this.bridge.requireAvailable(CoreServices.CRATES, cratesApi -> {
             cratesApi.pipeline().registerStage(
@@ -175,7 +168,8 @@ public class RewardsModuleBootstrap extends BaseModuleBootstrap {
                 evaluationContext.getEvaluationPipelineStage()
             );
             cratesApi.data().registerExtension(componentContext.getCrateDataExtension());
-            cratesApi.editor().registerExtension(componentEditorContext.editorExtension);
+            cratesApi.editor().registerExtension(componentContext.getCrateEditorExtension());
+            cratesApi.getPlaceholders().registerPlaceholder(componentContext.getCratePlaceholder());
         });
 
         // ----------------------------

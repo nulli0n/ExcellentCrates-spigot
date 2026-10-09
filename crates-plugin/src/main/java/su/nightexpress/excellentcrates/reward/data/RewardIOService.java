@@ -16,8 +16,12 @@ import su.nightexpress.engine.id.IdentifierParser;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.extension.RewardDataExtension;
-import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardPreview;
+import su.nightexpress.excellentcrates.api.reward.data.model.RewardBase;
+import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
+import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardBase;
 import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardBuilder;
+import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardPreview;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.exception.ModelLoadException;
 import su.nightexpress.nightcore.util.FileUtil;
@@ -35,12 +39,15 @@ public class RewardIOService {
         this.extensions = extensions;
     }
 
-    public Path getRewardFile(Reward crate) {
-        return this.rewardsDir.resolve(FileConfig.withExtension(crate.idString()));
+    public Path getRewardFile(Reward reward) {
+        String crateDir = reward.id().crateId().value();
+        String rewardFileName = reward.id().rewardId().value();
+
+        return this.rewardsDir.resolve(crateDir).resolve(FileConfig.withExtension(rewardFileName));
     }
 
-    public Optional<Path> getOrCreateRewardFile(Reward crate) {
-        Path file = this.getRewardFile(crate);
+    public Optional<Path> getOrCreateRewardFile(Reward reward) {
+        Path file = this.getRewardFile(reward);
         if (!Files.exists(file)) {
             try {
                 Files.createDirectories(file.getParent());
@@ -73,31 +80,52 @@ public class RewardIOService {
     public List<Reward> readRewards() {
         List<Reward> rewards = new ArrayList<>();
 
-        FileUtil.findYamlFiles(this.rewardsDir).forEach(file -> {
-            try {
-                rewards.add(this.readReward(file));
+        FileUtil.findFiles(this.rewardsDir, Files::isDirectory).forEach(crateDir -> {
+            String crateName = crateDir.getFileName().toString();
+            Identifier crateId = IdentifierParser.parse(crateName).orElse(null);
+            if (crateId == null) {
+                LOGGER.error("Invalid crate ID '{}'", crateName);
+                return;
             }
-            catch (ModelLoadException exception) {
-                LOGGER.error("Reward '{}' can not be loaded.", file);
-                LOGGER.error("Reason: ", exception);
-            }
+
+            FileUtil.findYamlFiles(crateDir).forEach(file -> {
+                try {
+                    rewards.add(this.readReward(crateId, file));
+                }
+                catch (ModelLoadException exception) {
+                    LOGGER.error("Reward '{}' can not be loaded.", file);
+                    LOGGER.error("Reason: ", exception);
+                }
+            });
         });
+
 
         return rewards;
     }
 
-    public Reward readReward(Path file) throws ModelLoadException {
+    public Reward readReward(Identifier crateId, Path file) throws ModelLoadException {
         String name = FileUtil.getNameWithoutExtension(file);
 
-        Identifier id = IdentifierParser.parseSanitized(name)
+        Identifier rewardId = IdentifierParser.parseSanitized(name)
             .orElseThrow(() -> new ModelLoadException("Invalid file name"));
+
+        RewardId id = new RewardId(crateId, rewardId);
 
         FileConfig config = FileConfig.load(file);
 
-        StandardRewardPreview preview = config.getOrSet("Preview", StandardRewardPreview.class, StandardRewardPreview
-            .createDefault());
+        RewardBase base = config.getOrSet("base",
+            StandardRewardBase.class,
+            StandardRewardBase.createDefault()
+        );
+
+        RewardPreview preview = config.getOrSet("preview",
+            StandardRewardPreview.class,
+            StandardRewardPreview.createDefault()
+        );
 
         StandardRewardBuilder builder = new StandardRewardBuilder(id);
+
+        builder.base(base);
         builder.preview(preview);
 
         this.extensions.getEntries().forEach(extension -> {
@@ -118,7 +146,8 @@ public class RewardIOService {
 
         FileConfig config = FileConfig.load(file);
 
-        config.set("Preview", reward.getPreview());
+        config.set("base", reward.getBase());
+        config.set("preview", reward.getPreview());
 
         this.extensions.getEntries().forEach(extension -> {
             extension.onWrite(config, reward);

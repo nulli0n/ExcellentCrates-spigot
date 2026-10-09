@@ -45,18 +45,25 @@ public class RewardPreviewService {
     }
 
     public NightItem createPreviewIconWithAllPlaceholders(Crate crate, Reward reward) {
-        return this.createPreviewIcon(reward)
-            .replace(ctx -> ctx.apply(this.placeholders.allPlaceholders(crate, reward)));
+        return this.addPlaceholders(this.createPreviewIcon(reward), crate, reward);
     }
 
     public NightItem createPreviewIcon(Reward reward) {
         return NightItem.fromItemStack(this.createPreviewItem(reward));
     }
 
+    public NightItem addPlaceholders(NightItem item, Reward reward) {
+        return item.replace(ctx -> ctx.apply(this.placeholders.basePlaceholders(reward)));
+    }
+
+    public NightItem addPlaceholders(NightItem item, Crate crate, Reward reward) {
+        return item.replace(ctx -> ctx.apply(this.placeholders.allPlaceholders(crate, reward)));
+    }
+
     public ItemStack createDisplayItem(Reward reward) {
         ItemStack itemStack = this.createPreviewItem(reward);
 
-        if (!reward.getPreview().isUseIconData()) {
+        if (!reward.getPreview().isInheritFromIcon()) {
             NameAndLore resolvedInfo = this.previewResolver.getDisplayInfo(reward);
             ItemUtil.editMeta(itemStack, meta -> {
                 ItemUtil.setCustomName(meta, resolvedInfo.name());

@@ -35,6 +35,8 @@ public final class SharedPlaceholders {
     public static final String CRATE_INITIAL_GLOBAL_COOLDOWN     = "%crate_initial_global_cooldown%";
     public static final String CRATE_INITIAL_INDIVIDUAL_COOLDOWN = "%crate_initial_individual_cooldown%";
 
+    public static final String CRATE_TOTAL_REWARDS_WEIGHT = "%crate_total_rewards_weight%";
+
     public static final String REWARD_ID                = "%reward_id%";
     public static final String REWARD_NAME              = "%reward_name%";
     public static final String REWARD_DESCRIPTION       = "%reward_description%";

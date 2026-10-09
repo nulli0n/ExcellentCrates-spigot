@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 import su.nightexpress.excellentcrates.api.common.quota.QuotaThreshold;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
-import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardEntry;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholder;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.reward.quota.RewardQuotaService;
@@ -34,7 +33,7 @@ public class RewardQuotaPlaceholder implements RewardPlaceholder {
     }
 
     @Override
-    public Consumer<Builder> applyInCrate(CrateRewardEntry entry, Crate crate, Reward reward, @Nullable Player player) {
+    public Consumer<Builder> applyInCrate(Crate crate, Reward reward, @Nullable Player player) {
         return ctx -> {
             if (player != null) {
                 ctx.with(SharedPlaceholders.REWARD_QUOTA_THRESHOLD, () -> {

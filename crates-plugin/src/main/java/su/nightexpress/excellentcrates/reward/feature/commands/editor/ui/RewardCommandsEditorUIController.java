@@ -7,11 +7,12 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.FeedbackHandler;
 import su.nightexpress.engine.dispatcher.MessageDispatcher;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.ui.menu.BackwardNavigator;
-import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandPool;
+import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandExecutionMode;
+import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandPool;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.reward.feature.commands.editor.RewardCommandsEditorService;
 import su.nightexpress.excellentcrates.reward.feature.commands.editor.ui.context.CommandBundleContext;
 import su.nightexpress.excellentcrates.reward.feature.commands.editor.ui.dialog.context.CommandsBundleDeleteDialogContext;
@@ -40,14 +41,14 @@ public class RewardCommandsEditorUIController implements FeedbackHandler {
         return this.dispatcher;
     }
 
-    public void onExtensionClick(Player player, Identifier rewardId, RewardEditorHook hook,
+    public void onExtensionClick(Player player, Reward reward, RewardEditorHook hook,
                                  BackwardNavigator backwardNavigator) {
-        RewardCommandsMenuContext menuContext = new RewardCommandsMenuContext(rewardId, hook, backwardNavigator);
+        RewardCommandsMenuContext menuContext = new RewardCommandsMenuContext(reward.id(), hook, backwardNavigator);
 
         this.handleFeedback(player, this.uiService.openCommandsMenu(player, menuContext));
     }
 
-    public boolean onCommandsMenuAddClick(Player player, Identifier rewardId, RewardCommandPool bundle,
+    public boolean onCommandsMenuAddClick(Player player, RewardId rewardId, RewardCommandPool bundle,
                                           RewardEditorHook hook) {
         return this.handleFeedback(player, this.editorService.addCommandBundle(hook, bundle));
     }
@@ -56,7 +57,7 @@ public class RewardCommandsEditorUIController implements FeedbackHandler {
         return this.handleFeedback(player, this.editorService.setCommandsState(hook, newState));
     }
 
-    public void onCommandsMenuIterationsClick(Player player, Identifier rewardId, int currentIterations,
+    public void onCommandsMenuIterationsClick(Player player, RewardId rewardId, int currentIterations,
                                               RewardEditorHook hook,
                                               Runnable refreshUI) {
         RewardCommandsIterationsDialogContext dialogContext = new RewardCommandsIterationsDialogContext(
@@ -68,7 +69,7 @@ public class RewardCommandsEditorUIController implements FeedbackHandler {
         this.handleFeedback(player, this.uiService.showCommandsIterationsDialog(player, dialogContext, refreshUI));
     }
 
-    public void onCommandsMenuGiveModeClick(Player player, Identifier rewardId, RewardCommandExecutionMode currentMode,
+    public void onCommandsMenuGiveModeClick(Player player, RewardId rewardId, RewardCommandExecutionMode currentMode,
                                             RewardEditorHook hook,
                                             Runnable refreshUI) {
         RewardCommandsGiveModeDialogContext dialogContext = new RewardCommandsGiveModeDialogContext(
@@ -80,7 +81,7 @@ public class RewardCommandsEditorUIController implements FeedbackHandler {
         this.handleFeedback(player, this.uiService.showCommandsGiveModeDialog(player, dialogContext, refreshUI));
     }
 
-    public void onCommandsMenuBundleClick(Player player, Identifier rewardId, CommandBundleContext bundleContext,
+    public void onCommandsMenuBundleClick(Player player, RewardId rewardId, CommandBundleContext bundleContext,
                                           RewardEditorHook hook,
                                           Runnable refreshUI) {
         RewardCommandsBundleDialogContext dialogContext = new RewardCommandsBundleDialogContext(

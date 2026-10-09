@@ -4,9 +4,10 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
-import su.nightexpress.excellentcrates.core.codec.IdentifierCodec;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.core.common.limit.DefaultLimitOptions;
 import su.nightexpress.excellentcrates.core.common.limit.codec.LimitOptionsCodec;
+import su.nightexpress.excellentcrates.reward.data.codec.RewardIdCodec;
 import su.nightexpress.excellentcrates.reward.feature.limit.component.DefaultRewardLimitComponent;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
@@ -29,8 +30,8 @@ public class RewardLimitComponentCodec implements ConfigCodec<DefaultRewardLimit
             DefaultLimitOptions.createDefault());
 
         boolean alternativeEnabled = config.getOrSet(path + ".alternative.enabled", ConfigCodecs.BOOLEAN, false);
-        Identifier alternativeRewardId = config.getOrSet(path + ".alternative.reward_id", IdentifierCodec.INSTANCE,
-            new Identifier("none")
+        RewardId alternativeRewardId = config.getOrSet(path + ".alternative.reward_id", RewardIdCodec.INSTANCE,
+            new RewardId(new Identifier("none"), new Identifier("none"))
         );
 
         return new DefaultRewardLimitComponent.Builder()

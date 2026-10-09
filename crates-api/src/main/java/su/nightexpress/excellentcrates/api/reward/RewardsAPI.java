@@ -22,6 +22,7 @@ import su.nightexpress.excellentcrates.api.reward.grant.RewardGrantAPI;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
 import su.nightexpress.excellentcrates.api.reward.preview.RewardPreviewAPI;
 import su.nightexpress.excellentcrates.api.reward.quota.RewardQuotaAPI;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 
 @NullMarked
@@ -48,7 +49,10 @@ public interface RewardsAPI extends PluginAPI {
     RewardQuotaAPI getQuota();
 
     @Nullable
-    Reward getReward(Identifier id);
+    Reward getReward(RewardId id);
+
+    @Nullable
+    Reward getReward(Identifier crateId, Identifier rewardId);
 
     Set<Reward> getRewards();
 

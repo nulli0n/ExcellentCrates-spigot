@@ -1,35 +1,23 @@
 package su.nightexpress.excellentcrates.keys.data.codec;
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import su.nightexpress.excellentcrates.keys.data.key.StandardKeyItem;
-import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.configuration.exception.CodecReadException;
-import su.nightexpress.nightcore.integration.item.ItemBridge;
+import su.nightexpress.nightcore.integration.item.codec.AdaptedItemCodec;
 
 @NullMarked
 public class KeyItemCodec implements ConfigCodec<StandardKeyItem> {
 
     public static final KeyItemCodec INSTANCE = new KeyItemCodec();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyItemCodec.class);
-
     @Override
     public StandardKeyItem read(FileConfig config, String path) throws CodecReadException {
-        AdaptedItem item = ItemBridge.get().read(config, path + ".item").orElse(null);
-        if (item == null) {
-            LOGGER.warn("Failed to read key item at path '{}', using default item instead.", path);
-            item = ItemHelper.bukkit(new ItemStack(Material.TRIPWIRE_HOOK));
-        }
-
+        AdaptedItem item = AdaptedItemCodec.read(config, path + ".item");
         boolean stackable = config.getOrSet(path + ".stackable", ConfigCodecs.BOOLEAN, true);
         boolean inheritDisplaySettings = config.getOrSet(path + ".inherit_display_settings", ConfigCodecs.BOOLEAN,
             true);

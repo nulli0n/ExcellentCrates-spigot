@@ -31,7 +31,7 @@ public class DefaultCrateRewardsPipelineComponent implements CrateRewardsPipelin
 
         logData.put("Rewards Required", String.valueOf(this.requiredRewards));
         logData.put("Rewards Given", this.targetRewards.stream()
-            .map(pipeReward -> pipeReward.getGranted().idString())
+            .map(pipeReward -> pipeReward.getGranted().id().toString())
             .collect(Collectors.joining(", "))
         );
 

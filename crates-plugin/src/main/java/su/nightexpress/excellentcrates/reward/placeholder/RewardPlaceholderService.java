@@ -50,19 +50,16 @@ public class RewardPlaceholderService implements RewardPlaceholders {
         return this.inCratePlaceholders(crate, reward, null);
     }
 
-    public PlaceholderApplier inCratePlaceholders(Crate crate, Reward reward,
-                                                  @Nullable Player player) {
+    public PlaceholderApplier inCratePlaceholders(Crate crate, Reward reward, @Nullable Player player) {
         return ctx -> {
             CrateRewardsComponent component = crate.getComponentOrNull(CrateComponentKeys.REWARDS);
             if (component == null) return;
 
-            CrateRewardEntry rewardEntry = component.getReward(reward.id());
+            CrateRewardEntry rewardEntry = component.getReward(reward.rawId());
             if (rewardEntry == null) return; // Reward is not in the crate, nothing to replace.
 
-            ctx.with(SharedPlaceholders.REWARD_WEIGHT, () -> NumberUtil.format(rewardEntry.getWeight()));
-
             this.placeholders.forEach(placeholder -> {
-                ctx.apply(placeholder.applyInCrate(rewardEntry, crate, reward, player));
+                ctx.apply(placeholder.applyInCrate(crate, reward, player));
             });
         };
     }
@@ -73,7 +70,8 @@ public class RewardPlaceholderService implements RewardPlaceholders {
 
     public PlaceholderApplier basePlaceholders(Reward reward, @Nullable Player player) {
         return ctx -> {
-            ctx.with(SharedPlaceholders.REWARD_ID, () -> reward.idString());
+            ctx.with(SharedPlaceholders.REWARD_ID, () -> reward.rawId().value());
+            ctx.with(SharedPlaceholders.REWARD_WEIGHT, () -> NumberUtil.format(reward.getWeight()));
 
             this.placeholders.forEach(placeholder -> ctx.apply(placeholder.applyBase(reward, player)));
         };

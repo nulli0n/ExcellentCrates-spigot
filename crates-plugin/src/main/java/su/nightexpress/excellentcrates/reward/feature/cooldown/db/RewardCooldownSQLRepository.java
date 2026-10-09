@@ -9,16 +9,16 @@ import java.util.concurrent.CompletableFuture;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.component.DatabaseClient;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.sql.RemoveContext;
 import su.nightexpress.engine.sql.SQLRepository;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownData;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.nightcore.db.statement.condition.Operator;
 import su.nightexpress.nightcore.db.statement.condition.Wheres;
 import su.nightexpress.nightcore.db.table.Table;
 
 @NullMarked
-public class RewardCooldownSQLRepository implements SQLRepository<UUID, Identifier, RewardCooldownData> {
+public class RewardCooldownSQLRepository implements SQLRepository<UUID, RewardId, RewardCooldownData> {
 
     private final DatabaseClient databaseClient;
     private final Table          table;
@@ -28,6 +28,7 @@ public class RewardCooldownSQLRepository implements SQLRepository<UUID, Identifi
 
         this.table = Table.builder(dbSettings.tableName())
             .withColumn(RewardCooldownDBSchema.PLAYER_ID_COLUMN)
+            .withColumn(RewardCooldownDBSchema.CRATE_ID_COLUMN)
             .withColumn(RewardCooldownDBSchema.REWARD_ID_COLUMN)
             .withColumn(RewardCooldownDBSchema.PERMANENT_COLUMN)
             .withColumn(RewardCooldownDBSchema.EXPIRATION_TIMESTAMP_COLUMN)
@@ -45,11 +46,14 @@ public class RewardCooldownSQLRepository implements SQLRepository<UUID, Identifi
     }
 
     @Override
-    public CompletableFuture<Void> delete(Collection<RemoveContext<UUID, Identifier>> keys) {
-        Wheres<RemoveContext<UUID, Identifier>> wheres = Wheres
-            .whereUUID(RewardCooldownDBSchema.PLAYER_ID_COLUMN, (RemoveContext<UUID, Identifier> ctx) -> ctx
+    public CompletableFuture<Void> delete(Collection<RemoveContext<UUID, RewardId>> keys) {
+        Wheres<RemoveContext<UUID, RewardId>> wheres = Wheres
+            .whereUUID(RewardCooldownDBSchema.PLAYER_ID_COLUMN, (RemoveContext<UUID, RewardId> ctx) -> ctx
                 .parentId())
-            .and(RewardCooldownDBSchema.REWARD_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, ctx -> ctx.key().value());
+            .and(RewardCooldownDBSchema.CRATE_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, ctx -> ctx.key().crateId()
+                .value())
+            .and(RewardCooldownDBSchema.REWARD_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, ctx -> ctx.key().rewardId()
+                .value());
 
         return CompletableFuture.runAsync(() -> this.databaseClient.delete(this.table, keys, wheres));
     }
@@ -65,10 +69,11 @@ public class RewardCooldownSQLRepository implements SQLRepository<UUID, Identifi
     }
 
     @Override
-    public CompletableFuture<Optional<RewardCooldownData>> loadById(UUID parentId, Identifier key) {
+    public CompletableFuture<Optional<RewardCooldownData>> loadById(UUID parentId, RewardId key) {
         Wheres<Object> wheres = Wheres
             .whereUUID(RewardCooldownDBSchema.PLAYER_ID_COLUMN, o -> parentId)
-            .and(RewardCooldownDBSchema.REWARD_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, o -> key.value());
+            .and(RewardCooldownDBSchema.CRATE_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, o -> key.crateId().value())
+            .and(RewardCooldownDBSchema.REWARD_ID_COLUMN, Operator.EQUALS_IGNORE_CASE, o -> key.rewardId().value());
 
         return CompletableFuture.supplyAsync(() -> {
             return this.databaseClient.selectFirst(this.table, RewardCooldownDBSchema.COOLDOWN_SELECT, wheres);

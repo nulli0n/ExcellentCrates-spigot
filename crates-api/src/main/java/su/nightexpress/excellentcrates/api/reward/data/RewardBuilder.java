@@ -5,12 +5,15 @@ import org.jspecify.annotations.NullMarked;
 import su.nightexpress.engine.entity.EntityComponentKey;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponent;
+import su.nightexpress.excellentcrates.api.reward.data.model.RewardBase;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
 
 @NullMarked
 public interface RewardBuilder {
 
     Reward build();
+
+    RewardBuilder base(RewardBase base);
 
     RewardBuilder preview(RewardPreview preview);
 

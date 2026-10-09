@@ -16,18 +16,20 @@ import su.nightexpress.excellentcrates.api.crate.hologram.HologramsAPI;
 import su.nightexpress.excellentcrates.api.crate.interact.InteractionAPI;
 import su.nightexpress.excellentcrates.api.crate.item.CrateItemAPI;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineAPI;
+import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 
 @NullMarked
 public class DefaultCratesAPI implements CratesAPI {
 
-    private final CrateRegistry    registry;
-    private final CrateCommandsAPI commands;
-    private final CrateDataAPI     data;
-    private final CrateEditorAPI   editor;
-    private final CrateItemAPI     items;
-    private final PipelineAPI      pipeline;
-    private final InteractionAPI   interaction;
+    private final CrateRegistry     registry;
+    private final CratePlaceholders placeholders;
+    private final CrateCommandsAPI  commands;
+    private final CrateDataAPI      data;
+    private final CrateEditorAPI    editor;
+    private final CrateItemAPI      items;
+    private final PipelineAPI       pipeline;
+    private final InteractionAPI    interaction;
 
     private final @Nullable BlockAPI          blocks;
     private final @Nullable HologramsAPI      holograms;
@@ -35,6 +37,7 @@ public class DefaultCratesAPI implements CratesAPI {
 
     DefaultCratesAPI(Builder builder) {
         this.registry = Objects.requireNonNull(builder.registry, "registry cannot be null");
+        this.placeholders = Objects.requireNonNull(builder.placeholders, "placeholders cannot be null");
         this.commands = Objects.requireNonNull(builder.commands, "commands cannot be null");
         this.data = Objects.requireNonNull(builder.data, "data cannot be null");
         this.editor = Objects.requireNonNull(builder.editor, "editor cannot be null");
@@ -54,6 +57,11 @@ public class DefaultCratesAPI implements CratesAPI {
     @Override
     public CrateRegistry registry() {
         return this.registry;
+    }
+
+    @Override
+    public CratePlaceholders getPlaceholders() {
+        return this.placeholders;
     }
 
     @Override
@@ -103,13 +111,14 @@ public class DefaultCratesAPI implements CratesAPI {
 
     public static class Builder {
 
-        private @Nullable CrateRegistry    registry;
-        private @Nullable CrateCommandsAPI commands;
-        private @Nullable CrateDataAPI     data;
-        private @Nullable CrateEditorAPI   editor;
-        private @Nullable CrateItemAPI     items;
-        private @Nullable PipelineAPI      pipeline;
-        private @Nullable InteractionAPI   interaction;
+        private @Nullable CrateRegistry     registry;
+        private @Nullable CratePlaceholders placeholders;
+        private @Nullable CrateCommandsAPI  commands;
+        private @Nullable CrateDataAPI      data;
+        private @Nullable CrateEditorAPI    editor;
+        private @Nullable CrateItemAPI      items;
+        private @Nullable PipelineAPI       pipeline;
+        private @Nullable InteractionAPI    interaction;
 
         private @Nullable BlockAPI          blocks;
         private @Nullable HologramsAPI      holograms;
@@ -117,6 +126,11 @@ public class DefaultCratesAPI implements CratesAPI {
 
         public Builder registry(@Nullable CrateRegistry registry) {
             this.registry = registry;
+            return this;
+        }
+
+        public Builder placeholders(@Nullable CratePlaceholders placeholders) {
+            this.placeholders = placeholders;
             return this;
         }
 

@@ -5,9 +5,9 @@ import java.util.function.Consumer;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.extension.RewardDataExtension;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
 public interface RewardDataAPI {
@@ -24,12 +24,12 @@ public interface RewardDataAPI {
 
     void saveReward(Reward reward);
 
-    Reward createReward(Identifier id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreated);
+    Reward createReward(RewardId id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreated);
 
     @Nullable
-    Reward getReward(Identifier id);
+    Reward getReward(RewardId id);
 
-    boolean hasReward(Identifier id);
+    boolean hasReward(RewardId id);
 
     void deleteReward(Reward reward);
 

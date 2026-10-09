@@ -9,15 +9,15 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import su.nightexpress.engine.cache.CacheStrategy;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.cooldown.CooldownOptions;
 import su.nightexpress.excellentcrates.api.common.cooldown.CooldownTimestamp;
 import su.nightexpress.excellentcrates.api.common.cooldown.CooldownType;
-import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.Reward;
+import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.cooldown.IRewardCooldownService;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownComponent;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownData;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.reward.feature.cooldown.db.RewardCooldownCachedDataService;
 
 @NullMarked
@@ -112,7 +112,7 @@ public class RewardCooldownService implements IRewardCooldownService {
         CooldownOptions globalCooldown = cooldowns.getGlobalCooldown();
         CooldownOptions individualCooldown = cooldowns.getIndividualCooldown();
 
-        Identifier rewardId = reward.id();
+        RewardId rewardId = reward.id();
         UUID playerId = player.getUniqueId();
 
         if (globalCooldown.isEffectivelyEnabled()) {

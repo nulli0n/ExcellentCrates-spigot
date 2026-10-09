@@ -50,13 +50,13 @@ public final class ItemHelper {
 
     public static AdaptedItem bukkitIfMixed(ItemStack itemStack) {
         if (isMixed(itemStack)) {
-            return bukkitIfCrates(itemStack);
+            return bukkitIfFromCrates(itemStack);
         }
 
         return adapt(itemStack);
     }
 
-    public static AdaptedItem bukkitIfCrates(ItemStack itemStack) {
+    public static AdaptedItem bukkitIfFromCrates(ItemStack itemStack) {
         if (ItemBridge.get().isProducedBy(itemStack, ItemProviderKeys.EXCELLENT_CRATES)) {
             return bukkit(itemStack);
         }

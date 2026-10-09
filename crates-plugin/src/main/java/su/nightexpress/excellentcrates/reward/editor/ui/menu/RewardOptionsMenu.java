@@ -14,19 +14,17 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.engine.ui.menu.BackwardNavigator;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
+import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.data.extension.PositionedExtension;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorExtension;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
-import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.editor.lang.RewardEditorLang;
 import su.nightexpress.excellentcrates.reward.editor.ui.RewardEditorUIController;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardOptionsMenuContext;
@@ -49,19 +47,16 @@ public class RewardOptionsMenu extends AbstractObjectMenu<RewardOptionsMenuConte
         37, 38, 39, 40, 41, 42, 43
     };
 
-    private final RewardRegistry                      registry;
     private final RewardPreviewService                previewService;
     private final RewardEditorUIController            controller;
     private final TinyRegistry<RewardEditorExtension> extensions;
 
     public RewardOptionsMenu(CratesPlugin plugin,
-                             RewardRegistry registry,
                              RewardPreviewService previewService,
                              RewardEditorUIController controller,
                              TinyRegistry<RewardEditorExtension> extensions) {
         super(plugin, MenuType.GENERIC_9X6, RewardEditorLang.UI_INVENTORY_OPTIONS_TITLE
             .text(), RewardOptionsMenuContext.class);
-        this.registry = registry;
         this.previewService = previewService;
         this.controller = controller;
         this.extensions = extensions;
@@ -113,14 +108,17 @@ public class RewardOptionsMenu extends AbstractObjectMenu<RewardOptionsMenuConte
         Player player = context.getPlayer();
         RewardOptionsMenuContext menuContext = this.getObject(context);
 
-        Reward reward = this.registry.get(menuContext.rewardId());
+        Crate crate = menuContext.crateRef().get();
+        if (crate == null) return;
+
+        Reward reward = menuContext.rewardRef().get();
         if (reward == null) return;
 
-        items.addAll(this.renderDefaultButtons(reward));
+        items.addAll(this.renderDefaultButtons(crate, reward));
         items.addAll(this.renderExtensions(player, reward, inventory, menuContext));
     }
 
-    private List<MenuItem> renderDefaultButtons(Reward reward) {
+    private List<MenuItem> renderDefaultButtons(Crate crate, Reward reward) {
         List<MenuItem> items = new ArrayList<>();
 
         items.add(MenuItem.custom()
@@ -133,6 +131,20 @@ public class RewardOptionsMenu extends AbstractObjectMenu<RewardOptionsMenuConte
                 .build()
             )
             .slots(4)
+            .build()
+        );
+
+        NightItem weightIcon = NightItem.fromType(Material.ANVIL)
+            .hideAllComponents()
+            .localized(RewardEditorLang.UI_INVENTORY_OPTIONS_BUTTON_WEIGHT);
+
+        items.add(MenuItem.button()
+            .defaultState(ItemState.builder()
+                .icon(this.previewService.addPlaceholders(weightIcon, crate, reward))
+                .action(actionContext -> this.handleWeight(actionContext, reward.getBase().getWeight()))
+                .build()
+            )
+            .slots(10)
             .build()
         );
 
@@ -207,6 +219,14 @@ public class RewardOptionsMenu extends AbstractObjectMenu<RewardOptionsMenuConte
         menuContext.moveBackward(context.getPlayer());
     }
 
+    private void handleWeight(ActionContext context, double currentWeight) {
+        Player player = context.getPlayer();
+        RewardOptionsMenuContext menuContext = this.getObject(context);
+        Runnable refreshUI = () -> context.getViewer().refresh();
+
+        this.controller.onOptionsWeightClick(player, menuContext, currentWeight, refreshUI);
+    }
+
     private void handlePreview(ActionContext context) {
         Player player = context.getPlayer();
         RewardOptionsMenuContext menuContext = this.getObject(context);
@@ -218,12 +238,15 @@ public class RewardOptionsMenu extends AbstractObjectMenu<RewardOptionsMenuConte
         Player player = context.getPlayer();
         RewardOptionsMenuContext menuContext = this.getObject(context);
 
-        Identifier rewardId = menuContext.rewardId();
-        Reward reward = this.registry.get(rewardId);
+        Crate crate = menuContext.crateRef().get();
+        if (crate == null) return;
+
+        Reward reward = menuContext.rewardRef().get();
         if (reward == null) return;
 
-        ItemStack preview = this.previewService.createDisplayItem(reward);
+        NightItem preview = this.previewService.createPreviewIconWithAllPlaceholders(crate, reward);
+        Runnable callback = () -> menuContext.moveBackward(player);
 
-        this.controller.onOptionsMenuDeleteClick(player, menuContext, preview);
+        this.controller.onOptionsDeleteClick(player, menuContext, preview, callback);
     }
 }

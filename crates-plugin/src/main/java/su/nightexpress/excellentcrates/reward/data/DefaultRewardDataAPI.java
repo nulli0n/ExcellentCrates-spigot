@@ -5,12 +5,12 @@ import java.util.function.Consumer;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.RewardBuilder;
 import su.nightexpress.excellentcrates.api.reward.data.RewardDataAPI;
 import su.nightexpress.excellentcrates.api.reward.data.extension.RewardDataExtension;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
 public class DefaultRewardDataAPI implements RewardDataAPI {
@@ -49,7 +49,7 @@ public class DefaultRewardDataAPI implements RewardDataAPI {
     }
 
     @Override
-    public Reward createReward(Identifier id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreated) {
+    public Reward createReward(RewardId id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreated) {
         return dataService.createReward(id, onBuild, onCreated);
     }
 
@@ -59,12 +59,12 @@ public class DefaultRewardDataAPI implements RewardDataAPI {
     }
 
     @Override
-    public @Nullable Reward getReward(Identifier id) {
+    public @Nullable Reward getReward(RewardId id) {
         return dataService.getReward(id);
     }
 
     @Override
-    public boolean hasReward(Identifier id) {
+    public boolean hasReward(RewardId id) {
         return dataService.hasReward(id);
     }
 

@@ -4,24 +4,24 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownData;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.nightcore.util.TimeUtil;
 
 @NullMarked
 public class DefaultRewardCooldownData implements RewardCooldownData {
 
-    private final UUID       playerId;
-    private final Identifier rewardId;
+    private final UUID     playerId;
+    private final RewardId rewardId;
 
     private boolean permanent;
     private long    expirationTimestamp;
 
-    public DefaultRewardCooldownData(UUID playerId, Identifier rewardId) {
+    public DefaultRewardCooldownData(UUID playerId, RewardId rewardId) {
         this(playerId, rewardId, false, 0L);
     }
 
-    public DefaultRewardCooldownData(UUID playerId, Identifier rewardId, boolean permanent, long expirationTimestamp) {
+    public DefaultRewardCooldownData(UUID playerId, RewardId rewardId, boolean permanent, long expirationTimestamp) {
         this.playerId = playerId;
         this.rewardId = rewardId;
         this.permanent = permanent;
@@ -42,12 +42,16 @@ public class DefaultRewardCooldownData implements RewardCooldownData {
     }
 
     @Override
-    public Identifier getKey() {
+    public RewardId getKey() {
         return this.rewardId;
     }
 
     public String getRewardIdString() {
-        return this.rewardId.value();
+        return this.rewardId.rewardId().value();
+    }
+
+    public String getCrateIdString() {
+        return this.rewardId.crateId().value();
     }
 
     public boolean isPermanent() {

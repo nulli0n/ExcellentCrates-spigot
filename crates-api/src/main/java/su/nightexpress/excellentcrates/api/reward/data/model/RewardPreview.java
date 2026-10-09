@@ -21,7 +21,7 @@ public interface RewardPreview {
 
     void setIcon(AdaptedItem icon);
 
-    boolean isUseIconData();
+    boolean isInheritFromIcon();
 
-    void setUseIconData(boolean useIconData);
+    void setInheritFromIcon(boolean inheritFromIcon);
 }

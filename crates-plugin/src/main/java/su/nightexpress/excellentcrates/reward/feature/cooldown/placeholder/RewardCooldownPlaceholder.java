@@ -12,7 +12,6 @@ import su.nightexpress.excellentcrates.api.common.cooldown.CooldownType;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownComponent;
-import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardEntry;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholder;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.core.lang.Lang;
@@ -31,8 +30,7 @@ public class RewardCooldownPlaceholder implements RewardPlaceholder {
     }
 
     @Override
-    public Consumer<Builder> applyInCrate(CrateRewardEntry crateReward, Crate crate, Reward reward,
-                                          @Nullable Player player) {
+    public Consumer<Builder> applyInCrate(Crate crate, Reward reward, @Nullable Player player) {
         return ctx -> {
             if (player != null) {
                 this.addEffectiveCooldownPlaceholder(ctx, reward, player);

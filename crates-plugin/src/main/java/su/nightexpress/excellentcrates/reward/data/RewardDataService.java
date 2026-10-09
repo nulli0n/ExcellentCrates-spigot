@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import su.nightexpress.engine.data.DirtyTracker;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.registry.TinyRegistry;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.data.RewardBuilder;
 import su.nightexpress.excellentcrates.api.reward.data.extension.RewardDataExtension;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardBuilder;
 
@@ -27,7 +27,7 @@ public class RewardDataService {
 
     private final TinyRegistry<RewardDataExtension> extensions;
 
-    private final DirtyTracker<Identifier> dirtyTracker;
+    private final DirtyTracker<RewardId> dirtyTracker;
 
     public RewardDataService(RewardIOService ioService,
                              RewardRegistry repository,
@@ -59,12 +59,12 @@ public class RewardDataService {
 
     public void unloadReward(Reward reward) {
         this.dirtyTracker.remove(reward.id());
-        this.rewards.remove(reward);
+        this.rewards.unregister(reward);
 
         this.extensions.forEach(extension -> extension.onUnload(reward));
     }
 
-    public Reward createReward(Identifier id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreate) {
+    public Reward createReward(RewardId id, Consumer<RewardBuilder> onBuild, Consumer<Reward> onCreate) {
         if (this.hasReward(id)) {
             throw new IllegalArgumentException("Reward with ID '" + id + "' already exists");
         }
@@ -90,12 +90,12 @@ public class RewardDataService {
         this.ioService.writeReward(reward);
     }
 
-    public @Nullable Reward getReward(Identifier id) {
+    public @Nullable Reward getReward(RewardId id) {
         return this.rewards.get(id);
     }
 
-    public boolean hasReward(Identifier id) {
-        return this.rewards.contains(id);
+    public boolean hasReward(RewardId id) {
+        return this.rewards.containsKey(id);
     }
 
     public boolean deleteReward(Reward reward) {
@@ -116,9 +116,9 @@ public class RewardDataService {
         if (!this.dirtyTracker.hasAny()) return;
 
         // Drain the queue safely
-        Set<Identifier> toSave = this.dirtyTracker.removeAndGetDirty();
+        Set<RewardId> toSave = this.dirtyTracker.removeAndGetDirty();
 
-        for (Identifier id : toSave) {
+        for (RewardId id : toSave) {
             Reward reward = this.rewards.get(id);
             if (reward != null) {
                 this.ioService.writeReward(reward);

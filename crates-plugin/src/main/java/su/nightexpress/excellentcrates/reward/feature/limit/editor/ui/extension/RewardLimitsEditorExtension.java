@@ -37,7 +37,7 @@ public class RewardLimitsEditorExtension implements RewardEditorExtension {
     }
 
     @Override
-    public MenuItem createButton(Reward reward, RewardEditorHook hook, BackwardNavigator backwardNavigator, int slot) {
+    public MenuItem createButton(Reward reward, RewardEditorHook hook, BackwardNavigator navigator, int slot) {
         RewardLimitComponent component = reward.getComponentOrNull(RewardComponentKeys.LIMIT);
         boolean enabled = component != null && component.isEnabled();
 
@@ -50,18 +50,16 @@ public class RewardLimitsEditorExtension implements RewardEditorExtension {
                         .with(SharedPlaceholders.STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(enabled))
                     )
                 )
-                .action(ctx -> this.click(ctx, reward, hook, backwardNavigator))
+                .action(ctx -> this.click(ctx, reward, hook, navigator))
                 .build()
             )
             .slots(slot)
             .build();
     }
 
-    private void click(ActionContext context, Reward reward, RewardEditorHook hook,
-                       BackwardNavigator backwardNavigator) {
+    private void click(ActionContext context, Reward reward, RewardEditorHook hook, BackwardNavigator navigator) {
         Player player = context.getPlayer();
-        Identifier rewardId = reward.id();
 
-        this.controller.onExtensionClick(player, rewardId, hook, backwardNavigator);
+        this.controller.onExtensionClick(player, reward, hook, navigator);
     }
 }

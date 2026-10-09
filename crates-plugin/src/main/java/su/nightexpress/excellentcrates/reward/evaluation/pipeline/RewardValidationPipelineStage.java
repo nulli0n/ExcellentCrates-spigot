@@ -43,7 +43,7 @@ public class RewardValidationPipelineStage implements PipelineStage {
             boolean allLimited = pool.stream().allMatch(reward -> !reward.threshold().isAbsent());
             if (allLimited) {
                 int rewardsRequired = crate.getComponent(CrateComponentKeys.REWARDS)
-                    .map(CrateRewardsComponent::getRequiredAmount)
+                    .map(CrateRewardsComponent::getRollCount)
                     .orElse(1);
 
                 int totalRewardAmount = pool.stream()

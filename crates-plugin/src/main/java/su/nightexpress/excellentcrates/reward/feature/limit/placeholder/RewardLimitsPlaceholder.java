@@ -12,7 +12,6 @@ import su.nightexpress.excellentcrates.api.common.limit.LimitType;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
-import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardEntry;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholder;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
@@ -31,8 +30,7 @@ public class RewardLimitsPlaceholder implements RewardPlaceholder {
     }
 
     @Override
-    public Consumer<Builder> applyInCrate(CrateRewardEntry crateReward, Crate crate, Reward reward,
-                                          @Nullable Player player) {
+    public Consumer<Builder> applyInCrate(Crate crate, Reward reward, @Nullable Player player) {
         return ctx -> {
             if (player != null) {
                 this.addRemainingPlaceholder(ctx, reward, player);

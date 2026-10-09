@@ -37,6 +37,6 @@ public class RewardPreviewCodec implements ConfigCodec<StandardRewardPreview> {
             config.set(path + ".icon", value.getIcon());
         }
 
-        config.set(path + ".use_item_data", value.isUseIconData());
+        config.set(path + ".use_item_data", value.isInheritFromIcon());
     }
 }

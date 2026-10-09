@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.reward.editor.ui.menu;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.bukkit.Material;
@@ -17,13 +18,16 @@ import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.CratesPlugin;
+import su.nightexpress.excellentcrates.api.crate.Crate;
+import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.Reward;
+import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardsComponent;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
+import su.nightexpress.excellentcrates.reward.crate.component.editor.RewardComponentHook;
 import su.nightexpress.excellentcrates.reward.editor.lang.RewardEditorLang;
 import su.nightexpress.excellentcrates.reward.editor.ui.RewardEditorUIController;
-import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.BrowseMenuContext;
-import su.nightexpress.excellentcrates.reward.editor.ui.preferences.EditorPreferences;
+import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardBrowseMenuContext;
 import su.nightexpress.excellentcrates.reward.preview.RewardPreviewService;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.core.config.CoreLang;
@@ -37,7 +41,7 @@ import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 @NullMarked
-public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
+public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext> {
 
     private final RewardRegistry           repository;
     private final RewardPreviewService     previewService;
@@ -49,8 +53,8 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
                             RewardRegistry repository,
                             RewardPreviewService previewService,
                             RewardEditorUIController controller) {
-        super(plugin, MenuType.GENERIC_9X5, RewardEditorLang.UI_INVENTORY_REWARDS_TITLE
-            .text(), BrowseMenuContext.class);
+        super(plugin, MenuType.GENERIC_9X5, RewardEditorLang.UI_INVENTORY_BROWSE_TITLE
+            .text(), RewardBrowseMenuContext.class);
         this.repository = repository;
         this.previewService = previewService;
         this.controller = controller;
@@ -58,8 +62,13 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
         this.rewardPopulator = ItemPopulator.builder(Reward.class)
             .slots(IntStream.range(0, 36).toArray())
             .itemProvider((context, reward) -> {
-                return this.previewService.createPreviewIconWithPlaceholders(reward)
-                    .localized(RewardEditorLang.UI_INVENTORY_REWARDS_REWARD)
+                RewardBrowseMenuContext menuContext = this.getObject(context);
+
+                Crate crate = menuContext.crateRef().get();
+                if (crate == null) return null;
+
+                return this.previewService.createPreviewIconWithAllPlaceholders(crate, reward)
+                    .localized(RewardEditorLang.UI_INVENTORY_BROWSE_BUTTON_REWARD)
                     .hideAllComponents();
             })
             .actionProvider(reward -> context -> this.handleRewardClick(context, reward))
@@ -89,7 +98,7 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
         this.addDefaultButton("create", MenuItem.button()
             .defaultState(ItemState.builder()
                 .icon(NightItem.fromType(Material.ANVIL)
-                    .localized(RewardEditorLang.UI_INVENTORY_REWARDS_BUTTON_CREATION)
+                    .localized(RewardEditorLang.UI_INVENTORY_BROWSE_BUTTON_CREATION)
                 )
                 .action(this::handleCreation)
                 .build()
@@ -105,10 +114,10 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
         int slot = event.getRawSlot();
         if (slot < inventory.getSize()) return;
 
-        BrowseMenuContext menuContext = this.getObject(context);
-        EditorPreferences preferences = menuContext.preferences();
+        RewardBrowseMenuContext menuContext = this.getObject(context);
+        boolean quickMode = menuContext.quickMode().get();
 
-        if (!preferences.isFastMode()) {
+        if (!quickMode) {
             event.setCancelled(false);
             return;
         }
@@ -120,9 +129,13 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
             ItemStack itemStack = event.getCurrentItem();
             if (itemStack == null || itemStack.getType().isAir()) return;
 
-            Player player = context.getPlayer();
+            Crate crate = menuContext.crateRef().get();
+            if (crate == null) return;
 
-            if (this.controller.onBrowseMenuFastCreateClick(player, new ItemStack(itemStack))) {
+            Player player = context.getPlayer();
+            RewardComponentHook hook = menuContext.hook();
+
+            if (this.controller.onBrowseMenuFastCreateClick(player, hook, crate, new ItemStack(itemStack))) {
                 context.getViewer().refresh(); // Refresh on successful creation only.
             }
         }
@@ -145,34 +158,42 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
 
     @Override
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
-        List<Reward> rewards = this.repository.values()
-            .stream()
-            .sorted(Comparator.comparing(Reward::idString))
-            .toList();
+        RewardBrowseMenuContext menuContext = this.getObject(context);
 
-        this.rewardPopulator.populateTo(context, rewards, items);
-
-        boolean isQuickMode = this.getObject(context).preferences().isFastMode();
+        boolean quickMode = menuContext.quickMode().get();
 
         items.add(MenuItem.button()
             .defaultState(ItemState.builder()
-                .icon(NightItem.fromType(Material.BREEZE_ROD)
-                    .localized(RewardEditorLang.UI_INVENTORY_REWARDS_BUTTON_QUICK_MODE)
+                .icon(NightItem.fromType(Material.WIND_CHARGE)
+                    .hideAllComponents()
+                    .localized(RewardEditorLang.UI_INVENTORY_BROWSE_BUTTON_QUICK_MODE)
                     .replace(ctx -> ctx
-                        .with(SharedPlaceholders.STATE, () -> {
-                            return CoreLang.STATE_ENABLED_DISALBED.get(isQuickMode);
-                        })
+                        .with(SharedPlaceholders.STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(quickMode))
                     )
                 )
-                .displayModifier((ctx, item) -> {
-                    item.setEnchantGlint(isQuickMode);
-                })
-                .action(this::handleQuickMode)
+                .action(this::handleQuickModeToggle)
+                .displayModifier((ctx, item) -> item.setEnchantGlint(quickMode))
                 .build()
             )
             .slots(38)
             .build()
         );
+
+        Crate crate = menuContext.crateRef().get();
+        if (crate == null) return;
+
+        CrateRewardsComponent crateRewards = crate.getComponentOrNull(CrateComponentKeys.REWARDS);
+        if (crateRewards == null) return;
+
+        List<Reward> rewardIds = crateRewards
+            .getRewards()
+            .stream()
+            .map(entry -> this.repository.resolveReward(crate.id(), entry.getRewardId()))
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparing(reward -> reward.rawId().value()))
+            .toList();
+
+        this.rewardPopulator.populateTo(context, rewardIds, items);
     }
 
     @Override
@@ -186,16 +207,16 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
     }
 
     private void handleBack(ActionContext context) {
-        BrowseMenuContext menuContext = this.getObject(context);
+        RewardBrowseMenuContext menuContext = this.getObject(context);
 
         menuContext.moveBackward(context.getPlayer());
     }
 
-    private void handleQuickMode(ActionContext context) {
-        BrowseMenuContext menuContext = this.getObject(context);
+    private void handleQuickModeToggle(ActionContext context) {
+        RewardBrowseMenuContext menuContext = this.getObject(context);
 
-        EditorPreferences preferences = menuContext.preferences();
-        preferences.setFastMode(!preferences.isFastMode());
+        boolean quickMode = menuContext.quickMode().get();
+        menuContext.quickMode().set(!quickMode);
         context.getViewer().refresh();
     }
 
@@ -205,6 +226,8 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
         ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().isAir()) return;
 
+        RewardBrowseMenuContext menuContext = this.getObject(context);
+
         ItemStack copy = new ItemStack(cursor);
         event.getView().setCursor(null);
 
@@ -213,13 +236,16 @@ public class RewardBrowseMenu extends AbstractObjectMenu<BrowseMenuContext> {
 
         Runnable refreshUI = () -> context.getViewer().refresh();
 
-        this.controller.onBrowseMenuDetailedCreateClick(player, copy, refreshUI);
+        this.controller.onBrowseMenuManualCreationClick(player, menuContext, copy, refreshUI);
     }
 
     private void handleRewardClick(ActionContext context, Reward reward) {
         Player player = context.getPlayer();
-        BrowseMenuContext menuContext = this.getObject(context);
+        RewardBrowseMenuContext menuContext = this.getObject(context);
 
-        this.controller.onBrowseMenuRewardClick(player, reward, menuContext.backwardNavigator());
+        Crate crate = menuContext.crateRef().get();
+        if (crate == null) return;
+
+        this.controller.onBrowseMenuRewardClick(player, reward, menuContext);
     }
 }

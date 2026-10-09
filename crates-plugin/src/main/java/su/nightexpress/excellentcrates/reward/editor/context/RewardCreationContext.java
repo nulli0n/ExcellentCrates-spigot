@@ -6,7 +6,6 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public record RewardCreationContext(ItemStack itemStack,
                                     boolean useItemReference,
-                                    //boolean setPreview,
-                                    boolean setItemContent) {
+                                    boolean addToGivenItems) {
 
 }

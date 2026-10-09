@@ -12,7 +12,12 @@ import su.nightexpress.excellentcrates.api.reward.Reward;
 public interface RewardResolver {
 
     @Nullable
-    Reward resolveReward(Identifier id);
+    Reward resolveReward(RewardId id);
+
+    @Nullable
+    default Reward resolveReward(Identifier crateId, Identifier rewardId) {
+        return this.resolveReward(new RewardId(crateId, rewardId));
+    }
 
     Set<Reward> rewards();
 }

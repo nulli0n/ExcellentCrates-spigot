@@ -2,17 +2,17 @@ package su.nightexpress.excellentcrates.reward.feature.limit.db;
 
 import java.util.UUID;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.sql.OwnableData;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
-public class RewardLimitData implements OwnableData<UUID, Identifier> {
+public class RewardLimitData implements OwnableData<UUID, RewardId> {
 
-    private final UUID       playerId;
-    private final Identifier rewardId;
+    private final UUID     playerId;
+    private final RewardId rewardId;
 
     private int rolls;
 
-    public RewardLimitData(UUID playerId, Identifier rewardId) {
+    public RewardLimitData(UUID playerId, RewardId rewardId) {
         this.playerId = playerId;
         this.rewardId = rewardId;
     }
@@ -31,7 +31,7 @@ public class RewardLimitData implements OwnableData<UUID, Identifier> {
     }
 
     @Override
-    public Identifier getKey() {
+    public RewardId getKey() {
         return this.getRewardId();
     }
 
@@ -39,12 +39,16 @@ public class RewardLimitData implements OwnableData<UUID, Identifier> {
         return this.playerId;
     }
 
-    public Identifier getRewardId() {
+    public RewardId getRewardId() {
         return this.rewardId;
     }
 
     public String getRewardIdString() {
-        return this.rewardId.value();
+        return this.rewardId.rewardId().value();
+    }
+
+    public String getCrateIdString() {
+        return this.rewardId.crateId().value();
     }
 
     public int getRolls() {

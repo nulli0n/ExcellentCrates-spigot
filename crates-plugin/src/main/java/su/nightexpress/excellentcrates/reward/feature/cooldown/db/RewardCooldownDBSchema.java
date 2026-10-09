@@ -6,7 +6,8 @@ import java.util.UUID;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.id.IdentifierParser;
 import su.nightexpress.excellentcrates.api.reward.cooldown.RewardCooldownData;
-import su.nightexpress.excellentcrates.reward.RewardsConstants;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
+import su.nightexpress.excellentcrates.core.SharedConstants;
 import su.nightexpress.nightcore.db.column.Column;
 import su.nightexpress.nightcore.db.statement.RowMapper;
 import su.nightexpress.nightcore.db.statement.template.InsertStatement;
@@ -16,8 +17,14 @@ public final class RewardCooldownDBSchema {
 
     public static final Column<UUID> PLAYER_ID_COLUMN = Column.uuidType("player_id").primaryKey().build();
 
+    public static final Column<String> CRATE_ID_COLUMN = Column
+        .stringType("crate_id", SharedConstants.MAX_CRATE_ID_LENGTH)
+        .defaultValue("none")
+        .primaryKey()
+        .build();
+
     public static final Column<String> REWARD_ID_COLUMN = Column
-        .stringType("reward_id", RewardsConstants.REWARD_ID_LENGTH)
+        .stringType("reward_id", SharedConstants.MAX_REWARD_ID_LENGTH)
         .primaryKey()
         .build();
 
@@ -31,20 +38,28 @@ public final class RewardCooldownDBSchema {
 
     public static final RowMapper<RewardCooldownData> COOLDOWN_DATA_MAPPER = resultSet -> {
         UUID playerId = PLAYER_ID_COLUMN.readOrThrow(resultSet);
+
+        String crateIdRaw = CRATE_ID_COLUMN.readOrThrow(resultSet);
+        Identifier crateId = IdentifierParser.parse(crateIdRaw)
+            .orElseThrow(() -> new SQLException("Corrupted crate ID: '" + crateIdRaw + "'"));
+
         String rewardIdRaw = REWARD_ID_COLUMN.readOrThrow(resultSet);
         Identifier rewardId = IdentifierParser.parse(rewardIdRaw)
             .orElseThrow(() -> new SQLException("Corrupted reward ID: '" + rewardIdRaw + "'"));
 
+        RewardId id = new RewardId(crateId, rewardId);
+
         boolean permanent = PERMANENT_COLUMN.readOrThrow(resultSet);
         long cooldownTimestamp = EXPIRATION_TIMESTAMP_COLUMN.readOrThrow(resultSet);
 
-        return new DefaultRewardCooldownData(playerId, rewardId, permanent, cooldownTimestamp);
+        return new DefaultRewardCooldownData(playerId, id, permanent, cooldownTimestamp);
     };
 
     public static final InsertStatement<RewardCooldownData> COOLDOWN_UPSERT = InsertStatement
         .builder(RewardCooldownData.class)
         .updateOnConflict()
         .setUUID(PLAYER_ID_COLUMN, RewardCooldownData::getParentId)
+        .setString(CRATE_ID_COLUMN, RewardCooldownData::getCrateIdString)
         .setString(REWARD_ID_COLUMN, RewardCooldownData::getRewardIdString)
         .setBoolean(PERMANENT_COLUMN, RewardCooldownData::isPermanent)
         .setLong(EXPIRATION_TIMESTAMP_COLUMN, RewardCooldownData::getExpirationTimestamp)

@@ -5,7 +5,6 @@ import java.util.function.BiFunction;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
 import su.nightexpress.excellentcrates.api.common.limit.LimitSnapshot;
 import su.nightexpress.excellentcrates.api.common.limit.LimitType;
@@ -14,6 +13,7 @@ import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.reward.feature.limit.lang.RewardLimitsLang;
 
 @NullMarked
@@ -68,7 +68,7 @@ public class RewardLimitsEditorService {
         });
     }
 
-    public ActionResult setAlternativeRewardId(RewardEditorHook hook, Identifier rewardId) {
+    public ActionResult setAlternativeRewardId(RewardEditorHook hook, RewardId rewardId) {
         return editComponent(hook, (reward, limit) -> {
             limit.setAlternativeRewardId(rewardId);
             return ActionResult.ok();

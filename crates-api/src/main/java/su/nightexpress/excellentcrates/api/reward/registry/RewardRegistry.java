@@ -1,19 +1,20 @@
 package su.nightexpress.excellentcrates.api.reward.registry;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.reward.Reward;
-import su.nightexpress.nightcore.bridge.registry.NRegistry;
 
 @NullMarked
-public interface RewardRegistry extends NRegistry<Identifier, Reward>, RewardResolver {
+public interface RewardRegistry extends RewardResolver {
 
     @Override
-    default @Nullable Reward resolveReward(Identifier id) {
+    default @Nullable Reward resolveReward(RewardId id) {
         return this.get(id);
     }
 
@@ -25,9 +26,43 @@ public interface RewardRegistry extends NRegistry<Identifier, Reward>, RewardRes
         return this.createReference(reward.id());
     }
 
-    RewardReference createReference(Identifier id);
+    default void register(Reward reward) {
+        this.put(reward.id(), reward);
+    }
 
-    boolean contains(Identifier key);
+    default void unregister(Reward reward) {
+        this.remove(reward.id());
+    }
 
-    void remove(Reward reward);
+    RewardReference createReference(RewardId id);
+
+    int size();
+
+    boolean isEmpty();
+
+    boolean containsKey(RewardId key);
+
+    boolean containsValue(Reward value);
+
+    Reward get(RewardId key);
+
+    Reward put(RewardId key, Reward value);
+
+    Reward remove(RewardId key);
+
+    void putAll(Map<? extends RewardId, ? extends Reward> m);
+
+    void clear();
+
+    Set<RewardId> keySet();
+
+    Set<Reward> values();
+
+    Set<Entry<RewardId, Reward>> entrySet();
+
+    Reward getOrDefault(RewardId key, Reward defaultValue);
+
+    void forEach(BiConsumer<? super RewardId, ? super Reward> action);
+
+    Reward putIfAbsent(RewardId key, Reward value);
 }

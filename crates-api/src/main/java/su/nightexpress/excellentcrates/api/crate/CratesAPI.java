@@ -14,12 +14,15 @@ import su.nightexpress.excellentcrates.api.crate.hologram.HologramsAPI;
 import su.nightexpress.excellentcrates.api.crate.interact.InteractionAPI;
 import su.nightexpress.excellentcrates.api.crate.item.CrateItemAPI;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineAPI;
+import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 
 @NullMarked
 public interface CratesAPI extends PluginAPI {
 
     CrateRegistry registry();
+
+    CratePlaceholders getPlaceholders();
 
     CrateCommandsAPI commands();
 

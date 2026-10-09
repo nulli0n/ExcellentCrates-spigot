@@ -12,11 +12,15 @@ import su.nightexpress.engine.settings.ReadOnlySettings;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.reward.data.RewardDataAPI;
 import su.nightexpress.excellentcrates.api.reward.data.extension.RewardDataExtension;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.config.settings.RewardCoreSettings;
+import su.nightexpress.excellentcrates.reward.data.codec.RewardBaseCodec;
+import su.nightexpress.excellentcrates.reward.data.codec.RewardIdCodec;
 import su.nightexpress.excellentcrates.reward.data.codec.RewardPreviewCodec;
 import su.nightexpress.excellentcrates.reward.data.controller.RewardDataLoader;
 import su.nightexpress.excellentcrates.reward.data.controller.RewardDataSaveController;
+import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardBase;
 import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardPreview;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 
@@ -41,6 +45,8 @@ public class RewardDataBootstrapContext extends NamedBootstrapContext {
         super(ID, NAME);
         this.extensions = new SimpleRegistry<>();
 
+        ConfigCodecs.register(RewardId.class, RewardIdCodec.INSTANCE);
+        ConfigCodecs.register(StandardRewardBase.class, RewardBaseCodec.INSTANCE);
         ConfigCodecs.register(StandardRewardPreview.class, RewardPreviewCodec.INSTANCE);
 
         Path rewardsDir = plugin.objectsPath().resolve(REWARDS_DIR);

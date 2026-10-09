@@ -7,7 +7,6 @@ import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitRemaining;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineChain;
@@ -20,6 +19,7 @@ import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.dispatcher.RewardMessageDispatcher;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardResolver;
 import su.nightexpress.excellentcrates.reward.feature.limit.RewardLimitManageService;
 import su.nightexpress.excellentcrates.reward.feature.limit.lang.RewardLimitsLang;
@@ -74,7 +74,7 @@ public class RewardLimitsAlternativePipelineStage implements PipelineStage {
         RewardLimitComponent limit = rolled.getComponentOrNull(RewardComponentKeys.LIMIT);
         if (limit == null || !limit.isAlternativeEnabled()) return false;
 
-        Identifier altId = limit.getAlternativeRewardId();
+        RewardId altId = limit.getAlternativeRewardId();
         Reward alternative = this.resolver.resolveReward(altId);
         if (alternative == null) {
             LOGGER.warn("Alternative reward with ID '{}' not found for reward '{}'", altId, rolled.getId());

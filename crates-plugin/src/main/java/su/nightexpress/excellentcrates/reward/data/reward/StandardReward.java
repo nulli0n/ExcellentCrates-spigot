@@ -3,21 +3,24 @@ package su.nightexpress.excellentcrates.reward.data.reward;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.entity.ImmutableEntityComponentContainer;
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponent;
+import su.nightexpress.excellentcrates.api.reward.data.model.RewardBase;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
 public class StandardReward implements Reward {
 
-    private final Identifier    id;
+    private final RewardId      id;
+    private final RewardBase    base;
     private final RewardPreview preview;
 
     private final ImmutableEntityComponentContainer<RewardComponent> components;
 
-    public StandardReward(Identifier id, StandardRewardBuilder builder) {
+    public StandardReward(RewardId id, StandardRewardBuilder builder) {
         this.id = id;
+        this.base = builder.base;
         this.preview = builder.preview;
         this.components = new ImmutableEntityComponentContainer<>(builder.components);
     }
@@ -28,8 +31,13 @@ public class StandardReward implements Reward {
     }
 
     @Override
-    public Identifier getId() {
+    public RewardId getId() {
         return this.id;
+    }
+
+    @Override
+    public RewardBase getBase() {
+        return this.base;
     }
 
     @Override

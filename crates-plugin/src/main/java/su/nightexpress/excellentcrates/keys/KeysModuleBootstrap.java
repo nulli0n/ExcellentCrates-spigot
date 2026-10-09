@@ -64,10 +64,7 @@ public final class KeysModuleBootstrap extends BaseModuleBootstrap {
         );
         KeyDataBootstrapContext dataContext = new KeyDataBootstrapContext(plugin, keys, configContext.settings);
         KeyBaseBootstrapContext baseContext = new KeyBaseBootstrapContext(plugin, dispatcher, coreUI, keys);
-
-        KeyDisplayBootstrapContext displayContext = new KeyDisplayBootstrapContext(
-            plugin, coreUI, dispatcher, keys, configContext.settings
-        );
+        KeyDisplayBootstrapContext displayContext = new KeyDisplayBootstrapContext(plugin, coreUI, dispatcher, keys);
 
         KeyItemBootstrapContext itemContext = new KeyItemBootstrapContext(
             plugin, coreUI, dispatcher, keys, placeholders
@@ -95,7 +92,6 @@ public final class KeysModuleBootstrap extends BaseModuleBootstrap {
         this.registerComponent(storageContext);
         this.registerComponent(balanceContext);
 
-        placeholders.registerPlaceholder(displayContext.getPlaceholder());
         placeholders.registerPlaceholder(balanceContext.getPlaceholder());
 
         editorContext.extensions.register(baseContext.getEditorExtension());
@@ -111,7 +107,7 @@ public final class KeysModuleBootstrap extends BaseModuleBootstrap {
         // ================================
 
         KeyCostBootstrapContext costContext = new KeyCostBootstrapContext(
-            plugin, keys, displayContext.resolver, itemContext.itemFactory, balanceContext.balanceService
+            plugin, keys, itemContext.itemFactory, balanceContext.balanceService
         );
 
         KeyCostEditorBootstrapContext costEditorContext = new KeyCostEditorBootstrapContext(

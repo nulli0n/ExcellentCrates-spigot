@@ -9,8 +9,9 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.id.IdentifierParser;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
-import su.nightexpress.excellentcrates.reward.RewardsConstants;
+import su.nightexpress.excellentcrates.core.SharedConstants;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedDataItem;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
@@ -28,13 +29,14 @@ public class RewardIdService {
         this.registry = registry;
     }
 
-    public Optional<Identifier> createUniqueRewardId(ItemStack itemStack) {
+    public Optional<Identifier> createUniqueRewardId(Identifier crateId, ItemStack itemStack) {
         Optional<Identifier> result = this.createRewardId(itemStack);
         if (result.isEmpty()) return result;
 
         Identifier id = this.trimLength(result.get());
+        RewardId rewardId = new RewardId(crateId, id);
 
-        if (this.registry.contains(id)) {
+        if (this.registry.containsKey(rewardId)) {
             return this.makeUnique(id);
         }
 
@@ -44,7 +46,7 @@ public class RewardIdService {
     private Identifier trimLength(Identifier id) {
         String value = id.value();
         int length = value.length();
-        int threshold = RewardsConstants.REWARD_ID_LENGTH;
+        int threshold = SharedConstants.MAX_REWARD_ID_LENGTH;
         if (length > threshold) {
             return new Identifier(value.substring(0, threshold));
         }

@@ -8,11 +8,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
-import su.nightexpress.engine.id.Identifier;
+import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
+import su.nightexpress.excellentcrates.reward.crate.component.editor.RewardComponentHook;
 import su.nightexpress.excellentcrates.reward.data.RewardDataService;
 import su.nightexpress.excellentcrates.reward.data.reward.StandardRewardPreview;
 import su.nightexpress.excellentcrates.reward.editor.context.RewardCreationContext;
@@ -35,11 +37,11 @@ public class RewardEditorService {
         this.rewardPlaceholders = rewardPlaceholders;
     }
 
-    public ActionResult editReward(Identifier id, Function<Reward, ActionResult> action) {
+    public ActionResult editReward(RewardId id, Function<Reward, ActionResult> action) {
         Reward reward = this.dataService.getReward(id);
         if (reward == null) {
             return ActionResult.fail(RewardsLang.GENERIC_REWARD_NOT_FOUND, ctx -> ctx
-                .with(CommonPlaceholders.GENERIC_VALUE, id::value)
+                .with(CommonPlaceholders.GENERIC_VALUE, () -> id.rewardId().value())
             );
         }
 
@@ -51,15 +53,19 @@ public class RewardEditorService {
         return result;
     }
 
-    public ActionResult createReward(Player player, Identifier id, RewardCreationContext context) {
+    public ActionResult createReward(Player player,
+                                     RewardComponentHook hook,
+                                     Crate crate,
+                                     RewardId id,
+                                     RewardCreationContext context) {
         if (this.dataService.hasReward(id)) {
             return ActionResult.fail(RewardEditorLang.CREATION_DUPLICATED_ID, ctx -> ctx
-                .with(CommonPlaceholders.GENERIC_VALUE, id::value)
+                .with(CommonPlaceholders.GENERIC_VALUE, () -> id.rewardId().value())
             );
         }
 
         ItemStack itemStack = context.itemStack();
-        AdaptedItem item = context.useItemReference() ? ItemHelper.bukkitIfCrates(itemStack) : ItemHelper.bukkit(
+        AdaptedItem item = context.useItemReference() ? ItemHelper.bukkitIfFromCrates(itemStack) : ItemHelper.bukkit(
             itemStack);
 
         this.dataService.createReward(id, builder -> {
@@ -68,31 +74,47 @@ public class RewardEditorService {
 
             builder.preview(new StandardRewardPreview(name, lore, item, true));
         }, reward -> {
-            if (context.setItemContent()) {
+            if (context.addToGivenItems()) {
                 reward.getComponent(RewardComponentKeys.ITEMS).ifPresent(itemComponent -> {
                     itemComponent.addItem(item);
                 });
             }
+
+            hook.addReward(crate, reward.rawId());
         });
 
         return ActionResult.ok();
     }
 
-    public ActionResult deleteReward(Identifier id) {
+    public ActionResult deleteReward(RewardComponentHook hook, Crate crate, RewardId id) {
         Reward reward = this.dataService.getReward(id);
         if (reward == null) {
             return ActionResult.fail(RewardsLang.GENERIC_REWARD_NOT_FOUND, ctx -> ctx
-                .with(CommonPlaceholders.GENERIC_VALUE, id::value)
+                .with(CommonPlaceholders.GENERIC_VALUE, () -> id.rewardId().value())
             );
         }
 
         boolean success = this.dataService.deleteReward(reward);
-        return success ? ActionResult.ok() : ActionResult.fail(RewardEditorLang.DELETION_FAILURE, ctx -> ctx
-            .apply(this.rewardPlaceholders.basePlaceholders(reward))
-        );
+        if (success) {
+            hook.removeReward(crate, reward.rawId());
+            return ActionResult.ok();
+        }
+        else {
+            return ActionResult.fail(RewardEditorLang.DELETION_FAILURE, ctx -> ctx
+                .apply(this.rewardPlaceholders.basePlaceholders(reward))
+            );
+        }
     }
 
-    public ActionResult setPreviewName(Identifier id, String name) {
+    public ActionResult setCrateRewardWeight(RewardId rewardId, double weight) {
+        return this.editReward(rewardId, reward -> {
+            reward.getBase().setWeight(weight);
+
+            return ActionResult.ok();
+        });
+    }
+
+    public ActionResult setPreviewName(RewardId id, String name) {
         return this.editReward(id, reward -> {
             RewardPreview preview = reward.getPreview();
             preview.setName(name);
@@ -101,7 +123,7 @@ public class RewardEditorService {
         });
     }
 
-    public ActionResult setPreviewLore(Identifier id, List<String> lore) {
+    public ActionResult setPreviewLore(RewardId id, List<String> lore) {
         return this.editReward(id, reward -> {
             RewardPreview preview = reward.getPreview();
             preview.setLore(lore);
@@ -110,22 +132,22 @@ public class RewardEditorService {
         });
     }
 
-    public ActionResult setPreviewIcon(Identifier id, ItemStack itemStack) {
+    public ActionResult setPreviewIcon(RewardId id, ItemStack itemStack) {
         return this.editReward(id, reward -> {
             AdaptedItem item = ItemHelper.bukkitIfMixed(itemStack);
 
             RewardPreview preview = reward.getPreview();
             preview.setIcon(item);
-            preview.setUseIconData(!ItemHelper.isBukkitOnly(itemStack));
+            preview.setInheritFromIcon(!ItemHelper.isBukkitOnly(itemStack));
 
             return ActionResult.ok();
         });
     }
 
-    public ActionResult setPreviewAutoResolveFromIcon(Identifier id, boolean state) {
+    public ActionResult setPreviewAutoResolveFromIcon(RewardId id, boolean state) {
         return this.editReward(id, reward -> {
             RewardPreview preview = reward.getPreview();
-            preview.setUseIconData(state);
+            preview.setInheritFromIcon(state);
 
             return ActionResult.ok();
         });

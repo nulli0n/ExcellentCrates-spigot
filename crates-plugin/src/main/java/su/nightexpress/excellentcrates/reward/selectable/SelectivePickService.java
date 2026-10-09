@@ -14,6 +14,7 @@ import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardsComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardReference;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.quota.RewardQuotaService;
@@ -36,11 +37,13 @@ public class SelectivePickService {
             return List.of();
         }
 
+        Identifier crateId = crate.id();
+
         return rewardsComponent.getRewards().stream()
-            .map(entry -> this.rewardRegistry.get(entry.getRewardId()))
+            .map(entry -> this.rewardRegistry.resolveReward(crateId, entry.getRewardId()))
             .filter(Objects::nonNull)
             .filter(reward -> this.isPickable(player, crate, reward, pickContext).success())
-            .sorted(Comparator.comparing(Reward::idString))
+            .sorted(Comparator.comparing(reward -> reward.rawId().value()))
             .toList();
     }
 
@@ -68,14 +71,14 @@ public class SelectivePickService {
     }
 
     public ActionResult isPickable(Player player, Crate crate, Reward reward, SelectivePickContext pickContext) {
-        Identifier rewardId = reward.id();
+        RewardId rewardId = reward.id();
 
         CrateRewardsComponent crateRewards = crate.getComponentOrNull(CrateComponentKeys.REWARDS);
         if (crateRewards == null) {
             return ActionResult.fail();
         }
 
-        if (!crateRewards.hasReward(rewardId)) {
+        if (!crateRewards.hasReward(rewardId.rewardId())) {
             return ActionResult.fail();
         }
 
@@ -83,7 +86,7 @@ public class SelectivePickService {
         List<RewardReference> selectedRewards = pickContext.selectedRewards();
         if (!selectedRewards.isEmpty()) {
             selectedRewards.removeIf(selectedRef -> {
-                return !crateRewards.hasReward(selectedRef.id());
+                return !crateRewards.hasReward(selectedRef.id().rewardId());
             });
         }
 
@@ -115,7 +118,7 @@ public class SelectivePickService {
             return result;
         }
 
-        Identifier rewardId = reward.id();
+        RewardId rewardId = reward.id();
         List<RewardReference> selectedRewards = pickContext.selectedRewards();
 
         selectedRewards.add(this.rewardRegistry.createReference(rewardId));
@@ -124,7 +127,7 @@ public class SelectivePickService {
     }
 
     public ActionResult unpickReward(Player player, Crate crate, Reward reward, SelectivePickContext pickContext) {
-        Identifier rewardId = reward.id();
+        RewardId rewardId = reward.id();
         List<RewardReference> selectedRewards = pickContext.selectedRewards();
 
         RewardReference existingRef = selectedRewards.stream()

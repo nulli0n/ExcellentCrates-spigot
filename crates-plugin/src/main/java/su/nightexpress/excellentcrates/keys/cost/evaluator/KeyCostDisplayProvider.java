@@ -8,15 +8,14 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.engine.settings.ReadOnlySettings;
-import su.nightexpress.excellentcrates.api.common.preview.NameAndLore;
 import su.nightexpress.excellentcrates.api.cost.type.CostDisplayInfo;
 import su.nightexpress.excellentcrates.api.cost.type.CostDisplayProvider;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.key.CrateKey;
+import su.nightexpress.excellentcrates.api.key.data.model.KeyDisplay;
 import su.nightexpress.excellentcrates.api.key.registry.KeyResolver;
 import su.nightexpress.excellentcrates.keys.cost.lang.KeyCostLang;
 import su.nightexpress.excellentcrates.keys.cost.settings.KeyCostSettings;
-import su.nightexpress.excellentcrates.keys.display.KeyDisplayResolver;
 import su.nightexpress.excellentcrates.keys.item.KeyItemFactory;
 import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
@@ -28,16 +27,13 @@ public class KeyCostDisplayProvider implements CostDisplayProvider<KeyCostOption
 
     private final ReadOnlySettings<KeyCostSettings> settings;
     private final KeyResolver                       keyResolver;
-    private final KeyDisplayResolver                displayResolver;
     private final KeyItemFactory                    itemFactory;
 
     public KeyCostDisplayProvider(ReadOnlySettings<KeyCostSettings> settings,
                                   KeyResolver keyResolver,
-                                  KeyDisplayResolver displayResolver,
                                   KeyItemFactory itemFactory) {
         this.settings = settings;
         this.keyResolver = keyResolver;
-        this.displayResolver = displayResolver;
         this.itemFactory = itemFactory;
     }
 
@@ -50,11 +46,11 @@ public class KeyCostDisplayProvider implements CostDisplayProvider<KeyCostOption
             return String.valueOf(balance.intValue());
         }
 
-        NameAndLore preview = this.displayResolver.getDisplayInfo(key);
+        KeyDisplay display = key.getDisplay();
 
         PlaceholderContext placeholders = PlaceholderContext.builder()
             .with(CommonPlaceholders.GENERIC_AMOUNT, () -> NumberUtil.format(balance.intValue()))
-            .with(CommonPlaceholders.GENERIC_NAME, preview::name)
+            .with(CommonPlaceholders.GENERIC_NAME, display::getName)
             .build();
 
         return placeholders.apply(KeyCostLang.DISPLAY_BALANCE_FORMAT.text());
@@ -79,8 +75,8 @@ public class KeyCostDisplayProvider implements CostDisplayProvider<KeyCostOption
         }
 
         NightItem icon = this.itemFactory.createDisplayIcon(key);
-        NameAndLore preview = this.displayResolver.getDisplayInfo(key);
+        KeyDisplay display = key.getDisplay();
 
-        return new CostDisplayInfo(icon, preview.name(), preview.lore());
+        return new CostDisplayInfo(icon, display.getName(), display.getLore());
     }
 }

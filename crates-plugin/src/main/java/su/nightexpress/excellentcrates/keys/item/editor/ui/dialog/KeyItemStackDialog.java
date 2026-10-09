@@ -58,7 +58,7 @@ public class KeyItemStackDialog extends Dialog<KeyItemDialogContext> {
         boolean isMixedItem = ItemHelper.isMixed(itemStack);
         boolean preferNBT = isMixedItem || isVanillaOnly;
 
-        AdaptedItem adaptedItem = ItemHelper.bukkitIfCrates(itemStack);
+        AdaptedItem adaptedItem = ItemHelper.bukkitIfFromCrates(itemStack);
         ItemProvider provider = ItemBridge.get().getProvider(itemStack);
 
         PlaceholderContext placeholders = PlaceholderContext.builder()

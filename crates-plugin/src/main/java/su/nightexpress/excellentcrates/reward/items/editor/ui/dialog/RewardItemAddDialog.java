@@ -54,7 +54,7 @@ public class RewardItemAddDialog extends Dialog<RewardItemAddDialogContext> {
         List<WrappedDialogInput> inputs = new ArrayList<>();
 
         boolean isMixedItem = ItemHelper.isMixed(itemStack);
-        AdaptedItem adaptedItem = ItemHelper.bukkitIfCrates(itemStack);
+        AdaptedItem adaptedItem = ItemHelper.bukkitIfFromCrates(itemStack);
         ItemProvider provider = ItemBridge.get().getProvider(itemStack);
 
         PlaceholderContext placeholders = PlaceholderContext.builder()

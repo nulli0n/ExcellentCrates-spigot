@@ -2,10 +2,10 @@ package su.nightexpress.excellentcrates.api.reward.limit;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
 import su.nightexpress.excellentcrates.api.common.limit.LimitType;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked
 public interface RewardLimitComponent extends RewardComponent {
@@ -30,7 +30,7 @@ public interface RewardLimitComponent extends RewardComponent {
 
     void setAlternativeEnabled(boolean enabled);
 
-    Identifier getAlternativeRewardId();
+    RewardId getAlternativeRewardId();
 
-    void setAlternativeRewardId(Identifier rewardId);
+    void setAlternativeRewardId(RewardId rewardId);
 }

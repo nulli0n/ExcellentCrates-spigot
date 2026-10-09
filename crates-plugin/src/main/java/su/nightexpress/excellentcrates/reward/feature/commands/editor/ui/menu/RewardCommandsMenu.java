@@ -16,14 +16,14 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.reward.Reward;
+import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandExecutionMode;
 import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandPool;
 import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandsComponent;
-import su.nightexpress.excellentcrates.api.reward.commands.RewardCommandExecutionMode;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardResolver;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.reward.feature.commands.component.StandrdRewardCommandPool;
@@ -104,7 +104,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
         Player player = context.getPlayer();
         RewardCommandsMenuContext menuContext = this.getObject(context);
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;
@@ -230,7 +230,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
         List<MenuItem> items = new ArrayList<>();
         List<RewardCommandPool> bundles = content.getBundles();
 
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
         boolean supportsWeight = content.isWeightEffective();
         RewardEditorHook hook = menuContext.hook();
         Runnable refreshUI = () -> this.refresh(player);
@@ -295,7 +295,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
         Player player = context.getPlayer();
         RewardCommandsMenuContext menuContext = this.getObject(context);
         RewardEditorHook hook = menuContext.hook();
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;
@@ -317,7 +317,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
     private void handleState(ActionContext context) {
         Player player = context.getPlayer();
         RewardCommandsMenuContext menuContext = this.getObject(context);
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;
@@ -336,7 +336,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
         Player player = context.getPlayer();
         RewardCommandsMenuContext menuContext = this.getObject(context);
         RewardEditorHook hook = menuContext.hook();
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;
@@ -355,7 +355,7 @@ public class RewardCommandsMenu extends AbstractObjectMenu<RewardCommandsMenuCon
         Player player = context.getPlayer();
         RewardCommandsMenuContext menuContext = this.getObject(context);
         RewardEditorHook hook = menuContext.hook();
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;

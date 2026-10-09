@@ -13,13 +13,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.MenuType;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.limit.LimitSnapshot;
 import su.nightexpress.excellentcrates.api.common.limit.LimitType;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.editor.RewardEditorHook;
 import su.nightexpress.excellentcrates.api.reward.limit.RewardLimitComponent;
+import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardResolver;
 import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.reward.feature.limit.editor.ui.RewardLimitsEditorUIController;
@@ -97,7 +97,7 @@ public class RewardLimitsMainMenu extends AbstractObjectMenu<RewardLimitsMainMen
     @Override
     public void onPrepare(ViewerContext context, InventoryView view, Inventory inventory, List<MenuItem> items) {
         RewardLimitsMainMenuContext menuContext = this.getObject(context);
-        Identifier rewardId = menuContext.rewardId();
+        RewardId rewardId = menuContext.rewardId();
 
         Reward reward = this.resolver.resolveReward(rewardId);
         if (reward == null) return;
@@ -186,7 +186,7 @@ public class RewardLimitsMainMenu extends AbstractObjectMenu<RewardLimitsMainMen
     }
 
     private MenuItem createAlternativeRewardButton(RewardLimitComponent limit) {
-        Identifier rewardId = limit.getAlternativeRewardId();
+        RewardId rewardId = limit.getAlternativeRewardId();
         Reward reward = this.resolver.resolveReward(rewardId);
 
         NightItem icon;
@@ -194,7 +194,7 @@ public class RewardLimitsMainMenu extends AbstractObjectMenu<RewardLimitsMainMen
         if (reward == null) {
             icon = NightItem.fromType(Material.BARRIER)
                 .replace(ctx -> ctx
-                    .with(CommonPlaceholders.GENERIC_VALUE, () -> CoreLang.badEntry(rewardId.value()))
+                    .with(CommonPlaceholders.GENERIC_VALUE, () -> CoreLang.badEntry(rewardId.rewardId().value()))
                 );
         }
         else {
