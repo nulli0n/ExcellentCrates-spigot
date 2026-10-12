@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.animation.style.csgo.codec;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.animation.style.csgo.CSGOAnimationSettings;
+import su.nightexpress.excellentcrates.animation.visibility.AnimationVisibility;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
@@ -19,8 +20,10 @@ public class CSGOAnimationSettingsCodec implements ConfigCodec<CSGOAnimationSett
         int totalRolls = config.getOrSet(path + ".total_rolls", ConfigCodecs.INT, 16);
         long durationTicks = config.getOrSet(path + ".duration_ticks", ConfigCodecs.LONG, 50L);
         long finishTickDelay = config.getOrSet(path + ".finish_tick_delay", ConfigCodecs.LONG, 20L);
+        AnimationVisibility visibility = config.getOrSet(path + ".visibility", ConfigCodecs.forEnum(AnimationVisibility.class),
+            AnimationVisibility.PUBLIC);
 
-        return new CSGOAnimationSettings(name, totalRolls, durationTicks, finishTickDelay);
+        return new CSGOAnimationSettings(name, totalRolls, durationTicks, finishTickDelay, visibility);
     }
 
     @Override
@@ -29,5 +32,6 @@ public class CSGOAnimationSettingsCodec implements ConfigCodec<CSGOAnimationSett
         config.set(path + ".total_rolls", value.totalRolls());
         config.set(path + ".duration_ticks", value.durationTicks());
         config.set(path + ".finish_tick_delay", value.finishTickDelay());
+        config.set(path + ".visibility", value.visibility().name());
     }
 }

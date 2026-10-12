@@ -38,6 +38,41 @@ Create custom animation profiles for registered types, tweaking their parameters
 
 ![](https://nightexpressdev.com/excellentcrates/img/overview/animations.webp)
 
+Built-in animation profiles support `settings.visibility`:
+
+- `PUBLIC` (default) shows the animation to nearby players, with the existing sounds and effects.
+- `PRIVATE` shows the animation entities and reward names only to the player opening the crate. Multiple players can open the same crate at the same time and see their own animation.
+
+Edit the profile selected for your crate under `plugins/ExcellentCrates/objects/animations/`, then reload ExcellentCrates or restart the server. Existing profiles without this setting continue using `PUBLIC`; newly generated profiles include it.
+
+Visibility uses the existing enum configuration parser: values are case-insensitive, and unrecognized values fall back to `PUBLIC`.
+
+Simple Roll (`simple_roll/<profile>.yml`, such as `simple_roll/default.yml`):
+
+```yaml
+settings:
+  name: "Simple Roll (Default)"
+  roll_amount: 12
+  roll_interval: 5
+  finish_delay: 40
+  visibility: PRIVATE
+```
+
+CS:GO (`csgo_animation/<profile>.yml`, such as `csgo_animation/default.yml`):
+
+```yaml
+settings:
+  name: "CSGO (Default)"
+  total_rolls: 16
+  duration_ticks: 50
+  finish_tick_delay: 20
+  visibility: PRIVATE
+```
+
+In `PRIVATE` mode, Simple Roll sends its sounds only to the opener and replaces the world firework with an opener-only firework particle burst. The burst creates no firework entity or explosion; its appearance depends on the player's particle settings. CS:GO's items, text and winner glow all follow the selected visibility; this animation has no separate sounds or fireworks. Reward announcements, logs, crate holograms and idle crate effects keep their existing behavior.
+
+Client visibility still needs verification on a running server; see the [multiplayer test checklist](docs/animation-visibility-testing.md).
+
 ### BLOCKS, EFFECTS AND HOLOGRAMS
 
 Place crates anywhere in one click - just put the crate block where you want it! Configure **holograms, particle effects**, and custom **click actions** for each crate block!

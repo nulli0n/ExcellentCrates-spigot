@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.animation.session;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -14,6 +15,9 @@ import su.nightexpress.excellentcrates.api.animation.AnimationInstance;
 public class AnimationSessionManager {
 
     private final Map<UUID, AnimationInstance> sessions;
+    private final Set<UUID> stoppingPlayers = new HashSet<>();
+
+    private boolean shuttingDown;
 
     public AnimationSessionManager() {
         this.sessions = new HashMap<>();
@@ -26,8 +30,32 @@ public class AnimationSessionManager {
     public void stopSession(UUID playerId) {
         AnimationInstance instance = this.sessions.remove(playerId);
         if (instance != null) {
-            instance.stop();
+            // Completion callbacks may try to start the next reward in a chain.
+            // An interruption must finish the pipeline without spawning another animation.
+            this.stoppingPlayers.add(playerId);
+            try {
+                instance.stop();
+            }
+            finally {
+                this.stoppingPlayers.remove(playerId);
+            }
         }
+    }
+
+    public boolean canStartSession(UUID playerId) {
+        return !this.shuttingDown && !this.stoppingPlayers.contains(playerId);
+    }
+
+    public void stopSession(AnimationInstance instance) {
+        this.sessions.entrySet().stream()
+            .filter(entry -> entry.getValue() == instance)
+            .map(Map.Entry::getKey)
+            .findFirst()
+            .ifPresent(this::stopSession);
+    }
+
+    public void beginShutdown() {
+        this.shuttingDown = true;
     }
 
     public void registerSession(UUID playerId, AnimationInstance instance) {

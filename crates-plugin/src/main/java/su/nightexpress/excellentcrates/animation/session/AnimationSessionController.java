@@ -8,6 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import su.nightexpress.engine.component.BaseController;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
@@ -15,6 +17,8 @@ import su.nightexpress.excellentcrates.api.animation.AnimationInstance;
 
 @NullMarked
 public class AnimationSessionController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnimationSessionController.class);
 
     private final AnimationSessionManager sessionManager;
 
@@ -30,6 +34,7 @@ public class AnimationSessionController extends BaseController {
 
     @Override
     protected void onControllerShutdown() {
+        this.sessionManager.beginShutdown();
         this.stopAllSessions();
     }
 
@@ -46,18 +51,35 @@ public class AnimationSessionController extends BaseController {
         this.sessionManager.purgeStoppedSessions();
 
         for (AnimationInstance session : this.sessionManager.getSessions()) {
-            if (!session.tick()) {
-                session.stop();
+            try {
+                if (!session.tick()) {
+                    session.stop();
+                }
+            }
+            catch (RuntimeException exception) {
+                LOGGER.error("Failed to tick an opening animation", exception);
+                if (session.isRunning()) {
+                    this.stopSession(session);
+                }
             }
         }
     }
 
     private void stopAllSessions() {
         for (AnimationInstance session : this.sessionManager.getSessions()) {
-            session.stop();
+            this.stopSession(session);
         }
 
         this.sessionManager.purgeStoppedSessions();
+    }
+
+    private void stopSession(AnimationInstance session) {
+        try {
+            this.sessionManager.stopSession(session);
+        }
+        catch (RuntimeException exception) {
+            LOGGER.error("Failed to stop an opening animation", exception);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

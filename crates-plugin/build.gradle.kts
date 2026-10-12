@@ -15,6 +15,16 @@ dependencies {
     implementation(project(":integration-nexo"))
     implementation(project(":integration-packetevents"))
     implementation(project(":integration-papi"))
+
+    testImplementation("io.papermc.paper:paper-api:26.1.2.build.+")
+    testImplementation("su.nightexpress.nightcore:main:2.16.7")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
+    testImplementation("org.mockito:mockito-core:5.20.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.named<Jar>("jar") {
