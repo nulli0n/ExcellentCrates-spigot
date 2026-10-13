@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.cache.CacheStrategy;
 import su.nightexpress.engine.id.Identifier;
+import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.key.CrateKey;
 import su.nightexpress.excellentcrates.api.key.balance.IKeyBalance;
 import su.nightexpress.excellentcrates.keys.item.KeyItemService;
@@ -21,10 +22,12 @@ import su.nightexpress.nightcore.util.placeholder.CommonPlaceholders;
 
 public final class KeyBalanceService {
 
+    private final CratesPlugin                plugin;
     private final KeyStorageCachedDataService storageService;
     private final KeyItemService              itemService;
 
-    public KeyBalanceService(KeyStorageCachedDataService storageService, KeyItemService itemService) {
+    public KeyBalanceService(CratesPlugin plugin, KeyStorageCachedDataService storageService, KeyItemService itemService) {
+        this.plugin = plugin;
         this.storageService = storageService;
         this.itemService = itemService;
     }
@@ -121,7 +124,10 @@ public final class KeyBalanceService {
         }
 
         int unclaimed = storedKey.getUnclaimedAmount();
-        this.addKey(player, key, unclaimed);
+        ActionResult result = this.addKey(player, key, unclaimed);
+        if (!result.success()) {
+            return result;
+        }
         storedKey.setUnclaimedAmount(0);
         this.storageService.markDirty(storedKey);
 
@@ -147,6 +153,20 @@ public final class KeyBalanceService {
             ItemStack keyItem = this.itemService.createTaggedItem(key).orElse(null);
             if (keyItem == null) {
                 return ActionResult.fail(KeyLang.ERROR_ITEM_CREATION_FAILED);
+            }
+
+            int space = 0;
+            int maxStackSize = Math.min(player.getInventory().getMaxStackSize(), keyItem.getMaxStackSize());
+            for (ItemStack item : player.getInventory().getStorageContents()) {
+                if (item == null || item.getType().isAir()) {
+                    space += maxStackSize;
+                }
+                else if (item.isSimilar(keyItem)) {
+                    space += Math.max(0, maxStackSize - item.getAmount());
+                }
+            }
+            if (space < absAmount) {
+                return ActionResult.fail(KeyLang.ERROR_INVENTORY_FULL);
             }
 
             keyItem.setAmount(absAmount);
@@ -186,16 +206,19 @@ public final class KeyBalanceService {
                 });
         }
         else {
-            Player player = Players.getPlayer(playerId);
-            if (player != null) {
-                return CompletableFuture.completedFuture(this.addKey(player, key, absAmount));
-            }
+            // Player inventory access and item delivery must run on the server thread.
+            return CompletableFuture.supplyAsync(() -> {
+                Player player = Players.getPlayer(playerId);
+                if (player != null) {
+                    return CompletableFuture.completedFuture(this.addKey(player, key, absAmount));
+                }
 
-            return this.storageService.updateDataAndCreateIfAbsentAsync(playerId, keyId, CacheStrategy.TEMPORARY,
-                storedKey -> {
-                    storedKey.setUnclaimedAmount(storedKey.getUnclaimedAmount() + absAmount);
-                    return success;
-                });
+                return this.storageService.updateDataAndCreateIfAbsentAsync(playerId, keyId, CacheStrategy.TEMPORARY,
+                    storedKey -> {
+                        storedKey.setUnclaimedAmount(storedKey.getUnclaimedAmount() + absAmount);
+                        return success;
+                    });
+            }, this.plugin::runTask).thenCompose(result -> result);
         }
     }
 
