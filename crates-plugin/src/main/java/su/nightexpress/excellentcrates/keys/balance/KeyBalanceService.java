@@ -166,7 +166,7 @@ public final class KeyBalanceService {
                 }
             }
             if (space < absAmount) {
-                return ActionResult.fail(KeyLang.ERROR_INVENTORY_FULL);
+                return ActionResult.fail(KeyLang.ERROR_INVENTORY_SPACE);
             }
 
             keyItem.setAmount(absAmount);

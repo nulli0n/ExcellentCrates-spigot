@@ -159,9 +159,9 @@ public final class KeyLang implements LangContainer {
         .builder("keys.key.redeem.no_unclaimed")
         .chatMessage("You have no unclaimed " + TagWrappers.WHITE.wrap(SharedPlaceholders.KEY_NAME) + ".");
 
-    public static final MessageLocale ERROR_INVENTORY_FULL = LangEntry
-        .builder("keys.error.inventory_full")
-        .chatMessage("The player's inventory is currently full.");
+    public static final MessageLocale ERROR_INVENTORY_SPACE = LangEntry
+        .builder("keys.error.inventory_space")
+        .chatMessage("The player's inventory does not have enough space.");
 
     public static final MessageLocale ERROR_ITEM_CREATION_FAILED = LangEntry
         .builder("keys.error.item_creation_failed")
