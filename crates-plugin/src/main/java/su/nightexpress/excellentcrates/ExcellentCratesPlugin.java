@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.bukkit.plugin.PluginManager;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import su.nightexpress.engine.component.ComponentBundle;
+import su.nightexpress.engine.component.ModuleBootstrap;
 import su.nightexpress.engine.dispatcher.MessageDispatcher;
 import su.nightexpress.engine.placeholder.PlaceholderAPIResolver;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
 import su.nightexpress.engine.ui.menu.MenuRegistry;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.PluginAPIConfiguration;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
+import su.nightexpress.excellentcrates.api.engine.event.ExcellentCratesModulesRegisteredEvent;
+import su.nightexpress.excellentcrates.api.engine.event.ExcellentCratesModulesResolvedEvent;
+import su.nightexpress.excellentcrates.api.engine.event.ExcellentCratesPreModuleRegisterEvent;
 import su.nightexpress.excellentcrates.core.SharedDirectories;
 import su.nightexpress.excellentcrates.core.crate.CratePlaceholderService;
 import su.nightexpress.excellentcrates.core.dispatcher.StandardMessageDispatcher;
@@ -106,13 +112,7 @@ public class ExcellentCratesPlugin extends NightPlugin implements CratesPlugin {
         this.core.addComponent(configContext.getComponent());
         this.core.addComponent(new PluginCommandRegistrar(this, this.core, configContext.settings, dispatcher));
 
-        moduleContext.getBootstraps().forEach(bootstrap -> {
-            bootstrap.onRegister(services, dependencies);
-        });
-
-        moduleContext.getBootstraps().forEach(bootstrap -> {
-            this.core.addComponent(bootstrap.onResolve(services, dependencies));
-        });
+        this.loadModules(services, dependencies, moduleContext.getBootstraps());
 
         if (PAPI.isPresent()) {
             this.core.addComponent(PlaceholderAPIConfiguration.configure(this, this.papiResolvers));
@@ -123,6 +123,24 @@ public class ExcellentCratesPlugin extends NightPlugin implements CratesPlugin {
         this.registerPermissions(Perms.ROOT);
 
         PluginAPIConfiguration.configure(this, services);
+    }
+
+    private void loadModules(ServiceRegistry services,
+                             DefaultDependencies dependencies,
+                             List<ModuleBootstrap<CoreDependencies>> bootstraps) {
+        PluginManager pluginManager = this.getPluginManager();
+
+        // Fire pre-module register event before registering modules
+        pluginManager.callEvent(new ExcellentCratesPreModuleRegisterEvent(this.core, services, dependencies,
+            bootstraps));
+
+        // Register modules and fire modules registered event
+        bootstraps.forEach(bootstrap -> bootstrap.onRegister(services, dependencies));
+        pluginManager.callEvent(new ExcellentCratesModulesRegisteredEvent(this.core, services, dependencies));
+
+        // Resolve modules and fire modules resolved event
+        bootstraps.forEach(bootstrap -> this.core.addComponent(bootstrap.onResolve(services, dependencies)));
+        pluginManager.callEvent(new ExcellentCratesModulesResolvedEvent(this.core, services, dependencies));
     }
 
     @Override
