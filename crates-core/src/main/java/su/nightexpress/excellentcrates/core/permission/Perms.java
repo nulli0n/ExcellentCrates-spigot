@@ -11,6 +11,7 @@ public final class Perms {
     public static final PermissionNamespace ROOT    = PermissionNamespace.root("excellentcrates");
     public static final PermissionNamespace COMMAND = ROOT.namespace("command");
 
+    public static final Permission COMMAND_ROOT   = COMMAND.create("root");
     public static final Permission COMMAND_RELOAD = COMMAND.create("reload");
     public static final Permission COMMAND_STATUS = COMMAND.create("status");
 

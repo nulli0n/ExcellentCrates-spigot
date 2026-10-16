@@ -58,6 +58,7 @@ public class PluginCommandRegistrar extends BasePluginComponent {
     private void createRootCommand() {
         this.rootCommand = NightCommand.hub(this.plugin, this.settings.get().commandAliases(), builder -> {
             builder.description(Lang.PLUGIN_COMMAND_ROOT_DESCRIPTION);
+            builder.permission(Perms.COMMAND_ROOT);
 
             builder.branch(Commands.literal("status")
                 .description(Lang.PLUGIN_COMMAND_STATUS_DESCRIPTION)
