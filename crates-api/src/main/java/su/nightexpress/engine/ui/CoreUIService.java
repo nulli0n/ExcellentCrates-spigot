@@ -21,5 +21,7 @@ public interface CoreUIService {
 
     <T> ActionResult openMenu(Player player, MenuKey<T> key, T context);
 
+    <T> ActionResult openMenu(Player player, MenuKey<T> key, T context, int page);
+
     <T> ActionResult showDialog(Player player, DialogKey<T> key, T context, @Nullable Runnable callback);
 }

@@ -68,7 +68,8 @@ public class RewardEditorUIController {
 
     }
 
-    public void onBrowseMenuRewardClick(Player player, Reward reward, RewardBrowseMenuContext currentContext) {
+    public void onBrowseMenuRewardClick(Player player, Reward reward, RewardBrowseMenuContext currentContext,
+                                        int page) {
         CrateReference crateRef = currentContext.crateRef();
         RewardReference rewardRef = this.rewardRegistry.createReference(reward);
 
@@ -76,7 +77,7 @@ public class RewardEditorUIController {
         if (crate == null) return;
 
         BackwardNavigator navigator = user -> {
-            this.dispatcher.handleFeedbackBase(user, crate, this.uiService.openBrowseMenu(user, currentContext));
+            this.dispatcher.handleFeedbackBase(user, crate, this.uiService.openBrowseMenu(user, currentContext, page));
         };
 
         RewardComponentHook hook = currentContext.hook();

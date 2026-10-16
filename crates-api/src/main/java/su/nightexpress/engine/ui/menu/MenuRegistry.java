@@ -20,4 +20,6 @@ public interface MenuRegistry {
     <T> void unregister(MenuKey<T> key);
 
     <T> ActionResult show(Player player, MenuKey<T> key, T context);
+
+    <T> ActionResult show(Player player, MenuKey<T> key, T context, int page);
 }

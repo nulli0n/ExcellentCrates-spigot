@@ -261,10 +261,11 @@ public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext
     private void handleRewardClick(ActionContext context, Reward reward) {
         Player player = context.getPlayer();
         RewardBrowseMenuContext menuContext = this.getObject(context);
+        int page = context.getViewer().getCurrentPage();
 
         Crate crate = menuContext.crateRef().get();
         if (crate == null) return;
 
-        this.controller.onBrowseMenuRewardClick(player, reward, menuContext);
+        this.controller.onBrowseMenuRewardClick(player, reward, menuContext, page);
     }
 }

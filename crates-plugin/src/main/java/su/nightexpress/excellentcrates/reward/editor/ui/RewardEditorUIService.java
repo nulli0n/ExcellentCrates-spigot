@@ -29,7 +29,11 @@ public class RewardEditorUIService {
     }
 
     public ActionResult openBrowseMenu(Player player, RewardBrowseMenuContext context) {
-        return this.coreUI.openMenu(player, RewardEditorUIKeys.MENU_BROWSE, context);
+        return this.openBrowseMenu(player, context, 1);
+    }
+
+    public ActionResult openBrowseMenu(Player player, RewardBrowseMenuContext context, int page) {
+        return this.coreUI.openMenu(player, RewardEditorUIKeys.MENU_BROWSE, context, page);
     }
 
     public ActionResult openOptionsMenu(Player player, RewardOptionsMenuContext context) {

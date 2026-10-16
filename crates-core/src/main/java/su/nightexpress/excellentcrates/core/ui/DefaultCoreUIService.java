@@ -47,6 +47,11 @@ public class DefaultCoreUIService implements CoreUIService {
     }
 
     @Override
+    public <T> ActionResult openMenu(Player player, MenuKey<T> key, T context, int page) {
+        return this.menus.show(player, key, context, page);
+    }
+
+    @Override
     public <T> ActionResult showDialog(Player player, DialogKey<T> key, T context, @Nullable Runnable callback) {
         if (!this.dialogs.show(player, key, context, callback)) {
             return ActionResult.fail(Lang.CORE_UI_ERROR_DIALOG_NOT_FOUND, ctx -> ctx

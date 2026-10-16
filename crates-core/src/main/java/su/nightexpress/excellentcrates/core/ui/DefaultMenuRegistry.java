@@ -46,8 +46,13 @@ public class DefaultMenuRegistry implements MenuRegistry {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public <T> ActionResult show(Player player, MenuKey<T> key, T context) {
+        return this.show(player, key, context, 1);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ActionResult show(Player player, MenuKey<T> key, T context, int page) {
         AbstractObjectMenu<T> menu = (AbstractObjectMenu<T>) this.byKey.get(key);
 
         if (menu == null) {
@@ -57,6 +62,6 @@ public class DefaultMenuRegistry implements MenuRegistry {
             );
         }
 
-        return ActionResult.of(menu.show(player, context));
+        return ActionResult.of(menu.show(player, context, v -> v.setCurrentPage(page)));
     }
 }
