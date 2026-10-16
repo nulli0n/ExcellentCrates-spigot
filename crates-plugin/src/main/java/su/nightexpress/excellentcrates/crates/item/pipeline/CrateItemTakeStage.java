@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.crate.Crate;
+import su.nightexpress.excellentcrates.api.crate.batch.BatchPipelineComponent;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineChain;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineStage;
@@ -42,11 +43,16 @@ public class CrateItemTakeStage implements PipelineStage {
             return;
         }
 
-        Players.takeItem(player, inv -> this.itemService.isCrateItem(inv, crate));
+        BatchPipelineComponent batchComponent = context.getComponentOrNull(PipelineComponentKeys.BATCH);
+        int batchAmount = batchComponent != null ? batchComponent.getSelectedAmount() : 1;
 
-        this.dispatcher.sendBase(player, crate, CrateItemLang.PIPELINE_ITEM_TAKEN, ctx -> ctx
-            .with(SharedPlaceholders.ITEM, () -> ItemUtil.getNameSerialized(itemStack))
-        );
+        if (batchAmount > 0) {
+            Players.takeItem(player, inv -> this.itemService.isCrateItem(inv, crate), batchAmount);
+
+            this.dispatcher.sendBase(player, crate, CrateItemLang.PIPELINE_ITEM_TAKEN, ctx -> ctx
+                .with(SharedPlaceholders.ITEM, () -> ItemUtil.getNameSerialized(itemStack))
+            );
+        }
 
         chain.proceed(player, context);
     }
