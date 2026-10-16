@@ -86,13 +86,13 @@ public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext
 
     @Override
     public void defineDefaultLayout() {
-        this.addNextPageButton(41);
-        this.addPreviousPageButton(39);
-
         this.addBackgroundItem(Material.GRAY_STAINED_GLASS_PANE, IntStream.range(0, 36).toArray());
         this.addBackgroundItem(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(36, 45).toArray());
 
         this.addBackButton(this::handleBack, 36);
+
+        this.addNextPageButton(41);
+        this.addPreviousPageButton(39);
 
         this.addDefaultButton("create", MenuItem.button()
             .defaultState(ItemState.builder()
