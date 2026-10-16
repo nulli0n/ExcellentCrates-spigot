@@ -134,7 +134,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
             activeNodes.entrySet().removeIf(entry -> {
                 int index = entry.getKey();
                 if (index < minIndex || index > maxIndex) {
-                    entry.getValue().remove();
+                    entry.getValue().remove(audience);
                     return true;
                 }
                 return false;
@@ -226,17 +226,9 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
         }
     }
 
-    private class RouletteNode {
+    private record RouletteNode(ItemDisplay item, TextDisplay text) {
 
-        private final ItemDisplay item;
-        private final TextDisplay text;
-
-        private RouletteNode(ItemDisplay item, TextDisplay text) {
-            this.item = item;
-            this.text = text;
-        }
-
-        public void remove() {
+        public void remove(AnimationAudience audience) {
             audience.remove(this.item);
             audience.remove(this.text);
         }

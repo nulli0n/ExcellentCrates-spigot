@@ -29,7 +29,7 @@ public class AnimationSessionManager {
 
     public void stopSession(UUID playerId) {
         AnimationInstance instance = this.sessions.remove(playerId);
-        if (instance != null) {
+        if (instance != null && instance.isRunning()) {
             // Completion callbacks may try to start the next reward in a chain.
             // An interruption must finish the pipeline without spawning another animation.
             this.stoppingPlayers.add(playerId);
@@ -46,16 +46,14 @@ public class AnimationSessionManager {
         return !this.shuttingDown && !this.stoppingPlayers.contains(playerId);
     }
 
-    public void stopSession(AnimationInstance instance) {
-        this.sessions.entrySet().stream()
-            .filter(entry -> entry.getValue() == instance)
-            .map(Map.Entry::getKey)
-            .findFirst()
-            .ifPresent(this::stopSession);
+    public void stopSession(UUID playerId, AnimationInstance instance) {
+        if (this.sessions.get(playerId) == instance) {
+            this.stopSession(playerId);
+        }
     }
 
-    public void beginShutdown() {
-        this.shuttingDown = true;
+    public void setShuttingDown(boolean shuttingDown) {
+        this.shuttingDown = shuttingDown;
     }
 
     public void registerSession(UUID playerId, AnimationInstance instance) {
@@ -77,5 +75,9 @@ public class AnimationSessionManager {
 
     public Set<AnimationInstance> getSessions() {
         return Set.copyOf(this.sessions.values());
+    }
+
+    public Set<Map.Entry<UUID, AnimationInstance>> getSessionEntries() {
+        return Map.copyOf(this.sessions).entrySet();
     }
 }

@@ -93,8 +93,6 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
     }
 
     private void displayReward() {
-        if (this.rewardDisplay == null) return;
-
         boolean lastRoll = this.rollsLeft <= 0;
 
         Reward reward = lastRoll ? this.reward.getRolled() : Randomizer.pick(this.availableRewards);

@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class AnimationSessionService {
     }
 
     public ActionResult checkActiveSession(Player player) {
-        if (this.sessionManager.hasSession(player.getUniqueId())) {
+        if (!this.sessionManager.canStartSession(player.getUniqueId()) || this.sessionManager.hasSession(player.getUniqueId())) {
             return ActionResult.fail(AnimationsLang.GENERIC_ANIMATION_SESSION_ACTIVE);
         }
         return ActionResult.ok();
@@ -34,19 +35,18 @@ public class AnimationSessionService {
     public ActionResult startSession(AnimationProfile profile, AnimationContext context, Runnable onComplete) {
         Player player = context.player();
 
-        if (!this.sessionManager.canStartSession(player.getUniqueId())) {
-            return ActionResult.fail(AnimationsLang.GENERIC_ANIMATION_SESSION_ACTIVE);
-        }
-
         ActionResult result = this.checkActiveSession(player);
         if (!result.success()) {
             return result;
         }
 
         AtomicBoolean completed = new AtomicBoolean();
+        AtomicBoolean failed = new AtomicBoolean();
+        @Nullable AnimationInstance instance = null;
         try {
-            AnimationInstance instance = profile.createInstance(context, () -> {
-                if (completed.compareAndSet(false, true)) {
+            instance = profile.createInstance(context, () -> {
+                if (!failed.get()) {
+                    completed.set(true);
                     onComplete.run();
                 }
             });
@@ -54,16 +54,22 @@ public class AnimationSessionService {
             instance.start();
         }
         catch (RuntimeException exception) {
-            // The caller completes a failed startup. Cleanup must not also advance the chain.
-            completed.set(true);
-            try {
-                this.sessionManager.stopSession(player.getUniqueId());
-            }
-            catch (RuntimeException cleanupException) {
-                exception.addSuppressed(cleanupException);
+            // Suppress callbacks only while cleaning up a failed startup.
+            failed.set(true);
+            if (instance != null && instance.isRunning()) {
+                if (this.sessionManager.getSession(player.getUniqueId()) == instance) {
+                    this.sessionManager.unregisterSession(player.getUniqueId());
+                }
+                try {
+                    instance.stop();
+                }
+                catch (RuntimeException cleanupException) {
+                    exception.addSuppressed(cleanupException);
+                }
             }
             LOGGER.error("Failed to start animation '{}'", profile.getKey(), exception);
-            return ActionResult.fail(AnimationsLang.PIPELINE_INVALID_ANIMATION_INSTANTIATOR);
+            // A synchronous completion may already have advanced the chain.
+            return completed.get() ? ActionResult.ok() : ActionResult.fail(AnimationsLang.PIPELINE_INVALID_ANIMATION_INSTANTIATOR);
         }
 
         return ActionResult.ok();

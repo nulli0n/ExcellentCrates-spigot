@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.session;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -34,12 +35,13 @@ public class AnimationSessionController extends BaseController {
 
     @Override
     protected void onControllerShutdown() {
-        this.sessionManager.beginShutdown();
+        this.sessionManager.setShuttingDown(true);
         this.stopAllSessions();
     }
 
     @Override
     protected void onControllerStart() {
+        this.sessionManager.setShuttingDown(false);
         this.runInstanceTickTask();
     }
 
@@ -50,32 +52,35 @@ public class AnimationSessionController extends BaseController {
     private void tickSessions() {
         this.sessionManager.purgeStoppedSessions();
 
-        for (AnimationInstance session : this.sessionManager.getSessions()) {
+        for (Map.Entry<UUID, AnimationInstance> entry : this.sessionManager.getSessionEntries()) {
+            AnimationInstance session = entry.getValue();
+            if (!session.isRunning()) continue;
+
             try {
-                if (!session.tick()) {
+                if (!session.tick() && session.isRunning()) {
                     session.stop();
                 }
             }
             catch (RuntimeException exception) {
                 LOGGER.error("Failed to tick an opening animation", exception);
                 if (session.isRunning()) {
-                    this.stopSession(session);
+                    this.stopSession(entry.getKey(), session);
                 }
             }
         }
     }
 
     private void stopAllSessions() {
-        for (AnimationInstance session : this.sessionManager.getSessions()) {
-            this.stopSession(session);
+        for (Map.Entry<UUID, AnimationInstance> entry : this.sessionManager.getSessionEntries()) {
+            this.stopSession(entry.getKey(), entry.getValue());
         }
 
         this.sessionManager.purgeStoppedSessions();
     }
 
-    private void stopSession(AnimationInstance session) {
+    private void stopSession(UUID playerId, AnimationInstance session) {
         try {
-            this.sessionManager.stopSession(session);
+            this.sessionManager.stopSession(playerId, session);
         }
         catch (RuntimeException exception) {
             LOGGER.error("Failed to stop an opening animation", exception);
