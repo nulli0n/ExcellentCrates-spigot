@@ -2,6 +2,7 @@ package su.nightexpress.excellentcrates.reward.evaluation;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,6 +54,17 @@ public class RewardEvaluationService implements RewardEvaluator {
     public int getRequiredRewards(Crate crate) {
         CrateRewardsComponent rewards = this.getRewardsComponent(crate);
         return rewards == null ? 0 : rewards.getRollCount();
+    }
+
+    public double getTotalWeight(Crate crate) {
+        CrateRewardsComponent crateRewards = this.getRewardsComponent(crate);
+        if (crateRewards == null) return 0D;
+
+        return crateRewards.getRewards().stream()
+            .map(entry -> this.rewardResolver.resolveReward(crate.id(), entry.getRewardId()))
+            .filter(Objects::nonNull)
+            .mapToDouble(reward -> reward.getBase().getWeight())
+            .sum();
     }
 
     public Set<RollableReward> resolveAvailableRewards(Crate crate, Player player) {

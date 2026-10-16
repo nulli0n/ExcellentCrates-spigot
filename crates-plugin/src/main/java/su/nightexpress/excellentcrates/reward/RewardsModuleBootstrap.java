@@ -83,7 +83,7 @@ public class RewardsModuleBootstrap extends CrateModuleBootstrap {
             rewards, dispatcher, quotaContext.quotaService
         );
 
-        rewardPlaceholders.registerPlaceholder(evaluationContext.getPlaceholder());
+        rewardPlaceholders.registerPlaceholder(evaluationContext.getRewardPlaceholder());
         rewardPlaceholders.registerPlaceholder(previewContext.getPlaceholder());
         rewardPlaceholders.registerPlaceholder(quotaContext.getPlaceholder());
 
@@ -108,6 +108,8 @@ public class RewardsModuleBootstrap extends CrateModuleBootstrap {
         this.bridge.requireAvailable(CoreServices.CRATES, cratesApi -> {
             cratesApi.pipeline().registerExecutor(grantContext.getPipelineExecutor());
             cratesApi.pipeline().registerExecutor(quotaContext.getPipelineExecutor());
+
+            cratesApi.getPlaceholders().registerPlaceholder(evaluationContext.getCratePlaceholder());
         });
 
         // ----------------------------
@@ -169,7 +171,6 @@ public class RewardsModuleBootstrap extends CrateModuleBootstrap {
             );
             cratesApi.data().registerExtension(componentContext.getCrateDataExtension());
             cratesApi.editor().registerExtension(componentContext.getCrateEditorExtension());
-            cratesApi.getPlaceholders().registerPlaceholder(componentContext.getCratePlaceholder());
         });
 
         // ----------------------------

@@ -21,7 +21,6 @@ import su.nightexpress.excellentcrates.reward.crate.component.extension.RewardCo
 import su.nightexpress.excellentcrates.reward.crate.component.lang.RewardComponentLang;
 import su.nightexpress.excellentcrates.reward.crate.component.model.StandardRewardEntry;
 import su.nightexpress.excellentcrates.reward.crate.component.model.StandardRewardsComponent;
-import su.nightexpress.excellentcrates.reward.crate.component.placeholder.RewardComponentPlaceholder;
 import su.nightexpress.excellentcrates.reward.data.RewardDataService;
 import su.nightexpress.excellentcrates.reward.editor.ui.RewardEditorUIService;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
@@ -33,7 +32,6 @@ public class RewardComponentBootstrapContext extends NamedBootstrapContext {
     private static final String     NAME = "Crate Component";
 
     private final RewardComponentExtension       crateDataExtension;
-    private final RewardComponentPlaceholder     cratePlaceholder;
     private final RewardComponentEditorExtension crateEditorExtension;
 
     public RewardComponentBootstrapContext(CratesPlugin plugin,
@@ -62,15 +60,10 @@ public class RewardComponentBootstrapContext extends NamedBootstrapContext {
 
         this.crateEditorExtension = new RewardComponentEditorExtension(uiController);
         this.crateDataExtension = new RewardComponentExtension(dataService);
-        this.cratePlaceholder = new RewardComponentPlaceholder(rewards);
     }
 
     public RewardComponentExtension getCrateDataExtension() {
         return this.crateDataExtension;
-    }
-
-    public RewardComponentPlaceholder getCratePlaceholder() {
-        return this.cratePlaceholder;
     }
 
     public RewardComponentEditorExtension getCrateEditorExtension() {

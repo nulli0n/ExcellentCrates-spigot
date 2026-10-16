@@ -8,6 +8,7 @@ import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholder;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
 import su.nightexpress.excellentcrates.reward.evaluation.pipeline.RewardEvaluationPipelineStage;
 import su.nightexpress.excellentcrates.reward.evaluation.pipeline.RewardValidationPipelineStage;
+import su.nightexpress.excellentcrates.reward.evaluation.placeholder.CrateTotalWeightPlaceholder;
 import su.nightexpress.excellentcrates.reward.evaluation.placeholder.RewardEvaluationPlaceholder;
 import su.nightexpress.excellentcrates.reward.quota.RewardQuotaService;
 
@@ -16,7 +17,8 @@ public class RewardEvaluationBootstrapContext {
 
     public final RewardEvaluationService evaluationService;
 
-    private final RewardPlaceholder             placeholder;
+    private final CrateTotalWeightPlaceholder   cratePlaceholder;
+    private final RewardPlaceholder             rewardPlaceholder;
     private final RewardValidationPipelineStage validationPipelineStage;
     private final RewardEvaluationPipelineStage evaluationPipelineStage;
 
@@ -25,7 +27,8 @@ public class RewardEvaluationBootstrapContext {
                                             RewardQuotaService quotaService) {
         this.evaluationService = new RewardEvaluationService(rewards, quotaService);
 
-        this.placeholder = new RewardEvaluationPlaceholder(this.evaluationService);
+        this.cratePlaceholder = new CrateTotalWeightPlaceholder(this.evaluationService);
+        this.rewardPlaceholder = new RewardEvaluationPlaceholder(this.evaluationService);
 
         this.validationPipelineStage = new RewardValidationPipelineStage(this.evaluationService, dispatcher);
         this.evaluationPipelineStage = new RewardEvaluationPipelineStage(this.evaluationService, dispatcher);
@@ -39,7 +42,11 @@ public class RewardEvaluationBootstrapContext {
         return this.evaluationPipelineStage;
     }
 
-    public RewardPlaceholder getPlaceholder() {
-        return this.placeholder;
+    public RewardPlaceholder getRewardPlaceholder() {
+        return this.rewardPlaceholder;
+    }
+
+    public CrateTotalWeightPlaceholder getCratePlaceholder() {
+        return this.cratePlaceholder;
     }
 }
