@@ -117,13 +117,9 @@ public class RewardsModuleBootstrap extends CrateModuleBootstrap {
         // ----------------------------
 
         RewardEditorBootstrapContext editorContext = new RewardEditorBootstrapContext(
-            plugin,
-            coreUI,
-            cratePlaceholders,
-            dispatcher,
-            rewards,
+            plugin, coreUI, dispatcher, rewards,
             dataContext.dataService,
-            rewardPlaceholders,
+            evaluationContext.evaluationService,
             previewContext.previewService
         );
 

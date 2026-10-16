@@ -5,13 +5,13 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
-import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardsComponent;
-import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
+import su.nightexpress.excellentcrates.core.SharedPlaceholders;
 import su.nightexpress.excellentcrates.reward.editor.lang.RewardEditorLang;
 import su.nightexpress.excellentcrates.reward.editor.ui.RewardEditorUIController;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardWeightDialogContext;
+import su.nightexpress.excellentcrates.reward.evaluation.RewardEvaluationService;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.ui.dialog.build.DialogActions;
@@ -21,6 +21,7 @@ import su.nightexpress.nightcore.ui.dialog.build.DialogButtons;
 import su.nightexpress.nightcore.ui.dialog.build.DialogInputs;
 import su.nightexpress.nightcore.ui.dialog.build.DialogTypes;
 import su.nightexpress.nightcore.ui.dialog.wrap.Dialog;
+import su.nightexpress.nightcore.util.NumberUtil;
 import su.nightexpress.nightcore.util.placeholder.PlaceholderContext;
 
 @NullMarked
@@ -28,16 +29,13 @@ public class RewardWeightDialog extends Dialog<RewardWeightDialogContext> {
 
     private static final String KEY_WEIGHT = "weight";
 
-    private final CratePlaceholders        cratePlaceholders;
-    private final RewardPlaceholders       rewardPlaceholders;
+    private final RewardEvaluationService  evaluationService;
     private final RewardEditorUIController controller;
 
-    public RewardWeightDialog(CratePlaceholders cratePlaceholders,
-                              RewardPlaceholders rewardPlaceholders,
+    public RewardWeightDialog(RewardEvaluationService evaluationService,
                               RewardEditorUIController controller) {
         super();
-        this.cratePlaceholders = cratePlaceholders;
-        this.rewardPlaceholders = rewardPlaceholders;
+        this.evaluationService = evaluationService;
         this.controller = controller;
     }
 
@@ -52,8 +50,12 @@ public class RewardWeightDialog extends Dialog<RewardWeightDialogContext> {
 
         if (crate != null && reward != null && rewardsComponent != null) {
             placeholderBuilder
-                .apply(this.rewardPlaceholders.allPlaceholders(crate, reward))
-                .apply(this.cratePlaceholders.basePlaceholders(crate));
+                .with(SharedPlaceholders.CRATE_TOTAL_REWARDS_WEIGHT, () -> {
+                    return NumberUtil.format(this.evaluationService.getTotalWeight(crate));
+                })
+                .with(SharedPlaceholders.REWARD_ROLL_CHANCE, () -> {
+                    return NumberUtil.format(this.evaluationService.calculateRollChance(crate, reward));
+                });
         }
 
         return Dialogs.create(builder -> {

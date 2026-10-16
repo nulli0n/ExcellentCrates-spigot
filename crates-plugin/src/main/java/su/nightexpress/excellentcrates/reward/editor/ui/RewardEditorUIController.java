@@ -151,7 +151,6 @@ public class RewardEditorUIController {
     public void onOptionsWeightClick(Player player, RewardOptionsMenuContext currentContext, double currentWeight,
                                      Runnable refreshUI) {
         CrateReference crateRef = currentContext.crateRef();
-        //CrateEditorHook hook = currentContext.hook();
         RewardReference rewardRef = currentContext.rewardRef();
 
         Crate crate = crateRef.get();
