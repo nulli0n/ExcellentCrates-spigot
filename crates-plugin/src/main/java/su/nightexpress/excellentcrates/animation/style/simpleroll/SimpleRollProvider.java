@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.style.simpleroll;
 
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.id.Identifier;
@@ -11,6 +12,12 @@ import su.nightexpress.nightcore.config.FileConfig;
 public class SimpleRollProvider implements AnimationProvider<SimpleRollProfile> {
 
     private static final Identifier ID = new Identifier("simple_roll");
+
+    private final Plugin plugin;
+
+    public SimpleRollProvider(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public Identifier getId() {
@@ -24,7 +31,7 @@ public class SimpleRollProvider implements AnimationProvider<SimpleRollProfile> 
             SimpleRollSettings.defaultSettings()
         );
 
-        return new SimpleRollProfile(key, settings);
+        return new SimpleRollProfile(this.plugin, key, settings);
     }
 
     @Override

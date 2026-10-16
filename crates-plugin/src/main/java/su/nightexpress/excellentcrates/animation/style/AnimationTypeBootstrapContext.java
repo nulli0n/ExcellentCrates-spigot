@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.style;
 
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.bootstrap.context.NamedBootstrapContext;
@@ -19,13 +20,13 @@ public class AnimationTypeBootstrapContext extends NamedBootstrapContext {
     private static final Identifier ID   = new Identifier("animation.type");
     private static final String     NAME = "Animation Types";
 
-    public AnimationTypeBootstrapContext(AnimationRegistry animationRegistry) {
+    public AnimationTypeBootstrapContext(Plugin plugin, AnimationRegistry animationRegistry) {
         super(ID, NAME);
 
         ConfigCodecs.register(SimpleRollSettings.class, SimpleRollSettingsCodec.INSTANCE);
         ConfigCodecs.register(CSGOAnimationSettings.class, CSGOAnimationSettingsCodec.INSTANCE);
 
-        animationRegistry.registerProvider(new SimpleRollProvider());
-        animationRegistry.registerProvider(new CSGOAnimationProvider());
+        animationRegistry.registerProvider(new SimpleRollProvider(plugin));
+        animationRegistry.registerProvider(new CSGOAnimationProvider(plugin));
     }
 }

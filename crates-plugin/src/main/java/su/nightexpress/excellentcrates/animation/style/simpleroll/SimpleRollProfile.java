@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.style.simpleroll;
 
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.animation.AnimationContext;
@@ -11,9 +12,11 @@ import su.nightexpress.nightcore.bridge.key.AdaptedKey;
 public class SimpleRollProfile extends BaseAnimationProfile {
 
     private final SimpleRollSettings settings;
+    private final Plugin             plugin;
 
-    public SimpleRollProfile(AdaptedKey key, SimpleRollSettings settings) {
+    public SimpleRollProfile(Plugin plugin, AdaptedKey key, SimpleRollSettings settings) {
         super(key);
+        this.plugin = plugin;
         this.settings = settings;
     }
 
@@ -24,6 +27,6 @@ public class SimpleRollProfile extends BaseAnimationProfile {
 
     @Override
     public AnimationInstance createInstance(AnimationContext context, Runnable onComplete) {
-        return new SimpleRollAnimation(this.settings, context, onComplete);
+        return new SimpleRollAnimation(this.plugin, this.settings, context, onComplete);
     }
 }

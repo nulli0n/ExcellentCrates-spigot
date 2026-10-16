@@ -2,24 +2,24 @@ package su.nightexpress.excellentcrates.animation.style.simpleroll;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import su.nightexpress.excellentcrates.animation.visibility.AnimationAudience;
 import su.nightexpress.excellentcrates.api.animation.AnimationContext;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.core.animation.BaseAnimationInstance;
-import su.nightexpress.excellentcrates.core.util.FireworkUtil;
 import su.nightexpress.nightcore.util.EntityUtil;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.Randomizer;
-import su.nightexpress.nightcore.util.sound.VanillaSound;
 
 public class SimpleRollAnimation extends BaseAnimationInstance {
 
     private final SimpleRollSettings settings;
+    private final AnimationAudience  audience;
     private final Item               rewardDisplay;
     private final Location           rewardLocation;
 
@@ -27,14 +27,15 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
     private int  rollsLeft;
     private int  finishTicks;
 
-    public SimpleRollAnimation(SimpleRollSettings settings, AnimationContext context, Runnable onComplete) {
+    public SimpleRollAnimation(Plugin plugin, SimpleRollSettings settings, AnimationContext context, Runnable onComplete) {
         super(context, onComplete);
         this.settings = settings;
         this.rollsLeft = settings.getRollAmount();
         this.finishTicks = settings.getFinishDelay();
 
         this.rewardLocation = this.adjustLocation(context.location());
-        this.rewardDisplay = this.createDisplay(this.player.getWorld());
+        this.audience = new AnimationAudience(plugin, this.player);
+        this.rewardDisplay = this.createDisplay();
     }
 
     @Override
@@ -44,9 +45,7 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
 
     @Override
     public void onStop() {
-        if (this.rewardDisplay != null) {
-            this.rewardDisplay.remove();
-        }
+        this.audience.cleanup();
     }
 
     @Override
@@ -80,19 +79,15 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
         return LocationUtil.setCenter2D(block.getLocation()).add(0, height, 0);
     }
 
-    private Item createDisplay(World world) {
-        Item item = world.spawn(this.rewardLocation, Item.class, spawnedItem -> {
+    private Item createDisplay() {
+        return this.audience.spawn(this.rewardLocation, Item.class, spawnedItem -> {
             spawnedItem.setVelocity(new Vector());
+            spawnedItem.setCustomNameVisible(true);
+            spawnedItem.setGravity(false);
+            spawnedItem.setPickupDelay(Integer.MAX_VALUE);
+            spawnedItem.setUnlimitedLifetime(true);
+            spawnedItem.setInvulnerable(true);
         });
-
-        item.setPersistent(false);
-        item.setCustomNameVisible(true);
-        item.setGravity(false);
-        item.setPickupDelay(Integer.MAX_VALUE);
-        item.setUnlimitedLifetime(true);
-        item.setInvulnerable(true);
-
-        return item;
     }
 
     private void displayReward() {
@@ -106,14 +101,14 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
         this.rewardDisplay.setItemStack(itemStack);
         EntityUtil.setCustomName(this.rewardDisplay, itemName);
 
-        VanillaSound.of(Sound.UI_BUTTON_CLICK, 0.5f).play(this.rewardLocation);
+        this.audience.playSound(this.rewardLocation, Sound.UI_BUTTON_CLICK, 0.5f);
 
         if (lastRoll) {
-            VanillaSound.of(Sound.ENTITY_GENERIC_EXPLODE, 0.7f).play(this.rewardLocation);
-            FireworkUtil.createRandom(this.rewardLocation);
+            this.audience.playSound(this.rewardLocation, Sound.ENTITY_GENERIC_EXPLODE, 0.7f);
+            this.audience.celebrate(this.rewardLocation);
         }
         else {
-            VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f).play(this.rewardLocation);
+            this.audience.playSound(this.rewardLocation, Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f);
         }
     }
 }

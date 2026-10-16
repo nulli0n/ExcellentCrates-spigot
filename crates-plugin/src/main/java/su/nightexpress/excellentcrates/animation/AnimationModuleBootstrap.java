@@ -54,7 +54,7 @@ public class AnimationModuleBootstrap extends CrateModuleBootstrap {
         // Animation Variant Bootstrap Context
         // -------------------------------
 
-        AnimationTypeBootstrapContext variantContext = new AnimationTypeBootstrapContext(animations);
+        AnimationTypeBootstrapContext variantContext = new AnimationTypeBootstrapContext(plugin, animations);
         this.registerComponent(variantContext);
 
         // -------------------------------

@@ -9,11 +9,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NullMarked;
 
+import su.nightexpress.excellentcrates.animation.visibility.AnimationAudience;
 import su.nightexpress.excellentcrates.api.animation.AnimationContext;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.core.animation.BaseAnimationInstance;
@@ -37,11 +39,12 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
     private final long durationTicks;
     private final long finishTickDelay;
 
-    private final RouletteRenderer renderer;
+    private final RouletteRenderer  renderer;
+    private final AnimationAudience audience;
 
     private int currentTick;
 
-    public CSGOAnimationInstance(AnimationContext context, Runnable onComplete, CSGOAnimationSettings settings) {
+    public CSGOAnimationInstance(Plugin plugin, AnimationContext context, Runnable onComplete, CSGOAnimationSettings settings) {
         super(context, onComplete);
         this.displayLocation = this.adjustLocation(context.location());
 
@@ -50,6 +53,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
         this.finishTickDelay = settings.finishTickDelay();
 
         this.renderer = new RouletteRenderer(this.displayLocation);
+        this.audience = new AnimationAudience(plugin, this.player);
     }
 
     private Location adjustLocation(Location originLocation) {
@@ -69,6 +73,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
     @Override
     protected void onStop() {
         // Cleanup renderer and any active nodes
+        this.audience.cleanup();
         this.renderer.cleanup();
     }
 
@@ -132,7 +137,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
             activeNodes.entrySet().removeIf(entry -> {
                 int index = entry.getKey();
                 if (index < minIndex || index > maxIndex) {
-                    entry.getValue().remove();
+                    entry.getValue().remove(audience);
                     return true;
                 }
                 return false;
@@ -151,7 +156,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
             ItemStack itemStack = rewardPreview.createPreviewItem(reward);
             String rewardName = rewardPreview.getDisplayInfo(reward).name();
 
-            ItemDisplay item = centerLoc.getWorld().spawn(centerLoc, ItemDisplay.class, ent -> {
+            ItemDisplay item = audience.spawn(centerLoc, ItemDisplay.class, ent -> {
                 ent.setItemStack(itemStack);
                 ent.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GUI);
                 ent.setBillboard(ItemDisplay.Billboard.CENTER);
@@ -159,7 +164,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
                 ent.setInterpolationDuration(1);
             });
 
-            TextDisplay text = centerLoc.getWorld().spawn(centerLoc, TextDisplay.class, ent -> {
+            TextDisplay text = audience.spawn(centerLoc, TextDisplay.class, ent -> {
                 WrappedTextDisplay wrapped = WrappedTextDisplay.wrap(ent);
                 wrapped.setText(rewardName);
                 ent.setBillboard(TextDisplay.Billboard.CENTER);
@@ -220,16 +225,15 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
         }
 
         public void cleanup() {
-            activeNodes.values().forEach(RouletteNode::remove);
             activeNodes.clear();
         }
     }
 
     private record RouletteNode(ItemDisplay item, TextDisplay text) {
 
-        public void remove() {
-            if (item != null) item.remove();
-            if (text != null) text.remove();
+        public void remove(AnimationAudience audience) {
+            audience.remove(this.item);
+            audience.remove(this.text);
         }
     }
 }

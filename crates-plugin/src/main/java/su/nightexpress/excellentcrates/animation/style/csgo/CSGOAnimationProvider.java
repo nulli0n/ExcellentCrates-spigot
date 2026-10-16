@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.style.csgo;
 
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.id.Identifier;
@@ -13,6 +14,12 @@ public class CSGOAnimationProvider implements AnimationProvider<CSGOAnimationPro
 
     private static final Identifier ID = new Identifier("csgo_animation");
 
+    private final Plugin plugin;
+
+    public CSGOAnimationProvider(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public CSGOAnimationProfile readProfile(AdaptedKey key, FileConfig config) {
         CSGOAnimationSettings settings = config.getOrSet("settings",
@@ -20,7 +27,7 @@ public class CSGOAnimationProvider implements AnimationProvider<CSGOAnimationPro
             CSGOAnimationSettings.defaultSettings()
         );
 
-        return new CSGOAnimationProfile(key, settings);
+        return new CSGOAnimationProfile(this.plugin, key, settings);
     }
 
     @Override

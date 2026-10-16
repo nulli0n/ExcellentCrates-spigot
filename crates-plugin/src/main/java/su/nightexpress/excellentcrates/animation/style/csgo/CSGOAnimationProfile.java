@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.animation.style.csgo;
 
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.api.animation.AnimationContext;
@@ -11,15 +12,17 @@ import su.nightexpress.nightcore.bridge.key.AdaptedKey;
 public class CSGOAnimationProfile extends BaseAnimationProfile {
 
     private final CSGOAnimationSettings settings;
+    private final Plugin                plugin;
 
-    public CSGOAnimationProfile(AdaptedKey key, CSGOAnimationSettings settings) {
+    public CSGOAnimationProfile(Plugin plugin, AdaptedKey key, CSGOAnimationSettings settings) {
         super(key);
+        this.plugin = plugin;
         this.settings = settings;
     }
 
     @Override
     public AnimationInstance createInstance(AnimationContext context, Runnable onComplete) {
-        return new CSGOAnimationInstance(context, onComplete, this.settings);
+        return new CSGOAnimationInstance(this.plugin, context, onComplete, this.settings);
     }
 
     @Override
