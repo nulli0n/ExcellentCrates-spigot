@@ -223,7 +223,9 @@ public class RewardEditorUIController {
 
     public boolean onDialogDeletionConfirmClick(Player player, RewardComponentHook hook, Crate crate, Reward reward) {
         // Dialog will handle the callback to move backward in the menu based on the result of this action.
-        return this.dispatcher.handleFeedback(player, this.editorService.deleteReward(hook, crate, reward.id()));
+        return this.dispatcher.handleFeedbackBase(player, reward,
+            this.editorService.deleteReward(hook, crate, reward.id())
+        );
     }
 
     public boolean onWeightDialogApply(Player player, RewardWeightDialogContext context, double weight) {

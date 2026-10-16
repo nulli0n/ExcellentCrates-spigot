@@ -49,7 +49,7 @@ public class RewardEditorBootstrapContext extends NamedBootstrapContext {
 
         plugin.injectLang(RewardEditorLang.class);
 
-        this.editorService = new RewardEditorService(dataService, rewardPlaceholders);
+        this.editorService = new RewardEditorService(dataService);
         this.idService = new RewardIdService(registry);
 
         this.extensions = new SimpleRegistry<>();

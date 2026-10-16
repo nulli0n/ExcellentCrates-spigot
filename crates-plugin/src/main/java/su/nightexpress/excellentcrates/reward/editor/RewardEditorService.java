@@ -12,7 +12,6 @@ import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
-import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.reward.crate.component.editor.RewardComponentHook;
 import su.nightexpress.excellentcrates.reward.data.RewardDataService;
@@ -28,13 +27,10 @@ import su.nightexpress.nightcore.util.placeholder.CommonPlaceholders;
 @NullMarked
 public class RewardEditorService {
 
-    private final RewardDataService  dataService;
-    @Deprecated
-    private final RewardPlaceholders rewardPlaceholders;
+    private final RewardDataService dataService;
 
-    public RewardEditorService(RewardDataService dataService, RewardPlaceholders rewardPlaceholders) {
+    public RewardEditorService(RewardDataService dataService) {
         this.dataService = dataService;
-        this.rewardPlaceholders = rewardPlaceholders;
     }
 
     public ActionResult editReward(RewardId id, Function<Reward, ActionResult> action) {
@@ -100,9 +96,7 @@ public class RewardEditorService {
             return ActionResult.ok();
         }
         else {
-            return ActionResult.fail(RewardEditorLang.DELETION_FAILURE, ctx -> ctx
-                .apply(this.rewardPlaceholders.basePlaceholders(reward))
-            );
+            return ActionResult.fail(RewardEditorLang.DELETION_FAILURE);
         }
     }
 
