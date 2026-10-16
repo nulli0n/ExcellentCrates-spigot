@@ -39,7 +39,8 @@ public class BatchSelectionPipelineStage implements PipelineStage {
         int maxAllowed = batchComponent.getMaxAllowed();
 
         // Skip batch selection if we are in fast mode only and the player is not in fast open mode.
-        if (this.settings.get().triggerInFastModeOnly() && !fastOpen) {
+        if (maxAllowed == 1 || (this.settings.get().triggerInFastModeOnly() && !fastOpen)) {
+            batchComponent.setSelectedAmount(1);
             chain.proceed(player, context);
             return;
         }
