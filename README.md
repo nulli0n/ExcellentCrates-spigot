@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://nightexpressdev.com/excellentcrates/img/brand/logo.png">
+</div>
+
 **ExcellentCrates** it is a modern, feature-rich, modular crate & lootbox plugin with an intuitive in-game GUI editor and smooth animations. Easily set up custom rewards, batch openings, portable crates, and fine-tuned limits without touching config files.
 
 # 🔵 Features
