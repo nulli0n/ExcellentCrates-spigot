@@ -1,4 +1,4 @@
-package su.nightexpress.excellentcrates.rarity.io;
+package su.nightexpress.excellentcrates.rarity.data;
 
 import java.io.IOException;
 import java.nio.file.Files;

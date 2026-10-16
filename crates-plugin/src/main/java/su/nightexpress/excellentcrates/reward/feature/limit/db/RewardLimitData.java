@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.reward.feature.limit.db;
 
 import java.util.UUID;
 
-import su.nightexpress.engine.sql.OwnableData;
+import su.nightexpress.engine.data.OwnableData;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 public class RewardLimitData implements OwnableData<UUID, RewardId> {

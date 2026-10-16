@@ -36,6 +36,7 @@ public final class KeyStorageDBSchema {
     };
 
     public static final InsertStatement<StoredKey> STORED_KEY_INSERT = InsertStatement.builder(StoredKey.class)
+        .updateOnConflict()
         .setUUID(OWNER_ID, StoredKey::getOwnerId)
         .setString(KEY_ID, data -> data.getKeyId().value())
         .setInt(VIRTUAL_BALANCE, StoredKey::getVirtualBalance)

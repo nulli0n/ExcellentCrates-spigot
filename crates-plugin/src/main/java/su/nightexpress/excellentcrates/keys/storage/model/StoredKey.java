@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
 
+import su.nightexpress.engine.data.OwnableData;
 import su.nightexpress.engine.id.Identifier;
-import su.nightexpress.engine.sql.OwnableData;
 
 @NullMarked
 public class StoredKey implements OwnableData<UUID, Identifier> {

@@ -8,6 +8,7 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.component.ModuleBootstrap;
 import su.nightexpress.excellentcrates.animation.AnimationModuleBootstrap;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.cost.CostModuleBootstrap;
 import su.nightexpress.excellentcrates.crates.CratesModuleBootstrap;
@@ -22,7 +23,7 @@ public class ModuleBootstrapContext {
 
     private static final String SETTINGS_FILE_NAME = "engine.modules.yml";
 
-    private final List<ModuleBootstrap> bootstraps;
+    private final List<ModuleBootstrap<CoreDependencies>> bootstraps;
 
     public ModuleBootstrapContext(CratesPlugin plugin) {
         Path settingsPath = plugin.configPath().resolve(SETTINGS_FILE_NAME);
@@ -55,7 +56,7 @@ public class ModuleBootstrapContext {
         }
     }
 
-    public List<ModuleBootstrap> getBootstraps() {
+    public List<ModuleBootstrap<CoreDependencies>> getBootstraps() {
         return this.bootstraps;
     }
 }

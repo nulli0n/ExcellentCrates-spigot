@@ -1,4 +1,4 @@
-package su.nightexpress.engine.sql;
+package su.nightexpress.engine.data;
 
 import java.util.Collection;
 import java.util.List;

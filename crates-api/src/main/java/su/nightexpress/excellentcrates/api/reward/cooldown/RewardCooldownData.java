@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.sql.OwnableData;
+import su.nightexpress.engine.data.OwnableData;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 
 @NullMarked

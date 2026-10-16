@@ -9,8 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.component.DatabaseClient;
-import su.nightexpress.engine.sql.RemoveContext;
-import su.nightexpress.engine.sql.SQLRepository;
+import su.nightexpress.engine.data.RemoveContext;
+import su.nightexpress.engine.data.SQLRepository;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.nightcore.db.statement.condition.Operator;
 import su.nightexpress.nightcore.db.statement.condition.Wheres;

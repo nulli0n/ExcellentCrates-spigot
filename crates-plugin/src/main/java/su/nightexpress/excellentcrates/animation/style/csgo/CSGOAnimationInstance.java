@@ -29,6 +29,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
     private static final float ITEM_SPACING         = 0.6f;    // spacing between items
     private static final float MIN_SCALE            = 0.2f;       // size of the edge items (20%)
     private static final float MAX_SCALE            = 0.8f;       // size of the center item (100%)
+    // TODO Setting for Y offset
 
     private final Location displayLocation;
 
@@ -53,8 +54,10 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
 
     private Location adjustLocation(Location originLocation) {
         Block block = originLocation.getBlock();
+        boolean isSolid = block.getType().isSolid();
+
         double offset = 0.5;
-        double height = block.getBoundingBox().getHeight() + offset;
+        double height = (isSolid ? block.getBoundingBox().getHeight() : 1) + offset;
         return LocationUtil.setCenter2D(block.getLocation()).add(0, height, 0);
     }
 

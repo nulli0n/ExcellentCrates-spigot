@@ -3,13 +3,14 @@ package su.nightexpress.engine.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.bootstrap.ModuleBridge;
 import su.nightexpress.engine.service.ServiceRegistry;
 
 @NullMarked
-public abstract class BaseModuleBootstrap implements ModuleBootstrap {
+public abstract class BaseModuleBootstrap<D extends EngineDependencies> implements ModuleBootstrap<D> {
 
     private final List<PluginComponent> bootComponents;
     protected final ModuleBridge        bridge;
@@ -32,7 +33,7 @@ public abstract class BaseModuleBootstrap implements ModuleBootstrap {
     }
 
     @Override
-    public final ComponentBundle onResolve(ServiceRegistry services, CoreDependencies dependencies) {
+    public final ComponentBundle onResolve(ServiceRegistry services, @NonNull D dependencies) {
 
         this.bridge.executeHooks(services);
 
@@ -44,5 +45,5 @@ public abstract class BaseModuleBootstrap implements ModuleBootstrap {
         return bundle;
     }
 
-    protected abstract ComponentBundle buildComponent(ServiceRegistry services, CoreDependencies dependencies);
+    protected abstract ComponentBundle buildComponent(ServiceRegistry services, @NonNull D dependencies);
 }

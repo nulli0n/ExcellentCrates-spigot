@@ -1,4 +1,4 @@
-package su.nightexpress.engine.cache;
+package su.nightexpress.engine.data.cache;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.sql.OwnableData;
+import su.nightexpress.engine.data.OwnableData;
 
 @NullMarked
 public class ExpiringCache<P, K, V extends OwnableData<P, K>> {

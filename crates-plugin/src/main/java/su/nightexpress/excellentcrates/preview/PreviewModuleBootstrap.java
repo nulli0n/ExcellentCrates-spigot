@@ -2,17 +2,17 @@ package su.nightexpress.excellentcrates.preview;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 import su.nightexpress.excellentcrates.api.preview.PreviewRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 import su.nightexpress.excellentcrates.preview.crate.command.CratePreviewCommand;
 import su.nightexpress.excellentcrates.preview.crate.component.PreviewComponentBootstrapContext;
 import su.nightexpress.excellentcrates.preview.crate.editor.PreviewComponentEditorBootstrapContext;
@@ -24,7 +24,7 @@ import su.nightexpress.excellentcrates.preview.permission.PreviewPerms;
 import su.nightexpress.excellentcrates.preview.view.PreviewViewService;
 
 @NullMarked
-public final class PreviewModuleBootstrap extends BaseModuleBootstrap {
+public final class PreviewModuleBootstrap extends CrateModuleBootstrap {
 
     @Override
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {

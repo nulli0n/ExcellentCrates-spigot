@@ -14,8 +14,8 @@ import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import su.nightexpress.engine.cache.CacheStrategy;
 import su.nightexpress.engine.component.BaseController;
+import su.nightexpress.engine.data.cache.CacheStrategy;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.keys.storage.db.KeyStorageCachedDataService;
 import su.nightexpress.nightcore.util.Players;

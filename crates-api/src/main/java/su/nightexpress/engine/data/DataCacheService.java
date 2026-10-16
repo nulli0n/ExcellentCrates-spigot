@@ -1,4 +1,4 @@
-package su.nightexpress.engine.sql;
+package su.nightexpress.engine.data;
 
 import java.time.Duration;
 import java.util.HashSet;
@@ -12,17 +12,17 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
-import su.nightexpress.engine.cache.CacheStrategy;
-import su.nightexpress.engine.cache.ExpiringCache;
+import su.nightexpress.engine.data.cache.CacheStrategy;
+import su.nightexpress.engine.data.cache.ExpiringCache;
 
 @NullMarked
-public abstract class CachedDataService<P, K, V extends OwnableData<P, K>> {
+public abstract class DataCacheService<P, K, V extends OwnableData<P, K>> {
 
     protected final SQLRepository<P, K, V> repository;
     protected final ExpiringCache<P, K, V> cache;
     protected final DataStateTracker<P, K> stateTracker;
 
-    public CachedDataService(SQLRepository<P, K, V> repository, Duration cacheTTL) {
+    public DataCacheService(SQLRepository<P, K, V> repository, Duration cacheTTL) {
         this.repository = repository;
         this.cache = new ExpiringCache<>(cacheTTL);
         this.stateTracker = new DataStateTracker<>();

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import su.nightexpress.engine.cache.CacheStrategy;
+import su.nightexpress.engine.data.cache.CacheStrategy;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.common.cooldown.CooldownOptions;
 import su.nightexpress.excellentcrates.api.common.cooldown.CooldownTimestamp;

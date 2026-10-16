@@ -2,12 +2,11 @@ package su.nightexpress.excellentcrates.reward;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.component.DatabaseClient;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelinePhase;
@@ -19,6 +18,7 @@ import su.nightexpress.excellentcrates.api.reward.grant.RewardGrantOrder;
 import su.nightexpress.excellentcrates.api.reward.placeholder.RewardPlaceholders;
 import su.nightexpress.excellentcrates.api.reward.quota.RewardQuotaOrder;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 import su.nightexpress.excellentcrates.reward.broadcast.RewardBroadcastBootstrapContext;
 import su.nightexpress.excellentcrates.reward.command.RewardCommandBootstrapContext;
 import su.nightexpress.excellentcrates.reward.config.RewardsConfigBootstrapContext;
@@ -41,7 +41,7 @@ import su.nightexpress.excellentcrates.reward.selectable.SelectiveUIBootstrapCon
 import su.nightexpress.excellentcrates.reward.selectable.component.SelectiveComponentBootstrapContext;
 
 @NullMarked
-public class RewardsModuleBootstrap extends BaseModuleBootstrap {
+public class RewardsModuleBootstrap extends CrateModuleBootstrap {
 
     @Override
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {

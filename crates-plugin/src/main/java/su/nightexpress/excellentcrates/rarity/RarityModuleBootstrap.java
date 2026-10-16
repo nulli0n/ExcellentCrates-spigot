@@ -2,11 +2,10 @@ package su.nightexpress.excellentcrates.rarity;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.rarity.Rarity;
@@ -14,12 +13,11 @@ import su.nightexpress.excellentcrates.api.rarity.reward.RarityComponent;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.dispatcher.RewardMessageDispatcher;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 import su.nightexpress.excellentcrates.rarity.api.RarityAPIProvider;
 import su.nightexpress.excellentcrates.rarity.data.RarityDataConfiguration;
 import su.nightexpress.excellentcrates.rarity.data.RarityDataService;
 import su.nightexpress.excellentcrates.rarity.data.component.RarityDataLoader;
-import su.nightexpress.excellentcrates.rarity.io.RarityIOConfiguration;
-import su.nightexpress.excellentcrates.rarity.io.RarityIOService;
 import su.nightexpress.excellentcrates.rarity.reward.component.DefaultRarityComponent;
 import su.nightexpress.excellentcrates.rarity.reward.component.codec.RarityComponentCodec;
 import su.nightexpress.excellentcrates.rarity.reward.component.editor.RarityComponentEditorBootstrapContext;
@@ -28,7 +26,7 @@ import su.nightexpress.excellentcrates.rarity.reward.placeholder.RarityRewardPla
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 
 @NullMarked
-public class RarityModuleBootstrap extends BaseModuleBootstrap {
+public class RarityModuleBootstrap extends CrateModuleBootstrap {
 
     @Override
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {
@@ -38,9 +36,7 @@ public class RarityModuleBootstrap extends BaseModuleBootstrap {
         ConfigCodecs.register(DefaultRarityComponent.class, RarityComponentCodec.INSTANCE);
 
         RarityRepository rarities = new RarityRepository();
-
-        RarityIOService ioService = RarityIOConfiguration.configure(dependencies);
-        RarityDataService dataService = RarityDataConfiguration.configure(rarities, ioService);
+        RarityDataService dataService = RarityDataConfiguration.configure(plugin, rarities);
 
         this.registerComponent(new RarityDataLoader(dataService, rarities));
 

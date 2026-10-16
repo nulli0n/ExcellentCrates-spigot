@@ -2,12 +2,11 @@ package su.nightexpress.excellentcrates.crates;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.component.DatabaseClient;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
@@ -15,6 +14,7 @@ import su.nightexpress.excellentcrates.api.crate.pipeline.PipelinePhase;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineStageOrder;
 import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 import su.nightexpress.excellentcrates.core.crate.permission.CratePerms;
 import su.nightexpress.excellentcrates.crates.batch.BatchBootstrapContext;
 import su.nightexpress.excellentcrates.crates.block.BlockCoreBootstrapContext;
@@ -37,7 +37,7 @@ import su.nightexpress.excellentcrates.crates.placeholder.CratePlaceholderAPIRes
 import su.nightexpress.excellentcrates.crates.quota.CrateQuotaBootstrapContext;
 
 @NullMarked
-public final class CratesModuleBootstrap extends BaseModuleBootstrap {
+public final class CratesModuleBootstrap extends CrateModuleBootstrap {
 
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {
         CratesPlugin plugin = dependencies.plugin();

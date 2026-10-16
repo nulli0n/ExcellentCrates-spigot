@@ -19,7 +19,6 @@ public final class RewardCooldownDBSchema {
 
     public static final Column<String> CRATE_ID_COLUMN = Column
         .stringType("crate_id", SharedConstants.MAX_CRATE_ID_LENGTH)
-        .defaultValue("none")
         .primaryKey()
         .build();
 

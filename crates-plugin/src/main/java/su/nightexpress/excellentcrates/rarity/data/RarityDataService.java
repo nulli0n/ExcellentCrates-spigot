@@ -18,7 +18,6 @@ import su.nightexpress.excellentcrates.api.rarity.registry.RarityRegistry;
 import su.nightexpress.excellentcrates.api.rarity.IRarityDataService;
 import su.nightexpress.excellentcrates.rarity.data.rarity.StandardRarity;
 import su.nightexpress.excellentcrates.rarity.data.rarity.StandardRarityBase;
-import su.nightexpress.excellentcrates.rarity.io.RarityIOService;
 import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 
 @NullMarked

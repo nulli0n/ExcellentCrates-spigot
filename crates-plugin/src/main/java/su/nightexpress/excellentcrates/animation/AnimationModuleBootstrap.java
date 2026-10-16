@@ -2,21 +2,20 @@ package su.nightexpress.excellentcrates.animation;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
 import su.nightexpress.excellentcrates.animation.component.AnimationComponentBootstrapContext;
 import su.nightexpress.excellentcrates.animation.component.editor.AnimationComponentEditorBootstrapContext;
 import su.nightexpress.excellentcrates.animation.data.AnimationDataBootstrapContext;
 import su.nightexpress.excellentcrates.animation.lang.AnimationsLang;
-import su.nightexpress.excellentcrates.animation.pipeline.AnimationProfilePipelineStage;
 import su.nightexpress.excellentcrates.animation.pipeline.AnimationPipelineProcessor;
+import su.nightexpress.excellentcrates.animation.pipeline.AnimationProfilePipelineStage;
 import su.nightexpress.excellentcrates.animation.session.AnimationSessionController;
 import su.nightexpress.excellentcrates.animation.session.AnimationSessionManager;
 import su.nightexpress.excellentcrates.animation.session.AnimationSessionService;
 import su.nightexpress.excellentcrates.animation.style.AnimationTypeBootstrapContext;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.animation.AnimationRegistry;
@@ -24,9 +23,10 @@ import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatch
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelinePhase;
 import su.nightexpress.excellentcrates.api.crate.pipeline.PipelineStageOrder;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 
 @NullMarked
-public class AnimationModuleBootstrap extends BaseModuleBootstrap {
+public class AnimationModuleBootstrap extends CrateModuleBootstrap {
 
     @Override
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {

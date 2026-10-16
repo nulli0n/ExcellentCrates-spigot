@@ -2,16 +2,16 @@ package su.nightexpress.excellentcrates.effect;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.BaseModuleBootstrap;
 import su.nightexpress.engine.component.ComponentBundle;
-import su.nightexpress.engine.component.CoreDependencies;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.engine.ui.CoreUIService;
+import su.nightexpress.excellentcrates.api.CoreDependencies;
 import su.nightexpress.excellentcrates.api.CoreServices;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
 import su.nightexpress.excellentcrates.api.effect.EffectRegistry;
+import su.nightexpress.excellentcrates.core.bootstrap.CrateModuleBootstrap;
 import su.nightexpress.excellentcrates.effect.crate.component.EffectComponentBootstrapContext;
 import su.nightexpress.excellentcrates.effect.crate.editor.EffectComponentEditorBootstrapContext;
 import su.nightexpress.excellentcrates.effect.data.EffectDataBootstrapContext;
@@ -21,7 +21,7 @@ import su.nightexpress.excellentcrates.effect.model.EffectModelBootstrapContext;
 import su.nightexpress.excellentcrates.effect.registry.DefaultEffectRegistry;
 
 @NullMarked
-public class EffectsModuleBootstrap extends BaseModuleBootstrap {
+public class EffectsModuleBootstrap extends CrateModuleBootstrap {
 
     @Override
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {

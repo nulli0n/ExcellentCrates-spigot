@@ -1,26 +1,16 @@
-package su.nightexpress.engine.component;
+package su.nightexpress.excellentcrates.api;
 
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.ui.CoreUIService;
-import su.nightexpress.excellentcrates.api.CratesPlugin;
+import su.nightexpress.engine.component.EngineDependencies;
 import su.nightexpress.excellentcrates.api.crate.dispatcher.CrateMessageDispatcher;
 import su.nightexpress.excellentcrates.api.crate.placeholder.CratePlaceholders;
 import su.nightexpress.excellentcrates.api.crate.registry.CrateRegistry;
-import su.nightexpress.nightcore.userdata.UserDataManager;
 
 @NullMarked
-public interface CoreDependencies {
+public interface CoreDependencies extends EngineDependencies {
 
     CratesPlugin plugin();
-
-    CoreUIService uiService();
-
-    UserDataManager userService();
-
-    DatabaseClient databaseClient();
-
-    // Core Domain
 
     CrateRegistry crateRegistry();
 

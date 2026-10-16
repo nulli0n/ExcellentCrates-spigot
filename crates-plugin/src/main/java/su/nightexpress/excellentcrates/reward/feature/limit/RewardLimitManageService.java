@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.cache.CacheStrategy;
+import su.nightexpress.engine.data.cache.CacheStrategy;
 import su.nightexpress.excellentcrates.api.common.limit.LimitOptions;
 import su.nightexpress.excellentcrates.api.common.limit.LimitRemaining;
 import su.nightexpress.excellentcrates.api.reward.Reward;
