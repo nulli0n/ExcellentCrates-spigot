@@ -55,6 +55,11 @@ public final class KeyItemService {
         return IdentifierParser.parse(idRaw).orElse(null);
     }
 
+    public boolean isKeyItem(ItemStack item, Identifier keyId) {
+        Identifier id = this.getKeyIdFromItem(item);
+        return id != null && id.equals(keyId);
+    }
+
     public boolean isKeyItem(ItemStack item) {
         return this.getKeyIdFromItem(item) != null;
     }
