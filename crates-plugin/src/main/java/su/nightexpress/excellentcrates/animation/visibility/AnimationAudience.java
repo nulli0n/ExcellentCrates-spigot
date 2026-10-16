@@ -14,9 +14,6 @@ import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import su.nightexpress.excellentcrates.core.util.FireworkUtil;
-import su.nightexpress.nightcore.util.sound.VanillaSound;
-
 /** Owns the entities and cosmetic effects of one built-in opening animation. */
 @NullMarked
 public class AnimationAudience {
@@ -25,33 +22,34 @@ public class AnimationAudience {
 
     private static final int CELEBRATION_PARTICLES = 40;
 
-    private final Plugin              plugin;
-    private final Player              player;
-    private final AnimationVisibility visibility;
-    private final Set<Entity>         entities = new HashSet<>();
+    private final Plugin      plugin;
+    private final Player      player;
+    private final Set<Entity> entities = new HashSet<>();
 
-    public AnimationAudience(Plugin plugin, Player player, AnimationVisibility visibility) {
+    public AnimationAudience(Plugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this.visibility = visibility;
     }
 
     public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<T> initializer) {
-        T entity = location.getWorld().spawn(location, type, spawned -> {
-            // The consumer runs before world insertion and client tracking. Late viewers
-            // also remain excluded because PRIVATE entities are never visible by default.
-            this.entities.add(spawned);
-            spawned.setPersistent(false);
-            if (this.visibility == AnimationVisibility.PRIVATE) {
+        try {
+            T entity = location.getWorld().spawn(location, type, spawned -> {
+                // The consumer runs before world insertion and client tracking. Late viewers
+                // also remain excluded because animation entities are never visible by default.
+                this.entities.add(spawned);
+                initializer.accept(spawned);
+                spawned.setPersistent(false);
                 spawned.setVisibleByDefault(false);
-            }
-            initializer.accept(spawned);
-        });
+            });
 
-        if (this.visibility == AnimationVisibility.PRIVATE) {
             this.player.showEntity(this.plugin, entity);
+            return entity;
         }
-        return entity;
+        catch (RuntimeException exception) {
+            // Also remove earlier roulette entries if creating an item/text pair fails.
+            this.cleanup();
+            throw exception;
+        }
     }
 
     public void remove(Entity entity) {
@@ -71,21 +69,11 @@ public class AnimationAudience {
     }
 
     public void playSound(Location location, Sound sound, float volume) {
-        if (this.visibility == AnimationVisibility.PRIVATE) {
-            this.player.playSound(location, sound, volume, 1f);
-        }
-        else {
-            VanillaSound.of(sound, volume).play(location);
-        }
+        this.player.playSound(location, sound, volume, 1f);
     }
 
     public void celebrate(Location location) {
-        if (this.visibility == AnimationVisibility.PRIVATE) {
-            // A player-targeted burst avoids a world firework's sound, explosion and damage.
-            this.player.spawnParticle(Particle.FIREWORK, location, CELEBRATION_PARTICLES, 0.3, 0.3, 0.3, 0.1);
-        }
-        else {
-            FireworkUtil.createRandom(location);
-        }
+        // A player-targeted burst avoids a world firework's sound, explosion and damage.
+        this.player.spawnParticle(Particle.FIREWORK, location, CELEBRATION_PARTICLES, 0.3, 0.3, 0.3, 0.1);
     }
 }

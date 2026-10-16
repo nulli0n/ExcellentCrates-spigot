@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.animation.session;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -9,8 +8,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jspecify.annotations.NullMarked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import su.nightexpress.engine.component.BaseController;
 import su.nightexpress.excellentcrates.api.CratesPlugin;
@@ -18,8 +15,6 @@ import su.nightexpress.excellentcrates.api.animation.AnimationInstance;
 
 @NullMarked
 public class AnimationSessionController extends BaseController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnimationSessionController.class);
 
     private final AnimationSessionManager sessionManager;
 
@@ -35,13 +30,11 @@ public class AnimationSessionController extends BaseController {
 
     @Override
     protected void onControllerShutdown() {
-        this.sessionManager.setShuttingDown(true);
         this.stopAllSessions();
     }
 
     @Override
     protected void onControllerStart() {
-        this.sessionManager.setShuttingDown(false);
         this.runInstanceTickTask();
     }
 
@@ -52,39 +45,19 @@ public class AnimationSessionController extends BaseController {
     private void tickSessions() {
         this.sessionManager.purgeStoppedSessions();
 
-        for (Map.Entry<UUID, AnimationInstance> entry : this.sessionManager.getSessionEntries()) {
-            AnimationInstance session = entry.getValue();
-            if (!session.isRunning()) continue;
-
-            try {
-                if (!session.tick() && session.isRunning()) {
-                    session.stop();
-                }
-            }
-            catch (RuntimeException exception) {
-                LOGGER.error("Failed to tick an opening animation", exception);
-                if (session.isRunning()) {
-                    this.stopSession(entry.getKey(), session);
-                }
+        for (AnimationInstance session : this.sessionManager.getSessions()) {
+            if (!session.tick()) {
+                session.stop();
             }
         }
     }
 
     private void stopAllSessions() {
-        for (Map.Entry<UUID, AnimationInstance> entry : this.sessionManager.getSessionEntries()) {
-            this.stopSession(entry.getKey(), entry.getValue());
+        for (AnimationInstance session : this.sessionManager.getSessions()) {
+            session.stop();
         }
 
         this.sessionManager.purgeStoppedSessions();
-    }
-
-    private void stopSession(UUID playerId, AnimationInstance session) {
-        try {
-            this.sessionManager.stopSession(playerId, session);
-        }
-        catch (RuntimeException exception) {
-            LOGGER.error("Failed to stop an opening animation", exception);
-        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

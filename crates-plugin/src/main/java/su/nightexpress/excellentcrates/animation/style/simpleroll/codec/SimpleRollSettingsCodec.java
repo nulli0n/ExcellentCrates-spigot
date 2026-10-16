@@ -3,7 +3,6 @@ package su.nightexpress.excellentcrates.animation.style.simpleroll.codec;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.excellentcrates.animation.style.simpleroll.SimpleRollSettings;
-import su.nightexpress.excellentcrates.animation.visibility.AnimationVisibility;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
@@ -20,10 +19,8 @@ public class SimpleRollSettingsCodec implements ConfigCodec<SimpleRollSettings> 
         int rollAmount = config.getOrSet(path + ".roll_amount", ConfigCodecs.INT, 12);
         int rollInterval = config.getOrSet(path + ".roll_interval", ConfigCodecs.INT, 5);
         int finishDelay = config.getOrSet(path + ".finish_delay", ConfigCodecs.INT, 40);
-        AnimationVisibility visibility = config.getOrSet(path + ".visibility", ConfigCodecs.forEnum(AnimationVisibility.class),
-            AnimationVisibility.PUBLIC);
 
-        return new SimpleRollSettings(name, rollAmount, rollInterval, finishDelay, visibility);
+        return new SimpleRollSettings(name, rollAmount, rollInterval, finishDelay);
     }
 
     @Override
@@ -32,6 +29,5 @@ public class SimpleRollSettingsCodec implements ConfigCodec<SimpleRollSettings> 
         config.set(path + ".roll_amount", ConfigCodecs.INT, value.getRollAmount());
         config.set(path + ".roll_interval", ConfigCodecs.INT, value.getRollInterval());
         config.set(path + ".finish_delay", ConfigCodecs.INT, value.getFinishDelay());
-        config.set(path + ".visibility", value.getVisibility().name());
     }
 }

@@ -52,7 +52,7 @@ public class CSGOAnimationInstance extends BaseAnimationInstance {
         this.finishTickDelay = settings.finishTickDelay();
 
         this.renderer = new RouletteRenderer(this.displayLocation);
-        this.audience = new AnimationAudience(plugin, this.player, settings.visibility());
+        this.audience = new AnimationAudience(plugin, this.player);
     }
 
     private Location adjustLocation(Location originLocation) {

@@ -7,7 +7,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import org.jspecify.annotations.Nullable;
 
 import su.nightexpress.excellentcrates.animation.visibility.AnimationAudience;
 import su.nightexpress.excellentcrates.api.animation.AnimationContext;
@@ -21,9 +20,8 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
 
     private final SimpleRollSettings settings;
     private final AnimationAudience  audience;
+    private final Item               rewardDisplay;
     private final Location           rewardLocation;
-
-    private @Nullable Item rewardDisplay;
 
     private long tickCount;
     private int  rollsLeft;
@@ -36,18 +34,18 @@ public class SimpleRollAnimation extends BaseAnimationInstance {
         this.finishTicks = settings.getFinishDelay();
 
         this.rewardLocation = this.adjustLocation(context.location());
-        this.audience = new AnimationAudience(plugin, this.player, settings.getVisibility());
+        this.audience = new AnimationAudience(plugin, this.player);
+        this.rewardDisplay = this.createDisplay();
     }
 
     @Override
     public void onStart() {
-        this.rewardDisplay = this.createDisplay();
+
     }
 
     @Override
     public void onStop() {
         this.audience.cleanup();
-        this.rewardDisplay = null;
     }
 
     @Override
