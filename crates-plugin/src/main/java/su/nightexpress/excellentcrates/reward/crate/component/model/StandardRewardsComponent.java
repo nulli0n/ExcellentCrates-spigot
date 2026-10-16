@@ -2,7 +2,7 @@ package su.nightexpress.excellentcrates.reward.crate.component.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
@@ -20,7 +20,7 @@ public class StandardRewardsComponent implements CrateRewardsComponent {
     private int requiredRewards;
 
     public StandardRewardsComponent(Map<Identifier, CrateRewardEntry> rewardByIdMap, int requiredRewards) {
-        this.rewardByIdMap = new HashMap<>(rewardByIdMap);
+        this.rewardByIdMap = new LinkedHashMap<>(rewardByIdMap);
         this.requiredRewards = requiredRewards;
     }
 

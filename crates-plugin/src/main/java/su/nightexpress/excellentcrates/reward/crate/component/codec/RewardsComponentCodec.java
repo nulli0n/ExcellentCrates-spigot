@@ -1,6 +1,6 @@
 package su.nightexpress.excellentcrates.reward.crate.component.codec;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public class RewardsComponentCodec implements ConfigCodec<StandardRewardsCompone
 
     @Override
     public StandardRewardsComponent read(FileConfig config, String path) throws CodecReadException {
-        Map<Identifier, CrateRewardEntry> rewardMap = new HashMap<>();
+        Map<Identifier, CrateRewardEntry> rewardMap = new LinkedHashMap<>();
 
         config.getSection(path + ".reward_list").forEach(sId -> {
             StandardRewardEntry crateReward = config.get(path + ".reward_list." + sId, StandardRewardEntry.class);
