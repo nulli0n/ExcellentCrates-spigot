@@ -14,7 +14,7 @@ public class StandardRewardBase implements RewardBase {
     }
 
     public static StandardRewardBase createDefault() {
-        return new StandardRewardBase(0D);
+        return new StandardRewardBase(10D);
     }
 
     @Override
