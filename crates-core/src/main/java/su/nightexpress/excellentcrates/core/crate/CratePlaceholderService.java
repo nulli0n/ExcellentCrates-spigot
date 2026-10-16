@@ -61,6 +61,10 @@ public class CratePlaceholderService implements CratePlaceholders {
             builder.with(SharedPlaceholders.CRATE_ID, () -> crate.id().value());
             builder.with(SharedPlaceholders.CRATE_NAME, () -> crate.getDisplay().getName());
             builder.with(SharedPlaceholders.CRATE_DESCRIPTION, () -> String.join("\n", crate.getDisplay().getLore()));
+
+            this.placeholders.forEach(placeholder -> {
+                builder.apply(placeholder.apply(crate));
+            });
         };
     }
 }
