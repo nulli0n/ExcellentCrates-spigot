@@ -1,7 +1,6 @@
 package su.nightexpress.excellentcrates.preview.inventory.menu;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.entity.Player;
@@ -207,8 +206,6 @@ public class InventoryPreviewMenu extends AbstractObjectMenu<InventoryMenuContex
 
             rewardIds.add(reward);
         });
-
-        rewardIds.sort(Comparator.comparing(reward -> reward.rawId().value()));
 
         this.rewardPopulator.populateTo(context, rewardIds, items);
     }

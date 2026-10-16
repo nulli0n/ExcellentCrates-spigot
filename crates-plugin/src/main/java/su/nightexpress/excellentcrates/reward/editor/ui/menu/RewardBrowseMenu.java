@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.reward.editor.ui.menu;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -179,6 +178,19 @@ public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext
             .build()
         );
 
+        items.add(MenuItem.button()
+            .defaultState(ItemState.builder()
+                .icon(NightItem.fromType(Material.COMPARATOR)
+                    .hideAllComponents()
+                    .localized(RewardEditorLang.UI_INVENTORY_BROWSE_BUTTON_SORT)
+                )
+                .action(this::handleSort)
+                .build()
+            )
+            .slots(42)
+            .build()
+        );
+
         Crate crate = menuContext.crateRef().get();
         if (crate == null) return;
 
@@ -190,7 +202,6 @@ public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext
             .stream()
             .map(entry -> this.repository.resolveReward(crate.id(), entry.getRewardId()))
             .filter(Objects::nonNull)
-            .sorted(Comparator.comparing(reward -> reward.rawId().value()))
             .toList();
 
         this.rewardPopulator.populateTo(context, rewardIds, items);
@@ -237,6 +248,14 @@ public class RewardBrowseMenu extends AbstractObjectMenu<RewardBrowseMenuContext
         Runnable refreshUI = () -> context.getViewer().refresh();
 
         this.controller.onBrowseMenuManualCreationClick(player, menuContext, copy, refreshUI);
+    }
+
+    private void handleSort(ActionContext context) {
+        Player player = context.getPlayer();
+        RewardBrowseMenuContext menuContext = this.getObject(context);
+
+        Runnable refresh = () -> this.refresh(player);
+        this.controller.onBrowseMenuSortClick(player, menuContext, refresh);
     }
 
     private void handleRewardClick(ActionContext context, Reward reward) {

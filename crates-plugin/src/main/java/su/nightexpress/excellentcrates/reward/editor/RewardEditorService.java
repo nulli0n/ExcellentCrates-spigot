@@ -1,6 +1,8 @@
 package su.nightexpress.excellentcrates.reward.editor;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
@@ -8,10 +10,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
+import su.nightexpress.engine.id.IdentifiableRegistry;
+import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.Crate;
 import su.nightexpress.excellentcrates.api.reward.Reward;
 import su.nightexpress.excellentcrates.api.reward.component.RewardComponentKeys;
 import su.nightexpress.excellentcrates.api.reward.data.model.RewardPreview;
+import su.nightexpress.excellentcrates.api.reward.editor.RewardSorter;
 import su.nightexpress.excellentcrates.api.reward.registry.RewardId;
 import su.nightexpress.excellentcrates.reward.crate.component.editor.RewardComponentHook;
 import su.nightexpress.excellentcrates.reward.data.RewardDataService;
@@ -27,10 +32,38 @@ import su.nightexpress.nightcore.util.placeholder.CommonPlaceholders;
 @NullMarked
 public class RewardEditorService {
 
-    private final RewardDataService dataService;
+    private final RewardDataService                  dataService;
+    private final IdentifiableRegistry<RewardSorter> sorters;
 
-    public RewardEditorService(RewardDataService dataService) {
+    public RewardEditorService(RewardDataService dataService, IdentifiableRegistry<RewardSorter> sorters) {
         this.dataService = dataService;
+        this.sorters = sorters;
+    }
+
+    public ActionResult sortRewards(RewardComponentHook hook, Crate crate, Identifier sorterId, boolean inverted) {
+        RewardSorter sorter = this.sorters.get(sorterId);
+        if (sorter == null) {
+            return ActionResult.fail(RewardEditorLang.ERROR_NO_SORTER, ctx -> ctx
+                .with(CommonPlaceholders.GENERIC_VALUE, () -> sorterId.value())
+            );
+        }
+
+        return hook.editRewards(crate, entries -> {
+            Comparator<Reward> comparator = sorter.getComparator(crate);
+            if (inverted) {
+                comparator = comparator.reversed();
+            }
+
+            List<Reward> actualRewards = entries.stream()
+                .map(rewardId -> new RewardId(crate.id(), rewardId))
+                .map(this.dataService::getReward)
+                .filter(Objects::nonNull)
+                .sorted(comparator)
+                .toList();
+
+            entries.clear();
+            actualRewards.forEach(reward -> entries.add(reward.rawId()));
+        });
     }
 
     public ActionResult editReward(RewardId id, Function<Reward, ActionResult> action) {

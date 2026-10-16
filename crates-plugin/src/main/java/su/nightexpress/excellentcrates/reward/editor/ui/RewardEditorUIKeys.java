@@ -3,9 +3,10 @@ package su.nightexpress.excellentcrates.reward.editor.ui;
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.ui.menu.MenuKey;
-import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardDeletionDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardManualCreationDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardSortDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardWeightDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardBrowseMenuContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardOptionsMenuContext;
@@ -44,7 +45,11 @@ public final class RewardEditorUIKeys {
     );
 
     public static final DialogKey<RewardWeightDialogContext> DIALOG_WEIGHT = new DialogKey<>(
-        "rewards.component.editor.reward.weight"
+        "rewards.editor.reward.weight"
+    );
+
+    public static final DialogKey<RewardSortDialogContext> DIALOG_SORT = new DialogKey<>(
+        "rewards.editor.sort"
     );
 
     private RewardEditorUIKeys() {

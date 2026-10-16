@@ -5,9 +5,10 @@ import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.ui.CoreUIService;
-import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardDeletionDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardManualCreationDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardSortDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardWeightDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardBrowseMenuContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardOptionsMenuContext;
@@ -33,6 +34,11 @@ public class RewardEditorUIService {
 
     public ActionResult openOptionsMenu(Player player, RewardOptionsMenuContext context) {
         return this.coreUI.openMenu(player, RewardEditorUIKeys.MENU_OPTIONS, context);
+    }
+
+    public ActionResult showSortDialog(Player player, RewardSortDialogContext context,
+                                       Runnable refreshUI) {
+        return this.coreUI.showDialog(player, RewardEditorUIKeys.DIALOG_SORT, context, refreshUI);
     }
 
     public ActionResult showRewardWeightDialog(Player player, RewardWeightDialogContext context,

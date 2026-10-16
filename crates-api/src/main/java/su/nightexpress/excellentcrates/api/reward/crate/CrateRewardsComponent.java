@@ -1,6 +1,7 @@
 package su.nightexpress.excellentcrates.api.reward.crate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
@@ -23,7 +24,9 @@ public interface CrateRewardsComponent extends CrateComponent {
 
     Map<Identifier, CrateRewardEntry> getRewardByIdMap();
 
-    Collection<CrateRewardEntry> getRewards();
+    void setRewards(Collection<? extends CrateRewardEntry> rewards);
+
+    List<CrateRewardEntry> getRewards();
 
     int getRollCount();
 

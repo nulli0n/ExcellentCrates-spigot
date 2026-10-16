@@ -24,9 +24,10 @@ import su.nightexpress.excellentcrates.reward.crate.component.editor.RewardCompo
 import su.nightexpress.excellentcrates.reward.editor.RewardEditorService;
 import su.nightexpress.excellentcrates.reward.editor.context.RewardCreationContext;
 import su.nightexpress.excellentcrates.reward.editor.lang.RewardEditorLang;
-import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardDeletionDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardManualCreationDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardPreviewDialogContext;
+import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardSortDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.dialog.context.RewardWeightDialogContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardBrowseMenuContext;
 import su.nightexpress.excellentcrates.reward.editor.ui.menu.context.RewardOptionsMenuContext;
@@ -128,6 +129,18 @@ public class RewardEditorUIController {
 
         return this.dispatcher.handleFeedback(player,
             this.editorService.createReward(player, hook, crate, id, creationContext)
+        );
+    }
+
+    public void onBrowseMenuSortClick(Player player, RewardBrowseMenuContext currentContext, Runnable refreshUI) {
+        RewardComponentHook hook = currentContext.hook();
+        CrateReference crateRef = currentContext.crateRef();
+        Crate crate = crateRef.get();
+        if (crate == null) return;
+
+        RewardSortDialogContext dialogContext = new RewardSortDialogContext(hook, crateRef);
+        this.dispatcher.handleFeedbackBase(player, crate,
+            this.uiService.showSortDialog(player, dialogContext, refreshUI)
         );
     }
 
@@ -236,6 +249,16 @@ public class RewardEditorUIController {
 
         return crate != null && this.dispatcher.handleFeedbackBase(player, crate,
             this.editorService.setCrateRewardWeight(reward.id(), weight)
+        );
+    }
+
+    public boolean onSortDialogSelect(Player player, RewardSortDialogContext context, Identifier sorterId,
+                                      boolean invert) {
+        Crate crate = context.crateRef().get();
+        RewardComponentHook hook = context.hook();
+
+        return crate != null && this.dispatcher.handleFeedbackBase(player, crate,
+            this.editorService.sortRewards(hook, crate, sorterId, invert)
         );
     }
 

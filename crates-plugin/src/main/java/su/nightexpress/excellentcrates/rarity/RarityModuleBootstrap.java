@@ -18,11 +18,14 @@ import su.nightexpress.excellentcrates.rarity.api.RarityAPIProvider;
 import su.nightexpress.excellentcrates.rarity.data.RarityDataConfiguration;
 import su.nightexpress.excellentcrates.rarity.data.RarityDataService;
 import su.nightexpress.excellentcrates.rarity.data.component.RarityDataLoader;
+import su.nightexpress.excellentcrates.rarity.lang.RarityLang;
 import su.nightexpress.excellentcrates.rarity.reward.component.DefaultRarityComponent;
 import su.nightexpress.excellentcrates.rarity.reward.component.codec.RarityComponentCodec;
 import su.nightexpress.excellentcrates.rarity.reward.component.editor.RarityComponentEditorBootstrapContext;
 import su.nightexpress.excellentcrates.rarity.reward.component.extension.RarityComponentDataExtension;
 import su.nightexpress.excellentcrates.rarity.reward.placeholder.RarityRewardPlaceholder;
+import su.nightexpress.excellentcrates.rarity.reward.sort.RewardRarityIdSorter;
+import su.nightexpress.excellentcrates.rarity.reward.sort.RewardRarityWeightSorter;
 import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 
 @NullMarked
@@ -32,6 +35,8 @@ public class RarityModuleBootstrap extends CrateModuleBootstrap {
     public void onRegister(ServiceRegistry services, CoreDependencies dependencies) {
         CratesPlugin plugin = dependencies.plugin();
         CoreUIService coreUI = dependencies.uiService();
+
+        plugin.injectLang(RarityLang.class);
 
         ConfigCodecs.register(DefaultRarityComponent.class, RarityComponentCodec.INSTANCE);
 
@@ -51,6 +56,8 @@ public class RarityModuleBootstrap extends CrateModuleBootstrap {
 
             rewardsApi.getData().registerExtension(new RarityComponentDataExtension(rarities));
             rewardsApi.getEditor().registerExtension(editorContext.getEditorExtension());
+            rewardsApi.getEditor().registerSorter(new RewardRarityWeightSorter(rarities));
+            rewardsApi.getEditor().registerSorter(new RewardRarityIdSorter());
             rewardsApi.getPlaceholders().registerPlaceholder(new RarityRewardPlaceholder(rarities));
             rewardsApi.getView().setColorProvider((reward, defaultColor) -> {
                 RarityComponent component = reward.getComponentOrNull(RewardComponentKeys.RARITY);

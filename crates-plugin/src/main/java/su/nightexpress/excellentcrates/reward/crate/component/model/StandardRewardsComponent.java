@@ -3,6 +3,7 @@ package su.nightexpress.excellentcrates.reward.crate.component.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
@@ -54,8 +55,16 @@ public class StandardRewardsComponent implements CrateRewardsComponent {
     }
 
     @Override
-    public Collection<CrateRewardEntry> getRewards() {
-        return Collections.unmodifiableCollection(this.rewardByIdMap.values());
+    public void setRewards(Collection<? extends CrateRewardEntry> rewards) {
+        this.rewardByIdMap.clear();
+        for (CrateRewardEntry reward : rewards) {
+            this.rewardByIdMap.put(reward.getRewardId(), reward);
+        }
+    }
+
+    @Override
+    public List<CrateRewardEntry> getRewards() {
+        return List.copyOf(this.rewardByIdMap.values());
     }
 
     @Override

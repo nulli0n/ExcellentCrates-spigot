@@ -6,4 +6,6 @@ import org.jspecify.annotations.NullMarked;
 public interface RewardEditorAPI {
 
     void registerExtension(RewardEditorExtension extension);
+
+    void registerSorter(RewardSorter sorter);
 }

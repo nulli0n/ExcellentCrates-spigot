@@ -15,6 +15,27 @@ import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 
 public final class RewardEditorLang implements LangContainer {
 
+    public static final TextLocale SORTER_ID = LangEntry
+        .builder("rewards.editor.sorter.id")
+        .text(TagWrappers.SPRITE_ITEM.apply(Material.NAME_TAG) + " Reward ID");
+
+    public static final TextLocale SORTER_WEIGHT = LangEntry
+        .builder("rewards.editor.sorter.weight")
+        .text(TagWrappers.SPRITE_ITEM.apply(Material.IRON_INGOT) + " Reward Weight");
+
+    public static final TextLocale SORTER_CHANCE = LangEntry
+        .builder("rewards.editor.sorter.chance")
+        .text(TagWrappers.SPRITE_BLOCKS.apply("block/target_top") + " Reward Chance");
+
+    public static final MessageLocale ERROR_NO_SORTER = LangEntry
+        .builder("rewards.editor.error.no_sorter")
+        .chatMessage(
+            Sound.ENTITY_VILLAGER_NO,
+            TagWrappers.GRAY.wrap("No reward sorter found with ID " +
+                TagWrappers.RED.wrap(CommonPlaceholders.GENERIC_VALUE) + "."
+            )
+        );
+
     public static final MessageLocale CREATION_ID_GENERATION_FAILED = LangEntry
         .builder("rewards.editor.creation.id_generation.failed")
         .chatMessage(
@@ -86,6 +107,19 @@ public final class RewardEditorLang implements LangContainer {
         )
         .br()
         .appendClick("Click to toggle")
+        .build();
+
+    public static final IconLocale UI_INVENTORY_BROWSE_BUTTON_SORT = LangEntry
+        .iconBuilder("rewards.editor.ui.inventory.browse.button.sort")
+        .accentColor(TagWrappers.GOLD)
+        .name("Sort Rewards")
+        .appendInfo(
+            "Organize and sort your rewards",
+            "based on various criteria such as",
+            "weight, rarity, roll chance and other."
+        )
+        .br()
+        .appendClick("Click to sort")
         .build();
 
     public static final TextLocale UI_INVENTORY_OPTIONS_TITLE = LangEntry
@@ -225,6 +259,22 @@ public final class RewardEditorLang implements LangContainer {
             TagWrappers.GRAY.wrap("This action is " + TagWrappers.RED.wrap("irreversible") + "."),
             TagWrappers.GRAY.wrap("Think twice before proceeding.")
         );
+
+    public static final TextLocale UI_DIALOG_SORT_TITLE = LangEntry
+        .builder("rewards.editor.ui.dialog.sort.title")
+        .text(TagWrappers.GOLD.and(TagWrappers.UNDERLINED).wrap("Sort Rewards"));
+
+    public static final DialogElementLocale UI_DIALOG_SORT_BODY = LangEntry
+        .builder("rewards.editor.ui.dialog.sort.body")
+        .dialogElement(
+            "Choose the criteria by which you want to sort the rewards.",
+            "",
+            TagWrappers.GRAY.wrap("Sorting will affect the order in which rewards are displayed.")
+        );
+
+    public static final TextLocale UI_DIALOG_SORT_INPUT_INVERT = LangEntry
+        .builder("rewards.editor.ui.dialog.sort.input.invert")
+        .text(TagWrappers.SPRITE_ITEM.apply(Material.COMPARATOR) + " Invert Sort");
 
     public static final TextLocale UI_DIALOG_PREVIEW_NAME_TITLE = LangEntry
         .builder("rewards.editor.ui.dialog.preview_name.title")

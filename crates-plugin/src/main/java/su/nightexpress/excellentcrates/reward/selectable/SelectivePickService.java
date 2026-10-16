@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.reward.selectable;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +42,6 @@ public class SelectivePickService {
             .map(entry -> this.rewardRegistry.resolveReward(crateId, entry.getRewardId()))
             .filter(Objects::nonNull)
             .filter(reward -> this.isPickable(player, crate, reward, pickContext).success())
-            .sorted(Comparator.comparing(reward -> reward.rawId().value()))
             .toList();
     }
 

@@ -1,5 +1,8 @@
 package su.nightexpress.excellentcrates.reward.crate.component.editor;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.jspecify.annotations.NullMarked;
 
 import su.nightexpress.engine.action.ActionResult;
@@ -24,5 +27,9 @@ public final class RewardComponentHook {
 
     public ActionResult removeReward(Crate crate, Identifier rewardId) {
         return this.editorService.removeReward(this.hook, rewardId);
+    }
+
+    public ActionResult editRewards(Crate crate, Consumer<List<Identifier>> editor) {
+        return this.editorService.editRewards(this.hook, editor);
     }
 }

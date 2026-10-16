@@ -1,5 +1,8 @@
 package su.nightexpress.excellentcrates.reward.crate.component.editor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jspecify.annotations.NullMarked;
@@ -8,6 +11,7 @@ import su.nightexpress.engine.action.ActionResult;
 import su.nightexpress.engine.id.Identifier;
 import su.nightexpress.excellentcrates.api.crate.component.CrateComponentKeys;
 import su.nightexpress.excellentcrates.api.crate.editor.CrateEditorHook;
+import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardEntry;
 import su.nightexpress.excellentcrates.api.reward.crate.CrateRewardsComponent;
 import su.nightexpress.excellentcrates.reward.crate.component.lang.RewardComponentLang;
 import su.nightexpress.excellentcrates.reward.crate.component.model.StandardRewardEntry;
@@ -37,6 +41,19 @@ public class RewardComponentEditorService {
     public ActionResult removeReward(CrateEditorHook hook, Identifier rewardId) {
         return this.editComponent(hook, rewards -> {
             rewards.removeReward(rewardId);
+
+            return ActionResult.ok();
+        });
+    }
+
+    public ActionResult editRewards(CrateEditorHook hook, Consumer<List<Identifier>> editor) {
+        return this.editComponent(hook, rewards -> {
+            List<Identifier> rewardList = new ArrayList<>();
+            for (CrateRewardEntry entry : rewards.getRewards()) {
+                rewardList.add(entry.getRewardId());
+            }
+            editor.accept(rewardList);
+            rewards.setRewards(rewardList.stream().map(StandardRewardEntry::new).toList());
 
             return ActionResult.ok();
         });
