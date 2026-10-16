@@ -46,7 +46,7 @@ public class KeyBalanceBootstrapContext extends NamedBootstrapContext {
         super(ID, NAME);
         this.commands = new ArrayList<>();
 
-        this.balanceService = new KeyBalanceService(storageService, itemService);
+        this.balanceService = new KeyBalanceService(plugin, storageService, itemService);
 
         this.placeholder = new KeyBalancePlaceholder(this.balanceService);
 
