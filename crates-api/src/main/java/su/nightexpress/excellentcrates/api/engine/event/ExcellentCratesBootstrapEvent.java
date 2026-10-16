@@ -3,18 +3,18 @@ package su.nightexpress.excellentcrates.api.engine.event;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.NullMarked;
 
-import su.nightexpress.engine.component.PluginComponent;
+import su.nightexpress.engine.component.ComponentBundle;
 import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.excellentcrates.api.CoreDependencies;
 
 @NullMarked
 public abstract class ExcellentCratesBootstrapEvent extends Event {
 
-    protected final PluginComponent  core;
+    protected final ComponentBundle  core;
     protected final ServiceRegistry  services;
     protected final CoreDependencies dependencies;
 
-    public ExcellentCratesBootstrapEvent(PluginComponent core,
+    public ExcellentCratesBootstrapEvent(ComponentBundle core,
                                          ServiceRegistry services,
                                          CoreDependencies dependencies) {
         super();
@@ -23,13 +23,13 @@ public abstract class ExcellentCratesBootstrapEvent extends Event {
         this.dependencies = dependencies;
     }
 
-    public PluginComponent getCore() {
+    public ComponentBundle getCore() {
         return core;
     }
 
     /**
-     * Gets the service registry associated with this bootstrap event.
-     * It is illegal to cache the service registry reference.
+     * Gets the service registry associated with this bootstrap event.<br>
+     * <b>It is illegal to cache the service registry reference.</b>
      *
      * @return the service registry
      */
@@ -38,8 +38,8 @@ public abstract class ExcellentCratesBootstrapEvent extends Event {
     }
 
     /**
-     * Gets the core dependencies associated with this bootstrap event.
-     * It is illegal to cache the dependencies reference.
+     * Gets the core dependencies associated with this bootstrap event.<br>
+     * <b>It is illegal to cache the dependencies reference.</b>
      *
      * @return the core dependencies
      */

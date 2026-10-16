@@ -7,7 +7,7 @@ import su.nightexpress.engine.service.ServiceRegistry;
 import su.nightexpress.excellentcrates.api.crate.CratesAPI;
 
 @NullMarked
-public class PluginAPIConfiguration {
+public final class PluginAPIConfiguration {
 
     private PluginAPIConfiguration() {
     }
