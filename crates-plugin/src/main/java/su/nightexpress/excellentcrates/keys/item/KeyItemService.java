@@ -18,10 +18,12 @@ public final class KeyItemService {
 
     private final KeyItemFactory itemFactory;
     private final NamespacedKey  itemKey;
+    private final NamespacedKey legacyItemKey;
 
-    public KeyItemService(KeyItemFactory itemFactory, NamespacedKey itemKey) {
+    public KeyItemService(KeyItemFactory itemFactory, NamespacedKey itemKey, NamespacedKey legacyItemKey) {
         this.itemFactory = itemFactory;
         this.itemKey = itemKey;
+        this.legacyItemKey = legacyItemKey;
     }
 
     public Optional<ItemStack> createTaggedItem(CrateKey key) {
@@ -47,7 +49,9 @@ public final class KeyItemService {
     }
 
     public @Nullable Identifier getKeyIdFromItem(ItemStack item) {
-        String idRaw = PDCUtil.getString(item, this.itemKey).orElse(null);
+        String idRaw = PDCUtil.getString(item, this.itemKey)
+                .or(() -> PDCUtil.getString(item, this.legacyItemKey))
+                .orElse(null);
         if (idRaw == null) {
             return null;
         }
