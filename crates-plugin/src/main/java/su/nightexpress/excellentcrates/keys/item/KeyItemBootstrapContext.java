@@ -47,9 +47,10 @@ public class KeyItemBootstrapContext extends NamedBootstrapContext {
         plugin.injectLang(KeyItemLang.class);
 
         NamespacedKey itemKey = new NamespacedKey(plugin, "key.id");
+        NamespacedKey legacyItemKey = new NamespacedKey(plugin, "crate_key.id");
 
         this.itemFactory = new KeyItemFactory(keyPlaceholders);
-        this.itemService = new KeyItemService(this.itemFactory, itemKey);
+        this.itemService = new KeyItemService(this.itemFactory, itemKey, legacyItemKey);
         this.api = new DefaultKeyItemAPI(this.itemFactory, this.itemService);
 
         KeyItemEditorBootstrapContext editorContext = new KeyItemEditorBootstrapContext(
