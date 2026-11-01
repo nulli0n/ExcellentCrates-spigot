@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class FakeEntityGroup {
@@ -13,12 +15,12 @@ public class FakeEntityGroup {
     private final List<FakeEntity> entities;
     private final Set<UUID>        humanViewers;
 
-    private boolean disabled;
+    private volatile boolean disabled;
 
     public FakeEntityGroup(@NotNull WorldPos blockPos) {
         this.blockPos = blockPos;
-        this.entities = new ArrayList<>();
-        this.humanViewers = new HashSet<>();
+        this.entities = new CopyOnWriteArrayList<>();
+        this.humanViewers = ConcurrentHashMap.newKeySet();
         this.disabled = false;
     }
 
@@ -27,7 +29,16 @@ public class FakeEntityGroup {
     }
 
     public void removeViewer(@NotNull Player player) {
-        this.humanViewers.remove(player.getUniqueId());
+        this.removeViewer(player.getUniqueId());
+    }
+
+    public void removeViewer(@NotNull UUID playerId) {
+        this.humanViewers.remove(playerId);
+    }
+
+    @NotNull
+    public Set<UUID> getViewerIds() {
+        return this.humanViewers;
     }
 
     public boolean isViewer(@NotNull Player player) {
