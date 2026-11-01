@@ -15,7 +15,8 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerProvider
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerType;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.provider.AnimationProvider;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.provider.RewardProvider;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
+import su.nightexpress.nightcore.configuration.property.ConfigProperty;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.util.BukkitThing;
@@ -47,29 +48,29 @@ public class InventoryProvider extends AbstractProvider {
 
     @Override
     public void load(@NotNull FileConfig config) {
-        this.invType = BukkitThing.getMenuType(ConfigValue.create("Settings.Menu_Type", BukkitThing.getValue(this.invType)).read(config));
+        this.invType = BukkitThing.getMenuType(config.getOrSet("Settings.Menu_Type", ConfigCodecs.STRING, BukkitThing.getValue(this.invType)));
 
-        this.invTitle = ConfigValue.create("Settings.Title", this.invTitle).read(config);
+        this.invTitle = config.getOrSet("Settings.Title", ConfigCodecs.STRING, this.invTitle);
 
-        this.winSlots = ConfigValue.create("Settings.WinSlots", this.winSlots).read(config);
+        this.winSlots = config.getOrSet("Settings.WinSlots", ConfigCodecs.INT_ARRAY, this.winSlots);
 
-        this.maxTicksForSkip = ConfigValue.create("Settings.Max_Ticks_To_Skip",
+        this.maxTicksForSkip = config.getOrSet(ConfigProperty.of(ConfigCodecs.LONG, "Settings.Max_Ticks_To_Skip",
             this.maxTicksForSkip,
             "Sets max. amount of the opening ticks while players can skip the opening animation.",
             "Set to -1 to disable (no skip)."
-        ).read(config);
+        ));
 
-        this.completionPauseTicks = ConfigValue.create("Settings.Completion_Pause_Ticks",
+        this.completionPauseTicks = config.getOrSet(ConfigProperty.of(ConfigCodecs.LONG, "Settings.Completion_Pause_Ticks",
             this.completionPauseTicks,
             "Sets how soon (in ticks) animation GUI will be closed when completed.",
             "[1 second = 20 ticks]",
             "[Default is 20 ticks]"
-        ).read(config);
+        ));
 
         if (config.getSection("Content.Default").isEmpty()) {
             this.defaultItems.forEach((id, menuItem) -> {
                 config.set("Content.Default." + id + ".Item", menuItem.getItem());
-                config.setIntArray("Content.Default." + id + ".Slots", menuItem.getSlots());
+                config.setArray("Content.Default." + id + ".Slots", menuItem.getSlots());
             });
         }
 
@@ -87,13 +88,13 @@ public class InventoryProvider extends AbstractProvider {
 
         if (!config.contains(configsPath)) {
             this.spinners.forEach((id, holder) -> {
-                config.set(configsPath + "." + holder.getType().name() + "." + holder.getId(), holder.getConfig());
+                holder.getConfig().write(config, configsPath + "." + holder.getType().name() + "." + holder.getId());
             });
         }
 
         if (!config.contains(providersPath)) {
             this.spinners.forEach((id, holder) -> {
-                config.set(providersPath + "." + holder.getType().name() + "." + holder.getConfig().getSpinnerId(), holder.getProvider());
+                holder.getProvider().write(config, providersPath + "." + holder.getType().name() + "." + holder.getConfig().getSpinnerId());
             });
         }
 
@@ -110,7 +111,7 @@ public class InventoryProvider extends AbstractProvider {
                 String spinnerId = data.getSpinnerId();
                 String providerIdPath = typedProvidersPath + "." + spinnerId;
                 if (!config.contains(providerIdPath)) {
-                    this.plugin.error("Spinner '" + spinnerId + "' not present in the '" + config.getFile().getPath() + "' for the '" + sId + "' run configuration.");
+                    this.plugin.error("Spinner '" + spinnerId + "' not present in the '" + config.getPath() + "' for the '" + sId + "' run configuration.");
                     return;
                 }
 

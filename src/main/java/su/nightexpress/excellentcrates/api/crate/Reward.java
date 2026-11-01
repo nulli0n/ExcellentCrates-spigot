@@ -8,14 +8,15 @@ import su.nightexpress.excellentcrates.crate.impl.Rarity;
 import su.nightexpress.excellentcrates.crate.limit.LimitValues;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.problem.ProblemReporter;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-public interface Reward extends Writeable {
+public interface Reward {
+
+    void write(@NotNull FileConfig config, @NotNull String path);
 
     @NotNull UnaryOperator<String> replacePlaceholders();
 

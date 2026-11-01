@@ -8,16 +8,15 @@ import su.nightexpress.excellentcrates.opening.inventory.InventoryOpening;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerProvider;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.impl.RewardSpinner;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.Lists;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class RewardProvider implements SpinnerProvider, Writeable {
+public class RewardProvider implements SpinnerProvider {
 
     private final Set<String> rarities;
 
@@ -32,7 +31,7 @@ public class RewardProvider implements SpinnerProvider, Writeable {
 
     @NotNull
     public static RewardProvider read(@NotNull FileConfig config, @NotNull String path) {
-        Set<String> rarities = ConfigValue.create(path + ".Rarities", Set.of(Placeholders.WILDCARD)).read(config);
+        Set<String> rarities = config.getOrSet(path + ".Rarities", ConfigCodecs.STRING_SET, Set.of(Placeholders.WILDCARD));
 
         return new RewardProvider(rarities);
     }

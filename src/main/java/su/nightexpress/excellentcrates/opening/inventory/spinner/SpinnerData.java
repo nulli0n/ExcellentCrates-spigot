@@ -4,13 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nightexpress.nightcore.bridge.wrap.NightSound;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.NumberUtil;
 
 import java.util.List;
 
-public class SpinnerData implements Writeable {
+public class SpinnerData {
 
     private final String         spinnerId;
     private final SpinMode       mode;
@@ -71,11 +70,10 @@ public class SpinnerData implements Writeable {
         return new SpinnerData(spinnerId, mode, slots, spinDelay, spinSteps, sound);
     }
 
-    @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".SpinnerId", this.spinnerId);
         config.set(path + ".Mode", this.mode.name());
-        config.setIntArray(path + ".Slots", this.slots);
+        config.setArray(path + ".Slots", this.slots);
         config.set(path + ".SpinDelay", this.spinDelay);
         config.set(path + ".Spins", Lists.modify(this.spinSteps, SpinStep::serialize));
         config.set(path + ".Sound", this.sound);

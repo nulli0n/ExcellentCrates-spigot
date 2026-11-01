@@ -64,7 +64,7 @@ public abstract class AbstractReward implements Reward {
             CooldownMode cooldownType = playerCooldown == -2 || globalCooldown == -2 ? CooldownMode.DAILY : CooldownMode.CUSTOM;
 
             LimitValues values = new LimitValues(playerEnabled || globalEnabled, cooldownType, globalAmount, playerAmount, globalCooldown, playerCooldown);
-            config.set(path + ".Limits", values);
+            values.write(config, path + ".Limits");
             config.remove(path + ".Win_Limit");
         }
 
@@ -85,7 +85,7 @@ public abstract class AbstractReward implements Reward {
         config.set(path + ".Weight", this.weight);
         config.set(path + ".Rarity", this.rarity.getId());
         config.set(path + ".Broadcast", this.broadcast);
-        config.set(path + ".Limits", this.limits);
+        this.limits.write(config, path + ".Limits");
         config.set(path + ".Ignored_For_Permissions", this.ignoredPermissions);
         config.set(path + ".Required_Permissions", this.requiredPermissions);
         this.writeAdditional(config, path);

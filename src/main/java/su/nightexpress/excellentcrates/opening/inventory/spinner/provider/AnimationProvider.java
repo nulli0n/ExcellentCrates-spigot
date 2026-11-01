@@ -7,7 +7,6 @@ import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerProvider
 import su.nightexpress.excellentcrates.opening.inventory.spinner.SpinnerData;
 import su.nightexpress.excellentcrates.opening.inventory.spinner.impl.AnimationSpinner;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.random.WeightedItem;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnimationProvider implements SpinnerProvider, Writeable {
+public class AnimationProvider implements SpinnerProvider {
 
     private final Map<String, WeightedItem<NightItem>> itemMap;
 

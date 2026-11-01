@@ -1,15 +1,15 @@
 package su.nightexpress.excellentcrates.crate.limit;
 
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
+import su.nightexpress.nightcore.configuration.property.ConfigProperty;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.TimeUtil;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class LimitValues implements Writeable {
+public class LimitValues {
 
     private static final int UNLIMITED = -1;
 
@@ -37,19 +37,18 @@ public class LimitValues implements Writeable {
 
     @NotNull
     public static LimitValues read(@NotNull FileConfig config, @NotNull String path) {
-        boolean enabled = ConfigValue.create(path + ".Enabled", false).read(config);
-        CooldownMode cooldownType = ConfigValue.create(path + ".CooldownType", CooldownMode.class, CooldownMode.DAILY).read(config);
+        boolean enabled = config.getOrSet(path + ".Enabled", ConfigCodecs.BOOLEAN, false);
+        CooldownMode cooldownType = config.getOrSet(ConfigProperty.of(ConfigCodecs.forEnum(CooldownMode.class), path + ".CooldownType", CooldownMode.DAILY));
 
-        int globalAmount = ConfigValue.create(path + ".GlobalAmount", UNLIMITED).read(config);
-        int playerAmount = ConfigValue.create(path + ".PlayerAmount", UNLIMITED).read(config);
+        int globalAmount = config.getOrSet(path + ".GlobalAmount", ConfigCodecs.INT, UNLIMITED);
+        int playerAmount = config.getOrSet(path + ".PlayerAmount", ConfigCodecs.INT, UNLIMITED);
 
-        long globalCooldown = ConfigValue.create(path + ".GlobalCooldown", 0L).read(config);
-        long playerCooldown = ConfigValue.create(path + ".PlayerCooldown", 0L).read(config);
+        long globalCooldown = config.getOrSet(path + ".GlobalCooldown", ConfigCodecs.LONG, 0L);
+        long playerCooldown = config.getOrSet(path + ".PlayerCooldown", ConfigCodecs.LONG, 0L);
 
         return new LimitValues(enabled, cooldownType, globalAmount, playerAmount, globalCooldown, playerCooldown);
     }
 
-    @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Enabled", this.enabled);
         config.set(path + ".CooldownType", this.cooldownType.name());
