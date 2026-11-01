@@ -7,7 +7,7 @@ import su.nightexpress.excellentcrates.crate.cost.entry.impl.KeyCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.AbstractCostType;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
 import su.nightexpress.excellentcrates.key.KeyManager;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.locale.LangContainer;
 import su.nightexpress.nightcore.locale.LangEntry;
@@ -57,8 +57,8 @@ public class KeyCostType extends AbstractCostType implements LangContainer {
     @Override
     @NotNull
     public KeyCostEntry load(@NotNull FileConfig config, @NotNull String path) {
-        String keyId = ConfigValue.create(path + ".Key", "null").read(config);
-        int amount = ConfigValue.create(path + ".Amount", 1).read(config);
+        String keyId = config.getOrSet(path + ".Key", ConfigCodecs.STRING, "null");
+        int amount = config.getOrSet(path + ".Amount", ConfigCodecs.INT, 1);
 
         return new KeyCostEntry(this, this.keyManager, this.dialogs, keyId, amount);
     }

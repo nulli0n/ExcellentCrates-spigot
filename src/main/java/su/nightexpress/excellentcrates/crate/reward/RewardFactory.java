@@ -16,6 +16,7 @@ import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.config.FileConfig;
+import su.nightexpress.nightcore.util.ItemNbt;
 import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Lists;
 
@@ -25,7 +26,8 @@ public class RewardFactory {
     public static Reward read(@NotNull CratesPlugin plugin, @NotNull Crate crate, @NotNull String id, @NotNull FileConfig config, @NotNull String path) {
         // ------- CONVERT ITEM - START -------
         if (config.contains(path + ".Preview")) {
-            ItemStack previewItem = config.getItemEncoded(path + ".Preview");
+            String encodedPreview = config.getString(path + ".Preview");
+            ItemStack previewItem = encodedPreview == null ? null : ItemNbt.decompress(encodedPreview);
             if (previewItem == null) previewItem = new ItemStack(Material.BARRIER);
 
             AdaptedItem item = ItemHelper.vanilla(previewItem);
@@ -64,7 +66,7 @@ public class RewardFactory {
         String rarityId = String.valueOf(config.getString(path + ".Rarity"));
         Rarity rarity = plugin.getCrateManager().getRarity(rarityId);
         if (rarity == null) {
-            plugin.error("Invalid rarity '" + rarityId + "', fallback to default rarity. Caused by '" + config.getFile().getName() + "' -> '" + path + "'.");
+            plugin.error("Invalid rarity '" + rarityId + "', fallback to default rarity. Caused by '" + config.getPath().getFileName() + "' -> '" + path + "'.");
             rarity = plugin.getCrateManager().getMostCommonRarity();
         }
 

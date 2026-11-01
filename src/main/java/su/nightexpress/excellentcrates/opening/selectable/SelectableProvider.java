@@ -7,7 +7,7 @@ import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.opening.AbstractProvider;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 
 public class SelectableProvider extends AbstractProvider {
@@ -22,7 +22,7 @@ public class SelectableProvider extends AbstractProvider {
 
     @Override
     public void load(@NotNull FileConfig config) {
-        this.selectionAmount = ConfigValue.create("Selection.Amount", this.selectionAmount).read(config);
+        this.selectionAmount = config.getOrSet("Selection.Amount", ConfigCodecs.INT, this.selectionAmount);
 
         this.menu = new SelectableMenu(this.plugin);
         this.menu.load(config);
