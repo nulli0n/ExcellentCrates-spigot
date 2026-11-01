@@ -1,5 +1,8 @@
 package su.nightexpress.excellentcrates;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.addon.CratesAddon;
 import su.nightexpress.excellentcrates.command.BaseCommands;
@@ -52,7 +55,6 @@ public class CratesPlugin extends NightPlugin {
     @NotNull
     protected PluginDetails getDefaultDetails() {
         return PluginDetails.create("Crates", new String[]{"crates", "ecrates", "excellentcrates", "crate", "case", "cases"})
-            .setConfigClass(Config.class)
             .setPermissionsClass(Perms.class);
     }
 
@@ -74,6 +76,9 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void enable() {
+        Config.load(this.getConfig());
+        this.getConfig().saveChanges();
+
         this.crateLogger = new CrateLogger(this);
         this.dialogRegistry = new DialogRegistry(this);
 
@@ -212,5 +217,23 @@ public class CratesPlugin extends NightPlugin {
     @NotNull
     public CrateManager getCrateManager() {
         return this.crateManager;
+    }
+
+    public void runOwned(@NotNull Entity entity, @NotNull Runnable action) {
+        if (Bukkit.isOwnedByCurrentRegion(entity)) {
+            action.run();
+        }
+        else {
+            this.runTask(entity, action);
+        }
+    }
+
+    public void runOwned(@NotNull Location location, @NotNull Runnable action) {
+        if (Bukkit.isOwnedByCurrentRegion(location)) {
+            action.run();
+        }
+        else {
+            this.runTask(location, action);
+        }
     }
 }
