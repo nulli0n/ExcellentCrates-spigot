@@ -7,7 +7,7 @@ import su.nightexpress.excellentcrates.crate.cost.CostTypeId;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.EcoCostEntry;
 import su.nightexpress.excellentcrates.crate.cost.type.AbstractCostType;
 import su.nightexpress.excellentcrates.dialog.DialogRegistry;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.integration.currency.CurrencyId;
 import su.nightexpress.nightcore.integration.currency.EconomyBridge;
@@ -43,7 +43,7 @@ public class EcoCostType extends AbstractCostType implements LangContainer {
 
     @Override
     public boolean isAvailable() {
-        return EconomyBridge.hasCurrency();
+        return EconomyBridge.initialized() && EconomyBridge.api().hasAnyCurrency();
     }
 
     @Override
@@ -55,8 +55,8 @@ public class EcoCostType extends AbstractCostType implements LangContainer {
     @Override
     @NotNull
     public CostEntry load(@NotNull FileConfig config, @NotNull String path) {
-        String currencyId = ConfigValue.create(path + ".Currency", CurrencyId.VAULT).read(config);
-        double amount = ConfigValue.create(path + ".Amount", 0D).read(config);
+        String currencyId = config.getOrSet(path + ".Currency", ConfigCodecs.STRING, CurrencyId.VAULT);
+        double amount = config.getOrSet(path + ".Amount", ConfigCodecs.DOUBLE, 0D);
 
         return new EcoCostEntry(this, this.dialogs, currencyId, amount);
     }
