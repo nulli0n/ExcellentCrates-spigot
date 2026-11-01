@@ -16,7 +16,7 @@ public class GlobalCrateData {
     private String latestOpenerName;
     private String latestRewardId;
 
-    private boolean dirty;
+    private volatile boolean dirty;
 
     @NotNull
     public static GlobalCrateData create(@NotNull Crate crate) {
