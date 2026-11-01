@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.MenuType;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
@@ -51,7 +52,8 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 39, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> this.plugin.getEditorManager().openOptionsMenu(player, this.getLink(player)));
         }));
 
         this.addItem(MenuItem.buildNextPage(this, 44));
@@ -61,7 +63,8 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
             Milestone milestone = new Milestone(crate, "null", 0);
             crate.getMilestones().add(milestone);
             crate.markDirty();
-            this.runNextTick(() -> this.flush(viewer));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> this.flush(player));
         });
     }
 
@@ -84,12 +87,13 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         });
         autoFill.setItemClick(milestone -> (viewer1, event) -> {
             Crate crate = this.getLink(viewer1);
+            Player player = viewer1.getPlayer();
 
             if (event.isShiftClick()) {
                 if (event.isRightClick()) {
                     crate.getMilestones().remove(milestone);
                     crate.markDirty();
-                    this.runNextTick(() -> this.flush(viewer));
+                    this.plugin.runTask(player, () -> this.flush(player));
                     return;
                 }
             }

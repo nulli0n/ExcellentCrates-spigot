@@ -72,7 +72,8 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
         this.itemDetection = true;
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openCosts(viewer.getPlayer(), this.getLink(viewer).crate));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> plugin.getEditorManager().openCosts(player, this.getLink(player).crate));
         }));
 
         this.addItem(NightItem.fromType(Material.GLASS_PANE)
@@ -140,7 +141,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
             .setHandler((viewer1, event) -> {
                 if (event.isRightClick()) {
                     this.itemDetection = !this.itemDetection;
-                    this.runNextTick(() -> this.flush(viewer));
+                    this.plugin.runTask(player, () -> this.flush(player));
                     return;
                 }
 
@@ -152,7 +153,7 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
                 crate.markDirty();
                 Players.addItem(player, cursor);
                 event.getView().setCursor(null);
-                this.runNextTick(() -> this.flush(viewer));
+                this.plugin.runTask(player, () -> this.flush(player));
             })
             .build()
         );
@@ -168,13 +169,13 @@ public class CostOptionsMenu extends LinkedMenu<CratesPlugin, CostOptionsMenu.Da
                     if (event.isLeftClick()) {
                         entry.openEditor(player, () -> {
                             crate.markDirty();
-                            this.runNextTick(() -> this.flush(viewer));
+                            this.plugin.runTask(player, () -> this.flush(player));
                         });
                     }
                     else if (event.getClick() == ClickType.DROP) {
                         cost.removeEntry(entry);
                         crate.markDirty();
-                        this.runNextTick(() -> this.flush(viewer));
+                        this.plugin.runTask(player, () -> this.flush(player));
                     }
                 });
             }

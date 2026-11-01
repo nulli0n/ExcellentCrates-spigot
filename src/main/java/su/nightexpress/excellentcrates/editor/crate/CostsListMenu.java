@@ -85,7 +85,8 @@ public class CostsListMenu extends LinkedMenu<CratesPlugin, Crate> implements La
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openOptionsMenu(viewer.getPlayer(), this.getLink(viewer)));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> this.plugin.getEditorManager().openOptionsMenu(player, this.getLink(player)));
         }));
 
         this.addItem(NightItem.fromType(Material.BLACK_STAINED_GLASS_PANE)
@@ -129,7 +130,7 @@ public class CostsListMenu extends LinkedMenu<CratesPlugin, Crate> implements La
                     .setHandler((viewer1, event) -> {
                         cost.setEnabled(!cost.isEnabled());
                         crate.markDirty();
-                        this.runNextTick(() -> this.flush(viewer));
+                        this.plugin.runTask(player, () -> this.flush(player));
                     });
 
                 entryBuilder = NightItem.fromItemStack(cost.getIconStack())
@@ -146,11 +147,11 @@ public class CostsListMenu extends LinkedMenu<CratesPlugin, Crate> implements La
                         if (event.getClick() == ClickType.DROP) {
                             crate.removeCost(cost);
                             crate.markDirty();
-                            this.runNextTick(() -> this.flush(viewer));
+                            this.plugin.runTask(player, () -> this.flush(player));
                             return;
                         }
 
-                        this.runNextTick(() -> plugin.getEditorManager().openCostOptions(player, crate, cost));
+                        this.plugin.runTask(player, () -> plugin.getEditorManager().openCostOptions(player, crate, cost));
                     });
 
                 statusBuilder = NightItem.fromType(!isValid ? Material.RED_STAINED_GLASS_PANE : (hasInvalids ? Material.YELLOW_STAINED_GLASS_PANE : Material.LIME_STAINED_GLASS_PANE))

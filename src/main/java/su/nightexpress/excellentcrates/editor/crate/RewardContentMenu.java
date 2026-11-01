@@ -61,7 +61,8 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
         this.addItem(MenuItem.background(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(36, 45).toArray()));
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openRewardOptions(viewer.getPlayer(), this.getLink(viewer)));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> plugin.getEditorManager().openRewardOptions(player, this.getLink(player)));
         }));
     }
 
@@ -82,7 +83,7 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
             if (!ItemHelper.isCustom(copy)) {
                 reward.addItem(ItemHelper.vanilla(copy));
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.plugin.runTask(player, flush);
             }
             else {
                 this.dialogs.show(player, RewardDialogs.ITEM, new RewardItemDialog.Data(reward, copy), flush);
@@ -100,7 +101,7 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
             reward.getItems().remove(index);
             crate.markDirty();
             clicked.setAmount(0);
-            this.runNextTick(flush);
+            this.plugin.runTask(player, flush);
         }
     }
 
@@ -114,7 +115,7 @@ public class RewardContentMenu extends LinkedMenu<CratesPlugin, ItemReward> impl
             .toMenuItem().setSlots(4).setHandler((viewer1, event) -> {
                 reward.setAllowItemPlaceholders(!reward.isAllowItemPlaceholders());
                 reward.getCrate().markDirty();
-                this.runNextTick(() -> this.flush(player));
+                this.plugin.runTask(player, () -> this.flush(player));
             }).build()
         );
     }

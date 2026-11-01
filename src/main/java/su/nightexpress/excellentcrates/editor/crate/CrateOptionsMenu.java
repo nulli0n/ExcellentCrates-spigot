@@ -169,7 +169,8 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 49, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openCrateList(viewer.getPlayer()));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> this.plugin.getEditorManager().openCrateList(player));
         }));
 
         this.addItem(MenuItem.background(Material.BLACK_STAINED_GLASS_PANE, IntStream.range(45, 54).toArray()));
@@ -210,7 +211,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                     if (event.isLeftClick()) {
                         crate.setItemStackable(!crate.isItemStackable());
                         crate.markDirty();
-                        this.runNextTick(flush);
+                        this.plugin.runTask(player, flush);
                     }
                     return;
                 }
@@ -253,12 +254,12 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                     crate.removeHologram();
                     crate.clearBlockPositions();
                     crate.markDirty();
-                    this.runNextTick(flush);
+                    this.plugin.runTask(player, flush);
                     return;
                 }
 
                 this.plugin.getCrateManager().giveLinkTool(player, crate);
-                this.runNextTick(player::closeInventory);
+                this.plugin.runTask(player, player::closeInventory);
             }).build()
         );
 
@@ -268,14 +269,14 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .toMenuItem().setSlots(16).setHandler((viewer1, event) -> {
                 crate.setPushbackEnabled(!crate.isPushbackEnabled());
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.plugin.runTask(player, flush);
             }).build()
         );
 
         viewer.addItem(NightItem.fromType(Material.TRIAL_KEY)
             .localized(LOCALE_COST_OPTIONS)
             .toMenuItem().setSlots(28).setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openCosts(viewer.getPlayer(), crate));
+                this.plugin.runTask(player, () -> plugin.getEditorManager().openCosts(player, crate));
             }).build()
         );
 
@@ -288,7 +289,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             .toMenuItem().setSlots(29).setHandler((viewer1, event) -> {
                 crate.setPermissionRequired(!crate.isPermissionRequired());
                 crate.markDirty();
-                this.runNextTick(flush);
+                this.plugin.runTask(player, flush);
             }).build()
         );
 
@@ -339,7 +340,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 .replace(GENERIC_AMOUNT, () -> CoreLang.formatEntry(String.valueOf(crate.countRewards()), crate.countRewards() > 0))
             )
             .toMenuItem().setSlots(33).setHandler((viewer1, event) -> {
-                this.runNextTick(() -> this.plugin.getEditorManager().openRewardList(viewer.getPlayer(), crate));
+                this.plugin.runTask(player, () -> this.plugin.getEditorManager().openRewardList(player, crate));
             }).build()
         );
 
@@ -351,7 +352,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 )
                 .toMenuItem().setSlots(34).setHandler((viewer1, event) -> {
                     // TODO crate.setMilestonesRepeatable(!crate.isMilestonesRepeatable());
-                    this.runNextTick(() -> this.plugin.getEditorManager().openMilestones(viewer.getPlayer(), crate));
+                    this.plugin.runTask(player, () -> this.plugin.getEditorManager().openMilestones(player, crate));
                 }).build()
             );
         }
@@ -362,7 +363,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
                 if (event.getClick() != ClickType.DROP) return;
 
                 this.plugin.getCrateManager().delete(crate);
-                this.runNextTick(() -> this.plugin.getEditorManager().openCrateList(player));
+                this.plugin.runTask(player, () -> this.plugin.getEditorManager().openCrateList(player));
             }).build()
         );
 
