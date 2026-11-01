@@ -55,7 +55,8 @@ public class KeyListMenu extends LinkedMenu<CratesPlugin, KeyManager> implements
         this.plugin.injectLang(this);
 
         this.addItem(MenuItem.buildReturn(this, 40, (viewer, event) -> {
-            this.runNextTick(() -> this.plugin.getEditorManager().openEditor(viewer.getPlayer()));
+            Player player = viewer.getPlayer();
+            this.plugin.runTask(player, () -> this.plugin.getEditorManager().openEditor(player));
         }));
         this.addItem(MenuItem.buildNextPage(this, 44));
         this.addItem(MenuItem.buildPreviousPage(this, 36));
@@ -86,7 +87,8 @@ public class KeyListMenu extends LinkedMenu<CratesPlugin, KeyManager> implements
                 );
         });
         autoFill.setItemClick(key -> (viewer1, event) -> {
-            this.runNextTick(() -> plugin.getEditorManager().openKeyOptions(viewer1.getPlayer(), key));
+            Player player = viewer1.getPlayer();
+            this.plugin.runTask(player, () -> plugin.getEditorManager().openKeyOptions(player, key));
         });
 
         return autoFill.build();

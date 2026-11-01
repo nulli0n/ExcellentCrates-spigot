@@ -8,9 +8,8 @@ import su.nightexpress.excellentcrates.api.cost.CostEntry;
 import su.nightexpress.excellentcrates.crate.cost.entry.AbstractCostEntry;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
 import su.nightexpress.nightcore.util.StringUtil;
 import su.nightexpress.nightcore.util.problem.ProblemCollector;
 import su.nightexpress.nightcore.util.problem.ProblemReporter;
@@ -21,7 +20,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class Cost implements Writeable {
+public class Cost {
 
     private final String          id;
     private final List<CostEntry> entries;
@@ -40,8 +39,8 @@ public class Cost implements Writeable {
 
     @NotNull
     public static Cost read(@NotNull FileConfig config, @NotNull String path, @NotNull String id) {
-        boolean enabled = ConfigValue.create(path + ".Enabled", true).read(config);
-        String name = ConfigValue.create(path + ".Name", StringUtil.capitalizeUnderscored(id)).read(config);
+        boolean enabled = config.getOrSet(path + ".Enabled", ConfigCodecs.BOOLEAN, true);
+        String name = config.getOrSet(path + ".Name", ConfigCodecs.STRING, StringUtil.capitalizeUnderscored(id));
         AdaptedItem icon = ItemHelper.readOrPlaceholder(config, path + ".Icon");
 
         List<CostEntry> entries = new ArrayList<>();
@@ -58,14 +57,13 @@ public class Cost implements Writeable {
         return new Cost(id, enabled, name, icon, entries);
     }
 
-    @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Enabled", this.enabled);
         config.set(path + ".Name", this.name);
         config.set(path + ".Icon", this.icon);
         config.remove(path + ".Entries");
         for (int i = 0; i < this.entries.size(); i++) {
-            config.set(path + ".Entries." + i, this.entries.get(i));
+            this.entries.get(i).write(config, path + ".Entries." + i);
         }
     }
 

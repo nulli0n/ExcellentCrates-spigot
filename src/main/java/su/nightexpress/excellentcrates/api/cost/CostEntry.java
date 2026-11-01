@@ -3,9 +3,12 @@ package su.nightexpress.excellentcrates.api.cost;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
 public interface CostEntry {
+
+    void write(@NotNull FileConfig config, @NotNull String path);
 
     @NotNull NightItem getEditorIcon();
 

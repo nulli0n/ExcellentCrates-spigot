@@ -64,17 +64,19 @@ public class PlaceholderHook {
             });
 
             this.userPlaceholders.put("openings_raw", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 return String.valueOf(user.getCrateData(crate).getOpenings());
             });
 
             this.userPlaceholders.put("openings_remaining", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
                 if (!crate.isOpeningCooldownEnabled()) return CoreLang.OTHER_INFINITY.text();
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 UserCrateData data = user.getCrateData(crate);
 
                 int openLimit = crate.getOpeningLimitAmount();
@@ -84,17 +86,19 @@ public class PlaceholderHook {
             });
 
             this.userPlaceholders.put("openings", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 return NumberUtil.format(user.getCrateData(crate).getOpenings());
             });
 
             this.userPlaceholders.put("cooldown", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
                 if (!crate.isOpeningCooldownEnabled()) return Lang.OTHER_COOLDOWN_READY.text();
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 UserCrateData data = user.getCrateData(crate);
 
                 if (!data.isOnCooldown()) return Lang.OTHER_COOLDOWN_READY.text();
@@ -104,9 +108,10 @@ public class PlaceholderHook {
             });
 
             this.userPlaceholders.put("next_milestone_openings", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 if (milestone == null) return Lang.OTHER_NEXT_MILESTONE_EMPTY.text();
@@ -115,9 +120,10 @@ public class PlaceholderHook {
             });
 
             this.userPlaceholders.put("next_milestone_reward", (player, crate) -> {
-                if (player == null) return null;
+                if (player == null || !player.isOnline()) return null;
 
                 CrateUser user = plugin.getUserManager().getOrFetch(player);
+                if (user == null) return null;
                 int milestones = user.getCrateData(crate).getMilestone();
                 Milestone milestone = crate.getNextMilestone(milestones);
                 Reward reward = milestone == null ? null : milestone.getReward();

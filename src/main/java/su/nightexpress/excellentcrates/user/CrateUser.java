@@ -6,8 +6,8 @@ import su.nightexpress.excellentcrates.data.crate.UserCrateData;
 import su.nightexpress.excellentcrates.key.CrateKey;
 import su.nightexpress.nightcore.db.AbstractUser;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
 public class CrateUser extends AbstractUser {
@@ -18,9 +18,9 @@ public class CrateUser extends AbstractUser {
 
     public CrateUser(@NotNull UUID uuid, @NotNull String name) {
         this(uuid, name, System.currentTimeMillis(), System.currentTimeMillis(),
-            new HashMap<>(),
-            new HashMap<>(),
-            new HashMap<>()
+            new ConcurrentHashMap<>(),
+            new ConcurrentHashMap<>(),
+            new ConcurrentHashMap<>()
         );
     }
 
@@ -32,9 +32,9 @@ public class CrateUser extends AbstractUser {
                      @NotNull Map<String, Integer> keysOnHold,
                      @NotNull Map<String, UserCrateData> crateDataMap) {
         super(uuid, name, dateCreated, lastOnline);
-        this.keys = keys;
-        this.keysOnHold = keysOnHold;
-        this.crateDataMap = new HashMap<>(crateDataMap);
+        this.keys = new ConcurrentHashMap<>(keys);
+        this.keysOnHold = new ConcurrentHashMap<>(keysOnHold);
+        this.crateDataMap = new ConcurrentHashMap<>(crateDataMap);
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public class CrateUser extends AbstractUser {
     }
 
     public void addKeys(@NotNull String id, int amount) {
-        this.setKeys(id, this.countKeys(id) + amount);
+        this.keys.compute(id.toLowerCase(), (keyId, current) -> clampAmount((current == null ? 0L : current) + amount));
     }
 
     public void takeKeys(@NotNull String id, int amount) {
@@ -96,7 +96,11 @@ public class CrateUser extends AbstractUser {
     }
 
     public void addKeysOnHold(@NotNull String id, int amount) {
-        this.keysOnHold.put(id.toLowerCase(), Math.max(0, this.getKeysOnHold(id) + amount));
+        this.keysOnHold.compute(id.toLowerCase(), (keyId, current) -> clampAmount((current == null ? 0L : current) + amount));
+    }
+
+    private static int clampAmount(long amount) {
+        return (int) Math.max(0L, Math.min(Integer.MAX_VALUE, amount));
     }
 
     public int getKeysOnHold(@NotNull String id) {

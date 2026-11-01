@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.nightcore.bridge.wrap.NightSound;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
@@ -84,7 +84,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                     opening.addSelectedReward(reward);
                     this.selectSound.play(player);
                 }
-                this.runNextTick(() -> this.flush(viewer));
+                player.getScheduler().run(this.plugin, task -> this.flush(viewer), null);
             })
             .build();
     }
@@ -152,25 +152,25 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
-        this.rewardSlots = ConfigValue.create("Reward.Slots",
+        this.rewardSlots = config.getOrSet("Reward.Slots", ConfigCodecs.INT_ARRAY,
             new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34}
-        ).read(config);
+        );
 
-        this.rewardName = ConfigValue.create("Reward.Name",
+        this.rewardName = config.getOrSet("Reward.Name", ConfigCodecs.STRING,
             REWARD_NAME
-        ).read(config);
+        );
 
-        this.rewardLore = ConfigValue.create("Reward.Lore", Lists.newList(
+        this.rewardLore = config.getOrSet("Reward.Lore", ConfigCodecs.STRING_LIST, Lists.newList(
             REWARD_DESCRIPTION,
             EMPTY_IF_ABOVE,
             YELLOW.wrap("→ " + UNDERLINED.wrap("Click to select"))
-        )).read(config);
+        ));
 
-        this.rewardEntry = ConfigValue.create("Reward.EntryName",
+        this.rewardEntry = config.getOrSet("Reward.EntryName", ConfigCodecs.STRING,
             GRAY.wrap("- " + REWARD_NAME)
-        ).read(config);
+        );
 
-        this.selectedIcon = ConfigValue.create("Selection.Icon",
+        this.selectedIcon = config.getOrSet("Selection.Icon", ConfigCodecs.NIGHT_ITEM,
             NightItem.fromType(Material.LIME_STAINED_GLASS_PANE)
                 .setDisplayName(GREEN.wrap(BOLD.wrap("Selected: ")) + WHITE.wrap(REWARD_NAME))
                 .setLore(Lists.newList(
@@ -179,12 +179,12 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                     GREEN.wrap("→ " + UNDERLINED.wrap("Click to unselect"))
                 ))
                 .hideAllComponents()
-        ).read(config);
+        );
 
-        this.selectSound = ConfigValue.create("Selection.Sound-V", VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE)).read(config);
-        this.unselectSound = ConfigValue.create("Selection.Sound-X", VanillaSound.of(Sound.BLOCK_GLASS_BREAK)).read(config);
-        this.limitSound = ConfigValue.create("Selection.Sound-Limit", VanillaSound.of(Sound.ENTITY_VILLAGER_NO)).read(config);
-        this.confirmSound = ConfigValue.create("Selection.Sound-Confirm", VanillaSound.of(Sound.BLOCK_VAULT_OPEN_SHUTTER)).read(config);
+        this.selectSound = config.getOrSet("Selection.Sound-V", ConfigCodecs.NIGHT_SOUND, VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE));
+        this.unselectSound = config.getOrSet("Selection.Sound-X", ConfigCodecs.NIGHT_SOUND, VanillaSound.of(Sound.BLOCK_GLASS_BREAK));
+        this.limitSound = config.getOrSet("Selection.Sound-Limit", ConfigCodecs.NIGHT_SOUND, VanillaSound.of(Sound.ENTITY_VILLAGER_NO));
+        this.confirmSound = config.getOrSet("Selection.Sound-Confirm", ConfigCodecs.NIGHT_SOUND, VanillaSound.of(Sound.BLOCK_VAULT_OPEN_SHUTTER));
 
         loader.addDefaultItem(new NightItem(Material.BLACK_STAINED_GLASS_PANE)
             .setHideTooltip(true)

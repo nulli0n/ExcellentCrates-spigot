@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.opening;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     private final Map<String, OpeningProvider> providerByIdMap;
     private final Map<UUID, Opening>           openingByPlayerMap;
+    private final Map<UUID, ScheduledTask>     tickerByPlayerMap;
 
     private final DummyProvider dummyProvider;
 
@@ -32,6 +34,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         super(plugin);
         this.providerByIdMap = new HashMap<>();
         this.openingByPlayerMap = new ConcurrentHashMap<>();
+        this.tickerByPlayerMap = new ConcurrentHashMap<>();
         this.dummyProvider = new DummyProvider(plugin);
     }
 
@@ -41,12 +44,13 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         this.loadProviders();
 
         this.addListener(new OpeningListener(this.plugin, this));
-
-        this.addTask(this::tickOpenings, 1L);
     }
 
     @Override
     protected void onShutdown() {
+        this.tickerByPlayerMap.values().forEach(ScheduledTask::cancel);
+        this.tickerByPlayerMap.clear();
+
         this.getOpenings().forEach(Opening::stop);
         this.providerByIdMap.clear();
         this.openingByPlayerMap.clear();
@@ -102,7 +106,7 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
     }
 
     public void loadProvider(@NotNull File file, @NotNull ProviderSupplier supplier) {
-        FileConfig config = new FileConfig(file);
+        FileConfig config = FileConfig.load(file.toPath());
         String name = FileConfig.getName(file);
 
         OpeningProvider provider = supplier.supply(this.plugin, name);
@@ -151,10 +155,6 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         return this.openingByPlayerMap.get(player.getUniqueId());
     }
 
-    public void tickOpenings() {
-        this.getOpenings().forEach(Opening::tick);
-    }
-
     public boolean isOpening(@NotNull Player player) {
         return this.getOpening(player) != null;
     }
@@ -168,7 +168,12 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
 
     @Nullable
     public Opening removeOpening(@NotNull Player player) {
-        return this.openingByPlayerMap.remove(player.getUniqueId());
+        UUID playerId = player.getUniqueId();
+        ScheduledTask ticker = this.tickerByPlayerMap.remove(playerId);
+        if (ticker != null) {
+            ticker.cancel();
+        }
+        return this.openingByPlayerMap.remove(playerId);
     }
 
     public boolean isOpeningAvailable(@NotNull Player player) {
@@ -188,11 +193,35 @@ public class OpeningManager extends AbstractManager<CratesPlugin> {
         return provider.createOpening(player, source, cost);
     }
 
-    public void startOpening(@NotNull Player player, @NotNull Opening opening, boolean instaRoll) {
-        this.openingByPlayerMap.putIfAbsent(player.getUniqueId(), opening);
+    public boolean startOpening(@NotNull Player player, @NotNull Opening opening, boolean instaRoll) {
+        UUID playerId = player.getUniqueId();
 
-        opening.start(); // Start ticking
+        if (this.openingByPlayerMap.putIfAbsent(playerId, opening) != null) {
+            return false;
+        }
+
+        ScheduledTask ticker = player.getScheduler().runAtFixedRate(this.plugin, task -> {
+            if (!opening.isRunning()) {
+                task.cancel();
+                this.tickerByPlayerMap.remove(playerId, task);
+                return;
+            }
+            opening.tick();
+        }, () -> {
+            this.tickerByPlayerMap.remove(playerId);
+            this.openingByPlayerMap.remove(playerId, opening);
+        }, 1L, 1L);
+
+        if (ticker == null) {
+            this.openingByPlayerMap.remove(playerId, opening);
+            return false;
+        }
+
+        this.tickerByPlayerMap.put(playerId, ticker);
+
+        opening.start();
 
         if (instaRoll) opening.instaRoll();
+        return true;
     }
 }

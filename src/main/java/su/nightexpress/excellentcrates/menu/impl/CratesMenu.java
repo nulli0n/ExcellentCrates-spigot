@@ -10,7 +10,8 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.util.ClickType;
 import su.nightexpress.excellentcrates.util.InteractType;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
+import su.nightexpress.nightcore.configuration.property.ConfigProperty;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.menu.MenuOptions;
 import su.nightexpress.nightcore.menu.MenuViewer;
@@ -22,6 +23,7 @@ import su.nightexpress.nightcore.util.Lists;
 import su.nightexpress.nightcore.util.NumberUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +74,7 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
                 InteractType clickAction = null;//Config.getCrateClickAction(clickType);
                 if (clickAction == null) return;
 
-                this.runNextTick(() -> {
+                this.plugin.runTask(player, () -> {
                     player.closeInventory();
                     plugin.getCrateManager().interactCrate(player, crate, clickAction, null, null);
                 });
@@ -101,26 +103,26 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
 
     @Override
     protected void loadAdditional() {
-        this.crateName = ConfigValue.create("Crate.Name",
+        this.crateName = cfg.getOrSet("Crate.Name", ConfigCodecs.STRING,
             CRATE_NAME
-        ).read(cfg);
+        );
 
-        this.crateLore = ConfigValue.create("Crate.Lore", Lists.newList(
+        this.crateLore = cfg.getOrSet("Crate.Lore", ConfigCodecs.STRING_LIST, Lists.newList(
             CRATE_DESCRIPTION,
             EMPTY_IF_ABOVE,
             LIGHT_GRAY.enclose("You have " + LIGHT_YELLOW.enclose(GENERIC_KEYS) + " keys."),
             " ",
             LIGHT_GRAY.enclose(LIGHT_YELLOW.enclose("[▶]") + " Left-Click to " + LIGHT_YELLOW.enclose("preview") + "."),
             LIGHT_GRAY.enclose(LIGHT_YELLOW.enclose("[▶]") + " Right-Click to " + LIGHT_YELLOW.enclose("open") + ".")
-        )).read(cfg);
+        ));
 
-        this.crateSlots = ConfigValue.forMap("Crate.Slots",
-            (cfg, path, id) -> cfg.getInt(path + "." + id),
-            (cfg, path, map) -> map.forEach((id, slot) -> cfg.set(path + "." + id, slot)),
-            () -> Map.of("your_crate_id", 13),
+        this.crateSlots = cfg.getOrSet(ConfigProperty.of(
+            ConfigCodecs.forMap(id -> id, id -> id, ConfigCodecs.INT, HashMap::new),
+            "Crate.Slots",
+            new HashMap<>(Map.of("your_crate_id", 13)),
             "Put here crate IDs and slots where they will be displayed.",
             "Crate IDs are equals to their config file names."
-        ).read(cfg);
+        ));
     }
 
 

@@ -28,6 +28,7 @@ import su.nightexpress.nightcore.manager.AbstractListener;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 import su.nightexpress.nightcore.util.time.TimeFormats;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
     public CrateListener(@NotNull CratesPlugin plugin, @NotNull CrateManager manager) {
         super(plugin);
         this.manager = manager;
-        this.adventureFix = new HashSet<>();
+        this.adventureFix = ConcurrentHashMap.newKeySet();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -49,6 +50,7 @@ public class CrateListener extends AbstractListener<CratesPlugin> {
         Player player = event.getPlayer();
 
         this.manager.removePreviewCooldown(player);
+        this.adventureFix.remove(player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

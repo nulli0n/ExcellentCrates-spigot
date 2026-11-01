@@ -196,7 +196,7 @@ public class BaseCommands {
 
         Location location = new Location(world, x, y, z);
 
-        if (!plugin.getCrateManager().dropCrateItem(crate, location)) return false;
+        plugin.runOwned(location, () -> plugin.getCrateManager().dropCrateItem(crate, location));
 
         Lang.COMMAND_DROP_DONE.message().send(context.getSender(), replacer -> replacer
             .replace(crate.replacePlaceholders())
@@ -215,7 +215,7 @@ public class BaseCommands {
         Crate crate = arguments.get(CommandArguments.CRATE, Crate.class);
         int amount = arguments.getInt(CommandArguments.AMOUNT, 1);
 
-        plugin.getCrateManager().giveCrateItem(player, crate, amount);
+        plugin.runOwned(player, () -> plugin.getCrateManager().giveCrateItem(player, crate, amount));
 
         if (!context.hasFlag(CommandFlags.SILENT)) {
             Lang.COMMAND_GIVE_NOTIFY.message().send(player, replacer -> replacer
@@ -258,15 +258,17 @@ public class BaseCommands {
         boolean mass = context.hasFlag(CommandFlags.MASS);
         CrateSource source = new CrateSource(crate);
 
-        Cost cost = force ? null : crate.getAnyCost(player).orElse(null);
         OpenOptions options = force ? OpenOptions.ignoreRestrictions() : OpenOptions.empty();
 
-        if (mass) {
-            plugin.getCrateManager().multiOpenCrate(player, source, options, cost, cost == null ? 1 : cost.countMaxOpenings(player));
-        }
-        else {
-            plugin.getCrateManager().openCrate(player, source, options, cost);
-        }
+        plugin.runOwned(player, () -> {
+            Cost cost = force ? null : crate.getAnyCost(player).orElse(null);
+            if (mass) {
+                plugin.getCrateManager().multiOpenCrate(player, source, options, cost, cost == null ? 1 : cost.countMaxOpenings(player));
+            }
+            else {
+                plugin.getCrateManager().openCrate(player, source, options, cost);
+            }
+        });
         return true;
     }
 
@@ -278,7 +280,7 @@ public class BaseCommands {
             return false;
         }
 
-        plugin.getCrateManager().previewCrate(player, new CrateSource(crate));
+        plugin.runOwned(player, () -> plugin.getCrateManager().previewCrate(player, new CrateSource(crate)));
 
         if (context.getSender() != player) {
             Lang.COMMAND_PREVIEW_DONE_OTHERS.message().send(context.getSender(), replacer -> replacer
@@ -340,14 +342,16 @@ public class BaseCommands {
         Players.getOnline().forEach(player -> {
             if (!player.hasPermission(Perms.INCLUDE_KEY_GIVEALL)) return;
 
-            plugin.getKeyManager().giveKey(player, key, amount);
+            plugin.runOwned(player, () -> {
+                plugin.getKeyManager().giveKey(player, key, amount);
 
-            if (!silent) {
-                Lang.COMMAND_KEY_GIVE_NOTIFY.message().send(player, replacer -> replacer
-                    .replace(Placeholders.GENERIC_AMOUNT, amount)
-                    .replace(key.replacePlaceholders())
-                );
-            }
+                if (!silent) {
+                    Lang.COMMAND_KEY_GIVE_NOTIFY.message().send(player, replacer -> replacer
+                        .replace(Placeholders.GENERIC_AMOUNT, amount)
+                        .replace(key.replacePlaceholders())
+                    );
+                }
+            });
         });
 
         if (!context.hasFlag(CommandFlags.SILENT_FEEDBACK)) {

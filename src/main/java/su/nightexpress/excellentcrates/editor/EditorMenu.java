@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.MenuType;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.CratesPlugin;
 import su.nightexpress.excellentcrates.config.Lang;
@@ -49,7 +50,8 @@ public class EditorMenu extends NormalMenu<CratesPlugin> implements LangContaine
             .toMenuItem()
             .setSlots(11)
             .setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openCrateList(viewer.getPlayer()));
+                Player player = viewer.getPlayer();
+                this.plugin.runTask(player, () -> plugin.getEditorManager().openCrateList(player));
             })
             .build()
         );
@@ -60,7 +62,8 @@ public class EditorMenu extends NormalMenu<CratesPlugin> implements LangContaine
             .toMenuItem()
             .setSlots(15)
             .setHandler((viewer1, event) -> {
-                this.runNextTick(() -> plugin.getEditorManager().openKeyList(viewer.getPlayer()));
+                Player player = viewer.getPlayer();
+                this.plugin.runTask(player, () -> plugin.getEditorManager().openKeyList(player));
             })
             .build()
         );

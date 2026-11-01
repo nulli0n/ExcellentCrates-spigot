@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.excellentcrates.crate.cost.entry.impl.EcoCostEntry;
 import su.nightexpress.excellentcrates.dialog.Dialog;
+import su.nightexpress.nightcore.bridge.currency.Currency;
 import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.single.WrappedSingleOptionEntry;
 import su.nightexpress.nightcore.integration.currency.EconomyBridge;
@@ -13,6 +14,8 @@ import su.nightexpress.nightcore.locale.entry.DialogElementLocale;
 import su.nightexpress.nightcore.locale.entry.TextLocale;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.ui.dialog.build.*;
+
+import java.util.Set;
 
 import static su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers.*;
 
@@ -39,7 +42,7 @@ public class CurrencyCostOptionsDialog extends Dialog<EcoCostEntry> {
             builder.base(DialogBases.builder(TITLE)
                 .body(DialogBodies.plainMessage(BODY))
                 .inputs(
-                    DialogInputs.singleOption(INPUT_ID, LABEL_CURRENCY, EconomyBridge.getCurrencies().stream()
+                    DialogInputs.singleOption(INPUT_ID, LABEL_CURRENCY, (EconomyBridge.initialized() ? EconomyBridge.api().getCurrencies() : Set.<Currency>of()).stream()
                         .map(currency -> new WrappedSingleOptionEntry(currency.getInternalId(), currency.getName(), entry.getCurrencyId().equalsIgnoreCase(currency.getInternalId())))
                         .toList()
                     ).build(),

@@ -8,7 +8,7 @@ import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.opening.AbstractProvider;
 import su.nightexpress.excellentcrates.opening.world.impl.SimpleRollOpening;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 
 public class SimpleRollProvider extends AbstractProvider {
@@ -23,9 +23,9 @@ public class SimpleRollProvider extends AbstractProvider {
 
     @Override
     public void load(@NotNull FileConfig config) {
-        this.spinsRequired = ConfigValue.create("Settings.Steps_Amount", this.spinsRequired).read(config);
-        this.spinInterval = ConfigValue.create("Settings.Steps_Tick", this.spinInterval).read(config);
-        this.finishDelay = ConfigValue.create("Settings.Complete_Pause", this.finishDelay).read(config);
+        this.spinsRequired = config.getOrSet("Settings.Steps_Amount", ConfigCodecs.INT, this.spinsRequired);
+        this.spinInterval = config.getOrSet("Settings.Steps_Tick", ConfigCodecs.LONG, this.spinInterval);
+        this.finishDelay = config.getOrSet("Settings.Complete_Pause", ConfigCodecs.LONG, this.finishDelay);
     }
 
     @Override

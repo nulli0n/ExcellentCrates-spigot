@@ -8,16 +8,18 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.data.DataManager;
 import su.nightexpress.nightcore.util.TimeUtil;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class RewardData {
 
     private final String crateId;
     private final String rewardId;
     private final String holder;
 
-    private int  rolls;
-    private long cooldownUntil;
+    private final AtomicInteger rolls = new AtomicInteger();
+    private volatile long cooldownUntil;
 
-    private boolean saveRequired;
+    private volatile boolean saveRequired;
 
     @NotNull
     public static RewardData create(@NotNull Reward reward, @Nullable Player player) {
@@ -44,7 +46,7 @@ public class RewardData {
     }
 
     public void reset() {
-        this.rolls = 0;
+        this.rolls.set(0);
         this.cooldownUntil = 0L;
     }
 
@@ -57,7 +59,7 @@ public class RewardData {
     }
 
     public void addRoll(int amount) {
-        this.rolls += amount;
+        this.rolls.addAndGet(amount);
     }
 
     @NotNull
@@ -76,11 +78,11 @@ public class RewardData {
     }
 
     public int getRolls() {
-        return this.rolls;
+        return this.rolls.get();
     }
 
     public void setRolls(int rolls) {
-        this.rolls = rolls;
+        this.rolls.set(rolls);
     }
 
     public long getCooldownUntil() {

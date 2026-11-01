@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.*;
 
 public class CrateManager extends AbstractManager<CratesPlugin> {
@@ -80,11 +81,11 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         super(plugin);
         this.dialogs = dialogs;
 
-        this.rarityByIdMap = new HashMap<>();
-        this.crateByIdMap = new HashMap<>();
-        this.crateByPosMap = new HashMap<>();
-        this.previewByIdMap = new HashMap<>();
-        this.previewCooldown = new HashMap<>();
+        this.rarityByIdMap = new ConcurrentHashMap<>();
+        this.crateByIdMap = new ConcurrentHashMap<>();
+        this.crateByPosMap = new ConcurrentHashMap<>();
+        this.previewByIdMap = new ConcurrentHashMap<>();
+        this.previewCooldown = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -96,11 +97,11 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.runTask(() -> this.reportProblems());
 
         this.addListener(new CrateListener(this.plugin, this));
 
-        this.addAsyncTask(this::playCrateEffects, 1L);
+        this.addTask(this::playCrateEffects, 1L);
         this.addAsyncTask(this::saveCrates, Config.CRATE_SAVE_INTERVAL.get());
     }
 
@@ -129,7 +130,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         });
         config.remove("Crate.Holograms.Templates"); // Remove old shit
 
-        Config.CRATE_HOLOGRAM_TEMPLATES.read(config); // Re-read
+        Config.CRATE_HOLOGRAM_TEMPLATES.load(config);
     }
 
     private void loadRarities() {
@@ -140,7 +141,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
             File oldFile = new File(plugin.getDataFolder(), "rarity.yml");
             if (oldFile.exists()) {
-                FileConfig oldConfig = new FileConfig(oldFile);
+                FileConfig oldConfig = FileConfig.load(oldFile.toPath());
                 for (String id : oldConfig.getSection("")) {
                     rarities.add(Rarity.read(plugin, oldConfig, id, id));
                 }
@@ -168,12 +169,12 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     private void loadPreviews() {
         File dir = new File(plugin.getDataFolder().getAbsolutePath(), Config.DIR_PREVIEWS);
         if (!dir.exists() && dir.mkdirs()) {
-            new PreviewMenu(plugin, FileConfig.loadOrExtract(plugin, Config.DIR_PREVIEWS, Placeholders.DEFAULT + ".yml"));
+            new PreviewMenu(plugin, FileConfig.load(dir.toPath().resolve(Placeholders.DEFAULT + ".yml")));
         }
 
         for (FileConfig config : FileConfig.loadAll(plugin.getDataFolder() + Config.DIR_PREVIEWS, false)) {
             PreviewMenu menu = new PreviewMenu(plugin, config);
-            String id = config.getFile().getName().replace(".yml", "").toLowerCase();
+            String id = config.getPath().getFileName().toString().replace(".yml", "").toLowerCase();
             this.previewByIdMap.put(id, menu);
         }
     }
@@ -611,7 +612,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         Opening opening = this.plugin.getOpeningManager().createOpening(player, source, realCost);
 
-        this.plugin.getOpeningManager().startOpening(player, opening, options.has(OpenOptions.Option.IGNORE_ANIMATION));
+        if (!this.plugin.getOpeningManager().startOpening(player, opening, options.has(OpenOptions.Option.IGNORE_ANIMATION))) {
+            return false;
+        }
 
         if (realCost != null) {
             realCost.takeAll(player);
@@ -729,11 +732,16 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     public void playCrateEffects() {
+        double distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
+
         this.getCrates().forEach(crate -> {
             if (!crate.isEffectEnabled()) return;
 
             CrateEffect effect = crate.getEffect();
             if (effect.isDummy()) return;
+
+            int step = effect.getPlayableStep();
+            if (step < 0) return;
 
             UniParticle particle = crate.getEffectParticle();
 
@@ -743,9 +751,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
                 Location location = worldPos.toLocation();
                 if (location == null) return;
 
-                CrateUtils.getPlayersForEffects(location).forEach(player -> {
-                    effect.playStep(location, particle, player);
-                });
+                this.plugin.runTask(location, () -> location.getNearbyPlayers(distance).forEach(player -> effect.playStep(location, particle, step, player)));
             });
         });
 

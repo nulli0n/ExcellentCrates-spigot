@@ -8,13 +8,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FakeDisplay {
 
     private final Map<WorldPos, FakeEntityGroup> entityGroups;
 
     public FakeDisplay() {
-        this.entityGroups = new HashMap<>();
+        this.entityGroups = new ConcurrentHashMap<>();
     }
 
     @NotNull

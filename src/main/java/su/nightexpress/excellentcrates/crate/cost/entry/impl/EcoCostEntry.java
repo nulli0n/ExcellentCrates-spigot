@@ -50,7 +50,9 @@ public class EcoCostEntry extends AbstractCostEntry<EcoCostType> {
 
     @NotNull
     public Optional<Currency> currency() {
-        return EconomyBridge.currency(this.currencyId);
+        if (!EconomyBridge.initialized()) return Optional.empty();
+
+        return EconomyBridge.api().currency(this.currencyId);
     }
 
     @Override
@@ -81,22 +83,23 @@ public class EcoCostEntry extends AbstractCostEntry<EcoCostType> {
 
     @Override
     public int countPossibleOpenings(@NotNull Player player) {
-        return (int) Math.floor(EconomyBridge.getBalance(player, this.currencyId) / this.amount);
+        double balance = this.currency().map(currency -> currency.queryBalance(player)).orElse(0D);
+        return (int) Math.floor(balance / this.amount);
     }
 
     @Override
     public boolean hasEnough(@NotNull Player player) {
-        return EconomyBridge.hasEnough(player, this.currencyId, this.amount);
+        return this.currency().map(currency -> currency.canAfford(player, this.amount)).orElse(false);
     }
 
     @Override
     public void take(@NotNull Player player) {
-        EconomyBridge.withdraw(player, this.currencyId, this.amount);
+        this.currency().ifPresent(currency -> currency.withdraw(player, this.amount));
     }
 
     @Override
     public void refund(@NotNull Player player) {
-        EconomyBridge.deposit(player, this.currencyId, this.amount);
+        this.currency().ifPresent(currency -> currency.deposit(player, this.amount));
     }
 
     @NotNull

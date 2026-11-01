@@ -20,6 +20,7 @@ import su.nightexpress.nightcore.util.placeholder.Replacer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public abstract class AbstractOpening implements Opening {
@@ -32,8 +33,10 @@ public abstract class AbstractOpening implements Opening {
     protected final List<Reward> rewards;
 
     protected long    tickCount;
-    protected boolean running;
+    protected volatile boolean running;
     protected boolean refundable;
+
+    private final AtomicBoolean runState = new AtomicBoolean();
 
     public AbstractOpening(@NotNull CratesPlugin plugin, @NotNull Player player, @NotNull CrateSource source, @Nullable Cost cost) {
         this.plugin = plugin;
@@ -47,7 +50,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void start() {
-        if (this.running) return;
+        if (!this.runState.compareAndSet(false, true)) return;
 
         this.running = true;
         this.onStart();
@@ -55,7 +58,7 @@ public abstract class AbstractOpening implements Opening {
 
     @Override
     public void stop() {
-        if (!this.running) return;
+        if (!this.runState.compareAndSet(true, false)) return;
 
         this.running = false;
         this.onStop();

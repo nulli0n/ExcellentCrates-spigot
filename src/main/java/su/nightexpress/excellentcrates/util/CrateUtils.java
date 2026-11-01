@@ -1,10 +1,8 @@
 package su.nightexpress.excellentcrates.util;
 
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.nightcore.util.*;
@@ -13,29 +11,12 @@ import su.nightexpress.nightcore.util.text.night.NightMessage;
 import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public class CrateUtils {
 
     public static final int REWARD_ITEMS_LIMIT = 27;
-
-    @NotNull
-    public static Set<Player> getPlayersForEffects(@NotNull Location location) {
-        Set<Player> players = new HashSet<>(Bukkit.getServer().getOnlinePlayers());
-        players.removeIf(player -> !isInEffectRange(player, location));
-
-        return players;
-    }
-
-    public static boolean isInEffectRange(@NotNull Player player, @NotNull Location location) {
-        World world = location.getWorld();
-        int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
-
-        return player.getWorld() == world && player.getLocation().distance(location) <= distance;
-    }
 
     @NotNull
     public static ItemStack removeCrateTags(@NotNull ItemStack itemStack) {

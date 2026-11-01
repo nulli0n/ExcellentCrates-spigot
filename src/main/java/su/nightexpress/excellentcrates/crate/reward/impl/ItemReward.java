@@ -12,7 +12,7 @@ import su.nightexpress.excellentcrates.crate.reward.AbstractReward;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.excellentcrates.util.ItemHelper;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.ItemNbt;
 import su.nightexpress.nightcore.util.ItemUtil;
@@ -49,7 +49,7 @@ public class ItemReward extends AbstractReward {
             config.remove(path + ".Items");
         }
 
-        this.setCustomPreview(ConfigValue.create(path + ".Custom_Preview", false).read(config));
+        this.setCustomPreview(config.getOrSet(path + ".Custom_Preview", ConfigCodecs.BOOLEAN, false));
         this.setAllowItemPlaceholders(config.getBoolean(path + ".Placeholder_Apply"));
 
         config.getSection(path + ".ItemsData").forEach(sId -> {

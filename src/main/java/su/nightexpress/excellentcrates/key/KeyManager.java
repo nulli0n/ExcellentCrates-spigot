@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -39,7 +40,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     public KeyManager(@NotNull CratesPlugin plugin, @NotNull DialogRegistry dialogs) {
         super(plugin);
         this.dialogs = dialogs;
-        this.keyByIdMap = new HashMap<>();
+        this.keyByIdMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -47,10 +48,10 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         this.loadCost();
         this.loadKeys();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // When everything is loaded.
+        this.plugin.runTask(this::reportProblems);
 
         this.addListener(new KeyListener(this.plugin, this));
-        this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get()); // TODO Config
+        this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get());
     }
 
     @Override
@@ -133,7 +134,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         World world = location.getWorld();
         if (world == null) return false;
 
-        world.dropItemNaturally(location, key.getItemStack());
+        this.plugin.runOwned(location, () -> world.dropItemNaturally(location, key.getItemStack()));
         return true;
     }
 
@@ -243,16 +244,17 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
             plugin.getUserManager().save(user);
         }
         else {
-            ItemStack keyItem = key.getItemStack();
-            int has = Players.countItem(player, keyItem);
-            if (has > amount) {
-                Players.takeItem(player, keyItem, has - amount);
-            }
-            else if (has < amount) {
-                Players.addItem(player, keyItem, amount - has);
-            }
+            plugin.runOwned(player, () -> {
+                ItemStack keyItem = key.getItemStack();
+                int has = Players.countItem(player, keyItem);
+                if (has > amount) {
+                    Players.takeItem(player, keyItem, has - amount);
+                }
+                else if (has < amount) {
+                    Players.addItem(player, keyItem, amount - has);
+                }
+            });
         }
-        //return true;
     }
 
     public void giveKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
@@ -277,9 +279,11 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
             plugin.getUserManager().save(user);
         }
         else {
-            ItemStack keyItem = key.getItemStack();
-            keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
-            Players.addItem(player, keyItem);
+            plugin.runOwned(player, () -> {
+                ItemStack keyItem = key.getItemStack();
+                keyItem.setAmount(amount < 0 ? Math.abs(amount) : amount);
+                Players.addItem(player, keyItem);
+            });
         }
     }
 
@@ -302,11 +306,14 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
             plugin.getUserManager().save(user);
         }
         else {
-            Predicate<ItemStack> predicate = this.getItemStackPredicate(key);
-            int has = Players.countItem(player, predicate);
-            if (has < amount) amount = has;
+            final int finalAmount = amount;
+            plugin.runOwned(player, () -> {
+                Predicate<ItemStack> predicate = this.getItemStackPredicate(key);
+                int has = Players.countItem(player, predicate);
+                int toRemove = Math.min(has, finalAmount);
 
-            Players.takeItem(player, predicate, amount);
+                Players.takeItem(player, predicate, toRemove);
+            });
         }
     }
 
