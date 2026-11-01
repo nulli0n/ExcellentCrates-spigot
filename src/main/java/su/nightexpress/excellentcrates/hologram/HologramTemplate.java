@@ -3,7 +3,7 @@ package su.nightexpress.excellentcrates.hologram;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.Placeholders;
 import su.nightexpress.nightcore.config.FileConfig;
-import su.nightexpress.nightcore.config.Writeable;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodec;
 import su.nightexpress.nightcore.util.Lists;
 
 import java.util.ArrayList;
@@ -15,7 +15,12 @@ import static su.nightexpress.excellentcrates.Placeholders.CRATE_ID;
 import static su.nightexpress.excellentcrates.Placeholders.CRATE_NAME;
 import static su.nightexpress.nightcore.util.text.tag.Tags.*;
 
-public class HologramTemplate implements Writeable {
+public class HologramTemplate {
+
+    public static final ConfigCodec<HologramTemplate> CODEC = ConfigCodec.of(
+        (config, path) -> read(config, path, path.substring(path.lastIndexOf('.') + 1)),
+        (config, path, template) -> template.write(config, path)
+    );
 
     private final String id;
     private final List<String> text;
@@ -54,7 +59,6 @@ public class HologramTemplate implements Writeable {
         return map;
     }
 
-    @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Text", this.text);
     }
