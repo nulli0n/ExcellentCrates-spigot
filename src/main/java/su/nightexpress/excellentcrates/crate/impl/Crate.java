@@ -51,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -65,8 +66,9 @@ public class Crate implements ConfigBacked {
 
     private final Set<WorldPos>                 blockPositions;
     private final Set<Milestone>                milestones;
-    private final Map<String, Cost>             costMap;
-    private final LinkedHashMap<String, Reward> rewardMap;
+
+    private volatile LinkedHashMap<String, Cost>   costMap;
+    private volatile LinkedHashMap<String, Reward> rewardMap;
 
     private String      name;
     private List<String> description;
@@ -106,8 +108,8 @@ public class Crate implements ConfigBacked {
 
         this.costMap = new LinkedHashMap<>();
         this.rewardMap = new LinkedHashMap<>();
-        this.blockPositions = new HashSet<>();
-        this.milestones = new HashSet<>();
+        this.blockPositions = ConcurrentHashMap.newKeySet();
+        this.milestones = ConcurrentHashMap.newKeySet();
         this.description = new ArrayList<>();
     }
 
@@ -190,13 +192,13 @@ public class Crate implements ConfigBacked {
                     entry.setAmount(1);
 
                     Cost cost = new Cost("key_" + keyId, keyRequired, keyId + " Key", ItemHelper.vanilla(new ItemStack(Material.TRIAL_KEY)), Collections.singletonList(entry));
-                    config.set("CostOptions." + cost.getId(), cost);
+                    cost.write(config, "CostOptions." + cost.getId());
                 });
             }
 
             if (CratesRegistries.getCostType(CostTypeId.CURRENCY) instanceof EcoCostType ecoType) {
                 for (String curId : config.getSection("Opening.Cost")) {
-                    Currency currency = EconomyBridge.getCurrency(curId);
+                    Currency currency = EconomyBridge.initialized() ? EconomyBridge.api().getCurrency(curId) : null;
                     if (currency == null) continue;
 
                     double amount = config.getDouble("Opening.Cost." + curId);
@@ -206,7 +208,7 @@ public class Crate implements ConfigBacked {
                     entry.setAmount(amount);
 
                     Cost cost = new Cost("eco_" + curId, keyRequired, curId + " Currency", ItemHelper.adapt(currency.getIcon()), Collections.singletonList(entry));
-                    config.set("CostOptions." + cost.getId(), cost);
+                    cost.write(config, "CostOptions." + cost.getId());
                 }
             }
 
@@ -240,7 +242,7 @@ public class Crate implements ConfigBacked {
 
         for (String sId : config.getSection("Rewards.List")) {
             Reward reward = RewardFactory.read(this.plugin, this, sId, config, "Rewards.List." + sId);
-            this.rewardMap.put(sId, reward);
+            this.addReward(sId, reward);
         }
 
         // Load milestones only if the feature is enabled.
@@ -287,7 +289,7 @@ public class Crate implements ConfigBacked {
         config.set("OpeningLimits.Amount", this.openingLimitAmount);
 
         config.remove("CostOptions");
-        this.getCosts().forEach(cost -> config.set("CostOptions." + cost.getId(), cost));
+        this.getCosts().forEach(cost -> cost.write(config, "CostOptions." + cost.getId()));
 
         config.set("Block.Positions", this.blockPositions.stream().map(WorldPos::serialize).toList());
         config.set("Block.Pushback.Enabled", this.pushbackEnabled);
@@ -701,11 +703,15 @@ public class Crate implements ConfigBacked {
     }
 
     public void addCost(@NotNull Cost cost) {
-        this.costMap.put(cost.getId(), cost);
+        LinkedHashMap<String, Cost> updated = new LinkedHashMap<>(this.costMap);
+        updated.put(cost.getId(), cost);
+        this.costMap = updated;
     }
 
     public void removeCost(@NotNull Cost cost) {
-        this.costMap.remove(cost.getId());
+        LinkedHashMap<String, Cost> updated = new LinkedHashMap<>(this.costMap);
+        updated.remove(cost.getId());
+        this.costMap = updated;
     }
 
     public boolean hasCost(@NotNull String id) {
@@ -855,9 +861,8 @@ public class Crate implements ConfigBacked {
     }
 
     public void setRewards(@NotNull List<Reward> rewards) {
-        this.rewardMap.clear();
-        this.rewardMap.putAll(rewards.stream().collect(
-            Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new)));
+        this.rewardMap = rewards.stream().collect(
+            Collectors.toMap(Reward::getId, Function.identity(), (has, add) -> add, LinkedHashMap::new));
     }
 
     @Nullable
@@ -872,7 +877,13 @@ public class Crate implements ConfigBacked {
     }
 
     public void addReward(@NotNull Reward reward) {
-        this.rewardMap.put(reward.getId(), reward);
+        this.addReward(reward.getId(), reward);
+    }
+
+    private void addReward(@NotNull String id, @NotNull Reward reward) {
+        LinkedHashMap<String, Reward> updated = new LinkedHashMap<>(this.rewardMap);
+        updated.put(id, reward);
+        this.rewardMap = updated;
     }
 
     public void removeReward(@NotNull Reward reward) {
@@ -881,7 +892,9 @@ public class Crate implements ConfigBacked {
     }
 
     public void removeReward(@NotNull String id) {
-        this.rewardMap.remove(id);
+        LinkedHashMap<String, Reward> updated = new LinkedHashMap<>(this.rewardMap);
+        updated.remove(id);
+        this.rewardMap = updated;
     }
 
     @NotNull
