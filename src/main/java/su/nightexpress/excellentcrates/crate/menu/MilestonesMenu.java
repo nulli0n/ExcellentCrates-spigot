@@ -13,7 +13,7 @@ import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.Milestone;
 import su.nightexpress.excellentcrates.user.CrateUser;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
@@ -55,7 +55,7 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
 
     public MilestonesMenu(@NotNull CratesPlugin plugin) {
         super(plugin, MenuType.GENERIC_9X3, BLACK.wrap("Crate Milestones"));
-        this.load(FileConfig.loadOrExtract(plugin, Config.FILE_MILESTONES));
+        this.load(FileConfig.load(plugin.getDataFolder().toPath().resolve(Config.FILE_MILESTONES)));
     }
 
     @Override
@@ -138,60 +138,61 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
-        this.mileCompName = ConfigValue.create("Milestones.Completed.Name",
+        this.mileCompName = config.getOrSet("Milestones.Completed.Name", ConfigCodecs.STRING,
             LIGHT_GREEN.wrap(BOLD.wrap(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.wrap("(" + WHITE.wrap("Completed") + ")")
-        ).read(config);
+        );
 
-        this.mileCompLore = ConfigValue.create("Milestones.Completed.Lore", Lists.newList(
+        this.mileCompLore = config.getOrSet("Milestones.Completed.Lore", ConfigCodecs.STRING_LIST, Lists.newList(
             LIGHT_GREEN.wrap(BOLD.wrap("Info:")),
             LIGHT_GREEN.wrap("▪ " + LIGHT_GRAY.wrap("Reward: ") + REWARD_NAME),
             "",
             LIGHT_GREEN.wrap("✔") + " " + LIGHT_GRAY.wrap("You have completed this milestone.")
-        )).read(config);
+        ));
 
-        this.mileIncName = ConfigValue.create("Milestones.Incompleted.Name",
+        this.mileIncName = config.getOrSet("Milestones.Incompleted.Name", ConfigCodecs.STRING,
             LIGHT_YELLOW.wrap(BOLD.wrap(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.wrap("(" + WHITE.wrap("Incompleted") + ")")
-        ).read(config);
+        );
 
-        this.mileIncLore = ConfigValue.create("Milestones.Incompleted.Lore", Lists.newList(
+        this.mileIncLore = config.getOrSet("Milestones.Incompleted.Lore", ConfigCodecs.STRING_LIST, Lists.newList(
             LIGHT_YELLOW.wrap(BOLD.wrap("Info:")),
             LIGHT_YELLOW.wrap("▪ " + LIGHT_GRAY.wrap("Openings Left: ") + PLACEHOLDER_OPENINGS_LEFT),
             LIGHT_YELLOW.wrap("▪ " + LIGHT_GRAY.wrap("Reward: ") + REWARD_NAME),
             "",
             LIGHT_RED.wrap("✘") + " " + LIGHT_GRAY.wrap("You haven''t completed this milestone yet.")
-        )).read(config);
+        ));
 
-        this.mileSlots = ConfigValue.create("Milestones.Slots", new int[]{10,12,14,16}).read(config);
+        this.mileSlots = config.getOrSet("Milestones.Slots", ConfigCodecs.INT_ARRAY, new int[]{10,12,14,16});
 
-        if (ConfigValue.create("Milestones.Completed.Custom_Item.Enabled", true).read(config)) {
-            this.mileCompItem = ConfigValue.create("Milestones.Completed.Custom_Item.Value",
+        if (config.getOrSet("Milestones.Completed.Custom_Item.Enabled", ConfigCodecs.BOOLEAN, true)) {
+            this.mileCompItem = config.getOrSet("Milestones.Completed.Custom_Item.Value", ConfigCodecs.NIGHT_ITEM,
                 NightItem.asCustomHead(SKIN_CHECK_MARK)
-            ).read(config);
+            );
         }
 
-        if (ConfigValue.create("Milestones.Incompleted.Custom_Item.Enabled", false).read(config)) {
-            this.mileIncItem = ConfigValue.create("Milestones.Incompleted.Custom_Item.Value",
+        if (config.getOrSet("Milestones.Incompleted.Custom_Item.Enabled", ConfigCodecs.BOOLEAN, false)) {
+            this.mileIncItem = config.getOrSet("Milestones.Incompleted.Custom_Item.Value", ConfigCodecs.NIGHT_ITEM,
                 NightItem.asCustomHead(SKIN_WRONG_MARK)
-            ).read(config);
+            );
         }
 
-        this.pointerEnabled = ConfigValue.create("Milestones.Pointer.Enabled", true).read(config);
+        this.pointerEnabled = config.getOrSet("Milestones.Pointer.Enabled", ConfigCodecs.BOOLEAN, true);
 
-        this.pointerPerMile = ConfigValue.create("Milestones.Pointer.Per_Milestone", 2).read(config);
+        this.pointerPerMile = config.getOrSet("Milestones.Pointer.Per_Milestone", ConfigCodecs.INT, 2);
 
-        this.pointerSlots = ConfigValue.create("Milestones.Pointer.Slots", new int[]{1,19,3,21,5,23,7,25}).read(config);
+        this.pointerSlots = config.getOrSet("Milestones.Pointer.Slots", ConfigCodecs.INT_ARRAY, new int[]{1,19,3,21,5,23,7,25});
 
-        this.pointerComp = ConfigValue.create("Milestones.Pointer.Completed",
+        this.pointerComp = config.getOrSet("Milestones.Pointer.Completed", ConfigCodecs.NIGHT_ITEM,
             new NightItem(Material.LIME_STAINED_GLASS_PANE)
-        ).read(config);
+        );
 
-        this.pointerInc = ConfigValue.create("Milestones.Pointer.Incompleted",
+        this.pointerInc = config.getOrSet("Milestones.Pointer.Incompleted", ConfigCodecs.NIGHT_ITEM,
             new NightItem(Material.WHITE_STAINED_GLASS_PANE)
-        ).read(config);
+        );
 
         loader.addDefaultItem(MenuItem.buildReturn(this, 22, (viewer, event) -> {
-            CrateSource source = this.getLink(viewer.getPlayer());
-            this.runNextTick(() -> plugin.getCrateManager().previewCrate(viewer.getPlayer(), source));
+            Player player = viewer.getPlayer();
+            CrateSource source = this.getLink(player);
+            this.plugin.runTask(player, () -> plugin.getCrateManager().previewCrate(player, source));
         }).setPriority(MenuItem.HIGH_PRIORITY));
 
         loader.addDefaultItem(MenuItem.buildNextPage(this, 17).setPriority(MenuItem.HIGH_PRIORITY));

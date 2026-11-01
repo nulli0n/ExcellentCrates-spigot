@@ -15,7 +15,7 @@ import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.OpenOptions;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
@@ -79,7 +79,7 @@ public class OpeningAmountMenu extends LinkedMenu<CratesPlugin, OpeningAmountMen
                 .setSlots(slots[index])
                 .setPriority(Integer.MAX_VALUE)
                 .setHandler((viewer1, event) -> {
-                    this.runNextTick(() -> {
+                    this.plugin.runTask(player, () -> {
                         player.closeInventory();
                         this.manager.multiOpenCrate(player, source, OpenOptions.empty(), cost, amount);
                     });
@@ -96,8 +96,8 @@ public class OpeningAmountMenu extends LinkedMenu<CratesPlugin, OpeningAmountMen
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
-        this.slotsSingle = ConfigValue.create("Slots.Single", new int[]{11}).read(config);
-        this.slotsAll = ConfigValue.create("Slots.All", new int[]{15}).read(config);
+        this.slotsSingle = config.getOrSet("Slots.Single", ConfigCodecs.INT_ARRAY, new int[]{11});
+        this.slotsAll = config.getOrSet("Slots.All", ConfigCodecs.INT_ARRAY, new int[]{15});
 
         loader.addDefaultItem(NightItem.fromType(Material.GRAY_STAINED_GLASS_PANE)
             .setHideTooltip(true)

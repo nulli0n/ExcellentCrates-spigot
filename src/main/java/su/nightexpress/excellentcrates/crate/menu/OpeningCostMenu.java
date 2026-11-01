@@ -15,7 +15,7 @@ import su.nightexpress.excellentcrates.crate.cost.Cost;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.crate.impl.OpenOptions;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
@@ -78,7 +78,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
                 .setPriority(Integer.MAX_VALUE)
                 .setSlots(slot)
                 .setHandler((viewer1, event) -> {
-                    this.runNextTick(() -> {
+                    this.plugin.runTask(player, () -> {
                         if (maxOpenings > 1 && Config.isMassOpenEnabled()) {
                             this.manager.openAmountMenu(player, source, cost);
                             return;
@@ -114,7 +114,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
         for (int count = 0; count < 10; count++) {
             int amount = count + 1;
             int[] defSlots = getDefaultSlots(amount);
-            int[] skillSlots = ConfigValue.create("Cost.SlotsByCount." + amount, defSlots).read(config);
+            int[] skillSlots = config.getOrSet("Cost.SlotsByCount." + amount, ConfigCodecs.INT_ARRAY, defSlots);
 
             this.slotsByCostsAmount.put(amount, skillSlots);
         }

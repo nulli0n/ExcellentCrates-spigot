@@ -11,7 +11,8 @@ import su.nightexpress.excellentcrates.api.crate.Reward;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.crate.impl.CrateSource;
 import su.nightexpress.excellentcrates.util.InteractType;
-import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.configuration.codec.ConfigCodecs;
+import su.nightexpress.nightcore.configuration.property.ConfigProperty;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
@@ -120,35 +121,35 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
-        this.hideUnavailable = ConfigValue.create("Reward.Hide_Unavailable",
+        this.hideUnavailable = config.getOrSet(ConfigProperty.of(ConfigCodecs.BOOLEAN,"Reward.Hide_Unavailable",
             true,
             "When enabled, displays only rewards that can be rolled out for a player."
-        ).read(config);
+        ));
 
-        this.rewardSlots = ConfigValue.create("Reward.Slots",
+        this.rewardSlots = config.getOrSet("Reward.Slots", ConfigCodecs.INT_ARRAY,
             new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34}
-        ).read(config);
+        );
 
-        this.rewardName = ConfigValue.create("Reward.Name",
+        this.rewardName = config.getOrSet("Reward.Name", ConfigCodecs.STRING,
             REWARD_NAME
-        ).read(config);
+        );
 
-        this.rewardLore = ConfigValue.create("Reward.Lore.Default", Lists.newList(
+        this.rewardLore = config.getOrSet("Reward.Lore.Default", ConfigCodecs.STRING_LIST, Lists.newList(
             NO_PERMISSION,
             EMPTY_IF_ABOVE,
             DARK_GRAY.wrap("»") + GRAY.wrap( " Rarity: " + WHITE.wrap(REWARD_RARITY_NAME) + " → " + GREEN.wrap(REWARD_ROLL_CHANCE + "%")),
             GENERIC_LIMITS,
             EMPTY_IF_BELOW,
             REWARD_DESCRIPTION
-        )).read(config);
+        ));
 
-        this.noPermissionLore = ConfigValue.create("Reward.Lore.No_Permission", Lists.newList(
+        this.noPermissionLore = config.getOrSet("Reward.Lore.No_Permission", ConfigCodecs.STRING_LIST, Lists.newList(
             GRAY.wrap(RED.wrap("✘") + " You don't have access to this reward.")
-        )).read(config);
+        ));
 
-        this.limitsLore = ConfigValue.create("Reward.Lore.LimitInfo", Lists.newList(
+        this.limitsLore = config.getOrSet("Reward.Lore.LimitInfo", ConfigCodecs.STRING_LIST, Lists.newList(
             DARK_GRAY.wrap("»") + GRAY.wrap(" Rolls Available: ") + YELLOW.wrap(GENERIC_AMOUNT)
-        )).read(config);
+        ));
 
         loader.addHandler(new ItemHandler("open", (viewer, event) -> {
             CrateSource source = this.getLink(viewer);
@@ -156,7 +157,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
             Player player = viewer.getPlayer();
 
-            this.runNextTick(() -> {
+            this.plugin.runTask(player, () -> {
                 player.closeInventory();
                 plugin.getCrateManager().interactCrate(player, source.getCrate(), InteractType.CRATE_OPEN, source.getItem(), source.getBlock());
             });
@@ -177,7 +178,8 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
             .setPriority(10)
             .setSlots(4)
             .setHandler(new ItemHandler("milestones", (viewer, event) -> {
-                this.runNextTick(() -> plugin.getCrateManager().openMilestones(viewer.getPlayer(), this.getLink(viewer)));
+                Player player = viewer.getPlayer();
+                this.plugin.runTask(player, () -> plugin.getCrateManager().openMilestones(player, this.getLink(viewer)));
             }, ItemOptions.builder().setVisibilityPolicy(viewer -> this.getLink(viewer).getCrate().hasMilestones()).build()))
         );
 
