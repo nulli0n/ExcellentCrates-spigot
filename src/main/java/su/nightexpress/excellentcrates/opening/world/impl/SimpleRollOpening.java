@@ -1,5 +1,6 @@
 package su.nightexpress.excellentcrates.opening.world.impl;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -63,7 +64,8 @@ public class SimpleRollOpening extends WorldOpening {
         }
         else {
             double offset = Math.max(0, this.crate.getHologramYOffset());
-            double height = block.getBoundingBox().getHeight() + offset;
+            double blockHeight = Bukkit.isOwnedByCurrentRegion(block.getLocation()) ? block.getBoundingBox().getHeight() : 1D;
+            double height = blockHeight + offset;
 
             center = LocationUtil.setCenter2D(block.getLocation()).add(0, height, 0);
 
@@ -130,7 +132,13 @@ public class SimpleRollOpening extends WorldOpening {
         this.addReward(this.reward);
 
         if (this.rewardDisplay != null) {
-            this.rewardDisplay.remove();
+            Item display = this.rewardDisplay;
+            if (Bukkit.isOwnedByCurrentRegion(display)) {
+                display.remove();
+            }
+            else {
+                this.plugin.runTask(display, display::remove);
+            }
             this.rewardDisplay = null;
         }
 
@@ -157,6 +165,10 @@ public class SimpleRollOpening extends WorldOpening {
     }
 
     private void displayReward() {
+        if (this.displayLocation == null || !Bukkit.isOwnedByCurrentRegion(this.displayLocation)) {
+            return;
+        }
+
         Reward reward = this.isSpinsCompleted() ? this.reward : this.crate.rollReward(this.player);
 
         if (this.rewardDisplay == null) {
